@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Domain.Enums
+{
+    public enum StatusEnum
+    {
+        [Display(Name = "In Cart")]
+        In_Cart = 1,
+
+        [Display(Name = "Pay Later")]
+        Pay_Later = 2,
+
+        [Display(Name = "Not Pay Yet")]
+        Not_Pay_Yet = 3,
+
+        [Display(Name = "Paid")]
+        Paid = 4,
+
+        [Display(Name = "On Delivering")]
+        On_Delivering = 5,
+
+        [Display(Name = "Delivered")]
+        Delivered = 6,
+
+        [Display(Name = "Confirmed")]
+        Confirmed = 7,
+
+        [Display(Name = "Is Error")]
+        Is_Error = 8
+    }
+}
