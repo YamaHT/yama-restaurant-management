@@ -10,7 +10,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            string[] include = [nameof(Category)];
+            string[] include = [nameof(Category), nameof(Product.Feedbacks)];
             return Ok(await _unitOfWork.ProductRepository.GetAllAsync(include));
         }
     }

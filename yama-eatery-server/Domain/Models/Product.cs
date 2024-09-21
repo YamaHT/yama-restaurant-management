@@ -34,7 +34,7 @@ namespace Domain.Models
         [Required(ErrorMessage = "Category is required")]
         public Category? Category { get; set; }
 
-        [JsonIgnore]
-        public virtual ICollection<FeedbackProduct> Feedbacks { get; set; } = [];
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public virtual ICollection<FeedbackProduct>? Feedbacks { get; set; } = null;
     }
 }

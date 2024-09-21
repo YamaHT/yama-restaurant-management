@@ -23,19 +23,19 @@ namespace Domain.Models
 
         public Profile? Profile { get; set; }
 
-        [JsonIgnore]
-        public virtual ICollection<FeedbackProduct> Feedbacks { get; set; } = [];
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public virtual ICollection<FeedbackProduct>? Feedbacks { get; set; } = null;
 
-        [JsonIgnore]
-        public virtual ICollection<UserVoucher> UserVouchers { get; set; } = [];
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public virtual ICollection<UserVoucher>? UserVouchers { get; set; } = null;
 
-        [JsonIgnore]
-        public virtual ICollection<Order> Orders { get; set; } = [];
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public virtual ICollection<Order>? Orders { get; set; } = null;
 
-        [JsonIgnore]
-        public virtual ICollection<Booking> BookingsUser { get; set; } = [];
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public virtual ICollection<Booking>? BookingsUser { get; set; } = null;
 
-        [JsonIgnore]
-        public virtual ICollection<Booking> BookingsWaiter { get; set; } = [];
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public virtual ICollection<Booking>? BookingsWaiter { get; set; } = null;
     }
 }
