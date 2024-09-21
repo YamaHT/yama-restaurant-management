@@ -45,7 +45,7 @@ namespace WebAPI.Middlewares
 		{
 			context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 			context.Response.ContentType = "application/json";
-			await context.Response.WriteAsync(JsonSerializer.Serialize(new { errorMessage = "Unauthorized" }));
+			await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = "Unauthorized" }));
 		}
 
 		private ClaimsPrincipal GetClaimPrincipal(string jwtToken)

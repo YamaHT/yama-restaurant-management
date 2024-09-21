@@ -15,9 +15,7 @@ namespace WebAPI.Middlewares
             }
             catch (ValidationException ex)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonSerializer.Serialize(new { errorList = ex.Message.Split("\n") }));
+               await HandleExceptionAsync(context, HttpStatusCode.UnprocessableContent, ex.Message.Split("\n"));
             }
             catch (InvalidDataException ex)
             {
@@ -38,11 +36,11 @@ namespace WebAPI.Middlewares
             }
         }
 
-        private Task HandleExceptionAsync(HttpContext context, HttpStatusCode statusCode, string message)
+        private Task HandleExceptionAsync(HttpContext context, HttpStatusCode statusCode, dynamic message)
         {
             context.Response.StatusCode = (int)statusCode;
             context.Response.ContentType = "application/json";
-            return context.Response.WriteAsync(JsonSerializer.Serialize(new { errorMessage = message }));
+            return context.Response.WriteAsync(JsonSerializer.Serialize(new { error = message }));
         }
     }
 }
