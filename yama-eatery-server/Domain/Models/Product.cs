@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Domain.Models
@@ -33,6 +34,7 @@ namespace Domain.Models
         [Required(ErrorMessage = "Category is required")]
         public Category? Category { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<FeedbackProduct> Feedbacks { get; set; } = [];
     }
 }

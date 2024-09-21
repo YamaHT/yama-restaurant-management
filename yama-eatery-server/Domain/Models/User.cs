@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 namespace Domain.Models
 {
@@ -22,14 +23,19 @@ namespace Domain.Models
 
         public Profile? Profile { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<FeedbackProduct> Feedbacks { get; set; } = [];
-        
+
+        [JsonIgnore]
         public virtual ICollection<UserVoucher> UserVouchers { get; set; } = [];
 
+        [JsonIgnore]
         public virtual ICollection<Order> Orders { get; set; } = [];
 
+        [JsonIgnore]
         public virtual ICollection<Booking> BookingsUser { get; set; } = [];
 
+        [JsonIgnore]
         public virtual ICollection<Booking> BookingsWaiter { get; set; } = [];
     }
 }
