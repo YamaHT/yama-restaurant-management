@@ -13,6 +13,7 @@ namespace Application
         #endregion
 
         public IUserRepository UserRepository { get; }
+        public IProductRepository ProductRepository { get; }
 
         public Task<int> SaveChangeAsync();
     }

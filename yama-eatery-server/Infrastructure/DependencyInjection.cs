@@ -23,6 +23,7 @@ namespace Infrastructure
             #endregion
 
             services.AddScoped<IUserRepository, UserRepository>();
+			services.AddScoped<IProductRepository, ProductRepository>();
 
 			// Service
 			services.AddScoped<IAuthService, AuthService>();

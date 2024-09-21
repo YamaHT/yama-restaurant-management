@@ -13,7 +13,8 @@ namespace Infrastructure
         IDeliveryRepository deliveryRepository,
     #endregion
         ApplicationDbContext dbContext,
-        IUserRepository userRepository) : IUnitOfWork
+        IUserRepository userRepository,
+        IProductRepository productRepository) : IUnitOfWork
     {
         #region All EnumRepository
         public IRoleRepository RoleRepository => roleRepository;
@@ -24,6 +25,7 @@ namespace Infrastructure
         #endregion
 
         public IUserRepository UserRepository => userRepository;
+        public IProductRepository ProductRepository => productRepository;
 
         public async Task<int> SaveChangeAsync()
         {
