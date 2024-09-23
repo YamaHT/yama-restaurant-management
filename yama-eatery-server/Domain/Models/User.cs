@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+
 namespace Domain.Models
 {
     public class User : TrackableEntity
@@ -15,8 +15,9 @@ namespace Domain.Models
             EmailAddress(ErrorMessage = "Email must be in correct format")]
         public required string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required"),
-            MaxLength(16, ErrorMessage = "Password can't exceed 16 characters")]
+        [Required(ErrorMessage = "Password is required"), 
+            MaxLength(255),
+            JsonIgnore]
         public required string Password { get; set; }
 
         public Role? Role { get; set; }

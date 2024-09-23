@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models
 {
 	public class Role : BaseEntity
 	{
+        [MaxLength(255)]
         public required string Name { get; set; }
     }
 }

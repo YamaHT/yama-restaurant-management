@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace Domain.Models
 {
@@ -11,12 +9,14 @@ namespace Domain.Models
         public User? User { get; set; }
 
         [Required(ErrorMessage = "Table is required")]
+        public int TableId { get; set; }
         public Table? Table { get; set; }
 
         public int WaiterId { get; set; }
         public User? Waiter { get; set; }
 
-        public DateOnly BookingDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        [Required(ErrorMessage = "BookingDate is required")]
+        public DateOnly BookingDate { get; set; }
 
         [Required(ErrorMessage = "DayPart is required"),
             Column(TypeName = "nvarchar(10)")]

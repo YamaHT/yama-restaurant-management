@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240920131451_A")]
+    [Migration("20240923095937_A")]
     partial class A
     {
         /// <inheritdoc />
@@ -440,7 +440,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Paid"
+                            Name = "Pay Online"
                         },
                         new
                         {
@@ -569,8 +569,7 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("nvarchar(16)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ProfileId")
                         .HasColumnType("int");
@@ -682,7 +681,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Models.User", "Waiter")
                         .WithMany("BookingsWaiter")
                         .HasForeignKey("WaiterId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Table");

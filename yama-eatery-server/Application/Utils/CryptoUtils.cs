@@ -7,9 +7,9 @@
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        public static bool IsPasswordCorrect(string password, string passwordHashed)
+        public static bool IsPasswordCorrect(string password, string? passwordHashed)
         {
-            return BCrypt.Net.BCrypt.Verify(password, passwordHashed);
+            return passwordHashed != null && BCrypt.Net.BCrypt.Verify(password, passwordHashed);
         }
     }
 }

@@ -437,7 +437,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Paid"
+                            Name = "Pay Online"
                         },
                         new
                         {
@@ -566,8 +566,7 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("nvarchar(16)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ProfileId")
                         .HasColumnType("int");
@@ -679,7 +678,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Models.User", "Waiter")
                         .WithMany("BookingsWaiter")
                         .HasForeignKey("WaiterId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Table");

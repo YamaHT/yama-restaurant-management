@@ -20,6 +20,7 @@ namespace Infrastructure.Services
             }
 
             var user = _mapper.Map<User>(userLoginDTO);
+            user.Password = CryptoUtils.EncryptPassword(user.Password);
             user.Role = await _unitOfWork.RoleRepository.GetByIdAsync((int)RoleEnum.Customer);
 
             await _unitOfWork.UserRepository.AddAsync(user);

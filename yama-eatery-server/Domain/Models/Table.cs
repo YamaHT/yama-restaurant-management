@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models
 {
@@ -16,7 +11,7 @@ namespace Domain.Models
         [Range(0, Double.PositiveInfinity, ErrorMessage = "Floor can't be negative")]
         public int Floor { get; set; }
 
-        [Required(ErrorMessage = "Type is required")]
-        public TableType? Type { get; set; }
+        [Required(ErrorMessage = "TableType is required")]
+        public TableType? TableType { get; set; }
     }
 }

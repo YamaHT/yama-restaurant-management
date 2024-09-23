@@ -42,7 +42,8 @@ namespace Infrastructure.Data
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.Waiter)
                 .WithMany(w => w.BookingsWaiter)
-                .HasForeignKey(b => b.WaiterId);
+                .HasForeignKey(b => b.WaiterId)
+                .OnDelete(DeleteBehavior.NoAction);
 
 
             modelBuilder.Entity<Category>().HasData(

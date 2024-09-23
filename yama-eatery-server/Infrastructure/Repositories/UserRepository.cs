@@ -11,9 +11,11 @@ namespace Infrastructure.Repositories
 	{
 		public async Task<User?> GetUserByEmailAndPassword(string email, string password)
 		{
-			return await _dbContext.User
+			var user = await _dbContext.User
 				.Include(x => x.Role)
-				.FirstOrDefaultAsync(x => x.Email == email && CryptoUtils.IsPasswordCorrect(password, x.Password));
+				.FirstOrDefaultAsync(x => x.Email == email);
+
+            return CryptoUtils.IsPasswordCorrect(password, user?.Password) ? user : null;
 		}
 
 		public async Task<bool> CheckEmailExisted(string email)

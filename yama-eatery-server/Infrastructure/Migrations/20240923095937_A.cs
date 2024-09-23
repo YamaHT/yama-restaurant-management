@@ -176,7 +176,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: true),
                     ProfileId = table.Column<int>(type: "int", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -309,8 +309,7 @@ namespace Infrastructure.Migrations
                         name: "FK_Booking_User_WaiterId",
                         column: x => x.WaiterId,
                         principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -445,7 +444,7 @@ namespace Infrastructure.Migrations
                     { 1, "In Cart" },
                     { 2, "Pay Later" },
                     { 3, "Not Pay Yet" },
-                    { 4, "Paid" },
+                    { 4, "Pay Online" },
                     { 5, "On Delivering" },
                     { 6, "Delivered" },
                     { 7, "Confirmed" },

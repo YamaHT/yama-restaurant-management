@@ -21,7 +21,6 @@ namespace Infrastructure
             services.AddScoped<ITableTypeRepository, TableTypeRepository>();
             services.AddScoped<IDeliveryRepository, DeliveryRepository>();
             #endregion
-
             services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IProductRepository, ProductRepository>();
 

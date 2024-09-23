@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Enums
 {
@@ -18,8 +13,8 @@ namespace Domain.Enums
         [Display(Name = "Not Pay Yet")]
         Not_Pay_Yet = 3,
 
-        [Display(Name = "Paid")]
-        Paid = 4,
+        [Display(Name = "Pay Online")]
+        Pay_Online = 4,
 
         [Display(Name = "On Delivering")]
         On_Delivering = 5,

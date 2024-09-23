@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class GenericRepository<T>(ApplicationDbContext _dbContext) : IGenericRepository<T> where T : BaseEntity
+    public class GenericRepository<T>(ApplicationDbContext _dbContext) : IGenericRepository<T> where T : class
     {
         // Function Get
         public async Task<List<T>> GetAllAsync(string[]? includes = null)
@@ -25,6 +25,11 @@ namespace Infrastructure.Repositories
 
         public async Task<T?> GetByIdAsync(int id, string[]? includes = null)
         {
+            if (!typeof(BaseEntity).IsAssignableFrom(typeof(T)))
+            {
+                return null;
+            }
+
             IQueryable<T> query = _dbContext.Set<T>();
 
             if (includes != null)
@@ -35,7 +40,7 @@ namespace Infrastructure.Repositories
                 }
             }
 
-            return await query.FirstOrDefaultAsync(x => x.Id == id);
+            return await query.FirstOrDefaultAsync(x => (x as BaseEntity).Id == id);
         }
 
         // Function Process
@@ -71,6 +76,19 @@ namespace Infrastructure.Repositories
             }
 
             _dbContext.Set<T>().Update(entity);
+        }
+
+        public void UpdateRange(List<T> entities)
+        {
+            if (entities is List<TrackableEntity> listTrackable)
+            {
+                foreach (var entity in listTrackable)
+                {
+                    entity.ModificationDate = DateTime.Now;
+                }
+            }
+
+            _dbContext.Set<T>().UpdateRange(entities);
         }
     }
 }
