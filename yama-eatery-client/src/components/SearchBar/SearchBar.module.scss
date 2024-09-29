@@ -1,0 +1,89 @@
+.wrapper {
+    height: 46px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding-left: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  
+    &:focus-within {
+      border-color: var(--blue-500);
+    }
+  
+    .icon {
+      color: #626161;
+      margin-right: 10px;
+    }
+  
+    input {
+      flex: 1;
+      color: #626161;
+      height: 100%;
+      font-size: 16px;
+      caret-color: var(--blue-500);
+      user-select: none;
+    }
+  
+    button {
+      height: 100%;
+      min-width: 60px;
+      margin-left: 5px;
+      padding: 0px 20px;
+      font-size: 18px;
+      color: white;
+      background-color: var(--blue-500);
+      text-align: center;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+      user-select: none;
+  
+      &:hover {
+        background-color: var(--blue-700);
+        cursor: pointer;
+      }
+    }
+  }
+  
+  .rounded {
+    border-radius: 92px;
+    button {
+      border-top-right-radius: 92px;
+      border-bottom-right-radius: 92px;
+    }
+  }
+  
+  .wrapper,
+  .search-result {
+    min-width: 550px;
+  }
+  
+  .search-result {
+    min-height: 100px;
+    max-height: 250px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.08);
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+  
+    &::-webkit-scrollbar-strack {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+  }
+  
+  .result {
+    min-width: 100%;
+    min-height: 100%;
+    padding: 5px 20px;
+  }

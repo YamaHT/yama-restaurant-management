@@ -1,0 +1,48 @@
+.wrapper {
+    position: relative;
+    display: flex;
+    cursor: pointer;
+    user-select: none;
+    width: var(--iconWidth);
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+}
+
+.icon {
+    font-size: var(--iconHeight);
+    display: flex;
+}
+
+.badgeStyle {
+    position: absolute;
+    //add padding to create round for badge
+    padding: 0px calc(0.32 * var(--halfIconHeight));
+    //caculator follow rate iconHeight = 50px
+    font-size: calc(0.64 * var(--halfIconHeight));
+    border-radius: 50%;
+    top: (calc((-1 * var(--iconHeight)) * 0.15));
+    left: (calc(var(--iconWidth) * 0.85));
+    transform: translateX(-50%);
+}
+
+// badge size
+
+.large {
+    --iconWidth: 80px;
+    --iconHeight: 80px;
+    --halfIconHeight: calc(var(--iconHeight)/2);
+}
+
+.medium {
+    --iconWidth: 48px;
+    --iconHeight: 48px;
+    --halfIconHeight: calc(var(--iconHeight)/2);
+}
+
+.small {
+    --iconWidth: 32px;
+    --iconHeight: 32px;
+    --halfIconHeight: calc(var(--iconHeight)/2);
+}
