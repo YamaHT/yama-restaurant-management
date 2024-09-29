@@ -26,7 +26,7 @@ function Footer() {
           <div className={cl("content-block-logo")}>
             <div className={cl("information")}>
               <div className={cl("content-block-logo-script")}>
-                <h2>Information</h2>
+              <img src="Food-Logo.png" alt="logo"/>
               </div>
               <div className={cl("content-block-logo-info")}>
                 <div className={cl("info")}>
@@ -50,7 +50,7 @@ function Footer() {
                     <FontAwesomeIcon icon={faEnvelope} />
                   </div>
                   <p>
-                    <span>Email:</span> sale@Nest.com
+                    <span>Email:</span> sale@eFood.com
                   </p>
                 </div>
                 <div className={cl("info")}>
@@ -67,21 +67,21 @@ function Footer() {
           <div className={cl("content-navigation")}>
             <div className={cl("content-navigation-block")}>
               <div className={cl("content-navigation-script")}>
-                <div className={cl("title")}>Chính sách</div>
+                <div className={cl("title")}>Store Policy</div>
                 <div className={cl("link")}>
                   <ul>
-                    <li>Điều khoản chung</li>
-                    <li>Chính sánh hợp tác</li>
-                    <li>Chính sách đổi trả</li>
-                    <li>Chính sách thanh toán</li>
-                    <li>Chính sách bảo mật</li>
+                    <li>General terms</li>
+                    <li>Cooperation policy</li>
+                    <li>Refund policy</li>
+                    <li>Payment policy</li>
+                    <li>Privacy policy</li>
                   </ul>
                 </div>
               </div>
             </div>
             <div className={cl("content-navigation-block")}>
               <div className={cl("content-navigation-script")}>
-                <div className={cl("title")}>Đối tác</div>
+                <div className={cl("title")}>Partnership</div>
                 <div className={cl("link")}>
                   <ul>
                     <li>Abavina.com</li>
@@ -91,25 +91,25 @@ function Footer() {
             </div>
             <div className={cl("content-navigation-block")}>
               <div className={cl("content-navigation-script")}>
-                <div className={cl("title")}>Hổ trợ</div>
+                <div className={cl("title")}>Support Center</div>
                 <div className={cl("link")}>
                   <ul>
-                    <li>Hỗ trợ khách hàng</li>
-                    <li>Hướng dẫn hợp tác</li>
-                    <li>Hướng dẫn mua hàng</li>
-                    <li>hướng dẫn thanh toán</li>
+                    <li>Online support</li>
+                    <li>Membership instructions</li>
+                    <li>Ordering instructions</li>
+                    <li>Payment instructions</li>
                   </ul>
                 </div>
               </div>
             </div>
             <div className={cl("content-navigation-block")}>
               <div className={cl("content-navigation-script")}>
-                <div className={cl("title")}>Thông tin khác</div>
+                <div className={cl("title")}>Contact Us</div>
                 <div className={cl("link")}>
                   <ul>
-                    <li>Tuyển dụng nhân sự</li>
-                    <li>Liên hệ hợp tác</li>
-                    <li>Blog tin tức</li>
+                    <li>Recruitment</li>
+                    <li>Contact for cooperation</li>
+                    <li>Other information</li>
                   </ul>
                 </div>
               </div>
@@ -119,7 +119,7 @@ function Footer() {
         <div className={cl("container-bottom")}>
           <div className={cl("copyright")}>
             <p>
-              © 2022, <span>E-Food</span> - Copyright by E-Food store All rights reserved
+              © 2022, <span>eFood</span> - Copyright by E-Food store All rights reserved
             </p>
           </div>
           <div className={cl("phone")}>
