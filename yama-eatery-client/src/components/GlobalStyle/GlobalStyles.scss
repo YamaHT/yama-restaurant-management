@@ -1,0 +1,277 @@
+@import "normalize.css";
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+:root {
+  --gray-100: #f5f5f5;
+
+  --blue-50: #dfecf7;
+  --blue-500: #2196f3;
+  --blue-700: #1976d2;
+
+  --green-50: #e8f5e9;
+  --green-500: #4caf50;
+  --green-700: #388e3c;
+
+  --red-50: #ffebee;
+  --red-500: #d32f2f;
+  --red-700: #b71c1c;
+
+  --blue-grey-50: #eceff1;
+  --blue-grey-500: #607d8b;
+  --blue-grey-900: #263238;
+
+  --grey-100: #f5f5f5;
+  --grey-500: #9e9e9e;
+
+  // Text color
+  --text-color: #253d4e;
+
+  --color-838383: #838383;
+  --color-7E7E7E: #7e7e7e;
+  --color-687188: #687188;
+  --color-ADADAD: #adadad;
+  --color-B6B6B6: #b6b6b6;
+  --color-DEF9EC: #def9ec;
+
+  // Default width and height of web application
+  --default-width: 1200px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  text-rendering: optimizeSpeed;
+}
+
+button,
+input {
+  outline: none;
+  border: none;
+}
+
+a[href] {
+  text-decoration: none;
+}
+
+// Button color for primary button
+
+.btn-secondary {
+  background-color: var(--blue-grey-500);
+  border-color: var(--blue-grey-500);
+
+  &:hover {
+    border-color: var(--blue-grey-900);
+    background-color: var(--blue-grey-900);
+  }
+}
+
+.btn-success {
+  background-color: var(--green-500);
+  border-color: var(--green-500);
+
+  &:hover {
+    border-color: var(--green-700);
+    background-color: var(--green-700);
+  }
+}
+
+.btn-danger {
+  background-color: var(--red-500);
+  border-color: var(--red-500);
+
+  &:hover {
+    border-color: var(--red-700);
+    background-color: var(--red-700);
+  }
+}
+
+// Button color for outline button
+
+.btn-outline-secondary {
+  color: var(--blue-grey-500);
+
+  &:hover {
+    background-color: var(--blue-grey-50);
+  }
+}
+
+.btn-outline-success {
+  color: var(--green-500);
+
+  &:hover {
+    background-color: var(--green-50);
+  }
+}
+
+.btn-outline-danger {
+  color: var(--red-500);
+
+  &:hover {
+    background-color: var(--red-50);
+  }
+}
+
+// Search bar color
+
+.search-bar-secondary {
+  &:focus-within {
+    border-color: var(--blue-grey-500);
+  }
+
+  input {
+    caret-color: var(--blue-grey-500);
+  }
+
+  button {
+    background-color: var(--blue-grey-500);
+
+    &:hover {
+      background-color: var(--blue-grey-900);
+    }
+  }
+}
+
+.search-bar-success {
+  &:focus-within {
+    border-color: var(--green-500);
+  }
+
+  input {
+    caret-color: var(--green-500);
+  }
+
+  button {
+    background-color: var(--green-500);
+
+    &:hover {
+      background-color: var(--green-700);
+    }
+  }
+}
+
+.search-bar-danger {
+  &:focus-within {
+    border-color: var(--red-500);
+  }
+
+  input {
+    caret-color: var(--red-500);
+  }
+
+  button {
+    background-color: var(--red-500);
+    &:hover {
+      background-color: var(--red-700);
+    }
+  }
+}
+
+// icon button color
+
+.icon-button-primary {
+  color: #2196f3;
+
+  &:hover::before {
+    background-color: #2196f3;
+  }
+
+  &.disabled {
+    color: #2196f3;
+  }
+}
+
+.icon-button-secondary {
+  color: #9e9e9e;
+
+  &:hover::before {
+    background-color: #9e9e9e;
+  }
+
+  &.disabled {
+    color: #9e9e9e;
+  }
+}
+
+.icon-button-success {
+  color: #4caf50;
+
+  &:hover::before {
+    background-color: #4caf50;
+  }
+
+  &.disabled {
+    color: #4caf50;
+  }
+}
+
+.icon-button-danger {
+  color: #f44336;
+
+  &:hover::before {
+    background-color: #f44336;
+  }
+
+  &.disabled {
+    color: #f44336;
+  }
+}
+
+// badge color
+
+.badge-text-color {
+  color: white;
+}
+
+.badge-color-primary {
+  background-color: #2196f3;
+}
+
+.icon-badge-color-primary {
+  color: #2196f3;
+}
+
+.badge-color-secondary {
+  background-color: #9e9e9e;
+}
+
+.icon-badge-color-secondary {
+  color: #9e9e9e;
+}
+
+.badge-color-success {
+  background-color: var(--green-500);
+  color: white;
+}
+
+.icon-badge-color-success {
+  color: #4caf50;
+}
+
+.badge-color-danger {
+  background-color: #f44336;
+}
+
+.icon-badge-color-danger {
+  color: #f44336;
+}
+
+.icon-badge-color-black {
+  color: var(--text-color);
+}
+
+// text color
+
+.text-color-white {
+  color: var(--color-DEF9EC);
+}
