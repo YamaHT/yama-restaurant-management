@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
-import styles from './TabPanel.module.scss'
 
 const TabPanel = ({ children, value, index, ...other }) => {
 	return (
