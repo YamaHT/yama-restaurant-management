@@ -1,1 +1,0 @@
-# yama-eatery-v2-react-dotnet

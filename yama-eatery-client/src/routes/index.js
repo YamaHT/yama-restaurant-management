@@ -1,9 +1,10 @@
-import WeatherList from "@/pages/WeatherList";
-import HomePage from "@/pages/Home";
+import WeatherList from '@/pages/WeatherList'
+import HomePage from '@/pages/Home'
+import CrudManagement from '../pages/Crud Management/CrudManagement'
 
 const publicRoutes = [
-  { path: "/", component: HomePage },
-  { path: "/weather", component: WeatherList },
-];
+	{ path: '/', component: CrudManagement },
+	{ path: '/weather', component: WeatherList },
+]
 
-export { publicRoutes };
+export { publicRoutes }
