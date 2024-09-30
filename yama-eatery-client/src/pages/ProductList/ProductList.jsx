@@ -12,8 +12,6 @@ import {
 	Rating,
 	CssBaseline,
 	Divider,
-	List,
-	ListItem,
 	Drawer,
 	AppBar,
 	IconButton,
@@ -21,7 +19,8 @@ import {
 } from "@mui/material"
 import MenuIcon from "@mui/icons-material/Menu"
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2"
-
+import { products } from "../FakeData/FakeData"
+import { useNavigate } from "react-router-dom"
 const drawerWidth = 240
 
 export default function ProductList(props) {
@@ -33,169 +32,6 @@ export default function ProductList(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const [productsPerPage] = useState(8)
 	const [searchTerm, setSearchTerm] = useState("") // For search
-
-	const products = [
-		{
-			id: 1,
-			name: "Banh Pia",
-			price: 10.5,
-			category: "dessert",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 2,
-			name: "Cua Hoang De",
-			price: 20.5,
-			category: "food",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 3,
-			name: "Soda",
-			price: 1.5,
-			category: "drink",
-			quantity: 0,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 4,
-			name: "Lays Xanh La",
-			price: 0.5,
-			category: "snack",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 5,
-			name: "Banh Pia",
-			price: 10.5,
-			category: "dessert",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 6,
-			name: "Cua Hoang De",
-			price: 20.5,
-			category: "food",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 7,
-			name: "Soda",
-			price: 1.5,
-			category: "drink",
-			quantity: 0,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 8,
-			name: "Lays Xanh La",
-			price: 0.5,
-			category: "snack",
-			quantity: 0,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 9,
-			name: "Banh 21e2",
-			price: 10.5,
-			category: "dessert",
-			quantity: 0,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 10,
-			name: "Cua 1e213 De",
-			price: 20.5,
-			category: "food",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 11,
-			name: "12",
-			price: 1.5,
-			category: "drink",
-			quantity: 0,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 12,
-			name: "Lays 2 La",
-			price: 0.5,
-			category: "snack",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 13,
-			name: "Banh 21",
-			price: 10.5,
-			category: "dessert",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 14,
-			name: "Cua 2 1",
-			price: 20.5,
-			category: "food",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 15,
-			name: "afe",
-			price: 1.5,
-			category: "drink",
-			quantity: 0,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 16,
-			name: "e33",
-			price: 0.5,
-			category: "snack",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 17,
-			name: "2 Pia",
-			price: 10.5,
-			category: "dessert",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 18,
-			name: "Cua 2 De",
-			price: 20.5,
-			category: "food",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 19,
-			name: "afe",
-			price: 1.5,
-			category: "drink",
-			quantity: 0,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-		{
-			id: 20,
-			name: "e33",
-			price: 0.5,
-			category: "snack",
-			quantity: 1,
-			imgSrc: "https://readymadeui.com/images/product9.webp",
-		},
-	]
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen)
@@ -311,9 +147,12 @@ export default function ProductList(props) {
 		</Box>
 	)
 
+	const navigate = useNavigate();
+
 	const handleClick = (id) => {
-		window.location.href = `http://localhost:3000/Product/${id}` // Navigate to product page
-	}
+	  navigate(`/Product/Detail/${id}`);
+	};
+	
 
 	const container = props.window !== undefined ? () => props.window().document.body : undefined
 
