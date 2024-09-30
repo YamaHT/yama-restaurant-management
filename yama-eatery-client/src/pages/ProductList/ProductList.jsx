@@ -251,7 +251,7 @@ export default function ProductList(props) {
 	const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
 
 	const handlePageChange = (value) => {
-		setCurrentPage(value)
+		setCurrentPage(value) // Set the page correctly
 	}
 
 	const drawer = (
@@ -479,13 +479,13 @@ export default function ProductList(props) {
 						</Grid2>
 						<Divider />
 						<Pagination
-							count={Math.ceil(filteredProducts.length / productsPerPage)}
-							page={currentPage}
-							onChange={handlePageChange}
+							count={Math.ceil(filteredProducts.length / productsPerPage)} // Total pages
+							page={currentPage} // Current page
+							onChange={(event, value) => handlePageChange(value)} // Handle page change
 							color='primary'
 							sx={{ display: "flex", justifyContent: "center", my: 3 }}
 						/>
-					</>
+					</>	
 				)}
 			</Box>
 		</Box>
