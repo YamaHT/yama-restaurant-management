@@ -1,9 +1,8 @@
 import WeatherList from '@/pages/WeatherList'
 import HomePage from '@/pages/Home'
-import CrudManagement from '../pages/Crud Management/CrudManagement'
 
 const publicRoutes = [
-	{ path: '/', component: CrudManagement },
+	{ path: '/', component: HomePage },
 	{ path: '/weather', component: WeatherList },
 ]
 
