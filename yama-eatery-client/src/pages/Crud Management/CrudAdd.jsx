@@ -1,3 +1,5 @@
+import axiosConfig from '@/utilities/axiosConfig'
+import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
 import { Close, FileUpload } from '@mui/icons-material'
 import {
 	Button,
@@ -19,31 +21,93 @@ import React, { useRef, useState } from 'react'
 const CrudAdd = ({ open, handleClose }) => {
 	const fileRef = useRef(null)
 
-	const [image, setImage] = useState({ name: '', base64: '' })
-	const [name, setName] = useState('')
-	const [price, setPrice] = useState('')
-	const [description, setDescription] = useState('')
-	const [category, setCategory] = useState(null)
+	const [imageBase64, setImageBase64] = useState('')
+	const [values, setValues] = useState({
+		image: '',
+		name: '',
+		price: '',
+		description: '',
+		category: '',
+	})
 
-	const handleImageChange = (event) => {
-		const file = event.target.files[0]
+	const [errors, setErrors] = useState({
+		image: '',
+		name: '',
+		price: '',
+		description: '',
+		category: '',
+	})
+
+	const [generatorOption, setGeneratorOption] = useState('')
+
+	const handleValueChange = (e) => {
+		const { name, value } = e.target
+		setValues((prev) => ({
+			...prev,
+			[name]: value,
+		}))
+	}
+
+	const handleImageChange = (e) => {
+		const file = e.target.files[0]
 		if (file) {
 			const reader = new FileReader()
 			reader.onload = () => {
-				setImage({ name: file.name, base64: reader.result })
+				setImageBase64(reader.result)
+				setValues((prev) => ({ ...prev, image: file.name }))
 			}
 			reader.readAsDataURL(file)
 		}
 	}
 
-	const handleAddProduct = async () => {
-		const productData = {
-			image: image.name,
-			name,
-			price: parseFloat(price),
-			description,
-			category,
+	const removeImageInput = () => {
+		setValues((prev) => ({ ...prev, image: '' }))
+		setImageBase64(null)
+	}
+
+	const handleDescriptionGenerator = async () => {
+		try {
+			const descriptionGenerated = await DescriptionGenerator(
+				'Product',
+				values.name,
+				generatorOption
+			)
+			if (descriptionGenerated != 404) {
+				setValues((prev) => ({ ...prev, description: descriptionGenerated }))
+			}
+			console.log(descriptionGenerated)
+		} catch (error) {
+			setValues((prev) => ({ ...prev, description: '' }))
 		}
+	}
+
+	const handleAddProduct = async () => {
+		const newErrors = {
+			image: values.image === '' ? 'Field image is required' : '',
+			name: values.name === '' ? 'Field name is required' : '',
+			price:
+				values.price === ''
+					? 'Field price is required'
+					: isNaN(values.price)
+					? 'Price must be a number'
+					: '',
+			description: values.description === '' ? 'Field description is required' : '',
+			category: values.category === '' ? 'Field category is required' : '',
+		}
+		setErrors(newErrors)
+
+		if (Object.values(newErrors).some((err) => err !== '')) {
+			return
+		}
+
+		const productData = {
+			image: values.image,
+			name: values.name,
+			price: parseFloat(values.price),
+			description: values.description,
+			category: values.category,
+		}
+
 		console.log(productData)
 		handleClose()
 	}
@@ -58,8 +122,8 @@ const CrudAdd = ({ open, handleClose }) => {
 			style: { backgroundColor: 'rgba(0, 0, 0, 0.06' },
 			endAdornment: (
 				<>
-					{image.name && (
-						<IconButton onClick={() => setImage({ name: '', base64: '' })}>
+					{values.image && (
+						<IconButton onClick={removeImageInput}>
 							<Close />
 						</IconButton>
 					)}
@@ -79,9 +143,9 @@ const CrudAdd = ({ open, handleClose }) => {
 			<DialogTitle>Add New Product</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					{image.base64 ? (
+					{imageBase64 ? (
 						<img
-							src={image.base64}
+							src={imageBase64}
 							style={{
 								minHeight: 200,
 								maxHeight: 400,
@@ -97,23 +161,29 @@ const CrudAdd = ({ open, handleClose }) => {
 						label='Image'
 						variant='filled'
 						name='image'
-						value={image.name}
+						value={values.image}
+						error={Boolean(errors.image)}
+						helperText={errors.image}
 						slotProps={customInputImageProperties}
 					/>
 					<TextField
 						label='Name'
 						name='name'
 						variant='filled'
-						value={name}
-						onChange={(e) => setName(e.target.value)}
+						value={values.name}
+						error={Boolean(errors.name)}
+						helperText={errors.name}
+						onChange={handleValueChange}
 					/>
 					<TextField
 						label='Price'
 						name='price'
 						type='number'
 						variant='filled'
-						value={price}
-						onChange={(e) => setPrice(e.target.value)}
+						value={values.price}
+						error={Boolean(errors.price)}
+						helperText={errors.price}
+						onChange={handleValueChange}
 					/>
 					<Stack direction={'row'} alignItems={'center'}>
 						<TextField
@@ -123,12 +193,25 @@ const CrudAdd = ({ open, handleClose }) => {
 							variant='filled'
 							multiline
 							minRows={3}
-							value={description}
-							onChange={(e) => setDescription(e.target.value)}
+							value={values.description}
+							error={Boolean(errors.description)}
+							helperText={errors.description}
+							onChange={handleValueChange}
 						/>
 						<Stack alignItems={'center'} padding={'0 1%'} spacing={1}>
-							<TextField size='small' variant='outlined' label={'(Optional)'} />
-							<Button fullWidth variant='contained' color='info'>
+							<TextField
+								size='small'
+								variant='outlined'
+								label={'(Optional)'}
+								value={generatorOption}
+								onChange={(e) => setGeneratorOption(e.target.value)}
+							/>
+							<Button
+								fullWidth
+								variant='contained'
+								color='info'
+								onClick={handleDescriptionGenerator}
+							>
 								Auto Generate
 							</Button>
 						</Stack>
@@ -137,8 +220,11 @@ const CrudAdd = ({ open, handleClose }) => {
 						<InputLabel id='category-label'>Category</InputLabel>
 						<Select
 							labelId='category-label'
-							value={category}
-							onChange={(e) => setCategory(e.target.value)}
+							name='category'
+							value={values.category}
+							error={Boolean(errors.category)}
+							helperText={errors.category}
+							onChange={handleValueChange}
 						>
 							<MenuItem value={1}>dsa</MenuItem>
 							<MenuItem value={2}>dsa</MenuItem>
