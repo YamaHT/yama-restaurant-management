@@ -12,6 +12,7 @@ const fieldRow = [
 
 const Profile = () => {
 	const [isEditing, setIsEditing] = useState(false)
+
 	const [profile, setProfile] = useState({
 		image: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_68.jpg',
 		name: 'Yasuo',
@@ -21,16 +22,11 @@ const Profile = () => {
 		birthday: '2015-09-06',
 	})
 
-	const handleImageChange = (e) => {
-		const file = e.target.files[0]
-		if (file) {
-			const imageUrl = URL.createObjectURL(file)
-			setEditableProfile({ ...editableProfile, image: imageUrl })
-		}
-	}
 	const [editableProfile, setEditableProfile] = useState({ ...profile })
 
-	const handleEdit = () => setIsEditing(true)
+	const handleEdit = () => {
+		setIsEditing(true)
+	}
 
 	const handleCancel = () => {
 		setEditableProfile({ ...profile })
@@ -39,6 +35,15 @@ const Profile = () => {
 	const handleSave = () => {
 		setProfile({ ...editableProfile })
 		setIsEditing(false)
+	}
+
+	const handleImageChange = (e) => {
+		const file = e.target.files[0]
+		if (file) {
+			const imageUrl = URL.createObjectURL(file)
+			setEditableProfile((prev) => ({ ...prev, image: imageUrl }))
+			setProfile((prev) => ({ ...prev, image: imageUrl }))
+		}
 	}
 
 	const handleChange = (e) => {
@@ -117,6 +122,7 @@ const Profile = () => {
 				<Box width={'50%'}>
 					{fieldRow.map((field) => (
 						<Box
+							key={field.name}
 							display={'flex'}
 							flexDirection={'row'}
 							alignItems={'center'}
@@ -147,7 +153,7 @@ const Profile = () => {
 							<>
 								<Button
 									type='reset'
-									sx={{ width: '44%' }}
+									sx={{ width: '49%' }}
 									variant='contained'
 									color='inherit'
 									onClick={handleCancel}
@@ -155,7 +161,7 @@ const Profile = () => {
 									Cancel
 								</Button>
 								<Button
-									sx={{ width: '44%' }}
+									sx={{ width: '49%' }}
 									color='success'
 									variant='contained'
 									onClick={handleSave}
@@ -168,13 +174,13 @@ const Profile = () => {
 								<Button
 									type='reset'
 									color='primary'
-									sx={{ width: '44%' }}
+									sx={{ width: '49%' }}
 									variant='contained'
 									onClick={handleEdit}
 								>
 									Edit
 								</Button>
-								<Button color='secondary' sx={{ width: '44%' }} variant='contained'>
+								<Button color='secondary' sx={{ width: '49%' }} variant='contained'>
 									Change Password
 								</Button>
 							</>
