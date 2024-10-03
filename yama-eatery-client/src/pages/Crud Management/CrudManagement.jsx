@@ -16,12 +16,12 @@ import {
 	Typography,
 } from '@mui/material'
 import React, { useMemo, useState } from 'react'
-import logo from '@/assets/img/general/logo192.png'
-import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
-import CrudTabs from '@/components/Crud Components/CrudTabs'
-import CrudTableHead from '@/components/Crud Components/CrudTableHead'
-import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
-import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
+import logo from '../assets/logo192.png'
+import CrudConfirmation from '../component/CrudConfirmation'
+import CrudMenuOptions from '../component/CrudMenuOptions'
+import CrudSearchBar from '../component/CrudSearchBar'
+import CrudTableHead from '../component/CrudTableHead'
+import CrudTabs from '../component/CrudTabs'
 import CrudAdd from './CrudAdd'
 
 const headCells = [
