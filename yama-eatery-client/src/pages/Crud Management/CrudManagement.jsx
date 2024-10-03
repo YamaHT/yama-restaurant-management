@@ -174,7 +174,7 @@ const CrudManagement = () => {
 			</Stack>
 
 			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
-				<Table sx={{ minWidth: '750px' }}>
+				<Table stickyHeader sx={{ minWidth: '750px' }}>
 					<CrudTableHead
 						order={order}
 						orderBy={orderBy}
