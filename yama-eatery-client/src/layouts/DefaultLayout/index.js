@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import classNames from "classnames/bind";
 import styles from "./DefaultLayout.module.scss"
+import { Box } from "@mui/material";
 
 const cx = classNames.bind(styles)
 
@@ -10,7 +11,7 @@ function DefaultLayout({ children }) {
     <div className={cx("wrapper")}>
       <Header />
       <div className={cx("container")}>
-        <div>{children}</div>
+        <Box maxWidth={"xl"}>{children}</Box>
       </div>
       <Footer />
     </div>
