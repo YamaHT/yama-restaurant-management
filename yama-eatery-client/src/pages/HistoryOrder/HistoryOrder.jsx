@@ -14,7 +14,7 @@ import {
 	styled,
 	Paper,
 } from '@mui/material'
-import TabPanel from '@/components/TabPanel/TabPanel'
+import TabPanel from '@/components/TabPanel'
 import {
 	ShoppingCart,
 	Payment,
@@ -75,7 +75,7 @@ const fakeData = () => {
 		})),
 	}))
 }
-const HistoryOrderPage = () => {
+const HistoryOrder = () => {
 	const tableColumns = [
 		{ name: 'ID', width: '10%' },
 		{ name: 'Order Date', width: '25%' },
@@ -276,4 +276,4 @@ const HistoryOrderPage = () => {
 	)
 }
 
-export default HistoryOrderPage
+export default HistoryOrder
