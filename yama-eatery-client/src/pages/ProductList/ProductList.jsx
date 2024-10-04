@@ -1,24 +1,19 @@
-// ProductList.js
-import React, { useEffect, useState } from 'react'
+import ProductDrawer from '@/components/ProductMenu/ProductMenu'
 import {
 	Box,
-	Typography,
-	Toolbar,
-	Pagination,
-	Stack,
-	Rating,
 	CssBaseline,
 	Divider,
-	Drawer,
-	AppBar,
-	IconButton,
-	TextField,
+	Grid,
 	Grid2,
+	Pagination,
+	Rating,
+	Stack,
+	Toolbar,
+	Typography,
 } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
-import { products } from '../FakeData/FakeData'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ProductDrawer from '@/components/ProductMenu/ProductMenu'
+import { products } from '../FakeData/FakeData'
 
 const drawerWidth = 240
 
@@ -28,13 +23,9 @@ export default function ProductList(props) {
 	const [filterOption, setFilterOption] = useState('') // For category filtering
 	const [sortOption, setSortOption] = useState('') // For sorting
 	const [currentPage, setCurrentPage] = useState(1)
-	const [mobileOpen, setMobileOpen] = useState(false)
-	const [productsPerPage] = useState(9)
-	const [searchTerm, setSearchTerm] = useState('') // For search
 
-	const handleDrawerToggle = () => {
-		setMobileOpen(!mobileOpen)
-	}
+	const [productsPerPage] = useState(8)
+	const [searchTerm, setSearchTerm] = useState('') // For search
 
 	const handleShowAll = () => {
 		setFilterOption('')
@@ -82,7 +73,7 @@ export default function ProductList(props) {
 	const indexOfFirstProduct = indexOfLastProduct - productsPerPage
 	const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
 
-	const handlePageChange = (value) => {
+	const handlePageChange = (event, value) => {
 		setCurrentPage(value)
 	}
 
@@ -91,8 +82,6 @@ export default function ProductList(props) {
 	const handleClick = (id) => {
 		navigate(`/Product/Detail/${id}`)
 	}
-
-	const container = props.window !== undefined ? () => props.window().document.body : undefined
 
 	return (
 		<Box display={'flex'}>
@@ -117,76 +106,86 @@ export default function ProductList(props) {
 					</Typography>
 				) : (
 					<>
-						<Grid2 container spacing={3}>
+						<Grid2
+							container
+							sx={{
+								display: 'grid',
+								gridTemplateColumns: {
+									md: 'repeat(1, 1fr)',
+									sm: 'repeat(2, 1fr)',
+									md: 'repeat(4, 1fr)',
+								},
+								gap: 3, 
+							}}
+						>
 							{currentProducts.map((product) => (
-								<Grid2 item xs={12} sm={6} md={4} lg={3} key={product.id}>
+								<Box
+									key={product.id}
+									onClick={() => handleClick(product.id)}
+									sx={{
+										backgroundColor: 'gray.50',
+										boxShadow: 2,
+										borderRadius: 2,
+										cursor: 'pointer',
+										'&:hover': { transform: 'translateY(-8px)' },
+										transition: 'all 0.3s ease-in-out',
+									}}
+								>
 									<Box
-										onClick={() => handleClick(product.id)}
 										sx={{
-											backgroundColor: 'gray.50',
-											boxShadow: 2,
-											borderRadius: 2,
-											cursor: 'pointer',
-											'&:hover': { transform: 'translateY(-8px)' },
-											transition: 'all 0.3s ease-in-out',
+											display: 'flex',
+											justifyContent: 'center',
+											height: 260,
+											padding: 2,
+											backgroundColor: 'gray.100',
 										}}
 									>
-										<Box
-											sx={{
-												display: 'flex',
-												justifyContent: 'center',
-												height: 260,
-												padding: 2,
-												backgroundColor: 'gray.100',
+										<img
+											src={product.img[0]} // Use the first image as the main image
+											alt={product.name}
+											style={{
+												objectFit: 'contain',
+												maxHeight: '100%',
+												maxWidth: '100%',
 											}}
-										>
-											<img
-												src={product.imgSrc}
-												alt={product.name}
-												style={{
-													objectFit: 'contain',
-													maxHeight: '100%',
-													maxWidth: '100%',
-												}}
-											/>
-										</Box>
-										<Box sx={{ p: 3, backgroundColor: 'white' }}>
-											<Stack
-												direction={'row'}
-												alignItems={'center'}
-												justifyContent={'space-between'}
-											>
-												<Rating value={3}></Rating>
-												<Typography variant='h5' align='right' color='gray.800'>
-													{product.category}
-												</Typography>
-											</Stack>
-											<Typography variant='h6' fontWeight='bold' color='gray.800'>
-												{product.name}
-											</Typography>
-											<Stack
-												direction={'row'}
-												alignItems={'center'}
-												justifyContent={'space-between'}
-											>
-												<Typography
-													variant='h6'
-													fontWeight='bold'
-													sx={{ mt: 1, color: 'gray.800' }}
-												>
-													${product.price}
-												</Typography>
-												<Typography
-													variant='overline'
-													color={product.quantity > 0 ? 'green' : 'error'}
-													sx={{ mt: 1 }}
-												>
-													{product.quantity > 0 ? 'In stock' : 'Out of stock'}
-												</Typography>
-											</Stack>
-										</Box>
+										/>
 									</Box>
-								</Grid2>
+									<Box sx={{ p: 3, backgroundColor: 'white' }}>
+										<Stack
+											direction={'row'}
+											alignItems={'center'}
+											justifyContent={'space-between'}
+										>
+											<Rating value={3}></Rating>
+											<Typography variant='h5' align='right' color='gray.800'>
+												{product.category}
+											</Typography>
+										</Stack>
+										<Typography variant='h6' fontWeight='bold' color='gray.800'>
+											{product.name}
+										</Typography>
+										<Stack
+											direction={'row'}
+											alignItems={'center'}
+											justifyContent={'space-between'}
+										>
+											<Typography
+												variant='h6'
+												fontWeight='bold'
+												sx={{ mt: 1, color: 'gray.800' }}
+											>
+												${product.price}
+											</Typography>
+											<Typography
+												variant='overline'
+												color={product.quantity > 0 ? 'green' : 'error'}
+												sx={{ mt: 1 }}
+											>
+												{product.quantity > 0 ? 'In stock' : 'Out of stock'}
+											</Typography>
+										</Stack>
+									</Box>
+								</Box>
 							))}
 						</Grid2>
 						<Divider />
@@ -194,9 +193,10 @@ export default function ProductList(props) {
 							size='large'
 							count={Math.ceil(filteredProducts.length / productsPerPage)} // Total pages
 							page={currentPage} // Current page
-							onChange={(event, value) => handlePageChange(value)} // Handle page change
+							onChange={handlePageChange} // Handle page change
 							color='primary'
 							sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
+							disabled={filteredProducts.length <= productsPerPage} // Disable if there's only one page
 						/>
 					</>
 				)}

@@ -8,13 +8,11 @@ export const products = [
         category: "dessert",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
-        features: [
-            "Made with fresh ingredients",
-            "Delicious and sweet",
-            "Perfect for any occasion",
-            "Baked to perfection"
-          ],
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 2,
@@ -23,7 +21,11 @@ export const products = [
         category: "food",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 3,
@@ -32,7 +34,11 @@ export const products = [
         category: "drink",
         description: "fisdnvblavajs v",
         quantity: 0,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 4,
@@ -41,7 +47,11 @@ export const products = [
         category: "snack",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 5,
@@ -50,7 +60,11 @@ export const products = [
         category: "dessert",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 6,
@@ -59,7 +73,11 @@ export const products = [
         category: "food",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 7,
@@ -68,7 +86,11 @@ export const products = [
         category: "drink",
         description: "fisdnvblavajs v",
         quantity: 0,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 8,
@@ -77,7 +99,11 @@ export const products = [
         category: "snack",
         description: "fisdnvblavajs v",
         quantity: 0,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 9,
@@ -86,7 +112,11 @@ export const products = [
         category: "dessert",
         description: "fisdnvblavajs v",
         quantity: 0,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 10,
@@ -95,7 +125,11 @@ export const products = [
         category: "food",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 11,
@@ -104,7 +138,11 @@ export const products = [
         category: "drink",
         description: "fisdnvblavajs v",
         quantity: 0,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 12,
@@ -113,7 +151,11 @@ export const products = [
         category: "snack",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 13,
@@ -122,7 +164,11 @@ export const products = [
         category: "dessert",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 14,
@@ -131,7 +177,11 @@ export const products = [
         category: "food",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 15,
@@ -140,7 +190,11 @@ export const products = [
         category: "drink",
         description: "fisdnvblavajs v",
         quantity: 0,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 16,
@@ -149,7 +203,11 @@ export const products = [
         category: "snack",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 17,
@@ -158,7 +216,11 @@ export const products = [
         category: "dessert",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 18,
@@ -167,7 +229,11 @@ export const products = [
         category: "food",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 19,
@@ -176,7 +242,11 @@ export const products = [
         category: "drink",
         description: "fisdnvblavajs v",
         quantity: 0,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
     {
         id: 20,
@@ -185,6 +255,10 @@ export const products = [
         category: "snack",
         description: "fisdnvblavajs v",
         quantity: 1,
-        imgSrc: "https://readymadeui.com/images/product9.webp",
+        img: [
+            "https://readymadeui.com/images/product3.webp",  // Main image
+            "https://readymadeui.com/images/product2.webp",  // Thumbnail 1
+            "https://readymadeui.com/images/product1.webp"   // Thumbnail 2
+        ],
     },
 ]

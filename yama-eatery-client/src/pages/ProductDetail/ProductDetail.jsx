@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Typography, Button, Divider, Rating, Avatar, Card, CardMedia, CardContent, Grid2 } from '@mui/material';
+import { Box, Grid2, Typography, Button, Divider, Rating, Avatar, Card, CardMedia, CardContent } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { products } from '../FakeData/FakeData';
-
 
 export default function ProductDetail() {
   const { id } = useParams(); // Get product ID from the URL
   const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(''); // State to track the selected thumbnail
 
   useEffect(() => {
     const productDetail = products.find((item) => item.id === parseInt(id)); // Find product by ID
     setProduct(productDetail);
+    setSelectedImage(productDetail?.img[0]); // Set initial image to the first image in the img array
   }, [id]);
 
   if (!product) {
@@ -22,7 +23,7 @@ export default function ProductDetail() {
   }
 
   return (
-    <Box sx={{ fontFamily: 'sans-serif', p: 4, maxWidth: '1200px', mx: 'auto' }}>
+    <Box display={'flex'} sx={{ p: 4, maxWidth: '1200px', mx: 'auto' }}>
       <Grid2 container spacing={3}>
         {/* Left Section (Product Image and Thumbnails) */}
         <Grid2 item xs={12} lg={7}>
@@ -41,19 +42,20 @@ export default function ProductDetail() {
           >
             <CardMedia
               component="img"
-              src={product.imgSrc}
+              src={selectedImage} // Display the selected image here
               alt={product.name}
               sx={{ width: '60%', objectFit: 'cover', borderRadius: 1, mb: 4 }}
             />
             <Divider sx={{ width: '100%', my: 4 }} />
             <Grid2 container spacing={2} justifyContent="center">
-              {product.thumbnails?.map((img, index) => (
+              {product.img?.map((img, index) => (
                 <Grid2 item key={index}>
                   <CardMedia
                     component="img"
                     src={img}
                     alt={`Product thumbnail ${index + 1}`}
-                    sx={{ width: 80, height: 80, borderRadius: 1, cursor: 'pointer' }}
+                    sx={{ width: 80, height: 80, borderRadius: 2, cursor: 'pointer' }}
+                    onClick={() => setSelectedImage(img)} // Set the selected image on click
                   />
                 </Grid2>
               ))}
@@ -62,7 +64,7 @@ export default function ProductDetail() {
         </Grid2>
 
         {/* Right Section (Product Details and Reviews) */}
-        <Grid item xs={12} lg={5}>
+        <Grid2 item xs={12} lg={5}>
           <Typography variant="h4" fontWeight="bold" color="textPrimary">
             {product.name}
           </Typography>
@@ -81,16 +83,11 @@ export default function ProductDetail() {
           <Rating value={3}></Rating>
 
           <Typography variant="h6" fontWeight="bold" color="textPrimary" mt={4}>
-            About the {product.name} 
+            About the {product.name}
           </Typography>
-          <Typography variant="p"  color="textPrimary" mt={4}>
+          <Typography variant="p" color="textPrimary" mt={4}>
             {product.description}
           </Typography>
-          {/* <ul style={{ paddingLeft: '20px', marginTop: '16px', color: '#444' }}>
-            {product.features?.map((feature, index) => (
-              <li key={index}>{feature}</li>
-            ))}
-          </ul> */}
 
           <Button
             variant="contained"
@@ -148,7 +145,7 @@ export default function ProductDetail() {
           <Button variant="outlined" sx={{ mt: 4, width: '100%' }} size="large">
             Read all reviews
           </Button>
-        </Grid>
+        </Grid2>
       </Grid2>
     </Box>
   );
