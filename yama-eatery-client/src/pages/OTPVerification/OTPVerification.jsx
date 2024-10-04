@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, Paper, Link } from '@mui/material';
-import { Shield } from '@mui/icons-material'; // Biểu tượng cái khiên từ MUI
-
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import { VerifiedUser } from '@mui/icons-material';
 export default function OtpVerification() {
   const [otp, setOtp] = useState(['', '', '', '']);
   const [isButtonActive, setIsButtonActive] = useState(false);
@@ -65,11 +65,11 @@ export default function OtpVerification() {
           rowGap: 2,
         }}
       >
-        <Shield
+        <VerifiedUser
           sx={{
             fontSize: 60,
             color: '#4070f4',
-            backgroundColor: '#fff',
+            backgroundColor: '#81d4fa',
             borderRadius: '50%',
             padding: '10px',
             boxShadow: '0 5px 10px rgba(0, 0, 0, 0.1)',
