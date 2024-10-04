@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Typography, Button, Divider, Rating, Avatar, Card, CardMedia, CardContent } from '@mui/material';
+import { Box, Grid, Typography, Button, Divider, Rating, Avatar, Card, CardMedia, CardContent, Grid2 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { products } from '../FakeData/FakeData';
 
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 
 export default function ProductDetail() {
   const { id } = useParams(); // Get product ID from the URL

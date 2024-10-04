@@ -1,12 +1,9 @@
+// ProductList.js
 import React, { useEffect, useState } from "react"
 import {
 	Box,
 	Typography,
 	Toolbar,
-	Button,
-	Select,
-	MenuItem,
-	Slider,
 	Pagination,
 	Stack,
 	Rating,
@@ -16,11 +13,13 @@ import {
 	AppBar,
 	IconButton,
 	TextField,
+	Grid2,
 } from "@mui/material"
 import MenuIcon from "@mui/icons-material/Menu"
-import Grid2 from "@mui/material/Unstable_Grid2/Grid2"
 import { products } from "../FakeData/FakeData"
 import { useNavigate } from "react-router-dom"
+import ProductDrawer from "../../components/ProductDrawer/ProductDrawer"
+
 const drawerWidth = 240
 
 export default function ProductList(props) {
@@ -49,19 +48,16 @@ export default function ProductList(props) {
 			(product) => product.price >= priceRange[0] && product.price <= priceRange[1]
 		)
 
-		// Apply category filter
 		if (filterOption) {
 			filtered = filtered.filter((product) => product.category === filterOption)
 		}
 
-		// Apply search filter
 		if (searchTerm) {
 			filtered = filtered.filter((product) =>
 				product.name.toLowerCase().includes(searchTerm.toLowerCase())
 			)
 		}
 
-		// Apply sorting
 		switch (sortOption) {
 			case "low-to-high":
 				filtered = filtered.sort((a, b) => a.price - b.price)
@@ -87,152 +83,20 @@ export default function ProductList(props) {
 	const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
 
 	const handlePageChange = (value) => {
-		setCurrentPage(value) // Set the page correctly
+		setCurrentPage(value)
 	}
 
-	const drawer = (
-		<Box>
-			<Toolbar />
-			<Button variant='contained' onClick={handleShowAll} sx={{ m: 2 }}>
-				All Products
-			</Button>
-
-			<Box sx={{ p: 2 }}>
-				<Typography variant='h6'>Filter by Price</Typography>
-				<Slider
-					value={priceRange}
-					onChange={(e, newValue) => setPriceRange(newValue)}
-					valueLabelDisplay='auto'
-					min={0}
-					max={1000}
-				/>
-				<Typography>
-					Price Range: ${priceRange[0]} - ${priceRange[1]}
-				</Typography>
-			</Box>
-
-			<Box sx={{ p: 2 }}>
-				<Typography variant='h6'>Sort Options</Typography>
-				<Select
-					variant='outlined'
-					sx={{ borderRadius: "15px", width: "100%" }}
-					value={sortOption}
-					onChange={(e) => setSortOption(e.target.value)}
-					displayEmpty
-				>
-					<MenuItem value=''>Sort by</MenuItem>
-					<MenuItem value='low-to-high'>Price: Low to High</MenuItem>
-					<MenuItem value='high-to-low'>Price: High to Low</MenuItem>
-					<MenuItem value='a-to-z'>Name: A-Z</MenuItem>
-					<MenuItem value='z-to-a'>Name: Z-A</MenuItem>
-				</Select>
-			</Box>
-
-			<Box sx={{ p: 2 }}>
-				<Typography variant='h6'>Category</Typography>
-				<Select
-					variant='outlined'
-					sx={{ borderRadius: "15px", width: "100%" }}
-					value={filterOption}
-					onChange={(e) => setFilterOption(e.target.value)}
-					displayEmpty
-				>
-					<MenuItem value=''>Filter by</MenuItem>
-					<MenuItem value='drink'>Category: Drink</MenuItem>
-					<MenuItem value='dessert'>Category: Dessert</MenuItem>
-					<MenuItem value='food'>Category: Food</MenuItem>
-					<MenuItem value='snack'>Category: Snack</MenuItem>
-				</Select>
-			</Box>
-		</Box>
-	)
-
-	const navigate = useNavigate();
+	const navigate = useNavigate()
 
 	const handleClick = (id) => {
-	  navigate(`/Product/Detail/${id}`);
-	};
-	
+		navigate(`/Product/Detail/${id}`)
+	}
 
 	const container = props.window !== undefined ? () => props.window().document.body : undefined
 
 	return (
-		<Box sx={{ display: "flex" }}>
+		<Box display={"flex"}>
 			<CssBaseline />
-			<AppBar
-				position='fixed'
-				sx={{
-					width: { sm: `calc(100% - ${drawerWidth}px)` },
-					ml: { sm: `${drawerWidth}px` },
-					backgroundColor: "white", // Set background color to white
-					color: "black", // Set text color to black
-				}}
-			>
-				<Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-					<Box sx={{ display: "flex", alignItems: "center" }}>
-						<IconButton
-							color='inherit'
-							aria-label='open drawer'
-							edge='start'
-							onClick={handleDrawerToggle}
-							sx={{ mr: 2, display: { sm: "none" } }}
-						>
-							<MenuIcon />
-						</IconButton>
-						<Typography variant='h6' noWrap component='div' sx={{ flexGrow: 1 }}>
-							Product List
-						</Typography>
-					</Box>
-					<Box sx={{ ml: "auto", width: 300 }}>
-						<form
-							onSubmit={(e) => e.preventDefault()} // Prevent form submission
-							style={{ display: "flex", gap: "8px" }}
-						>
-							<TextField
-								type='search'
-								variant='outlined'
-								placeholder='Search'
-								fullWidth
-								onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input change
-							/>
-						</form>
-					</Box>
-				</Toolbar>
-			</AppBar>
-
-			<Box
-				component='nav'
-				sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-				aria-label='mailbox folders'
-			>
-				<Drawer
-					container={container}
-					variant='temporary'
-					open={mobileOpen}
-					onClose={handleDrawerToggle}
-					ModalProps={{
-						keepMounted: true,
-					}}
-					sx={{
-						display: { xs: "block", sm: "none" },
-						"& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
-					}}
-				>
-					{drawer}
-				</Drawer>
-
-				<Drawer
-					variant='permanent'
-					sx={{
-						display: { xs: "none", sm: "block" },
-						"& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
-					}}
-					open
-				>
-					{drawer}
-				</Drawer>
-			</Box>
-
 			<Box
 				component='main'
 				sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
@@ -324,7 +188,7 @@ export default function ProductList(props) {
 							color='primary'
 							sx={{ display: "flex", justifyContent: "center", my: 3 }}
 						/>
-					</>	
+					</>
 				)}
 			</Box>
 		</Box>
