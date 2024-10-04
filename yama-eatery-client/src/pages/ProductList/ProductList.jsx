@@ -1,5 +1,5 @@
 // ProductList.js
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from 'react'
 import {
 	Box,
 	Typography,
@@ -14,33 +14,33 @@ import {
 	IconButton,
 	TextField,
 	Grid2,
-} from "@mui/material"
-import MenuIcon from "@mui/icons-material/Menu"
-import { products } from "../FakeData/FakeData"
-import { useNavigate } from "react-router-dom"
-import ProductDrawer from "../../components/ProductDrawer/ProductDrawer"
+} from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
+import { products } from '../FakeData/FakeData'
+import { useNavigate } from 'react-router-dom'
+import ProductDrawer from '@/components/ProductMenu/ProductMenu'
 
 const drawerWidth = 240
 
 export default function ProductList(props) {
 	const [priceRange, setPriceRange] = useState([0, 1000])
 	const [filteredProducts, setFilteredProducts] = useState([])
-	const [filterOption, setFilterOption] = useState("") // For category filtering
-	const [sortOption, setSortOption] = useState("") // For sorting
+	const [filterOption, setFilterOption] = useState('') // For category filtering
+	const [sortOption, setSortOption] = useState('') // For sorting
 	const [currentPage, setCurrentPage] = useState(1)
 	const [mobileOpen, setMobileOpen] = useState(false)
-	const [productsPerPage] = useState(8)
-	const [searchTerm, setSearchTerm] = useState("") // For search
+	const [productsPerPage] = useState(9)
+	const [searchTerm, setSearchTerm] = useState('') // For search
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen)
 	}
 
 	const handleShowAll = () => {
-		setFilterOption("")
+		setFilterOption('')
 		setPriceRange([0, 1000])
-		setSortOption("")
-		setSearchTerm("")
+		setSortOption('')
+		setSearchTerm('')
 	}
 
 	useEffect(() => {
@@ -59,16 +59,16 @@ export default function ProductList(props) {
 		}
 
 		switch (sortOption) {
-			case "low-to-high":
+			case 'low-to-high':
 				filtered = filtered.sort((a, b) => a.price - b.price)
 				break
-			case "high-to-low":
+			case 'high-to-low':
 				filtered = filtered.sort((a, b) => b.price - a.price)
 				break
-			case "a-to-z":
+			case 'a-to-z':
 				filtered = filtered.sort((a, b) => a.name.localeCompare(b.name))
 				break
-			case "z-to-a":
+			case 'z-to-a':
 				filtered = filtered.sort((a, b) => b.name.localeCompare(a.name))
 				break
 			default:
@@ -95,8 +95,17 @@ export default function ProductList(props) {
 	const container = props.window !== undefined ? () => props.window().document.body : undefined
 
 	return (
-		<Box display={"flex"}>
+		<Box display={'flex'}>
 			<CssBaseline />
+			<ProductDrawer
+				handleShowAll={handleShowAll}
+				filterOption={filterOption}
+				priceRange={priceRange}
+				sortOption={sortOption}
+				setFilterOption={setFilterOption}
+				setPriceRange={setPriceRange}
+				setSortOption={setSortOption}
+			/>
 			<Box
 				component='main'
 				sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
@@ -114,38 +123,38 @@ export default function ProductList(props) {
 									<Box
 										onClick={() => handleClick(product.id)}
 										sx={{
-											backgroundColor: "gray.50",
+											backgroundColor: 'gray.50',
 											boxShadow: 2,
 											borderRadius: 2,
-											cursor: "pointer",
-											"&:hover": { transform: "translateY(-8px)" },
-											transition: "all 0.3s ease-in-out",
+											cursor: 'pointer',
+											'&:hover': { transform: 'translateY(-8px)' },
+											transition: 'all 0.3s ease-in-out',
 										}}
 									>
 										<Box
 											sx={{
-												display: "flex",
-												justifyContent: "center",
+												display: 'flex',
+												justifyContent: 'center',
 												height: 260,
 												padding: 2,
-												backgroundColor: "gray.100",
+												backgroundColor: 'gray.100',
 											}}
 										>
 											<img
 												src={product.imgSrc}
 												alt={product.name}
 												style={{
-													objectFit: "contain",
-													maxHeight: "100%",
-													maxWidth: "100%",
+													objectFit: 'contain',
+													maxHeight: '100%',
+													maxWidth: '100%',
 												}}
 											/>
 										</Box>
-										<Box sx={{ p: 3, backgroundColor: "white" }}>
+										<Box sx={{ p: 3, backgroundColor: 'white' }}>
 											<Stack
-												direction={"row"}
-												alignItems={"center"}
-												justifyContent={"space-between"}
+												direction={'row'}
+												alignItems={'center'}
+												justifyContent={'space-between'}
 											>
 												<Rating value={3}></Rating>
 												<Typography variant='h5' align='right' color='gray.800'>
@@ -156,23 +165,23 @@ export default function ProductList(props) {
 												{product.name}
 											</Typography>
 											<Stack
-												direction={"row"}
-												alignItems={"center"}
-												justifyContent={"space-between"}
+												direction={'row'}
+												alignItems={'center'}
+												justifyContent={'space-between'}
 											>
 												<Typography
 													variant='h6'
 													fontWeight='bold'
-													sx={{ mt: 1, color: "gray.800" }}
+													sx={{ mt: 1, color: 'gray.800' }}
 												>
 													${product.price}
 												</Typography>
 												<Typography
 													variant='overline'
-													color={product.quantity > 0 ? "green" : "error"}
+													color={product.quantity > 0 ? 'green' : 'error'}
 													sx={{ mt: 1 }}
 												>
-													{product.quantity > 0 ? "In stock" : "Out of stock"}
+													{product.quantity > 0 ? 'In stock' : 'Out of stock'}
 												</Typography>
 											</Stack>
 										</Box>
@@ -182,11 +191,12 @@ export default function ProductList(props) {
 						</Grid2>
 						<Divider />
 						<Pagination
+							size='large'
 							count={Math.ceil(filteredProducts.length / productsPerPage)} // Total pages
 							page={currentPage} // Current page
 							onChange={(event, value) => handlePageChange(value)} // Handle page change
 							color='primary'
-							sx={{ display: "flex", justifyContent: "center", my: 3 }}
+							sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
 						/>
 					</>
 				)}

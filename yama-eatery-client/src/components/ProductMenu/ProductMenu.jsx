@@ -2,7 +2,7 @@
 import React from "react"
 import { Box, Button, Typography, Slider, Select, MenuItem, Toolbar, Menu } from "@mui/material"
 
-export default function ProductDrawer({
+export default function ProductMenu({
 	handleShowAll,
 	priceRange,
 	setPriceRange,
