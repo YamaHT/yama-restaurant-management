@@ -1,4 +1,5 @@
-import axiosConfig from '@/utilities/axiosConfig'
+import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
+import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
 import { Close, FileUpload } from '@mui/icons-material'
 import {
@@ -7,31 +8,20 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
-	FormControl,
-	FormHelperText,
 	IconButton,
-	InputLabel,
 	MenuItem,
-	Select,
 	Skeleton,
 	Stack,
 	TextField,
 } from '@mui/material'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 const CrudAdd = ({ open, handleClose }) => {
 	const fileRef = useRef(null)
+	const fieldsRef = useRef({})
 
 	const [imageBase64, setImageBase64] = useState('')
 	const [values, setValues] = useState({
-		image: '',
-		name: '',
-		price: '',
-		description: '',
-		category: '',
-	})
-
-	const [errors, setErrors] = useState({
 		image: '',
 		name: '',
 		price: '',
@@ -53,9 +43,16 @@ const CrudAdd = ({ open, handleClose }) => {
 		const file = e.target.files[0]
 		if (file) {
 			const reader = new FileReader()
-			reader.onload = () => {
+			reader.onload = async () => {
 				setImageBase64(reader.result)
-				setValues((prev) => ({ ...prev, image: file.name }))
+				await new Promise((resolve) => {
+					setValues((prev) => {
+						resolve()
+						return { ...prev, image: file.name }
+					})
+				})
+
+				fieldsRef.current['image']?.validate()
 			}
 			reader.readAsDataURL(file)
 		}
@@ -83,34 +80,26 @@ const CrudAdd = ({ open, handleClose }) => {
 	}
 
 	const handleAddProduct = async () => {
-		const newErrors = {
-			image: values.image === '' ? 'Field image is required' : '',
-			name: values.name === '' ? 'Field name is required' : '',
-			price:
-				values.price === ''
-					? 'Field price is required'
-					: isNaN(values.price)
-					? 'Price must be a number'
-					: '',
-			description: values.description === '' ? 'Field description is required' : '',
-			category: values.category === '' ? 'Field category is required' : '',
-		}
-		setErrors(newErrors)
+		let isValid = true
 
-		if (Object.values(newErrors).some((err) => err !== '')) {
-			return
-		}
+		Object.keys(fieldsRef.current).map((key) => {
+			if (!fieldsRef.current[key]?.validate()) {
+				isValid = false
+			}
+		})
 
-		const productData = {
-			image: values.image,
-			name: values.name,
-			price: parseFloat(values.price),
-			description: values.description,
-			category: values.category,
-		}
+		if (isValid) {
+			const productData = {
+				image: values.image,
+				name: values.name,
+				price: parseFloat(values.price),
+				description: values.description,
+				category: values.category,
+			}
 
-		console.log(productData)
-		handleClose()
+			console.log(productData)
+			handleClose()
+		}
 	}
 
 	//#region customInputImageProperties
@@ -158,36 +147,34 @@ const CrudAdd = ({ open, handleClose }) => {
 					) : (
 						<Skeleton animation={false} height={200} variant='rounded' />
 					)}
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['image'] = el)}
 						label='Image'
 						variant='filled'
 						name='image'
 						value={values.image}
-						error={Boolean(errors.image)}
-						helperText={errors.image}
 						slotProps={customInputImageProperties}
 					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['name'] = el)}
 						label='Name'
 						name='name'
 						variant='filled'
 						value={values.name}
-						error={Boolean(errors.name)}
-						helperText={errors.name}
 						onChange={handleValueChange}
 					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['price'] = el)}
 						label='Price'
 						name='price'
 						type='number'
 						variant='filled'
 						value={values.price}
-						error={Boolean(errors.price)}
-						helperText={errors.price}
 						onChange={handleValueChange}
 					/>
 					<Stack direction={'row'} alignItems={'center'}>
-						<TextField
+						<ValidationTextField
+							ref={(el) => (fieldsRef.current['description'] = el)}
 							fullWidth
 							label='Description'
 							name='description'
@@ -195,8 +182,6 @@ const CrudAdd = ({ open, handleClose }) => {
 							multiline
 							minRows={3}
 							value={values.description}
-							error={Boolean(errors.description)}
-							helperText={errors.description}
 							onChange={handleValueChange}
 						/>
 						<Stack alignItems={'center'} padding={'0 1%'} spacing={1}>
@@ -217,25 +202,17 @@ const CrudAdd = ({ open, handleClose }) => {
 							</Button>
 						</Stack>
 					</Stack>
-					<FormControl variant='filled'>
-						<InputLabel id='category-label' error={Boolean(errors.category)}>
-							Category
-						</InputLabel>
-						<Select
-							labelId='category-label'
-							name='category'
-							value={values.category}
-							error={Boolean(errors.category)}
-							onChange={handleValueChange}
-						>
-							<MenuItem value={1}>Category 1</MenuItem>
-							<MenuItem value={2}>Category 2</MenuItem>
-							<MenuItem value={3}>Category 3</MenuItem>
-						</Select>
-						<FormHelperText sx={{ color: 'red' }}>
-							{errors.category ? errors.category : ''}
-						</FormHelperText>
-					</FormControl>
+					<ValidationSelect
+						ref={(el) => (fieldsRef.current['category'] = el)}
+						label={'Category'}
+						name='category'
+						value={values.category}
+						onChange={handleValueChange}
+					>
+						<MenuItem value={1}>Category 1</MenuItem>
+						<MenuItem value={2}>Category 2</MenuItem>
+						<MenuItem value={3}>Category 3</MenuItem>
+					</ValidationSelect>
 				</Stack>
 			</DialogContent>
 			<DialogActions
