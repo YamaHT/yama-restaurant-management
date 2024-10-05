@@ -17,12 +17,12 @@ import {
 } from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import logo from '@/assets/img/general/logo192.png'
-import CrudAdd from './CrudAdd'
-import CrudTableHead from '@/components/Crud Components/CrudTableHead'
-import CrudTabs from '@/components/Crud Components/CrudTabs'
 import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
+import CrudTabs from '@/components/Crud Components/CrudTabs'
+import CrudTableHead from '@/components/Crud Components/CrudTableHead'
 import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
 import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
+import CrudAdd from './CrudAdd'
 
 const headCells = [
 	{
@@ -160,7 +160,8 @@ const CrudManagement = () => {
 	return (
 		<Paper
 			sx={{
-				width: '1200px',
+				width: '85%',
+				marginLeft: '15%',
 				padding: '1%',
 				bgcolor: '#f0f2f5',
 				zIndex: -1,

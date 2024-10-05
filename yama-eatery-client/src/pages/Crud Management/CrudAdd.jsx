@@ -1,8 +1,5 @@
-import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
-import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
-import { Close, FileUpload } from '@mui/icons-material'
 import {
+	Box,
 	Button,
 	Dialog,
 	DialogActions,
@@ -14,6 +11,7 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material'
+
 import { useRef, useState } from 'react'
 
 const CrudAdd = ({ open, handleClose }) => {
@@ -129,13 +127,26 @@ const CrudAdd = ({ open, handleClose }) => {
 	//#endregion
 
 	return (
-		<Dialog open={open} onClose={handleClose} fullWidth>
+		<Dialog
+			open={open}
+			onClose={handleClose}
+			fullWidth
+			PaperProps={{
+				component: 'form',
+				onSubmit: (event) => {
+					event.preventDefault()
+					const formData = new FormData(event.currentTarget)
+					const formJson = Object.fromEntries(formData.entries())
+					handleClose()
+				},
+			}}
+		>
 			<DialogTitle>Add New Product</DialogTitle>
 			<DialogContent>
-				<Stack spacing={2}>
-					{imageBase64 ? (
+				<FormControl fullWidth sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+					{image.base64 ? (
 						<img
-							src={imageBase64}
+							src={image.base64}
 							style={{
 								minHeight: 200,
 								maxHeight: 400,
@@ -152,6 +163,7 @@ const CrudAdd = ({ open, handleClose }) => {
 						label='Image'
 						variant='filled'
 						name='image'
+
 						value={values.image}
 						slotProps={customInputImageProperties}
 					/>
@@ -172,6 +184,8 @@ const CrudAdd = ({ open, handleClose }) => {
 						value={values.price}
 						onChange={handleValueChange}
 					/>
+					<TextField label='Name' name='name' variant='filled' />
+					<TextField label='Price' name='price' type='number' variant='filled' />
 					<Stack direction={'row'} alignItems={'center'}>
 						<ValidationTextField
 							ref={(el) => (fieldsRef.current['description'] = el)}
@@ -185,19 +199,8 @@ const CrudAdd = ({ open, handleClose }) => {
 							onChange={handleValueChange}
 						/>
 						<Stack alignItems={'center'} padding={'0 1%'} spacing={1}>
-							<TextField
-								size='small'
-								variant='outlined'
-								label={'(Optional)'}
-								value={generatorOption}
-								onChange={(e) => setGeneratorOption(e.target.value)}
-							/>
-							<Button
-								fullWidth
-								variant='contained'
-								color='info'
-								onClick={handleDescriptionGenerator}
-							>
+							<TextField size='small' variant='outlined' label={'(Optional)'} />
+							<Button fullWidth variant='contained' color='info'>
 								Auto Generate
 							</Button>
 						</Stack>
@@ -225,7 +228,7 @@ const CrudAdd = ({ open, handleClose }) => {
 				<Button onClick={handleClose} variant='outlined' color='inherit'>
 					Close
 				</Button>
-				<Button onClick={handleAddProduct} size='large' variant='contained' color='primary'>
+				<Button onClick={handleClose} size='large' variant='contained' color='primary'>
 					Add
 				</Button>
 			</DialogActions>
