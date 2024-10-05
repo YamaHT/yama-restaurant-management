@@ -1,3 +1,9 @@
+import logo from '@/assets/img/general/logo192.png'
+import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
+import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
+import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
+import CrudTableHead from '@/components/Crud Components/CrudTableHead'
+import CrudTabs from '@/components/Crud Components/CrudTabs'
 import { Add, Delete, Edit, FoodBank, Icecream, LocalDrink, Menu } from '@mui/icons-material'
 import {
 	Avatar,
@@ -15,13 +21,7 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material'
-import React, { useMemo, useState } from 'react'
-import logo from '@/assets/img/general/logo192.png'
-import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
-import CrudTabs from '@/components/Crud Components/CrudTabs'
-import CrudTableHead from '@/components/Crud Components/CrudTableHead'
-import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
-import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
+import React, { useState } from 'react'
 import CrudAdd from './CrudAdd'
 
 const headCells = [
@@ -160,8 +160,7 @@ const CrudManagement = () => {
 	return (
 		<Paper
 			sx={{
-				width: '85%',
-				marginLeft: '15%',
+				width: 1200,
 				padding: '1%',
 				bgcolor: '#f0f2f5',
 				zIndex: -1,
