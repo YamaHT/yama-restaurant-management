@@ -6,9 +6,9 @@ import { Box, Button, Link, Stack, Typography } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 
 const Register = () => {
+	const [firstName, setFirstName] = useState('')
+	const [lastName, setLastName] = useState('')
 	const [email, setEmail] = useState('')
-	const [email2, setEmail2] = useState('')
-	const [email3, setEmail3] = useState('')
 	const [password, setPassword] = useState('')
 
 	const fieldsRef = useRef({})
@@ -45,6 +45,24 @@ const Register = () => {
 		>
 			<Box>
 				<Stack gap={3}>
+					<Stack direction={'row'} spacing={2}>
+						<ValidationTextField
+							ref={(el) => (fieldsRef.current['firstName'] = el)}
+							type='text'
+							label='First Name'
+							name='firstName'
+							value={firstName}
+							onChange={(e) => setFirstName(e.target.value)}
+						/>
+						<ValidationTextField
+							ref={(el) => (fieldsRef.current['lastName'] = el)}
+							type='text'
+							label='Last Name'
+							name='lastName'
+							value={lastName}
+							onChange={(e) => setLastName(e.target.value)}
+						/>
+					</Stack>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['email'] = el)}
 						type='email'
@@ -52,22 +70,6 @@ const Register = () => {
 						name='email'
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
-					/>
-					<ValidationTextField
-						ref={(el) => (fieldsRef.current['email2'] = el)}
-						type='email'
-						label='Email'
-						name='email2'
-						value={email2}
-						onChange={(e) => setEmail2(e.target.value)}
-					/>
-					<ValidationTextField
-						ref={(el) => (fieldsRef.current['email3'] = el)}
-						type='email'
-						label='Email'
-						name='email3'
-						value={email3}
-						onChange={(e) => setEmail3(e.target.value)}
 					/>
 					<PasswordTextField
 						ref={(el) => (fieldsRef.current['password'] = el)}
