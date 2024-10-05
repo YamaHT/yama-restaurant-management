@@ -70,14 +70,31 @@ function createData(id, image, name, category, price, rating, isDeleted) {
 		category,
 		price,
 		rating,
-		isDeleted: isDeleted,
+		isDeleted,
 	}
 }
 
 const rows = [
 	createData(1, '', 'Spicy Tuna Roll', 'Food', 12.99, 4.6, false),
 	createData(2, '', 'Margherita Pizza', 'Food', 15.49, 3.3, true),
-	createData(3, '', 'Vegan Burger', 'Drink', 11.99, 1.9, false),
+	createData(3, '', 'Vegan Burger', 'Food', 11.99, 1.9, false),
+	createData(4, '', 'Lemon Iced Tea', 'Drink', 3.49, 4.1, false),
+	createData(5, '', 'BBQ Chicken Wings', 'Food', 10.99, 4.9, false),
+	createData(6, '', 'Caesar Salad', 'Food', 9.99, 3.8, false),
+	createData(7, '', 'Espresso', 'Drink', 2.99, 4.4, false),
+	createData(8, '', 'Grilled Salmon', 'Food', 17.99, 4.7, false),
+	createData(9, '', 'Chicken Alfredo Pasta', 'Food', 14.49, 4.0, true),
+	createData(10, '', 'Mango Smoothie', 'Drink', 5.99, 4.8, false),
+	createData(11, '', 'Beef Tacos', 'Food', 9.49, 4.2, false),
+	createData(12, '', 'Chocolate Milkshake', 'Drink', 4.99, 4.5, false),
+	createData(13, '', 'Lobster Bisque', 'Food', 22.99, 4.9, false),
+	createData(14, '', 'Iced Coffee', 'Drink', 3.99, 3.5, false),
+	createData(15, '', 'Pulled Pork Sandwich', 'Food', 8.99, 4.6, true),
+	createData(16, '', 'Cucumber Salad', 'Food', 6.99, 3.9, false),
+	createData(17, '', 'Orange Juice', 'Drink', 2.99, 4.3, false),
+	createData(18, '', 'Stuffed Mushrooms', 'Food', 12.99, 4.7, false),
+	createData(19, '', 'Cappuccino', 'Drink', 3.49, 4.2, false),
+	createData(20, '', 'Chicken Caesar Wrap', 'Food', 9.99, 3.7, true),
 ]
 
 const categoryNavigation = [
@@ -111,7 +128,7 @@ const CrudManagement = () => {
 	const [page, setPage] = useState(0)
 	const [categoryTab, setCategoryTab] = useState(0)
 	const [searchName, setSearchName] = useState(null)
-	const rowsPerPage = 10
+	const [rowsPerPage, setRowsPerPage] = useState(10)
 
 	const [openAddPage, setOpenAddPage] = useState(false)
 
@@ -121,18 +138,23 @@ const CrudManagement = () => {
 		setOrderBy(property)
 	}
 
-	const handleChangePage = (event, newPage) => {
+	const handleChangePage = (e, newPage) => {
 		setPage(newPage)
+	}
+
+	const handleChangeRowsPerPage = (e) => {
+		setRowsPerPage(parseInt(e.target.value, 10))
+		setPage(0)
 	}
 
 	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
-	const visibleRows = useMemo(
+	const visibleRows = React.useMemo(
 		() =>
 			[...rows]
 				.sort(getComparator(order, orderBy))
 				.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-		[order, orderBy, page]
+		[order, orderBy, page, rowsPerPage]
 	)
 
 	return (
@@ -142,6 +164,7 @@ const CrudManagement = () => {
 				marginLeft: '15%',
 				padding: '1%',
 				bgcolor: '#f0f2f5',
+				zIndex: -1,
 			}}
 		>
 			<Stack marginBottom={1} spacing={2}>
@@ -240,13 +263,13 @@ const CrudManagement = () => {
 					</TableBody>
 				</Table>
 				<TablePagination
-					rowsPerPageOptions={rowsPerPage}
+					rowsPerPageOptions={[5, 10, 20]}
 					component={'div'}
 					count={rows.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
-					sx={{ fontSize: 18 }}
 					onPageChange={handleChangePage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
 				/>
 			</Paper>
 		</Paper>

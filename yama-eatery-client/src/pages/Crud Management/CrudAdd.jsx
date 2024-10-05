@@ -6,6 +6,8 @@ import {
 	DialogContent,
 	DialogTitle,
 	FormControl,
+	FormHelperText,
+	IconButton,
 	InputLabel,
 	MenuItem,
 	Select,
@@ -88,12 +90,23 @@ const CrudAdd = ({ open, handleClose }) => {
 						</Stack>
 					</Stack>
 					<FormControl variant='filled'>
-						<InputLabel id='category-label'>Category</InputLabel>
-						<Select labelId='category-label'>
-							<MenuItem value={1}>dsa</MenuItem>
-							<MenuItem value={2}>dsa</MenuItem>
-							<MenuItem value={3}>dsa</MenuItem>
+						<InputLabel id='category-label' error={Boolean(errors.category)}>
+							Category
+						</InputLabel>
+						<Select
+							labelId='category-label'
+							name='category'
+							value={values.category}
+							error={Boolean(errors.category)}
+							onChange={handleValueChange}
+						>
+							<MenuItem value={1}>Category 1</MenuItem>
+							<MenuItem value={2}>Category 2</MenuItem>
+							<MenuItem value={3}>Category 3</MenuItem>
 						</Select>
+						<FormHelperText sx={{ color: 'red' }}>
+							{errors.category ? errors.category : ''}
+						</FormHelperText>
 					</FormControl>
 				</FormControl>
 			</DialogContent>
