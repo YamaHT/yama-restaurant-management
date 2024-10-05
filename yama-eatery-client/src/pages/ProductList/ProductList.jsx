@@ -3,13 +3,12 @@ import {
 	Box,
 	CssBaseline,
 	Divider,
-	Grid,
 	Grid2,
 	Pagination,
 	Rating,
 	Stack,
 	Toolbar,
-	Typography,
+	Typography
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
