@@ -26,7 +26,7 @@ const CategorySection = () => {
 	]
 
 	return (
-		<Box sx={{ mt: 5, mx: 'auto' }}>
+		<Box sx={{ mx: 'auto' }}>
 			<Box textAlign='center'>
 				<Typography
 					variant='h2'

@@ -1,6 +1,6 @@
 import { GppGood, Groups, LiveHelp } from '@mui/icons-material'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
-import { Box, Grid2, Typography } from '@mui/material'
+import { Box, Grid2, Stack, Typography } from '@mui/material'
 
 const features = [
 	{
@@ -23,10 +23,42 @@ const features = [
 
 const FeatureSection = () => {
 	return (
-		<Box sx={{ flexGrow: 1, p: 4 }}>
-			<Typography variant='h4' textAlign={'center'} fontWeight={'bold'}>
-				Discover Our Exclusive Features
-			</Typography>
+		<Stack
+			sx={{
+				p: 4,
+				background: '#FBF8F7',
+			}}
+			spacing={4}
+		>
+			<Box textAlign={'center'}>
+				<Typography
+					variant='h2'
+					sx={{
+						display: 'inline-block',
+						position: 'relative',
+						fontWeight: 'bold',
+						fontSize: '2rem',
+						textTransform: 'uppercase',
+						textAlign: 'center',
+						color: '#444',
+						'&::after': {
+							content: '""',
+							position: 'absolute',
+							width: '70%',
+							height: '4px',
+							left: 0,
+							right: 0,
+							bottom: '-8px',
+							margin: 'auto',
+							backgroundColor: '#EC4899',
+							borderRadius: 2,
+						},
+					}}
+				>
+					Discover Our Exclusive Features
+				</Typography>
+			</Box>
+
 			<Grid2 container spacing={4}>
 				{features.map((feature, index) => (
 					<Grid2 item size={{ xs: 12, md: 4 }} key={index}>
@@ -37,8 +69,9 @@ const FeatureSection = () => {
 								textAlign: 'center',
 								height: '100%',
 								borderRadius: 1.5,
+								userSelect: 'none',
 								backgroundColor: 'transparent',
-								transition: 'transform 0.3s, box-shadow 0.3s',
+								transition: '0.2s linear, box-shadow 0.3s',
 								'&:hover': {
 									boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
 									backgroundColor: '#fff',
@@ -55,7 +88,7 @@ const FeatureSection = () => {
 					</Grid2>
 				))}
 			</Grid2>
-		</Box>
+		</Stack>
 	)
 }
 
