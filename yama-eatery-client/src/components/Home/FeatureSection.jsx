@@ -1,4 +1,4 @@
-import { GppGood, Groups } from '@mui/icons-material'
+import { GppGood, Groups, LiveHelp } from '@mui/icons-material'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import { Box, Grid2, Typography } from '@mui/material'
 
@@ -14,15 +14,19 @@ const features = [
 		description: 'Your data is protected by the latest security measures.',
 	},
 	{
-		icon: <ThumbUpIcon fontSize='large' />,
-		title: 'Feature 3',
-		description: 'Description of feature 3.',
+		icon: <LiveHelp fontSize='large' />,
+		title: 'Support',
+		description:
+			'Tailor our product to suit your needs 24/7 customer support for all your inquiries.',
 	},
 ]
 
 const FeatureSection = () => {
 	return (
 		<Box sx={{ flexGrow: 1, p: 4 }}>
+			<Typography variant='h4' textAlign={'center'} fontWeight={'bold'}>
+				Discover Our Exclusive Features
+			</Typography>
 			<Grid2 container spacing={4}>
 				{features.map((feature, index) => (
 					<Grid2 item size={{ xs: 12, md: 4 }} key={index}>
