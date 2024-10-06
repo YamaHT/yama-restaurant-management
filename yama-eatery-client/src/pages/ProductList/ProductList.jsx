@@ -165,20 +165,13 @@ export default function ProductList(props) {
 												alignItems={'center'}
 												justifyContent={'space-between'}
 											>
-												<Rating
-													value={averageRating}
-													precision={0.1}
-													readOnly
-												/> {/* Show average rating */}
+												<Rating value={averageRating} precision={0.1} readOnly />{' '}
+												{/* Show average rating */}
 												<Typography variant='h5' align='right' color='gray.800'>
 													{product.category}
 												</Typography>
 											</Stack>
-											<Typography
-												variant='h6'
-												fontWeight='bold'
-												color='gray.800'
-											>
+											<Typography variant='h6' fontWeight='bold' color='gray.800'>
 												{product.name}
 											</Typography>
 											<Stack
@@ -198,9 +191,7 @@ export default function ProductList(props) {
 													color={product.quantity > 0 ? 'green' : 'error'}
 													sx={{ mt: 1 }}
 												>
-													{product.quantity > 0
-														? 'In stock'
-														: 'Out of stock'}
+													{product.quantity > 0 ? 'In stock' : 'Out of stock'}
 												</Typography>
 											</Stack>
 										</Box>
