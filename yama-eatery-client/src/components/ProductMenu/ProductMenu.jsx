@@ -1,6 +1,6 @@
 // ProductDrawer.js
-import React from "react"
-import { Box, Button, Typography, Slider, Select, MenuItem, Toolbar, Menu } from "@mui/material"
+import React from 'react'
+import { Box, Button, Typography, Slider, Select, MenuItem, Toolbar, Menu } from '@mui/material'
 
 export default function ProductMenu({
 	handleShowAll,
@@ -36,7 +36,7 @@ export default function ProductMenu({
 				<Typography variant='h6'>Sort Options</Typography>
 				<Select
 					variant='outlined'
-					sx={{ borderRadius: "15px", width: "100%" }}
+					sx={{ borderRadius: '15px', width: '100%' }}
 					value={sortOption}
 					onChange={(e) => setSortOption(e.target.value)}
 					displayEmpty
@@ -53,7 +53,7 @@ export default function ProductMenu({
 				<Typography variant='h6'>Category</Typography>
 				<Select
 					variant='outlined'
-					sx={{ borderRadius: "15px", width: "100%" }}
+					sx={{ borderRadius: '15px', width: '100%' }}
 					value={filterOption}
 					onChange={(e) => setFilterOption(e.target.value)}
 					displayEmpty

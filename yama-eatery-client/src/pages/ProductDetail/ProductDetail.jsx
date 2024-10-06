@@ -151,97 +151,104 @@ export default function ProductDetail() {
 					</Card>
 
 					{recommendedProducts.length > 0 && (
-				<Box mt={4}>
-					<Typography variant="h6" fontWeight="bold" color="textPrimary" gutterBottom>
-						Recommended Products
-					</Typography>
+						<Box mt={4}>
+							<Typography variant='h6' fontWeight='bold' color='textPrimary' gutterBottom>
+								Recommended Products
+							</Typography>
 
-					{/* Swiper with dynamic navigation */}
-					<Box sx={{ position: 'relative' }}>
-						<Swiper
-							modules={[Navigation]}
-							navigation={{ prevEl: prevRef.current, nextEl: nextRef.current }}
-							onBeforeInit={(swiper) => (swiperRef.current = swiper)} // Attach the swiper instance
-							spaceBetween={16}
-							slidesPerView={2}
-							breakpoints={{
-								640: {
-									slidesPerView: 2,
-								},
-								768: {
-									slidesPerView: 3,
-								},
-								1024: {
-									slidesPerView: 4,
-								},
-							}}
-						>
-							{recommendedProducts.map((recommendedProduct) => (
-								<SwiperSlide key={recommendedProduct.id}>
-									<Box sx={{ cursor: 'pointer' ,	transition: 'all 0.3s ease-in-out',	'&:hover': { transform: 'translateY(-8px)' }, }} onClick={() => handleClick(recommendedProduct.id)}>
-										<Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-											<CardMedia
-												component="img"
-												image={recommendedProduct.img[0]}
-												alt={recommendedProduct.name}
-												sx={{ height: 200, objectFit: 'cover' }}
-											/>
-											<Box sx={{ p: 2, flexGrow: 1 }}>
-												<Typography variant="subtitle1" fontWeight="bold">
-													{recommendedProduct.name}
-												</Typography>
-												<Typography variant="body2" color="textSecondary">
-													${recommendedProduct.price}
-												</Typography>
+							{/* Swiper with dynamic navigation */}
+							<Box sx={{ position: 'relative' }}>
+								<Swiper
+									modules={[Navigation]}
+									navigation={{ prevEl: prevRef.current, nextEl: nextRef.current }}
+									onBeforeInit={(swiper) => (swiperRef.current = swiper)} // Attach the swiper instance
+									spaceBetween={16}
+									slidesPerView={2}
+									breakpoints={{
+										640: {
+											slidesPerView: 2,
+										},
+										768: {
+											slidesPerView: 3,
+										},
+										1024: {
+											slidesPerView: 4,
+										},
+									}}
+								>
+									{recommendedProducts.map((recommendedProduct) => (
+										<SwiperSlide key={recommendedProduct.id}>
+											<Box
+												sx={{
+													cursor: 'pointer',
+													transition: 'all 0.3s ease-in-out',
+													'&:hover': { transform: 'translateY(-8px)' },
+												}}
+												onClick={() => handleClick(recommendedProduct.id)}
+											>
+												<Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+													<CardMedia
+														component='img'
+														image={recommendedProduct.img[0]}
+														alt={recommendedProduct.name}
+														sx={{ height: 200, objectFit: 'cover' }}
+													/>
+													<Box sx={{ p: 2, flexGrow: 1 }}>
+														<Typography variant='subtitle1' fontWeight='bold'>
+															{recommendedProduct.name}
+														</Typography>
+														<Typography variant='body2' color='textSecondary'>
+															${recommendedProduct.price}
+														</Typography>
+													</Box>
+													<Box sx={{ p: 2 }}>
+														<Rating
+															value={calculateAverageRating(recommendedProduct.reviews)}
+															precision={0.1}
+															readOnly
+															size='small'
+														/>
+													</Box>
+												</Card>
 											</Box>
-											<Box sx={{ p: 2 }}>
-												<Rating
-													value={calculateAverageRating(recommendedProduct.reviews)}
-													precision={0.1}
-													readOnly
-													size="small"
-												/>
-											</Box>
-										</Card>
-									</Box>
-								</SwiperSlide>
-							))}
-						</Swiper>
+										</SwiperSlide>
+									))}
+								</Swiper>
 
-						{/* Dynamic Navigation Buttons */}
-						<Button
-							ref={prevRef}
-							sx={{
-								position: 'absolute',
-								top: '50%',
-								left: 0,
-								transform: 'translateY(-50%)',
-								zIndex: 10,
-								backgroundColor: 'rgba(0,0,0,0.5)',
-								color: 'white',
-								'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
-							}}
-						>
-							Prev
-						</Button>
-						<Button
-							ref={nextRef}
-							sx={{
-								position: 'absolute',
-								top: '50%',
-								right: 0,
-								transform: 'translateY(-50%)',
-								zIndex: 10,
-								backgroundColor: 'rgba(0,0,0,0.5)',
-								color: 'white',
-								'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
-							}}
-						>
-							Next
-						</Button>
-					</Box>
-				</Box>
-			)}
+								{/* Dynamic Navigation Buttons */}
+								<Button
+									ref={prevRef}
+									sx={{
+										position: 'absolute',
+										top: '50%',
+										left: 0,
+										transform: 'translateY(-50%)',
+										zIndex: 10,
+										backgroundColor: 'rgba(0,0,0,0.5)',
+										color: 'white',
+										'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+									}}
+								>
+									Prev
+								</Button>
+								<Button
+									ref={nextRef}
+									sx={{
+										position: 'absolute',
+										top: '50%',
+										right: 0,
+										transform: 'translateY(-50%)',
+										zIndex: 10,
+										backgroundColor: 'rgba(0,0,0,0.5)',
+										color: 'white',
+										'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+									}}
+								>
+									Next
+								</Button>
+							</Box>
+						</Box>
+					)}
 				</Grid>
 
 				{/* Right Section (Product Details and Reviews) */}

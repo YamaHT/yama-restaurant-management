@@ -145,7 +145,7 @@ export default function TableList() {
 								</Box>
 							))}
 						</Grid>
-						<Divider  sx={{mt:2}}/>
+						<Divider sx={{ mt: 2 }} />
 						<Pagination
 							size='large'
 							count={Math.ceil(filteredTables.length / tablesPerPage)} // Total pages
