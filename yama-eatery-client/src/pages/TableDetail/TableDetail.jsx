@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { Box, Stack, Button, TextField, Select, MenuItem, Typography, Card } from '@mui/material'
-import { tables } from '../TableMockData/TableMockData' // Import table data
-import { useParams, useNavigate } from 'react-router-dom'
+import { Box, Button, Card, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { tables } from '../TableMockData/TableMockData'
 
 export default function TableDetail() {
 	const { id } = useParams() // Get the table id from the URL
@@ -97,12 +97,10 @@ export default function TableDetail() {
 
 	return (
 		<Box sx={{ maxWidth: '1200px', margin: '0 auto' }}>
-			{/* Table Detail Header */}
 			<Stack direction='row' justifyContent='space-between' alignItems='center' mb={2}>
 				<Typography variant='h5'>{table.tableType} Table</Typography>
 				<Typography variant='subtitle1'>Floor {table.floor}</Typography>
 			</Stack>
-
 			<Card
 				sx={{
 					minHeight: 500,
@@ -118,7 +116,6 @@ export default function TableDetail() {
 					<Button variant='outlined' onClick={() => handleImageChange('prev')}>
 						{'<'}
 					</Button>
-
 					<Box
 						component='img'
 						src={table.img[selectedImageIndex]}
@@ -130,13 +127,11 @@ export default function TableDetail() {
 							objectFit: 'cover',
 						}}
 					/>
-
 					<Button variant='outlined' onClick={() => handleImageChange('next')}>
 						{'>'}
 					</Button>
 				</Stack>
 			</Card>
-
 			{/* Thumbnail Images */}
 			<Stack direction='row' justifyContent='center' mt={1}>
 				{table.img.map((img, index) => (
@@ -157,7 +152,6 @@ export default function TableDetail() {
 					/>
 				))}
 			</Stack>
-
 			{/* Booking Information */}
 			<Box
 				sx={{
@@ -189,7 +183,6 @@ export default function TableDetail() {
 							helperText={formErrors.lastName}
 						/>
 					</Stack>
-
 					<Stack direction='row' spacing={2} mb={2}>
 						<TextField
 							fullWidth
@@ -233,7 +226,6 @@ export default function TableDetail() {
 							</Typography>
 						)}
 					</Stack>
-
 					<TextField
 						fullWidth
 						name='note'
@@ -244,14 +236,12 @@ export default function TableDetail() {
 						onChange={handleFormChange}
 						sx={{ mb: 2 }}
 					/>
-
 					{/* Pricing Information */}
 					<Stack direction='row' justifyContent='space-between' mb={2}>
 						<Typography>Total Reserve: ${table.price || 1000}</Typography>
 						<Typography>Deposit: ${table.deposit || 100}</Typography>
 					</Stack>
 
-					{/* Book Now Button */}
 					<Button
 						type='submit'
 						fullWidth

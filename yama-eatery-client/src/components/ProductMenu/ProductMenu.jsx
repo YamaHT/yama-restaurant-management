@@ -1,6 +1,5 @@
 // ProductDrawer.js
-import React from 'react'
-import { Box, Button, Typography, Slider, Select, MenuItem, Toolbar, Menu } from '@mui/material'
+import { Box, Button, MenuItem, Select, Slider, Toolbar, Typography } from '@mui/material'
 
 export default function ProductMenu({
 	handleShowAll,

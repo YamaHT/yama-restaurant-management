@@ -12,16 +12,16 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
-import { useEffect, useState, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { calculateAverageRating } from '../ProductList/ProductList'
 import { products } from '../ProductMockData/ProductMockData'
 
 // Import Swiper components
-import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import { Navigation } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
 
 export default function ProductDetail() {
 	const { id } = useParams()
@@ -153,10 +153,9 @@ export default function ProductDetail() {
 					{recommendedProducts.length > 0 && (
 						<Box mt={4}>
 							<Typography variant='h6' fontWeight='bold' color='textPrimary' gutterBottom>
-								Recommended Products 
+								Recommended Products
 							</Typography>
 
-							{/* Swiper with dynamic navigation */}
 							<Box sx={{ position: 'relative' }}>
 								<Swiper
 									modules={[Navigation]}
@@ -215,7 +214,6 @@ export default function ProductDetail() {
 									))}
 								</Swiper>
 
-								{/* Dynamic Navigation Buttons */}
 								<Button
 									ref={prevRef}
 									sx={{
@@ -251,7 +249,6 @@ export default function ProductDetail() {
 					)}
 				</Grid>
 
-				{/* Right Section (Product Details and Reviews) */}
 				<Grid item xs={12} lg={5}>
 					<Typography variant='h4' fontWeight='bold' color='textPrimary'>
 						{product.name}
@@ -265,7 +262,6 @@ export default function ProductDetail() {
 					<Stack direction='row' spacing={1} my={2}>
 						<Chip label='Bét Choi' variant='outlined' />
 						<Chip label='Giga Chát' variant='outlined' />
-						{/* Dynamically display category */}
 						<Chip label={product.category} variant='outlined' />
 					</Stack>
 

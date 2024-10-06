@@ -1,7 +1,6 @@
 import TableMenu from '@/components/TableMenu/TableMenu'
 import {
 	Box,
-	Button,
 	CssBaseline,
 	Divider,
 	Grid,
@@ -11,8 +10,8 @@ import {
 	Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom' // Correct hook for navigation
-import { tables } from '../TableMockData/TableMockData' // Import mock data
+import { useNavigate } from 'react-router-dom'
+import { tables } from '../TableMockData/TableMockData'
 
 const drawerWidth = 240
 

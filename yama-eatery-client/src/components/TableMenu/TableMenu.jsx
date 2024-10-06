@@ -1,5 +1,4 @@
-import React from 'react'
-import { Box, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material'
+import { Box, Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
 export default function TableMenu({
 	filterOption,
@@ -23,7 +22,6 @@ export default function TableMenu({
 
 	return (
 		<Box sx={{ mt: 8, p: 3, width: 240 }}>
-			{/* Table Type Filter */}
 			<FormControl fullWidth sx={{ mb: 3, mt: 1 }}>
 				<InputLabel sx={{ ml: 1, backgroundColor: 'rgba(236, 236, 236, 1)', paddingRight: '4px' }}>
 					Table Type
@@ -38,7 +36,6 @@ export default function TableMenu({
 				</Select>
 			</FormControl>
 
-			{/* Sorting Options */}
 			<FormControl fullWidth sx={{ mb: 3, mt: 1 }}>
 				<InputLabel sx={{ ml: 1, backgroundColor: 'rgba(236, 236, 236, 1)', paddingRight: '4px' }}>
 					Sort By
@@ -52,7 +49,6 @@ export default function TableMenu({
 				</Select>
 			</FormControl>
 
-			{/* Reset Filters Button */}
 			<Button variant='outlined' color='primary' fullWidth onClick={handleShowAll}>
 				Reset Filters
 			</Button>
