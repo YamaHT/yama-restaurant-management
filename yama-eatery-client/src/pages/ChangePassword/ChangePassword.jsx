@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 // Import thư viện React và sử dụng hook useState để quản lý trạng thái dữ liệu
 import { Button, Box, Typography, Paper, TextField, IconButton, InputAdornment } from '@mui/material';
 // Import các thành phần của MUI (Material-UI) để tạo UI
@@ -15,9 +15,10 @@ export default function ChangePassword() {
   const [showOldPassword, setShowOldPassword] = useState(false); // False là ẩn mật khẩu cũ, True là hiển thị
   const [showNewPassword, setShowNewPassword] = useState(false); // False là ẩn mật khẩu mới, True là hiển thị
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // False là ẩn xác nhận mật khẩu, True là hiển thị
+  // const [oldPasswordError, setOldPasswordError] = useState('');
   const [newPasswordError, setNewPasswordError] = useState('');
-  const [newConfirmErorr, setNewConfirmError] = useState('');
-
+  // const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  
   const validateNewPassword = (password) => {{
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!*()]).{8,}$/; // Regex kiểm tra mật khẩu
     if (!passwordRegex.test(newPassword)) { //Hàm test dùng để kiểm tra xem trường newPassword có khớp với hàm biểu thức chính quy "passwordRegex" hay không
