@@ -9,7 +9,6 @@ import {
 	tableCellClasses,
 	TableHead,
 	TableRow,
-	Typography,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { weatherService } from '../services/weatherServices'

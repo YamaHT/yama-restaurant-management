@@ -1,9 +1,14 @@
+import CrudManagement from "@/pages/Crud Management/CrudManagement";
+import ProductDetail from "@/pages/ProductDetail/ProductDetail";
+import ProductList from "@/pages/ProductList/ProductList";
 import WeatherList from "@/pages/WeatherList";
-import HomePage from "@/pages/Home";
 
 const publicRoutes = [
-  { path: "/", component: HomePage },
+  { path: "/", component: ProductList },
   { path: "/weather", component: WeatherList },
+  { path: "/Product/Detail/:id", component: ProductDetail },
 ];
 
-export { publicRoutes };
+
+export { publicRoutes }
+
