@@ -5,22 +5,17 @@ import {
   Typography,
   Divider,
   Rating,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Pagination,
   TextField,
-  createTheme,
-  Stack,
   Button,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Pagination,
+  Stack,
+  createTheme,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // Corrected import
 
 const theme = createTheme({
   palette: {
@@ -40,7 +35,7 @@ const theme = createTheme({
 });
 
 const StyledDivider = styled(Divider)(({ theme }) => ({
-  margin: '16px 0',
+  margin: '2% 0',
   backgroundColor: theme.palette.divider,
 }));
 
@@ -52,21 +47,15 @@ const StyledRating = styled(Rating)(({ theme }) => ({
 
 const ReviewItem = ({ product, message, rating }) => {
   return (
-    <Grid2 container columns={12} columnSpacing={2} alignItems="center">
-      <Grid2 item xs={12} sm={3}>
-        <Typography variant="subtitle1" fontWeight="bold">
-          {product}
-        </Typography>
-      </Grid2>
-      <Grid2 item xs={12} sm={6}>
-        <Typography variant="body2" color="text.secondary">
-          {message}
-        </Typography>
-      </Grid2>
-      <Grid2 item xs={12} sm={3}>
-        <StyledRating value={rating} readOnly />
-      </Grid2>
-    </Grid2>
+    <Box sx={{ padding: 2 }}>
+      <Typography variant="subtitle1" fontWeight="bold">
+        {product}
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        {message}
+      </Typography>
+      <StyledRating value={rating} readOnly />
+    </Box>
   );
 };
 
@@ -74,20 +63,11 @@ const FeedbackHistory = () => {
   const [reviewType, setReviewType] = React.useState('All reviews');
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = React.useState('');
-  const [drawerOpen, setDrawerOpen] = React.useState(false); // State for Drawer
   const reviewsPerPage = 7;
-
-  const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-    setDrawerOpen(open);
-  };
 
   const handleReviewTypeChange = (type) => {
     setReviewType(type);
     setCurrentPage(1);
-    setDrawerOpen(false); // Close drawer after selection
   };
 
   const handleSearchChange = (event) => {
@@ -101,51 +81,36 @@ const FeedbackHistory = () => {
 
   const reviews = [
     {
+      UserId: 1,
+      ProductId: 101,
       product: 'Apple iMac 27", M2 Max CPU 1TB HDD, Retina 5K',
       message: "It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.",
       rating: 5,
     },
     {
+      UserId: 2,
+      ProductId: 102,
       product: 'iPad Pro 13-Inch (M4): XDR Display, 512GB',
       message: "Elegant look, exceptional keyboard, and well-matched accessories. Lightning-quick speed.",
       rating: 4,
     },
     {
+      UserId: 3,
+      ProductId: 103,
       product: 'PlayStation®5 Console – 1TB, PRO Controller',
       message: "It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.",
       rating: 3,
     },
     {
+      UserId: 4,
+      ProductId: 104,
       product: 'Apple Watch SE [GPS 40mm], Smartwatch',
       message: "The DualSense controller enhances gameplay with immersive feedback, making it a must-have.",
       rating: 5,
     },
     {
-      product: 'Apple MacBook PRO Laptop with M2 chip',
-      message: "Elegant and refined, with well-chosen accessories. Quick response, durable battery.",
-      rating: 2,
-    },
-    {
-      product: 'Apple iMac 27", M2 Max CPU 1TB HDD, Retina 5K',
-      message: "It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.",
-      rating: 5,
-    },
-    {
-      product: 'iPad Pro 13-Inch (M4): XDR Display, 512GB',
-      message: "Elegant look, exceptional keyboard, and well-matched accessories. Lightning-quick speed.",
-      rating: 4,
-    },
-    {
-      product: 'PlayStation®5 Console – 1TB, PRO Controller',
-      message: "It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.",
-      rating: 3,
-    },
-    {
-      product: 'Apple Watch SE [GPS 40mm], Smartwatch',
-      message: "The DualSense controller enhances gameplay with immersive feedback, making it a must-have.",
-      rating: 5,
-    },
-    {
+      UserId: 5,
+      ProductId: 105,
       product: 'Apple MacBook PRO Laptop with M2 chip',
       message: "Elegant and refined, with well-chosen accessories. Quick response, durable battery.",
       rating: 2,
@@ -169,7 +134,7 @@ const FeedbackHistory = () => {
 
   return (
     <Box sx={{ padding: 4, backgroundColor: theme.palette.background.default,
-      width: '1420px', margin: '60px',
+      width: '100%', margin: '60px',
       padding: '20px',
       boxShadow: 3,
       borderRadius: '8px',
@@ -178,7 +143,7 @@ const FeedbackHistory = () => {
       <Container maxWidth="lg">
         <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" sx={{ marginBottom: 3 }}>
           <Typography variant="h5" fontWeight="semibold">
-            My reviews
+            Header
           </Typography>
           <TextField
             sx={{ width: '300px' }}
@@ -191,11 +156,23 @@ const FeedbackHistory = () => {
         <StyledDivider />
 
         <Box sx={{ display: 'flex', gap: 3 }}>
-          {/* Left column: Drawer toggle button */}
+          {/* Left column: Accordion for selecting review types */}
           <Box sx={{ width: '250px' }}>
-            <Button variant="contained" onClick={toggleDrawer(true)}>
-              Select review types
-            </Button>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>Review Types</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Stack spacing={1}>
+                  <Button variant="text" onClick={() => handleReviewTypeChange('All reviews')}>All Reviews</Button>
+                  <Button variant="text" onClick={() => handleReviewTypeChange('5')}>5 Stars</Button>
+                  <Button variant="text" onClick={() => handleReviewTypeChange('4')}>4 Stars</Button>
+                  <Button variant="text" onClick={() => handleReviewTypeChange('3')}>3 Stars</Button>
+                  <Button variant="text" onClick={() => handleReviewTypeChange('2')}>2 Stars</Button>
+                  <Button variant="text" onClick={() => handleReviewTypeChange('1')}>1 Star</Button>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
           </Box>
 
           {/* Right column: Reviews */}
@@ -226,33 +203,6 @@ const FeedbackHistory = () => {
             />
           </Box>
         </Box>
-
-        {/* Drawer for selecting review types */}
-        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-          <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
-            <List>
-
-              <ListItemButton onClick={() => handleReviewTypeChange('All reviews')}>
-                <ListItemText primary="All reviews" />
-              </ListItemButton>
-              <ListItemButton onClick={() => handleReviewTypeChange('5')}>
-                <ListItemText primary="5 stars" />
-              </ListItemButton>
-              <ListItemButton onClick={() => handleReviewTypeChange('4')}>
-                <ListItemText primary="4 stars" />
-              </ListItemButton>
-              <ListItemButton onClick={() => handleReviewTypeChange('3')}>
-                <ListItemText primary="3 stars" />
-              </ListItemButton>
-              <ListItemButton onClick={() => handleReviewTypeChange('2')}>
-                <ListItemText primary="2 stars" />
-              </ListItemButton>
-              <ListItemButton onClick={() => handleReviewTypeChange('1')}>
-                <ListItemText primary="1 star" />
-              </ListItemButton>
-            </List>
-          </Box>
-        </Drawer>
       </Container>
     </Box>
   );

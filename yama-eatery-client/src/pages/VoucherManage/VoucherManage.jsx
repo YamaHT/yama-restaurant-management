@@ -1,156 +1,251 @@
-import React, { useState } from 'react';
+import { Add, Delete, Edit, FileUpload, Menu } from '@mui/icons-material'
 import {
+    Avatar,
+    Button,
+    Chip,
+    MenuItem,
+    Paper,
+    Stack,
+    Tab,
     Table,
     TableBody,
     TableCell,
-    TableContainer,
-    TableHead,
+    TablePagination,
     TableRow,
-    Paper,
-    Button,
-    Box,
     Typography,
-    Avatar,
-    IconButton,
-    Stack,
-} from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import StarIcon from '@mui/icons-material/Star';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+} from '@mui/material'
+import React, { useMemo, useState } from 'react'
+import logo from '@/assets/img/general/logo192.png'
+import VoucherAdd from './VoucherAdd'
+import CrudTableHead from '@/components/Crud Components/CrudTableHead'
+import CrudTabs from '@/components/Crud Components/CrudTabs'
+import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
+import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
+import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
+
+
+
+const headCells = [
+    {
+        name: 'Voucher Name',
+        orderData: 'name',
+        numeric: false,
+        widthPercent: 30,
+    },
+    {
+        name: 'Expiration Date',
+        orderData: 'expiredDate',
+        numeric: false,
+        widthPercent: 20,
+    },
+    {
+        name: 'Reduced Percent',
+        orderData: 'reducedPercent',
+        numeric: true,
+        widthPercent: 10,
+    },
+    {
+        name: 'Max Reducing (VND)',
+        orderData: 'maxReducing',
+        numeric: true,
+        widthPercent: 20,
+    },
+    {
+        name: 'Status',
+        orderData: 'quantity',
+        numeric: false,
+        widthPercent: 15,
+    },
+    {
+        name: '',
+        numeric: false,
+        widthPercent: 5,
+    },
+]
+
+function createData(id, image, name, expiredDate, reducedPercent, maxReducing, quantity) {
+    return {
+        id,
+        image,
+        name,
+        expiredDate,
+        reducedPercent,
+        maxReducing,
+        quantity,
+    }
+}
+
+const rows = [
+    createData(1, 'images/voucher1.jpg', 'Black Friday Voucher', '2024-11-25', 50, 200000, 100),
+    createData(2, 'images/voucher2.jpg', 'Cyber Monday Voucher', '2024-12-02', 30, 150000, 200),
+    createData(3, 'images/voucher3.jpg', 'Christmas Voucher', '2024-12-25', 40, 300000, 50),
+]
+
+// Helper functions for sorting
+function descendingComparator(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+        return -1
+    }
+    if (b[orderBy] > a[orderBy]) {
+        return 1
+    }
+    return 0
+}
+
+function getComparator(order, orderBy) {
+    return order === 'desc'
+        ? (a, b) => descendingComparator(a, b, orderBy)
+        : (a, b) => -descendingComparator(a, b, orderBy)
+}
 
 const VoucherManage = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 4;
+    const [order, setOrder] = useState('asc')
+    const [orderBy, setOrderBy] = useState('name')
+    const [page, setPage] = useState(0)
+    const rowsPerPage = 10
 
-    const rows = [
-        { id: 1, image: 'images/voucher1.jpg', name: 'Voucher Black Friday', description: 'Giảm giá Black Friday lên đến 50%', expiredDate: '2024-11-25', reducedPercent: 50, maxReducing: 200000, quantity: 100 },
-        { id: 2, image: 'images/voucher2.jpg', name: 'Voucher Cyber Monday', description: 'Ưu đãi Cyber Monday với giảm giá 30%', expiredDate: '2024-12-02', reducedPercent: 30, maxReducing: 150000, quantity: 200 },
-        { id: 3, image: 'images/voucher3.jpg', name: 'Voucher Giáng Sinh', description: 'Giảm giá đặc biệt cho mùa lễ Giáng Sinh', expiredDate: '2024-12-25', reducedPercent: 40, maxReducing: 300000, quantity: 50 },
-        { id: 4, image: 'images/voucher4.jpg', name: 'Voucher Mùa Xuân', description: 'Chương trình khuyến mãi mùa xuân, giảm giá 20%', expiredDate: '2024-04-10', reducedPercent: 20, maxReducing: 100000, quantity: 150 },
-        { id: 5, image: 'images/voucher5.jpg', name: 'Voucher Khai Trương', description: 'Giảm giá 10% trong sự kiện khai trương cửa hàng mới', expiredDate: '2024-10-15', reducedPercent: 10, maxReducing: 50000, quantity: 300 },
-        { id: 1, image: 'images/voucher1.jpg', name: 'Voucher Black Friday', description: 'Giảm giá Black Friday lên đến 50%', expiredDate: '2024-11-25', reducedPercent: 50, maxReducing: 200000, quantity: 100 },
-        { id: 2, image: 'images/voucher2.jpg', name: 'Voucher Cyber Monday', description: 'Ưu đãi Cyber Monday với giảm giá 30%', expiredDate: '2024-12-02', reducedPercent: 30, maxReducing: 150000, quantity: 200 },
-        { id: 3, image: 'images/voucher3.jpg', name: 'Voucher Giáng Sinh', description: 'Giảm giá đặc biệt cho mùa lễ Giáng Sinh', expiredDate: '2024-12-25', reducedPercent: 40, maxReducing: 300000, quantity: 50 },
-        { id: 4, image: 'images/voucher4.jpg', name: 'Voucher Mùa Xuân', description: 'Chương trình khuyến mãi mùa xuân, giảm giá 20%', expiredDate: '2024-04-10', reducedPercent: 20, maxReducing: 100000, quantity: 150 },
-        { id: 5, image: 'images/voucher5.jpg', name: 'Voucher Khai Trương', description: 'Giảm giá 10% trong sự kiện khai trương cửa hàng mới', expiredDate: '2024-10-15', reducedPercent: 10, maxReducing: 50000, quantity: 300 },
-        
-    ];
+    const [openAddPage, setOpenAddPage] = useState(false)
 
-    const totalItems = rows.filter(row => row.name.toLowerCase().includes(searchTerm.toLowerCase())).length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const handleRequestSort = (event, property) => {
+        const isAsc = orderBy === property && order === 'asc'
+        setOrder(isAsc ? 'desc' : 'asc')
+        setOrderBy(property)
+    }
 
-    const handlePageChange = (page) => {
-        if (page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
-        }
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage)
+    }
+
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
+
+    const visibleRows = useMemo(
+        () =>
+            [...rows]
+                .sort(getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+        [order, orderBy, page]
+    )
+    // Add state to manage the selected percentage filter
+    const [reducedPercentFilter, setReducedPercentFilter] = useState('All');
+
+    // Function to handle filter changes
+    const handleReducedPercentFilterChange = (event) => {
+        setReducedPercentFilter(event.target.value);
     };
+    // Filtering logic based on reduced percentage
+    const filteredRows = useMemo(() => {
+        if (reducedPercentFilter === 'All') {
+            return rows; // No filtering, show all
+        } else if (reducedPercentFilter === 'Less than 20%') {
+            return rows.filter(row => row.reducedPercent < 20);
+        } else if (reducedPercentFilter === '20% - 40%') {
+            return rows.filter(row => row.reducedPercent >= 20 && row.reducedPercent <= 40);
+        } else if (reducedPercentFilter === 'More than 40%') {
+            return rows.filter(row => row.reducedPercent > 40);
+        }
+    }, [rows, reducedPercentFilter]);
 
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentRows = rows.filter(row => row.name.toLowerCase().includes(searchTerm.toLowerCase())).slice(startIndex, startIndex + itemsPerPage);
-    
+
     return (
-        <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} m={'2% 2% 2%'} sx={{
-            padding: '1% 2%',
-            boxShadow: 3,
-            borderRadius: '8px',
-            backgroundColor: '#ffffff',
-        }}>
-            <Stack direction={'row'} justifyContent={'space-between'} paddingBottom={'30px'}>
-                <Typography variant="h6" gutterBottom >
-                    All Vouchers: {totalItems} 
+        <Paper
+            sx={{
+                width: '1200px',
+                padding: '1%',
+                bgcolor: '#f0f2f5',
+                zIndex: -1,
+            }}
+        >
+            <Stack marginBottom={1} spacing={2}>
+                <Typography variant="h5" fontWeight={'bold'}>
+                    Voucher Management
                 </Typography>
-                <Box display={'flex'}>
-                    <Button variant="contained" color="primary" sx={{ width: '200px', marginRight: '20px' }} startIcon={<AddCircleIcon />}>
-                        Add new voucher
-                    </Button>
-                    <Button variant="outlined" startIcon={<SaveAltIcon />}>
-                        Export
-                    </Button>
-                </Box>
-            </Stack>
 
-            <TableContainer
-                component={Paper}
-                sx={{
-                    padding: '10px',
-                    boxShadow: 3,
-                    borderRadius: '8px',
-                    backgroundColor: '#ffffff',
-                }}
-            >
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ padding: '10px' }}>Image</TableCell>
-                            <TableCell sx={{ padding: '10px' }}>Name</TableCell>
-                            <TableCell sx={{ padding: '10px' }}>Description</TableCell>
-                            <TableCell sx={{ padding: '10px' }}>Expired Date</TableCell>
-                            <TableCell sx={{ padding: '10px' }}>Reduced Percent (%)</TableCell>
-                            <TableCell sx={{ padding: '10px' }}>Max Reducing ($)</TableCell>
-                            <TableCell sx={{ padding: '10px' }}>Quantity</TableCell>
-                            <TableCell sx={{ padding: '10px' }}>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
+                <Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
+                    <CrudSearchBar
+                        listItem={['Black Friday', 'Cyber Monday', 'Christmas']}
+                        widthPercent={50}
+                        handleChange={() => { }}
+                    />
+                    <React.Fragment>
+                        <Button variant="contained" onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
+                            Add New Voucher
+                        </Button>
+                        {openAddPage && (
+                            <VoucherAdd open={openAddPage} handleClose={() => setOpenAddPage(false)} />
+                        )}
+                    </React.Fragment>
+                </Stack>
+
+                <CrudTabs value={0} handleChange={() => { }}>
+                    <Tab icon={<Menu />} iconPosition="start" label="All Vouchers" />
+                </CrudTabs>
+                <Typography variant="body1">Filter by Reduced Percent:</Typography>
+                
+            </Stack>
+            
+
+            <Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
+                <Table stickyHeader sx={{ minWidth: '750px' }}>
+                    <CrudTableHead order={order} orderBy={orderBy} headCells={headCells} onRequestSort={handleRequestSort} />
                     <TableBody>
-                        {currentRows.map((row) => (
-                            <TableRow key={row.id}>
-                                <TableCell sx={{ padding: '10px' }}>
-                                    <Avatar sx={{ width: 56, height: 56 }} src={row.image} alt={row.name} />
+                        {visibleRows.map((row) => (
+                            <TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
+                                <TableCell>
+                                    <Stack direction={'row'} spacing={2} alignItems={'center'}>
+                                        <Avatar src={row.image} />
+                                        <p>{row.name}</p>
+                                    </Stack>
                                 </TableCell>
-                                <TableCell sx={{ padding: '10px' }}>{row.name}</TableCell>
-                                <TableCell sx={{ padding: '10px' }}>{row.description}</TableCell>
-                                <TableCell sx={{ padding: '10px' }}>{row.expiredDate}</TableCell>
-                                <TableCell sx={{ padding: '10px' }}>{row.reducedPercent}</TableCell>
-                                <TableCell sx={{ padding: '10px' }}>{row.maxReducing}</TableCell>
-                                <TableCell sx={{ padding: '10px' }}>{row.quantity}</TableCell>
-                                <TableCell sx={{ padding: '10px' }}>
-                                    <IconButton color="primary" sx={{ mr: 1 }}>
-                                        <EditIcon />
-                                    </IconButton>
-                                    <IconButton color="secondary">
-                                        <DeleteIcon />
-                                    </IconButton>
+                                <TableCell>{row.expiredDate}</TableCell>
+                                <TableCell align="right">{row.reducedPercent}%</TableCell>
+                                <TableCell align="right">{row.maxReducing.toLocaleString()} VND</TableCell>
+                                <TableCell>
+                                    {row.quantity > 0 ? (
+                                        <Chip label="Available" color="success" />
+                                    ) : (
+                                        <Chip label="Out of Stock" color="error" />
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    <CrudMenuOptions>
+                                        <MenuItem>
+                                            <Button startIcon={<Edit />}>Update</Button>
+                                        </MenuItem>
+                                        <MenuItem>
+                                            <CrudConfirmation
+                                                title="Delete Confirmation"
+                                                description="Are you sure you want to delete this voucher?"
+                                                handleConfirm={() => alert('Deleted')}
+                                            >
+                                                {(handleOpen) => (
+                                                    <Button onClick={handleOpen} startIcon={<Delete />}>
+                                                        Remove
+                                                    </Button>
+                                                )}
+                                            </CrudConfirmation>
+                                        </MenuItem>
+                                    </CrudMenuOptions>
                                 </TableCell>
                             </TableRow>
                         ))}
+                        {emptyRows > 0 && (
+                            <TableRow>
+                                <TableCell colSpan={6} />
+                            </TableRow>
+                        )}
                     </TableBody>
                 </Table>
-            </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[10]}
+                    component={'div'}
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                />
+            </Paper>
+        </Paper>
+    )
+}
 
-            {/* Pagination */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                <Typography variant="body2">
-                    Showing {currentPage} of {totalPages}
-                </Typography>
-                <Box sx={{
-                    boxShadow: 3,
-                    borderRadius: '7px',
-                    backgroundColor: '#ffffff',
-                }}>
-                    <Button size='small' onClick={() => handlePageChange(1)} disabled={currentPage === 1} sx={{ borderRadius: 0, borderRight: '1px solid #ccc'}}>
-                        Min 
-                    </Button>
-                    <Button size='small' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} sx={{ borderRadius: 0, borderRight: '1px solid #ccc' }}>
-                        Prev
-                    </Button>
-                    <Button size='small' sx={{ borderRadius: 0, borderRight: '1px solid #ccc'  }}>
-                        {currentPage}
-                    </Button>
-                    <Button size='small' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} sx={{ borderRadius: 0, borderRight: '1px solid #ccc'  }}>
-                        Next
-                    </Button>
-                    <Button size='small' onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} sx={{ borderRadius: 0, borderRight: '1px solid #ccc'}}>
-                        Max 
-                    </Button>
-                </Box>
-            </Box>
-        </Box>
-    );
-};
-
-export default VoucherManage;
+export default VoucherManage
