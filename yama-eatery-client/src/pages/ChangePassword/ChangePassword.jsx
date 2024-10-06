@@ -6,7 +6,6 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 // Import các biểu tượng để giúp bật/tắt hiển thị mật khẩu
 
 export default function ChangePassword() {
-  // Khởi tạo các state để lưu giá trị của các trường mật khẩu
   const [oldPassword, setOldPassword] = useState(''); // Trạng thái lưu mật khẩu cũ
   const [newPassword, setNewPassword] = useState(''); // Trạng thái lưu mật khẩu mới
   const [confirmPassword, setConfirmPassword] = useState(''); // Trạng thái lưu xác nhận mật khẩu
