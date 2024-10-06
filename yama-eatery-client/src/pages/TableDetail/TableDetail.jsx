@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Stack, Button, TextField, Select, MenuItem, Typography } from '@mui/material'
+import { Box, Stack, Button, TextField, Select, MenuItem, Typography, Card } from '@mui/material'
 import { tables } from '../TableMockData/TableMockData' // Import table data
 import { useParams, useNavigate } from 'react-router-dom'
 
@@ -103,35 +103,39 @@ export default function TableDetail() {
 				<Typography variant='subtitle1'>Floor {table.floor}</Typography>
 			</Stack>
 
-			{/* Image Carousel */}
-			<Stack direction='row' justifyContent='center' alignItems='center' spacing={2} mb={2}>
-				<Button variant='outlined' onClick={() => handleImageChange('prev')}>
-					{'<'}
-				</Button>
-				<Box
-					sx={{
-						width: '100%',
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}
-				>
+			<Card
+				sx={{
+					minHeight: 500,
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					justifyContent: 'center',
+					background: 'linear-gradient(to top right, #F8C794, #FFE0B5, #FFF2D7)',
+					p: 4,
+				}}
+			>
+				<Stack direction='row' justifyContent='center' alignItems='center' spacing={2} mb={2}>
+					<Button variant='outlined' onClick={() => handleImageChange('prev')}>
+						{'<'}
+					</Button>
+
 					<Box
 						component='img'
 						src={table.img[selectedImageIndex]}
 						alt={`Table Image ${selectedImageIndex + 1}`}
 						sx={{
-							width: '80%',
-							height: 'auto',
+							width: '1000px', // Explicit width
+							height: '562.5px', // Maintain 16:9 aspect ratio
 							borderRadius: '10px',
 							objectFit: 'cover',
 						}}
 					/>
-				</Box>
-				<Button variant='outlined' onClick={() => handleImageChange('next')}>
-					{'>'}
-				</Button>
-			</Stack>
+
+					<Button variant='outlined' onClick={() => handleImageChange('next')}>
+						{'>'}
+					</Button>
+				</Stack>
+			</Card>
 
 			{/* Thumbnail Images */}
 			<Stack direction='row' justifyContent='center' mt={1}>
