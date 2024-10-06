@@ -153,7 +153,7 @@ export default function ProductDetail() {
 					{recommendedProducts.length > 0 && (
 						<Box mt={4}>
 							<Typography variant='h6' fontWeight='bold' color='textPrimary' gutterBottom>
-								Recommended Products
+								Recommended Products 
 							</Typography>
 
 							{/* Swiper with dynamic navigation */}
