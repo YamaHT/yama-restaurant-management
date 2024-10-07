@@ -7,9 +7,9 @@ import { tables } from '../TableMockData/TableMockData'
 import styles from './TableSlider.module.css'
 
 export default function TableDetail() {
-	const { id } = useParams() 
+	const { id } = useParams()
 	const table = tables.find((t) => t.id === parseInt(id))
-	const navigate = useNavigate() 
+	const navigate = useNavigate()
 
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 	const [formData, setFormData] = useState({
@@ -20,7 +20,7 @@ export default function TableDetail() {
 		dayPart: '',
 		note: '',
 	})
-	const [formErrors, setFormErrors] = useState({}) 
+	const [formErrors, setFormErrors] = useState({})
 	const slideRef = useRef(null)
 
 	const handleFormChange = (e) => {
@@ -53,9 +53,9 @@ export default function TableDetail() {
 			const currentTimeInVietnam = new Date(vietnamTime)
 			const currentHour = currentTimeInVietnam.getHours()
 			const dayParts = {
-				Morning: { start: 6, end: 12 }, // 6 AM to 12 PM
-				Afternoon: { start: 12, end: 18 }, // 12 PM to 6 PM
-				Evening: { start: 18, end: 24 }, // 6 PM to midnight
+				Morning: { start: 6, end: 12 },
+				Afternoon: { start: 12, end: 18 },
+				Evening: { start: 18, end: 24 },
 			}
 			const selectedPart = dayParts[formData.dayPart]
 			const isToday =
@@ -67,20 +67,20 @@ export default function TableDetail() {
 		}
 
 		setFormErrors(errors)
-		return Object.keys(errors).length === 0 // Return true if no errors
+		return Object.keys(errors).length === 0
 	}
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
 		if (validateForm()) {
 			console.log('Form submitted:', formData)
-			navigate('/confirmation') // Redirect to the confirmation page
+			navigate('/confirmation')
 		}
 	}
 
 	const handleThumbnailClick = (index) => {
 		setSelectedImageIndex(index)
-		slideRef.current.goTo(index) // Use goTo method to change the slide
+		slideRef.current.goTo(index)
 	}
 
 	if (!table) {
@@ -113,13 +113,12 @@ export default function TableDetail() {
 										alt='Table image'
 										style={{
 											backgroundImage: `url(${table.img[index]})`,
-											backgroundColor: '#f0f0f0', // Placeholder background color
+											backgroundColor: '#f0f0f0',
 											display: 'flex',
 											alignItems: 'center',
 											justifyContent: 'center',
 										}}
 									>
-										{/* Fallback for broken image */}
 										{table.img[index] ? null : (
 											<Typography variant='h6' color='textSecondary'>
 												Image not found
@@ -132,7 +131,6 @@ export default function TableDetail() {
 					</Slide>
 				</div>
 			</Card>
-
 			<Stack direction='row' justifyContent='center' mt={1}>
 				{table.img.map((img, index) => (
 					<Box
@@ -149,14 +147,13 @@ export default function TableDetail() {
 							objectFit: 'cover',
 						}}
 						onError={(e) => {
-							e.target.onerror = null 
+							e.target.onerror = null
 							e.target.src = 'path/to/placeholder-image.jpg'
 						}}
 						onClick={() => handleThumbnailClick(index)}
 					/>
 				))}
 			</Stack>
-
 			<Box
 				sx={{
 					marginTop: '20px',

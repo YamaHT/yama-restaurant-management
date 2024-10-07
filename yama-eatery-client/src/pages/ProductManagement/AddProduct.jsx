@@ -167,8 +167,8 @@ const AddProduct = ({ open, handleClose }) => {
 			endAdornment: (
 				<>
 					<input
-						accept="image/*"
-						type="file"
+						accept='image/*'
+						type='file'
 						multiple
 						hidden
 						ref={fileRef}
@@ -184,12 +184,8 @@ const AddProduct = ({ open, handleClose }) => {
 			<DialogTitle>Add New Product</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					<Stack
-						direction="row"
-						spacing={2}
-						style={{ flexWrap: 'wrap' }}
-					>
-						{imageBase64Array.length>0
+					<Stack direction='row' spacing={2} style={{ flexWrap: 'wrap' }}>
+						{imageBase64Array.length > 0
 							? imageBase64Array.map((base64, index) => (
 									<Box
 										key={index}
@@ -238,35 +234,32 @@ const AddProduct = ({ open, handleClose }) => {
 							}}
 							onClick={() => fileRef.current.click()}
 						>
-							<Add sx={{ fontSize: 50 }} /> 
+							<Add sx={{ fontSize: 50 }} />
 						</IconButton>
 					</Stack>
-
-					{/* Error message */}
-					{error && <Typography color="error">{error}</Typography>}
-
+					{error && <Typography color='error'>{error}</Typography>}
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['image'] = el)}
-						label="Images"
-						variant="filled"
-						name="image"
+						label='Images'
+						variant='filled'
+						name='image'
 						value={values.images.join(', ')}
 						slotProps={customInputImageProperties}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['name'] = el)}
-						label="Name"
-						name="name"
-						variant="filled"
+						label='Name'
+						name='name'
+						variant='filled'
 						value={values.name}
 						onChange={handleValueChange}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['price'] = el)}
-						label="Price"
-						name="price"
-						type="number"
-						variant="filled"
+						label='Price'
+						name='price'
+						type='number'
+						variant='filled'
 						value={values.price}
 						onChange={handleValueChange}
 					/>
@@ -274,9 +267,9 @@ const AddProduct = ({ open, handleClose }) => {
 						<ValidationTextField
 							ref={(el) => (fieldsRef.current['description'] = el)}
 							fullWidth
-							label="Description"
-							name="description"
-							variant="filled"
+							label='Description'
+							name='description'
+							variant='filled'
 							multiline
 							minRows={3}
 							value={values.description}
@@ -284,16 +277,16 @@ const AddProduct = ({ open, handleClose }) => {
 						/>
 						<Stack alignItems={'center'} padding={'0 1%'} spacing={1}>
 							<TextField
-								size="small"
-								variant="outlined"
-								label="(Optional)"
+								size='small'
+								variant='outlined'
+								label='(Optional)'
 								value={generatorOption}
 								onChange={(e) => setGeneratorOption(e.target.value)}
 							/>
 							<Button
 								fullWidth
-								variant="contained"
-								color="info"
+								variant='contained'
+								color='info'
 								onClick={handleDescriptionGenerator}
 							>
 								Auto Generate
@@ -302,8 +295,8 @@ const AddProduct = ({ open, handleClose }) => {
 					</Stack>
 					<ValidationSelect
 						ref={(el) => (fieldsRef.current['category'] = el)}
-						label="Category"
-						name="category"
+						label='Category'
+						name='category'
 						value={values.category}
 						onChange={handleValueChange}
 					>
@@ -320,10 +313,10 @@ const AddProduct = ({ open, handleClose }) => {
 					gap: 2,
 				}}
 			>
-				<Button onClick={handleClose} variant="outlined" color="inherit">
+				<Button onClick={handleClose} variant='outlined' color='inherit'>
 					Close
 				</Button>
-				<Button onClick={handleAddProduct} size="large" variant="contained" color="primary">
+				<Button onClick={handleAddProduct} size='large' variant='contained' color='primary'>
 					Add
 				</Button>
 			</DialogActions>
