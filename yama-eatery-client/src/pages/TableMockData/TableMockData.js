@@ -6,7 +6,7 @@ export const tables = [
         img: [
             'https://images.pexels.com/photos/276528/pexels-photo-276528.jpeg', // Wooden table
             'https://images.pexels.com/photos/2343469/pexels-photo-2343469.jpeg', // Small wooden table
-            'https://images.pexels.com/photos/2058118/pexels-photo-2058118.jpeg'  // Cozy table
+            'https://images.pexels.com/photos/4479385/pexels-photo-4479385.jpeg'  // Cozy table
         ],
     },
     {

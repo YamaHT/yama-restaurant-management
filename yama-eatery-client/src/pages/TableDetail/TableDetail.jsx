@@ -1,12 +1,15 @@
 import { Box, Button, Card, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { Slide } from 'react-slideshow-image'
+import 'react-slideshow-image/dist/styles.css'
 import { tables } from '../TableMockData/TableMockData'
+import styles from './TableSlider.module.css'
 
 export default function TableDetail() {
-	const { id } = useParams() // Get the table id from the URL
-	const table = tables.find((t) => t.id === parseInt(id)) // Find the table by id
-	const navigate = useNavigate() // Initialize useNavigate
+	const { id } = useParams()
+	const table = tables.find((t) => t.id === parseInt(id))
+	const navigate = useNavigate()
 
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 	const [formData, setFormData] = useState({
@@ -17,24 +20,16 @@ export default function TableDetail() {
 		dayPart: '',
 		note: '',
 	})
-	const [formErrors, setFormErrors] = useState({}) // State to track validation errors
-
-	const handleImageChange = (direction) => {
-		if (direction === 'next') {
-			setSelectedImageIndex((selectedImageIndex + 1) % table.img.length)
-		} else if (direction === 'prev') {
-			setSelectedImageIndex((selectedImageIndex - 1 + table.img.length) % table.img.length)
-		}
-	}
+	const [formErrors, setFormErrors] = useState({})
+	const slideRef = useRef(null)
 
 	const handleFormChange = (e) => {
 		const { name, value } = e.target
 		setFormData((prev) => ({ ...prev, [name]: value }))
 	}
+
 	const validateForm = () => {
 		let errors = {}
-
-		// Required field validations
 		if (!formData.firstName) errors.firstName = 'First name is required'
 		if (!formData.lastName) errors.lastName = 'Last name is required'
 		if (!formData.phone) {
@@ -42,53 +37,50 @@ export default function TableDetail() {
 		} else if (!/^\d{10}$/.test(formData.phone)) {
 			errors.phone = 'Phone number must be 10 digits'
 		}
-
-		// Date validation to prevent past dates
+		const currentDate = new Date()
 		if (!formData.date) {
 			errors.date = 'Date is required'
 		} else {
 			const selectedDate = new Date(formData.date)
-			const currentDate = new Date()
-
-			// Compare selected date with current date
 			if (selectedDate < currentDate.setHours(0, 0, 0, 0)) {
 				errors.date = 'Date cannot be in the past'
 			}
 		}
-
-		// Day Part validation based on Vietnam time
 		if (!formData.dayPart) {
 			errors.dayPart = 'Please select a time of day'
 		} else {
-			// Get current time in Vietnam (UTC+7)
 			const vietnamTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })
 			const currentTimeInVietnam = new Date(vietnamTime)
 			const currentHour = currentTimeInVietnam.getHours()
-
-			// Define time ranges for day parts
 			const dayParts = {
-				Morning: { start: 6, end: 12 }, // 6 AM to 12 PM
-				Afternoon: { start: 12, end: 18 }, // 12 PM to 6 PM
-				Evening: { start: 18, end: 24 }, // 6 PM to midnight
+				Morning: { start: 6, end: 12 },
+				Afternoon: { start: 12, end: 18 },
+				Evening: { start: 18, end: 24 },
 			}
-
-			// Check if the selected day part is valid for the current time
 			const selectedPart = dayParts[formData.dayPart]
-			if (selectedPart && (currentHour < selectedPart.start || currentHour >= selectedPart.end)) {
+			const isToday =
+				new Date(formData.date).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0)
+
+			if (isToday && selectedPart && currentHour >= selectedPart.start) {
 				errors.dayPart = `The selected ${formData.dayPart.toLowerCase()} time has passed in Vietnam`
 			}
 		}
 
 		setFormErrors(errors)
-		return Object.keys(errors).length === 0 // Return true if no errors
+		return Object.keys(errors).length === 0
 	}
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
 		if (validateForm()) {
 			console.log('Form submitted:', formData)
-			navigate('/confirmation') // Redirect to the confirmation page
+			navigate('/confirmation')
 		}
+	}
+
+	const handleThumbnailClick = (index) => {
+		setSelectedImageIndex(index)
+		slideRef.current.goTo(index)
 	}
 
 	if (!table) {
@@ -112,27 +104,33 @@ export default function TableDetail() {
 					p: 4,
 				}}
 			>
-				<Stack direction='row' justifyContent='center' alignItems='center' spacing={2} mb={2}>
-					<Button variant='outlined' onClick={() => handleImageChange('prev')}>
-						{'<'}
-					</Button>
-					<Box
-						component='img'
-						src={table.img[selectedImageIndex]}
-						alt={`Table Image ${selectedImageIndex + 1}`}
-						sx={{
-							width: '1000px', // Explicit width
-							height: '562.5px', // Maintain 16:9 aspect ratio
-							borderRadius: '10px',
-							objectFit: 'cover',
-						}}
-					/>
-					<Button variant='outlined' onClick={() => handleImageChange('next')}>
-						{'>'}
-					</Button>
-				</Stack>
+				<div className={styles.container}>
+					<Slide easing='ease' duration={7000} ref={slideRef}>
+						{table.img.map((slide, index) => {
+							return (
+								<div className={styles.slide} key={slide}>
+									<div
+										alt='Table image'
+										style={{
+											backgroundImage: `url(${table.img[index]})`,
+											backgroundColor: '#f0f0f0',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+										}}
+									>
+										{table.img[index] ? null : (
+											<Typography variant='h6' color='textSecondary'>
+												Image not found
+											</Typography>
+										)}
+									</div>
+								</div>
+							)
+						})}
+					</Slide>
+				</div>
 			</Card>
-			{/* Thumbnail Images */}
 			<Stack direction='row' justifyContent='center' mt={1}>
 				{table.img.map((img, index) => (
 					<Box
@@ -148,11 +146,14 @@ export default function TableDetail() {
 							cursor: 'pointer',
 							objectFit: 'cover',
 						}}
-						onClick={() => setSelectedImageIndex(index)}
+						onError={(e) => {
+							e.target.onerror = null
+							e.target.src = 'path/to/placeholder-image.jpg'
+						}}
+						onClick={() => handleThumbnailClick(index)}
 					/>
 				))}
 			</Stack>
-			{/* Booking Information */}
 			<Box
 				sx={{
 					marginTop: '20px',
@@ -236,7 +237,6 @@ export default function TableDetail() {
 						onChange={handleFormChange}
 						sx={{ mb: 2 }}
 					/>
-					{/* Pricing Information */}
 					<Stack direction='row' justifyContent='space-between' mb={2}>
 						<Typography>Total Reserve: ${table.price || 1000}</Typography>
 						<Typography>Deposit: ${table.deposit || 100}</Typography>
