@@ -11,7 +11,6 @@ import {
 	DialogTitle,
 	IconButton,
 	MenuItem,
-	Skeleton,
 	Stack,
 	TextField,
 	Typography,
@@ -19,7 +18,7 @@ import {
 
 import { useRef, useState } from 'react'
 
-const AddProduct = ({ open, handleClose }) => {
+const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
 	const [imageBase64Array, setImageBase64Array] = useState([])
@@ -91,7 +90,7 @@ const AddProduct = ({ open, handleClose }) => {
 				values.name,
 				generatorOption
 			)
-			if (descriptionGenerated !== 404) {
+			if (descriptionGenerated != 404) {
 				setValues((prev) => ({
 					...prev,
 					description: descriptionGenerated.trim(),
@@ -102,7 +101,7 @@ const AddProduct = ({ open, handleClose }) => {
 		}
 	}
 
-	const handleAddProduct = async () => {
+	const handleAdd = () => {
 		let isValid = true
 
 		Object.keys(fieldsRef.current).forEach((key) => {
@@ -112,15 +111,19 @@ const AddProduct = ({ open, handleClose }) => {
 		})
 
 		if (isValid) {
-			const productData = {
+			const newProduct = {
+				id: Date.now(), // Simple unique ID generation
 				images: values.images,
+				imageBase64Array: imageBase64Array,
 				name: values.name,
 				price: parseFloat(values.price),
 				description: values.description,
 				category: values.category,
+				quantity: 0, // Default quantity
+				isDeleted: false, // Default status
 			}
 
-			console.log(productData)
+			handleAddProduct(newProduct)
 			handleClose()
 		}
 	}
@@ -184,7 +187,7 @@ const AddProduct = ({ open, handleClose }) => {
 			<DialogTitle>Add New Product</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					<Stack direction='row' spacing={2} style={{ flexWrap: 'wrap' }}>
+					<Stack direction='row' style={{ flexWrap: 'wrap' }} gap={2}>
 						{imageBase64Array.length > 0
 							? imageBase64Array.map((base64, index) => (
 									<Box
@@ -224,7 +227,7 @@ const AddProduct = ({ open, handleClose }) => {
 							: null}
 						<IconButton
 							sx={{
-								width: 175,
+								width: 160,
 								height: 130,
 								display: 'flex',
 								justifyContent: 'center',
@@ -300,9 +303,10 @@ const AddProduct = ({ open, handleClose }) => {
 						value={values.category}
 						onChange={handleValueChange}
 					>
-						<MenuItem value={1}>Category 1</MenuItem>
-						<MenuItem value={2}>Category 2</MenuItem>
-						<MenuItem value={3}>Category 3</MenuItem>
+						<MenuItem value='Food'>Food</MenuItem>
+						<MenuItem value='Drink'>Drink</MenuItem>
+						<MenuItem value='Dessert'>Dessert</MenuItem>
+						<MenuItem value='Snack'>Snack</MenuItem>
 					</ValidationSelect>
 				</Stack>
 			</DialogContent>
@@ -316,7 +320,7 @@ const AddProduct = ({ open, handleClose }) => {
 				<Button onClick={handleClose} variant='outlined' color='inherit'>
 					Close
 				</Button>
-				<Button onClick={handleAddProduct} size='large' variant='contained' color='primary'>
+				<Button onClick={handleAdd} size='large' variant='contained' color='primary'>
 					Add
 				</Button>
 			</DialogActions>

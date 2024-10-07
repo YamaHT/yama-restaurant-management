@@ -30,7 +30,7 @@ import {
 	Typography,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-
+import UpdateProduct from './UpdateProduct'
 import AddProduct from './AddProduct'
 
 const headCells = [
@@ -83,7 +83,7 @@ function createData(id, image, name, category, price, quantity, isDeleted) {
 	}
 }
 
-const rows = [
+const initialRows = [
 	createData(
 		1,
 		'https://readymadeui.com/images/product2.webp',
@@ -145,11 +145,15 @@ const ProductManagement = () => {
 	const [orderBy, setOrderBy] = useState('name')
 	const [page, setPage] = useState(0)
 	const [categoryTab, setCategoryTab] = useState(0)
-	const [searchName, setSearchName] = useState(null)
+	const [searchName, setSearchName] = useState('')
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 
 	const [openAddPage, setOpenAddPage] = useState(false)
-	const [filteredRows, setFilteredRows] = useState(rows)
+	const [openUpdatePage, setOpenUpdatePage] = useState(false)
+	const [selectedProduct, setSelectedProduct] = useState(null)
+
+	const [rows, setRows] = useState(initialRows)
+	const [filteredRows, setFilteredRows] = useState(initialRows)
 
 	// Category filtering logic
 	useEffect(() => {
@@ -162,7 +166,26 @@ const ProductManagement = () => {
 		} else {
 			setFilteredRows(rows.filter((row) => row.category === categoryFilterMap[categoryTab]))
 		}
-	}, [categoryTab])
+	}, [categoryTab, rows])
+
+	// Search filtering logic
+	useEffect(() => {
+		if (searchName) {
+			setFilteredRows(
+				rows.filter((row) =>
+					row.name.toLowerCase().includes(searchName.toLowerCase())
+				)
+			)
+		} else {
+			// Reset to category-filtered rows
+			const categoryFilterMap = ['All', 'Food', 'Drink', 'Dessert', 'Snack']
+			if (categoryFilterMap[categoryTab] === 'All') {
+				setFilteredRows(rows)
+			} else {
+				setFilteredRows(rows.filter((row) => row.category === categoryFilterMap[categoryTab]))
+			}
+		}
+	}, [searchName, rows, categoryTab])
 
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === 'asc'
@@ -189,6 +212,26 @@ const ProductManagement = () => {
 		[order, orderBy, page, rowsPerPage, filteredRows]
 	)
 
+	// Handler to open UpdateProduct dialog
+	const handleOpenUpdate = (product) => {
+		setSelectedProduct(product)
+		setOpenUpdatePage(true)
+	}
+
+	// Handler to update a product in the rows state
+	const handleUpdateProduct = (updatedProduct) => {
+		setRows((prevRows) =>
+			prevRows.map((row) => (row.id === updatedProduct.id ? updatedProduct : row))
+		)
+		setOpenUpdatePage(false)
+	}
+
+	// Handler to add a new product to the rows state
+	const handleAddProduct = (newProduct) => {
+		setRows((prevRows) => [...prevRows, newProduct])
+		setOpenAddPage(false)
+	}
+
 	return (
 		<Paper
 			sx={{
@@ -205,17 +248,33 @@ const ProductManagement = () => {
 
 				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
 					<CrudSearchBar
-						listItem={['dsadsads', 'eweweewewqqwe', 'dsadasewew', 'cxzczx']}
+						listItem={rows.map((row) => row.name)}
 						widthPercent={50}
 						value={searchName}
 						handleChange={(e, value) => setSearchName(value)}
 					/>
 					<React.Fragment>
-						<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
+						<Button
+							variant='contained'
+							onClick={() => setOpenAddPage(true)}
+							startIcon={<Add />}
+						>
 							Add New
 						</Button>
 						{openAddPage && (
-							<AddProduct open={openAddPage} handleClose={() => setOpenAddPage(false)} />
+							<AddProduct
+								open={openAddPage}
+								handleClose={() => setOpenAddPage(false)}
+								handleAddProduct={handleAddProduct}
+							/>
+						)}
+						{openUpdatePage && selectedProduct && (
+							<UpdateProduct
+								open={openUpdatePage}
+								handleClose={() => setOpenUpdatePage(false)}
+								existingProduct={selectedProduct}
+								handleUpdateProduct={handleUpdateProduct}
+							/>
 						)}
 					</React.Fragment>
 				</Stack>
@@ -237,7 +296,7 @@ const ProductManagement = () => {
 					/>
 					<TableBody>
 						{visibleRows.length > 0 ? (
-							visibleRows.map((row, index) => {
+							visibleRows.map((row) => {
 								return (
 									<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
 										<TableCell>
@@ -252,7 +311,11 @@ const ProductManagement = () => {
 											<Chip
 												label={row.quantity}
 												color={
-													row.quantity === 0 ? 'error' : row.quantity < 10 ? 'warning' : 'success'
+													row.quantity === 0
+														? 'error'
+														: row.quantity < 10
+														? 'warning'
+														: 'success'
 												}
 											/>
 										</TableCell>
@@ -265,7 +328,12 @@ const ProductManagement = () => {
 										<TableCell>
 											<CrudMenuOptions>
 												<MenuItem>
-													<Button startIcon={<Edit />}>Update</Button>
+													<Button
+														startIcon={<Edit />}
+														onClick={() => handleOpenUpdate(row)}
+													>
+														Update
+													</Button>
 												</MenuItem>
 												<MenuItem>
 													<Button startIcon={<SystemUpdateAlt />}>Restock</Button>
@@ -274,10 +342,19 @@ const ProductManagement = () => {
 													<CrudConfirmation
 														title='Delete Confirmation'
 														description='Are you sure you want to delete this?'
-														handleConfirm={() => alert('Deleted')}
+														handleConfirm={() => {
+															// Implement your delete logic here
+															alert(`Deleted product with ID: ${row.id}`)
+															setRows((prevRows) =>
+																prevRows.filter((r) => r.id !== row.id)
+															)
+														}}
 													>
 														{(handleOpen) => (
-															<Button onClick={handleOpen} startIcon={<Delete />}>
+															<Button
+																onClick={handleOpen}
+																startIcon={<Delete />}
+															>
 																Remove
 															</Button>
 														)}

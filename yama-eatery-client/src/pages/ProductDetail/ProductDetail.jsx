@@ -7,6 +7,7 @@ import {
 	Chip,
 	Divider,
 	Grid,
+	Grid2,
 	Rating,
 	Stack,
 	TextField,
@@ -114,7 +115,7 @@ export default function ProductDetail() {
 	}
 
 	return (
-		<Box display={'flex'} sx={{ p: 4, maxWidth: '1200px', mx: 'auto' }}>
+		<Box  sx={{ p: 4, maxWidth: '1200px', mx: 'auto' }}>
 			<Grid container spacing={3}>
 				<Grid item xs={12} lg={7}>
 					<Card
@@ -149,7 +150,6 @@ export default function ProductDetail() {
 							))}
 						</Grid>
 					</Card>
-
 					{recommendedProducts.length > 0 && (
 						<Box mt={4}>
 							<Typography variant='h6' fontWeight='bold' color='textPrimary' gutterBottom>
@@ -248,7 +248,6 @@ export default function ProductDetail() {
 						</Box>
 					)}
 				</Grid>
-
 				<Grid item xs={12} lg={5}>
 					<Typography variant='h4' fontWeight='bold' color='textPrimary'>
 						{product.name}
@@ -273,13 +272,13 @@ export default function ProductDetail() {
 					<Typography variant='body1' color='textPrimary' mt={4}>
 						{product.description}
 					</Typography>
-
-					{/* Reviews */}
+				</Grid>
+			
+			</Grid>
+			<Box >
 					<Typography variant='h6' fontWeight='bold' color='textPrimary' mt={3}>
 						Reviews ({totalReviews})
 					</Typography>
-
-					{/* Rating Distribution */}
 					{[5, 4, 3, 2, 1].map((star) => (
 						<Box key={star} display='flex' alignItems='center' mt={1}>
 							<Typography variant='body2' fontWeight='bold' sx={{ mr: 1, minWidth: '50px' }}>
@@ -313,26 +312,29 @@ export default function ProductDetail() {
 					))}
 
 					{reviewsToShow.map((review, index) => (
-						<Box display='flex' alignItems='flex-start' mt={4} key={index}>
-							<Avatar src={review.avatar} alt={review.reviewer} />
-
-							<Box ml={2}>
+						<Grid2 container sx={{width: '100%'}} alignItems='flex-start' mt={4} key={index}>
+							<Grid2 size={0.5}>
+								<Avatar src={review.avatar} alt={review.reviewer} />
+							</Grid2>
+							
+							<Grid2 size={11.5} >
 								<Stack direction='row' alignItems='center' justifyContent='space-between'>
 									<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
 										{review.reviewer}
 									</Typography>
+
 									<Typography variant='caption' color='textSecondary'>
 										{new Date(review.date).toLocaleDateString()}
 									</Typography>
 								</Stack>
 								<Rating value={review.rating} readOnly size='small' sx={{ mt: 0.5 }} />
+
 								<Typography variant='body2' color='textSecondary' mt={1}>
 									{review.comment}
 								</Typography>
-							</Box>
-						</Box>
+							</Grid2>
+						</Grid2>
 					))}
-
 					<Button
 						variant='outlined'
 						sx={{ mt: 4, width: '100%' }}
@@ -341,13 +343,10 @@ export default function ProductDetail() {
 					>
 						{showAllReviews ? 'Show less reviews' : 'Read all reviews'}
 					</Button>
-
-					{/* Rating and Review Form */}
 					<Box mt={4}>
 						<Typography variant='h6' fontWeight='bold' color='textPrimary'>
 							Leave a Rating and Review
 						</Typography>
-						{/* Rating Input */}
 						<Rating
 							name='user-rating'
 							value={userRating}
@@ -355,7 +354,6 @@ export default function ProductDetail() {
 							size='large'
 							sx={{ mt: 2 }}
 						/>
-						{/* Review Input */}
 						<TextField
 							fullWidth
 							label='Your Review'
@@ -369,8 +367,7 @@ export default function ProductDetail() {
 							Submit
 						</Button>
 					</Box>
-				</Grid>
-			</Grid>
+				</Box>
 		</Box>
 	)
 }
