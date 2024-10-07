@@ -13,10 +13,10 @@ import {
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { products } from '../ProductMockData/ProductMockData'
+import { Grid } from 'swiper/modules'
 
 const drawerWidth = 240
 
-// This function should not be the default export
 export function calculateAverageRating(reviews) {
 	if (!reviews || reviews.length === 0) return 0
 	const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
@@ -26,12 +26,12 @@ export function calculateAverageRating(reviews) {
 export default function ProductList(props) {
 	const [priceRange, setPriceRange] = useState([0, 1000])
 	const [filteredProducts, setFilteredProducts] = useState([])
-	const [filterOption, setFilterOption] = useState('') // For category filtering
-	const [sortOption, setSortOption] = useState('') // For sorting
+	const [filterOption, setFilterOption] = useState('') 
+	const [sortOption, setSortOption] = useState('') 
 	const [currentPage, setCurrentPage] = useState(1)
 
 	const [productsPerPage] = useState(8)
-	const [searchTerm, setSearchTerm] = useState('') // For search
+	const [searchTerm, setSearchTerm] = useState('') 
 
 	const handleShowAll = () => {
 		setFilterOption('')
@@ -90,128 +90,130 @@ export default function ProductList(props) {
 	}
 
 	return (
-		<Box display={'flex'}>
+		<Grid2 container>
 			<CssBaseline />
-			<ProductDrawer
-				handleShowAll={handleShowAll}
-				filterOption={filterOption}
-				priceRange={priceRange}
-				sortOption={sortOption}
-				setFilterOption={setFilterOption}
-				setPriceRange={setPriceRange}
-				setSortOption={setSortOption}
-			/>
-			<Box
-				component='main'
-				sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-			>
-				<Toolbar />
-				{filteredProducts.length === 0 ? (
-					<Typography variant='h6' align='center' sx={{ mt: 10 }}>
-						No products found matching the selected filters or price range.
-					</Typography>
-				) : (
-					<>
-						<Grid2
-							container
-							sx={{
-								display: 'grid',
-								gridTemplateColumns: {
-									lg: 'repeat(4, 1fr)', // Fix: lg for large screens (was duplicated as md)
-									md: 'repeat(3, 1fr)',
-									sm: 'repeat(2, 1fr)',
-								},
-								gap: 3,
-							}}
-						>
-							{currentProducts.map((product) => {
-								const averageRating = calculateAverageRating(product.reviews) // Calculate average rating
+			<Grid2 size={3}>
+				<ProductDrawer
+					handleShowAll={handleShowAll}
+					filterOption={filterOption}
+					priceRange={priceRange}
+					sortOption={sortOption}
+					setFilterOption={setFilterOption}
+					setPriceRange={setPriceRange}
+					setSortOption={setSortOption}
+				/>
+			</Grid2>
+			<Grid2 size={9}>
+				<Box
+					component='main'
+					sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+				>
+					{filteredProducts.length === 0 ? (
+						<Typography variant='h6' align='center' sx={{ mt: 10 }}>
+							No products found matching the selected filters or price range.
+						</Typography>
+					) : (
+						<>
+							<Grid2
+								container
+								sx={{
+									display: 'grid',
+									gridTemplateColumns: {
+										lg: 'repeat(4, 1fr)', 
+										md: 'repeat(3, 1fr)',
+										sm: 'repeat(2, 1fr)',
+									},
+									gap: 3,
+								}}
+							>
+								{currentProducts.map((product) => {
+									const averageRating = calculateAverageRating(product.reviews)
 
-								return (
-									<Box
-										key={product.id}
-										onClick={() => handleClick(product.id)}
-										sx={{
-											backgroundColor: 'gray.50',
-											boxShadow: 2,
-											borderRadius: 2,
-											cursor: 'pointer',
-											'&:hover': { transform: 'translateY(-8px)' },
-											transition: 'all 0.3s ease-in-out',
-										}}
-									>
+									return (
 										<Box
+											key={product.id}
+											onClick={() => handleClick(product.id)}
 											sx={{
-												display: 'flex',
-												justifyContent: 'center',
-												height: 260,
-												padding: 2,
-												backgroundColor: 'gray.100',
+												backgroundColor: 'gray.50',
+												boxShadow: 2,
+												borderRadius: 2,
+												cursor: 'pointer',
+												'&:hover': { transform: 'translateY(-8px)' },
+												transition: 'all 0.3s ease-in-out',
 											}}
 										>
-											<img
-												src={product.img[0]} // Use the first image as the main image
-												alt={product.name}
-												style={{
-													objectFit: 'contain',
-													maxHeight: '100%',
-													maxWidth: '100%',
+											<Box
+												sx={{
+													display: 'flex',
+													justifyContent: 'center',
+													height: 260,
+													padding: 2,
+													backgroundColor: 'gray.100',
 												}}
-											/>
-										</Box>
-										<Box sx={{ p: 3, backgroundColor: 'white' }}>
-											<Stack
-												direction={'row'}
-												alignItems={'center'}
-												justifyContent={'space-between'}
 											>
-												<Rating value={averageRating} precision={0.1} readOnly />{' '}
-												{/* Show average rating */}
-												<Typography variant='h5' align='right' color='gray.800'>
-													{product.category}
-												</Typography>
-											</Stack>
-											<Typography variant='h6' fontWeight='bold' color='gray.800'>
-												{product.name}
-											</Typography>
-											<Stack
-												direction={'row'}
-												alignItems={'center'}
-												justifyContent={'space-between'}
-											>
-												<Typography
-													variant='h6'
-													fontWeight='bold'
-													sx={{ mt: 1, color: 'gray.800' }}
+												<img
+													src={product.img[0]} // Use the first image as the main image
+													alt={product.name}
+													style={{
+														objectFit: 'contain',
+														maxHeight: '100%',
+														maxWidth: '100%',
+													}}
+												/>
+											</Box>
+											<Box sx={{ p: 3, backgroundColor: 'white' }}>
+												<Stack
+													direction={'row'}
+													alignItems={'center'}
+													justifyContent={'space-between'}
 												>
-													${product.price}
+													<Rating value={averageRating} precision={0.1} readOnly />{' '}
+													<Typography variant='h5' align='right' color='gray.800'>
+														{product.category}
+													</Typography>
+												</Stack>
+												<Typography variant='h6' fontWeight='bold' color='gray.800'>
+													{product.name}
 												</Typography>
-												<Typography
-													variant='overline'
-													color={product.quantity > 0 ? 'green' : 'error'}
-													sx={{ mt: 1 }}
+												<Stack
+													direction={'row'}
+													alignItems={'center'}
+													justifyContent={'space-between'}
 												>
-													{product.quantity > 0 ? 'In stock' : 'Out of stock'}
-												</Typography>
-											</Stack>
+													<Typography
+														variant='h6'
+														fontWeight='bold'
+														sx={{ mt: 1, color: 'gray.800' }}
+													>
+														${product.price}
+													</Typography>
+													<Typography
+														variant='overline'
+														color={product.quantity > 0 ? 'green' : 'error'}
+														sx={{ mt: 1 }}
+													>
+														{product.quantity > 0 ? 'In stock' : 'Out of stock'}
+													</Typography>
+												</Stack>
+											</Box>
 										</Box>
-									</Box>
-								)
-							})}
-						</Grid2>
-						<Divider />
-						<Pagination
-							size='large'
-							count={Math.ceil(filteredProducts.length / productsPerPage)} // Total pages
-							page={currentPage} // Current page
-							onChange={handlePageChange} // Handle page change
-							color='primary'
-							sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
-							disabled={filteredProducts.length <= productsPerPage} // Disable if there's only one page
-						/>
-					</>
-				)}
-			</Box>
-		</Box>
+									)
+								})}
+							</Grid2>
+							<Divider />
+							<Pagination
+								size='large'
+								count={Math.ceil(filteredProducts.length / productsPerPage)} // Total pages
+								page={currentPage} // Current page
+								onChange={handlePageChange} // Handle page change
+								color='primary'
+								sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
+								disabled={filteredProducts.length <= productsPerPage} // Disable if there's only one page
+							/>
+						</>
+					)}
+				</Box>
+			</Grid2>
+		</Grid2>
 	)
 }

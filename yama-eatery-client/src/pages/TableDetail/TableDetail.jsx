@@ -90,8 +90,8 @@ export default function TableDetail() {
 	return (
 		<Box sx={{ maxWidth: '1200px', margin: '0 auto' }}>
 			<Stack direction='row' justifyContent='space-between' alignItems='center' mb={2}>
-				<Typography variant='h5'>{table.tableType} Table</Typography>
-				<Typography variant='subtitle1'>Floor {table.floor}</Typography>
+				
+				
 			</Stack>
 			<Card
 				sx={{
@@ -104,6 +104,8 @@ export default function TableDetail() {
 					p: 4,
 				}}
 			>
+				<Typography variant='h5'>{table.tableType} Table</Typography>
+				<Typography variant='subtitle1'>Floor {table.floor}</Typography>
 				<div className={styles.container}>
 					<Slide easing='ease' duration={7000} ref={slideRef}>
 						{table.img.map((slide, index) => {
