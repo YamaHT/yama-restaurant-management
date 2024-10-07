@@ -13,7 +13,6 @@ const NewsletterSection = () => {
 					exclusive offers. Get valuable insights. Join our community today!
 				</Typography>
 			</Box>
-
 			<Box maxWidth='sm' mx='auto' mt={3}>
 				<Paper
 					component='form'

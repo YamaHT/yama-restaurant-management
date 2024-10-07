@@ -1,5 +1,4 @@
 import { GppGood, Groups, LiveHelp } from '@mui/icons-material'
-import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import { Box, Grid2, Stack, Typography } from '@mui/material'
 
 const features = [
@@ -46,7 +45,6 @@ const FeatureSection = () => {
 					Discover Our Exclusive Features
 				</Typography>
 			</Box>
-
 			<Grid2 container spacing={4}>
 				{features.map((feature, index) => (
 					<Grid2 item size={{ xs: 12, md: 4 }} key={index}>

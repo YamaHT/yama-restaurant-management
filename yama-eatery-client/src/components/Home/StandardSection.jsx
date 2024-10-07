@@ -64,7 +64,6 @@ const StandardSection = () => {
 					Our Standards
 				</Typography>
 			</Box>
-
 			<Grid2 container px={5}>
 				{standards.map((standard, index) => (
 					<Grid2 size={3}>

@@ -54,7 +54,6 @@ const CategorySection = () => {
 					OUR CATEGORY
 				</Typography>
 			</Box>
-
 			<Grid2 container spacing={4} mt={5} justifyContent='center'>
 				{categories.map((category, index) => (
 					<Grid2 size={{ xs: 12, sm: 6, lg: 3 }} key={index}>
