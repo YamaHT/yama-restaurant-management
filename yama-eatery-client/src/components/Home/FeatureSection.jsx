@@ -41,18 +41,6 @@ const FeatureSection = () => {
 						textTransform: 'uppercase',
 						textAlign: 'center',
 						color: '#444',
-						'&::after': {
-							content: '""',
-							position: 'absolute',
-							width: '70%',
-							height: '4px',
-							left: 0,
-							right: 0,
-							bottom: '-8px',
-							margin: 'auto',
-							backgroundColor: '#EC4899',
-							borderRadius: 2,
-						},
 					}}
 				>
 					Discover Our Exclusive Features
