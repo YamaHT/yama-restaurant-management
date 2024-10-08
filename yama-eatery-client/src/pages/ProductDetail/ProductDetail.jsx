@@ -35,19 +35,31 @@ export default function ProductDetail() {
 	const [userReview, setUserReview] = useState('')
 	const [recommendedProducts, setRecommendedProducts] = useState([])
 	const [isBeginning, setIsBeginning] = useState(true)
-	const [isEnd, setIsEnd] = useState(false) 
+	const [isEnd, setIsEnd] = useState(false)
 
 	const prevRef = useRef(null)
 	const nextRef = useRef(null)
 	const swiperRef = useRef(null)
+
 	useEffect(() => {
-		if (swiperRef.current) {
-			swiperRef.current.params.navigation.prevEl = prevRef.current
-			swiperRef.current.params.navigation.nextEl = nextRef.current
-			swiperRef.current.navigation.init()
-			swiperRef.current.navigation.update()
+		const initializeSwiperNavigation = () => {
+			if (swiperRef.current && prevRef.current && nextRef.current) {
+				swiperRef.current.params.navigation.prevEl = prevRef.current
+				swiperRef.current.params.navigation.nextEl = nextRef.current
+				swiperRef.current.navigation.init()
+				swiperRef.current.navigation.update()
+			}
+		}
+
+		setTimeout(initializeSwiperNavigation, 100)
+
+		return () => {
+			if (swiperRef.current && swiperRef.current.navigation) {
+				swiperRef.current.navigation.destroy()
+			}
 		}
 	}, [recommendedProducts])
+
 	useEffect(() => {
 		const productDetail = products.find((item) => item.id === parseInt(id))
 		setProduct(productDetail)
@@ -57,6 +69,21 @@ export default function ProductDetail() {
 				(item) => item.category === productDetail.category && item.id !== productDetail.id
 			)
 			setRecommendedProducts(recommendations.slice(0, 10))
+		}
+	}, [id])
+
+	const handleSlideChange = () => {
+		if (swiperRef.current) {
+			setIsBeginning(swiperRef.current.isBeginning)
+			setIsEnd(swiperRef.current.isEnd)
+		}
+	}
+	useEffect(() => {
+		const productDetail = products.find((item) => item.id === parseInt(id))
+		setProduct(productDetail)
+
+		if (productDetail) {
+			setSelectedImage(productDetail.img[0])
 		}
 	}, [id])
 
@@ -70,12 +97,6 @@ export default function ProductDetail() {
 		)
 	}
 
-	const handleSlideChange = () => {
-		if (swiperRef.current) {
-			setIsBeginning(swiperRef.current.isBeginning)
-			setIsEnd(swiperRef.current.isEnd)
-		}
-	}
 	const averageRating = calculateAverageRating(product.reviews)
 
 	const ratingCount = {
@@ -118,7 +139,7 @@ export default function ProductDetail() {
 	}
 
 	const handleClick = (id) => {
-		window.scrollTo({ top: 0, behavior: 'smooth' });
+		window.scrollTo({ top: 0, behavior: 'smooth' })
 
 		navigate(`/Product/Detail/${id}`)
 	}
@@ -250,7 +271,7 @@ export default function ProductDetail() {
 					variant='outlined'
 					sx={{ mt: 4, width: '100%' }}
 					size='large'
-					onClick={() => setShowAllReviews(!showAllReviews)} 
+					onClick={() => setShowAllReviews(!showAllReviews)}
 				>
 					{showAllReviews ? 'Show less reviews' : 'Read all reviews'}
 				</Button>
@@ -313,7 +334,7 @@ export default function ProductDetail() {
 											transition: 'all 0.3s ease-in-out',
 											'&:hover': { transform: 'translateY(-8px)' },
 										}}
-										onClick={() => handleClick(recommendedProduct.id) }
+										onClick={() => handleClick(recommendedProduct.id)}
 									>
 										<Card
 											sx={{
@@ -349,40 +370,47 @@ export default function ProductDetail() {
 								</SwiperSlide>
 							))}
 						</Swiper>
-						{!isBeginning && (
-							<IconButton
-								ref={prevRef}
-								sx={{
-									position: 'absolute',
-									top: '50%',
-									left: 0,
-									transform: 'translateY(-50%)',
-									zIndex: 10,
-									backgroundColor: 'rgba(0,0,0,0.5)',
-									color: 'white',
-									'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
-								}}
-							>
-								<ChevronLeft />
-							</IconButton>
-						)}
-						{recommendedProducts.length > 4 && !isEnd && (
-							<IconButton
-								ref={nextRef}
-								sx={{
-									position: 'absolute',
-									top: '50%',
-									right: 0,
-									transform: 'translateY(-50%)',
-									zIndex: 10,
-									backgroundColor: 'rgba(0,0,0,0.5)',
-									color: 'white',
-									'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
-								}}
-							>
-								<ChevronRight />
-							</IconButton>
-						)}
+						<IconButton
+							size='large'
+							ref={prevRef}
+							sx={{
+								position: 'absolute',
+								top: '50%',
+								left: 0,
+								transform: 'translateY(-50%)',
+								zIndex: 10,
+								backgroundColor: 'rgba(0,0,0,0.5)',
+								color: 'white',
+								'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+								display: isBeginning || recommendedProducts.length <= 4 ? 'none' : 'flex',
+								borderRadius: '0 50% 50% 0', // Semi-circle on the left
+								width: '40px',
+								height: '80px',
+							}}
+						>
+							<ChevronLeft />
+						</IconButton>
+
+						<IconButton
+							size='large'
+							ref={nextRef}
+							sx={{
+								position: 'absolute',
+								top: '50%',
+								right: 0,
+								transform: 'translateY(-50%)',
+								zIndex: 10,
+								backgroundColor: 'rgba(0,0,0,0.5)',
+								color: 'white',
+								'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+								display: isEnd || recommendedProducts.length <= 4 ? 'none' : 'flex',
+								borderRadius: '50% 0 0 50%', // Semi-circle on the right
+								width: '40px',
+								height: '80px',
+							}}
+						>
+							<ChevronRight />
+						</IconButton>
 					</Box>
 				</Box>
 			)}

@@ -13,7 +13,6 @@ import {
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { products } from '../ProductMockData/ProductMockData'
-import { Grid } from 'swiper/modules'
 
 const drawerWidth = 240
 
@@ -26,12 +25,13 @@ export function calculateAverageRating(reviews) {
 export default function ProductList(props) {
 	const [priceRange, setPriceRange] = useState([0, 1000])
 	const [filteredProducts, setFilteredProducts] = useState([])
-	const [filterOption, setFilterOption] = useState('') 
-	const [sortOption, setSortOption] = useState('') 
+	const [filterOption, setFilterOption] = useState('')
+	const [sortOption, setSortOption] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
+	const [hoveredProductId, setHoveredProductId] = useState(null) // Add this state
 
-	const [productsPerPage] = useState(8)
-	const [searchTerm, setSearchTerm] = useState('') 
+	const productsPerPage = 8
+	const [searchTerm, setSearchTerm] = useState('')
 
 	const handleShowAll = () => {
 		setFilterOption('')
@@ -119,7 +119,7 @@ export default function ProductList(props) {
 								sx={{
 									display: 'grid',
 									gridTemplateColumns: {
-										lg: 'repeat(4, 1fr)', 
+										lg: 'repeat(4, 1fr)',
 										md: 'repeat(3, 1fr)',
 										sm: 'repeat(2, 1fr)',
 									},
@@ -149,14 +149,17 @@ export default function ProductList(props) {
 													padding: 2,
 													backgroundColor: 'gray.100',
 												}}
+												onMouseEnter={() => setHoveredProductId(product.id)}
+												onMouseLeave={() => setHoveredProductId(null)}
 											>
 												<img
-													src={product.img[0]}
+													src={hoveredProductId === product.id ? product.img[1] : product.img[0]} // Switch image based on hover
 													alt={product.name}
 													style={{
 														objectFit: 'contain',
 														maxHeight: '100%',
 														maxWidth: '100%',
+														transition: 'all 0.3s ease-in-out', // Smooth transition between images
 													}}
 												/>
 											</Box>
@@ -166,7 +169,7 @@ export default function ProductList(props) {
 													alignItems={'center'}
 													justifyContent={'space-between'}
 												>
-													<Rating value={averageRating} precision={0.1} readOnly />{' '}
+													<Rating value={averageRating} precision={0.1} readOnly />
 													<Typography variant='h5' align='right' color='gray.800'>
 														{product.category}
 													</Typography>
@@ -202,12 +205,12 @@ export default function ProductList(props) {
 							<Divider />
 							<Pagination
 								size='large'
-								count={Math.ceil(filteredProducts.length / productsPerPage)} 
-								page={currentPage} 
-								onChange={handlePageChange} 
+								count={Math.ceil(filteredProducts.length / productsPerPage)}
+								page={currentPage}
+								onChange={handlePageChange}
 								color='primary'
 								sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
-								disabled={filteredProducts.length <= productsPerPage} 
+								disabled={filteredProducts.length <= productsPerPage}
 							/>
 						</>
 					)}
