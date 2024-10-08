@@ -88,12 +88,9 @@ const Profile = () => {
 		const { name, value } = e.target
 		let isValid = true,
 			txt = ''
-		const maxLengths = {
-			name: 50,
-			phone: 10,
-		}
+
 		const validators = {
-			name: /^[\p{L}\s]*$/gu.test(value) && value.length <= maxLengths.name,
+			name: /^[\p{L}\s]*$/gu.test(value) && value.length <= 50,
 			phone: /^\d{0,10}$/.test(value),
 			birthday: value >= '1900-01-01' && value <= Today,
 		}
@@ -102,12 +99,14 @@ const Profile = () => {
 			return
 		}
 		if (validators[name] === false) {
+			if (name === 'name') {
+				txt = `Name must be less than 50 characters`
+			}
 			if (name === 'phone') {
 				txt = 'Phone must be max 10 digits'
-			} else if (name === 'birthday') {
+			}
+			if (name === 'birthday') {
 				txt = 'Birthday must be before today'
-			} else if (name === 'name') {
-				txt = `Name must be less than ${maxLengths.name} characters`
 			} else {
 				txt = `Invalid ${name}`
 			}
@@ -283,7 +282,7 @@ const Profile = () => {
 										aspectRatio: 7 / 6,
 										transition: 'filter 0.3s ease',
 									}}
-									alt='yasuo'
+									alt={editableProfile.name}
 									src={editableProfile.image ? editableProfile.image : '/logo192.png'}
 								/>
 								<IconButton
@@ -317,7 +316,7 @@ const Profile = () => {
 									aspectRatio: 7 / 6,
 									transition: 'filter 0.3s ease',
 								}}
-								alt='yasuo'
+								alt={editableProfile.name}
 								src={editableProfile.image ? editableProfile.image : '/logo192.png'}
 							/>
 						)}
