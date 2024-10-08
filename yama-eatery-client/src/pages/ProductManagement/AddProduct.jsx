@@ -112,15 +112,15 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 
 		if (isValid) {
 			const newProduct = {
-				id: Date.now(), // Simple unique ID generation
+				id: Date.now(), 
 				images: values.images,
 				imageBase64Array: imageBase64Array,
 				name: values.name,
 				price: parseFloat(values.price),
 				description: values.description,
 				category: values.category,
-				quantity: 0, // Default quantity
-				isDeleted: false, // Default status
+				quantity: 0, 
+				isDeleted: false, 
 			}
 
 			handleAddProduct(newProduct)
@@ -128,7 +128,6 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 		}
 	}
 
-	// Drag-and-Drop Handlers
 	const handleDragStart = (index) => {
 		setDraggingIndex(index)
 	}
@@ -140,11 +139,9 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 		const reorderedImages = [...values.images]
 		const reorderedBase64 = [...imageBase64Array]
 
-		// Remove the dragged item
 		const [movedImage] = reorderedImages.splice(draggingIndex, 1)
 		const [movedBase64] = reorderedBase64.splice(draggingIndex, 1)
 
-		// Insert it at the new position
 		reorderedImages.splice(index, 0, movedImage)
 		reorderedBase64.splice(index, 0, movedBase64)
 

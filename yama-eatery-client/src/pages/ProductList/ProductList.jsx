@@ -128,7 +128,6 @@ export default function ProductList(props) {
 							>
 								{currentProducts.map((product) => {
 									const averageRating = calculateAverageRating(product.reviews)
-
 									return (
 										<Box
 											key={product.id}
@@ -152,7 +151,7 @@ export default function ProductList(props) {
 												}}
 											>
 												<img
-													src={product.img[0]} // Use the first image as the main image
+													src={product.img[0]}
 													alt={product.name}
 													style={{
 														objectFit: 'contain',
@@ -203,12 +202,12 @@ export default function ProductList(props) {
 							<Divider />
 							<Pagination
 								size='large'
-								count={Math.ceil(filteredProducts.length / productsPerPage)} // Total pages
-								page={currentPage} // Current page
-								onChange={handlePageChange} // Handle page change
+								count={Math.ceil(filteredProducts.length / productsPerPage)} 
+								page={currentPage} 
+								onChange={handlePageChange} 
 								color='primary'
 								sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
-								disabled={filteredProducts.length <= productsPerPage} // Disable if there's only one page
+								disabled={filteredProducts.length <= productsPerPage} 
 							/>
 						</>
 					)}
