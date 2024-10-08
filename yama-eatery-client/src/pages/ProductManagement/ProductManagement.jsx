@@ -32,6 +32,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import UpdateProduct from './UpdateProduct'
 import AddProduct from './AddProduct'
+import RestockProduct from './RestockProduct'
 
 const headCells = [
 	{
@@ -150,6 +151,7 @@ const ProductManagement = () => {
 
 	const [openAddPage, setOpenAddPage] = useState(false)
 	const [openUpdatePage, setOpenUpdatePage] = useState(false)
+	const [openRestockPage, setOpenRestockPage] = useState(false)
 	const [selectedProduct, setSelectedProduct] = useState(null)
 
 	const [rows, setRows] = useState(initialRows)
@@ -172,9 +174,7 @@ const ProductManagement = () => {
 	useEffect(() => {
 		if (searchName) {
 			setFilteredRows(
-				rows.filter((row) =>
-					row.name.toLowerCase().includes(searchName.toLowerCase())
-				)
+				rows.filter((row) => row.name.toLowerCase().includes(searchName.toLowerCase()))
 			)
 		} else {
 			// Reset to category-filtered rows
@@ -212,21 +212,30 @@ const ProductManagement = () => {
 		[order, orderBy, page, rowsPerPage, filteredRows]
 	)
 
-	// Handler to open UpdateProduct dialog
 	const handleOpenUpdate = (product) => {
 		setSelectedProduct(product)
 		setOpenUpdatePage(true)
 	}
-
-	// Handler to update a product in the rows state
 	const handleUpdateProduct = (updatedProduct) => {
 		setRows((prevRows) =>
 			prevRows.map((row) => (row.id === updatedProduct.id ? updatedProduct : row))
 		)
 		setOpenUpdatePage(false)
 	}
+	const handleOpenRestock = (product) => {
+		setSelectedProduct(product)
+		setOpenRestockPage(true)
+	}
 
-	// Handler to add a new product to the rows state
+	const handleRestockProduct = (restockQuantity) => {
+		setRows((prevRows) =>
+			prevRows.map((row) =>
+				row.id === selectedProduct.id ? { ...row, quantity: restockQuantity } : row
+			)
+		)
+		setOpenRestockPage(false)
+	}
+
 	const handleAddProduct = (newProduct) => {
 		setRows((prevRows) => [...prevRows, newProduct])
 		setOpenAddPage(false)
@@ -254,11 +263,7 @@ const ProductManagement = () => {
 						handleChange={(e, value) => setSearchName(value)}
 					/>
 					<React.Fragment>
-						<Button
-							variant='contained'
-							onClick={() => setOpenAddPage(true)}
-							startIcon={<Add />}
-						>
+						<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
 							Add New
 						</Button>
 						{openAddPage && (
@@ -274,6 +279,15 @@ const ProductManagement = () => {
 								handleClose={() => setOpenUpdatePage(false)}
 								existingProduct={selectedProduct}
 								handleUpdateProduct={handleUpdateProduct}
+							/>
+						)}
+						{openRestockPage && selectedProduct && (
+							<RestockProduct
+								open={openRestockPage}
+								handleClose={() => setOpenRestockPage(false)}
+								currentQuantity={selectedProduct.quantity}
+								productName={selectedProduct.name} // Pass product name as a prop
+								onRestock={(newQuantity) => handleRestockProduct(newQuantity)}
 							/>
 						)}
 					</React.Fragment>
@@ -311,11 +325,7 @@ const ProductManagement = () => {
 											<Chip
 												label={row.quantity}
 												color={
-													row.quantity === 0
-														? 'error'
-														: row.quantity < 10
-														? 'warning'
-														: 'success'
+													row.quantity === 0 ? 'error' : row.quantity < 10 ? 'warning' : 'success'
 												}
 											/>
 										</TableCell>
@@ -328,15 +338,17 @@ const ProductManagement = () => {
 										<TableCell>
 											<CrudMenuOptions>
 												<MenuItem>
-													<Button
-														startIcon={<Edit />}
-														onClick={() => handleOpenUpdate(row)}
-													>
+													<Button startIcon={<Edit />} onClick={() => handleOpenUpdate(row)}>
 														Update
 													</Button>
 												</MenuItem>
 												<MenuItem>
-													<Button startIcon={<SystemUpdateAlt />}>Restock</Button>
+													<Button
+														startIcon={<SystemUpdateAlt />}
+														onClick={() => handleOpenRestock(row)}
+													>
+														Restock
+													</Button>
 												</MenuItem>
 												<MenuItem>
 													<CrudConfirmation
@@ -345,16 +357,11 @@ const ProductManagement = () => {
 														handleConfirm={() => {
 															// Implement your delete logic here
 															alert(`Deleted product with ID: ${row.id}`)
-															setRows((prevRows) =>
-																prevRows.filter((r) => r.id !== row.id)
-															)
+															setRows((prevRows) => prevRows.filter((r) => r.id !== row.id))
 														}}
 													>
 														{(handleOpen) => (
-															<Button
-																onClick={handleOpen}
-																startIcon={<Delete />}
-															>
+															<Button onClick={handleOpen} startIcon={<Delete />}>
 																Remove
 															</Button>
 														)}
