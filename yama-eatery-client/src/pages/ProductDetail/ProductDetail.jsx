@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 import {
 	Avatar,
 	Box,
@@ -15,14 +16,12 @@ import {
 } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { calculateAverageRating } from '../ProductList/ProductList'
-import { products } from '../ProductMockData/ProductMockData'
-
-import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { calculateAverageRating } from '../ProductList/ProductList'
+import { products } from '../ProductMockData/ProductMockData'
 
 export default function ProductDetail() {
 	const { id } = useParams()
@@ -184,7 +183,6 @@ export default function ProductDetail() {
 					<Typography variant='h4' fontWeight='bold' color='textPrimary'>
 						{product.name}
 					</Typography>
-
 					<Box mt={2} display='flex' gap={2}>
 						<Typography variant='h5' fontWeight='bold' color='textPrimary'>
 							${product.price}
@@ -195,9 +193,7 @@ export default function ProductDetail() {
 						<Chip label='Giga Chát' variant='outlined' />
 						<Chip label={product.category} variant='outlined' />
 					</Stack>
-
 					<Rating value={averageRating} precision={0.1} readOnly />
-
 					<Typography variant='h6' fontWeight='bold' color='textPrimary' mt={3}>
 						About the {product.name}
 					</Typography>
@@ -247,7 +243,6 @@ export default function ProductDetail() {
 						<Grid2 size={0.5}>
 							<Avatar src={review.avatar} alt={review.reviewer} />
 						</Grid2>
-
 						<Grid2 size={11.5}>
 							<Stack direction='row' alignItems='center' justifyContent='space-between'>
 								<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
@@ -304,7 +299,6 @@ export default function ProductDetail() {
 					<Typography variant='h6' fontWeight='bold' color='textPrimary' gutterBottom>
 						Recommended Products
 					</Typography>
-
 					<Box sx={{ position: 'relative' }}>
 						<Swiper
 							modules={[Navigation]}
@@ -389,7 +383,6 @@ export default function ProductDetail() {
 						>
 							<ChevronLeft />
 						</IconButton>
-
 						<IconButton
 							size='large'
 							ref={nextRef}

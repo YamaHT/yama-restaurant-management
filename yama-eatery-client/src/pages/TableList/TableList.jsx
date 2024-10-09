@@ -16,13 +16,13 @@ import { tables } from '../TableMockData/TableMockData'
 const drawerWidth = 240
 
 export default function TableList() {
-	const [filteredTables, setFilteredTables] = useState([]) // State for filtered tables
-	const [filterOption, setFilterOption] = useState('') // For table type filtering
-	const [sortOption, setSortOption] = useState('') // For sorting
-	const [currentPage, setCurrentPage] = useState(1) // Current page state
-	const [tablesPerPage] = useState(8) // Tables per page
+	const [filteredTables, setFilteredTables] = useState([])
+	const [filterOption, setFilterOption] = useState('')
+	const [sortOption, setSortOption] = useState('')
+	const [currentPage, setCurrentPage] = useState(1)
+	const [tablesPerPage] = useState(8)
 
-	const navigate = useNavigate() // Initialize the useNavigate hook for navigation
+	const navigate = useNavigate()
 
 	const handleShowAll = () => {
 		setFilterOption('')
@@ -30,14 +30,10 @@ export default function TableList() {
 	}
 
 	useEffect(() => {
-		let filtered = tables // Use imported tables
-
-		// Filter by table type if an option is selected
+		let filtered = tables
 		if (filterOption) {
 			filtered = filtered.filter((table) => table.tableType === filterOption)
 		}
-
-		// Sorting based on user selection (floor sorting)
 		switch (sortOption) {
 			case 'low-to-high':
 				filtered = filtered.sort((a, b) => a.floor - b.floor)
@@ -49,10 +45,9 @@ export default function TableList() {
 				break
 		}
 
-		setFilteredTables(filtered) // Set filtered tables state
+		setFilteredTables(filtered)
 	}, [filterOption, sortOption])
 
-	// Pagination logic
 	const indexOfLastTable = currentPage * tablesPerPage
 	const indexOfFirstTable = indexOfLastTable - tablesPerPage
 	const currentTables = filteredTables.slice(indexOfFirstTable, indexOfLastTable)
@@ -109,7 +104,7 @@ export default function TableList() {
 										'&:hover': { transform: 'translateY(-8px)' },
 										transition: 'all 0.3s ease-in-out',
 									}}
-									onClick={() => handleClick(table.id)} // Handle click event
+									onClick={() => handleClick(table.id)}
 								>
 									<Box
 										sx={{
@@ -121,7 +116,7 @@ export default function TableList() {
 										}}
 									>
 										<img
-											src={table.img[0]} // Use the first image as the main image
+											src={table.img[0]}
 											alt={table.tableType}
 											style={{
 												objectFit: 'contain',
@@ -147,12 +142,12 @@ export default function TableList() {
 						<Divider sx={{ mt: 2 }} />
 						<Pagination
 							size='large'
-							count={Math.ceil(filteredTables.length / tablesPerPage)} // Total pages
-							page={currentPage} // Current page
-							onChange={handlePageChange} // Handle page change
+							count={Math.ceil(filteredTables.length / tablesPerPage)}
+							page={currentPage}
+							onChange={handlePageChange}
 							color='primary'
 							sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
-							disabled={filteredTables.length <= tablesPerPage} // Disable if there's only one page
+							disabled={filteredTables.length <= tablesPerPage}
 						/>
 					</>
 				)}

@@ -102,7 +102,7 @@ export default function TableDetail() {
 					justifyContent: 'center',
 					background: 'linear-gradient(to top right, #F8C794, #FFE0B5, #FFF2D7)',
 					p: 4,
-					position: 'relative', // Added to position floor text relative to the card
+					position: 'relative',
 				}}
 			>
 				<Typography variant='h4'>{table.tableType} Table</Typography>
@@ -110,9 +110,9 @@ export default function TableDetail() {
 				<Typography
 					variant='h5'
 					sx={{
-						position: 'absolute', // Position it absolutely in relation to the card
-						top: 16, // Add some spacing from the top
-						right: 16, // Align to the right side of the card
+						position: 'absolute',
+						top: 16,
+						right: 16,
 					}}
 				>
 					Floor {table.floor}

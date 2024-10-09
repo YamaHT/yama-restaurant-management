@@ -15,7 +15,6 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
-
 import { useRef, useState } from 'react'
 
 const AddProduct = ({ open, handleClose, handleAddProduct }) => {
@@ -103,7 +102,6 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 
 	const handleAdd = () => {
 		let isValid = true
-
 		Object.keys(fieldsRef.current).forEach((key) => {
 			if (!fieldsRef.current[key]?.validate()) {
 				isValid = false
@@ -112,17 +110,16 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 
 		if (isValid) {
 			const newProduct = {
-				id: Date.now(), 
+				id: Date.now(),
 				images: values.images,
 				imageBase64Array: imageBase64Array,
 				name: values.name,
 				price: parseFloat(values.price),
 				description: values.description,
 				category: values.category,
-				quantity: 0, 
-				isDeleted: false, 
+				quantity: 0,
+				isDeleted: false,
 			}
-
 			handleAddProduct(newProduct)
 			handleClose()
 		}

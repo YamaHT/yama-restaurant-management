@@ -36,10 +36,9 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 	const [draggingIndex, setDraggingIndex] = useState(null)
 
 	useEffect(() => {
-		// Load existing product data into form when the dialog opens
 		if (existingProduct) {
 			setValues({
-				id: existingProduct.id || '', // Set the id here
+				id: existingProduct.id || '',
 				images: existingProduct.images || [],
 				name: existingProduct.name || '',
 				price: existingProduct.price?.toString() || '',
@@ -142,7 +141,6 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 		}
 	}
 
-	// Drag-and-Drop Handlers
 	const handleDragStart = (index) => {
 		setDraggingIndex(index)
 	}
@@ -154,11 +152,9 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 		const reorderedImages = [...values.images]
 		const reorderedBase64 = [...imageBase64Array]
 
-		// Remove the dragged item
 		const [movedImage] = reorderedImages.splice(draggingIndex, 1)
 		const [movedBase64] = reorderedBase64.splice(draggingIndex, 1)
 
-		// Insert it at the new position
 		reorderedImages.splice(index, 0, movedImage)
 		reorderedBase64.splice(index, 0, movedBase64)
 

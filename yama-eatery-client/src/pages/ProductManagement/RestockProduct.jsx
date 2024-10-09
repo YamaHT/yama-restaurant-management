@@ -19,9 +19,8 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 
 	const handleIncrease = () => {
 		if (quantity < 1000) {
-			// Assuming a maximum limit for quantity
 			setQuantity((prev) => prev + 1)
-			setError('') // Clear error if there was any
+			setError('')
 		} else {
 			setError('Maximum quantity reached.')
 		}
@@ -30,7 +29,7 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 	const handleDecrease = () => {
 		if (quantity > 0) {
 			setQuantity((prev) => prev - 1)
-			setError('') // Clear error if there was any
+			setError('')
 		}
 	}
 
@@ -38,14 +37,13 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 		const value = e.target.value
 
 		if (value === '') {
-			setQuantity('') // Allow empty input for clearing
-			setError('') // Clear error while editing
+			setQuantity('')
+			setError('')
 			return
 		}
 
 		const numericValue = parseInt(value, 10)
-			setQuantity(numericValue)
-	
+		setQuantity(numericValue)
 	}
 
 	const handleConfirm = () => {
@@ -59,7 +57,6 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 		<Dialog open={open} onClose={handleClose} maxWidth='xs' fullWidth>
 			<DialogTitle>Restock Product</DialogTitle>
 			<DialogContent>
-				{/* Show the product name in a read-only text field */}
 				<ValidationTextField
 					label='Product Name'
 					value={productName}
@@ -88,7 +85,7 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 						onChange={handleInputChange}
 						inputProps={{ min: 0 }}
 						fullWidth={false}
-						regex='^[0-9]*$' // Allows empty or positive integer numbers
+						regex='^[0-9]*$'
 						regexErrorText='Quantity must be a positive integer.'
 						requiredErrorText='Quantity is required.'
 						sx={{ width: '200px', textAlign: 'center' }}

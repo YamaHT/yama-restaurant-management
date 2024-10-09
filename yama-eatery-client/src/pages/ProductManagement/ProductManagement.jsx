@@ -123,7 +123,6 @@ const categoryNavigation = [
 	{ icon: <LunchDining />, name: 'Snack' },
 ]
 
-// Not change function
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
 		return -1
@@ -134,7 +133,6 @@ function descendingComparator(a, b, orderBy) {
 	return 0
 }
 
-// Not change function
 function getComparator(order, orderBy) {
 	return order === 'desc'
 		? (a, b) => descendingComparator(a, b, orderBy)
@@ -173,7 +171,6 @@ const ProductManagement = () => {
 				rows.filter((row) => row.name.toLowerCase().includes(searchName.toLowerCase()))
 			)
 		} else {
-			// Reset to category-filtered rows
 			const categoryFilterMap = ['All', 'Food', 'Drink', 'Dessert', 'Snack']
 			if (categoryFilterMap[categoryTab] === 'All') {
 				setFilteredRows(rows)
@@ -282,7 +279,7 @@ const ProductManagement = () => {
 								open={openRestockPage}
 								handleClose={() => setOpenRestockPage(false)}
 								currentQuantity={selectedProduct.quantity}
-								productName={selectedProduct.name} // Pass product name as a prop
+								productName={selectedProduct.name}
 								onRestock={(newQuantity) => handleRestockProduct(newQuantity)}
 							/>
 						)}
@@ -351,7 +348,6 @@ const ProductManagement = () => {
 														title='Delete Confirmation'
 														description='Are you sure you want to delete this?'
 														handleConfirm={() => {
-															// Implement your delete logic here
 															alert(`Deleted product with ID: ${row.id}`)
 															setRows((prevRows) => prevRows.filter((r) => r.id !== row.id))
 														}}

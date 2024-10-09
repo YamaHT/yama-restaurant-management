@@ -7,7 +7,6 @@ import {
 	Pagination,
 	Rating,
 	Stack,
-	Toolbar,
 	Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -28,7 +27,7 @@ export default function ProductList(props) {
 	const [filterOption, setFilterOption] = useState('')
 	const [sortOption, setSortOption] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
-	const [hoveredProductId, setHoveredProductId] = useState(null) // Add this state
+	const [hoveredProductId, setHoveredProductId] = useState(null)
 
 	const productsPerPage = 8
 	const [searchTerm, setSearchTerm] = useState('')
@@ -153,13 +152,13 @@ export default function ProductList(props) {
 												onMouseLeave={() => setHoveredProductId(null)}
 											>
 												<img
-													src={hoveredProductId === product.id ? product.img[1] : product.img[0]} // Switch image based on hover
+													src={hoveredProductId === product.id ? product.img[1] : product.img[0]}
 													alt={product.name}
 													style={{
 														objectFit: 'contain',
 														maxHeight: '100%',
 														maxWidth: '100%',
-														transition: 'all 0.3s ease-in-out', // Smooth transition between images
+														transition: 'all 0.3s ease-in-out',
 													}}
 												/>
 											</Box>
