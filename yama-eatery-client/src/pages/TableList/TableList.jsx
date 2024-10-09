@@ -3,7 +3,7 @@ import {
 	Box,
 	CssBaseline,
 	Divider,
-	Grid,
+	Grid2,
 	Pagination,
 	Stack,
 	Toolbar,
@@ -86,7 +86,7 @@ export default function TableList() {
 					</Typography>
 				) : (
 					<>
-						<Grid
+						<Grid2
 							container
 							sx={{
 								display: 'grid',
@@ -143,7 +143,7 @@ export default function TableList() {
 									</Box>
 								</Box>
 							))}
-						</Grid>
+						</Grid2>
 						<Divider sx={{ mt: 2 }} />
 						<Pagination
 							size='large'

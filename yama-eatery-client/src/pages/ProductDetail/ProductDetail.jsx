@@ -6,7 +6,6 @@ import {
 	CardMedia,
 	Chip,
 	Divider,
-	Grid,
 	Grid2,
 	IconButton,
 	Rating,
@@ -19,11 +18,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { calculateAverageRating } from '../ProductList/ProductList'
 import { products } from '../ProductMockData/ProductMockData'
 
+import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
 export default function ProductDetail() {
 	const { id } = useParams()
@@ -166,9 +165,9 @@ export default function ProductDetail() {
 							sx={{ width: '40%', objectFit: 'cover', borderRadius: 1, mb: 4 }}
 						/>
 						<Divider sx={{ width: '100%', my: 4 }} />
-						<Grid container spacing={2} justifyContent='center'>
+						<Grid2 container spacing={2} justifyContent='center'>
 							{product.img?.map((img, index) => (
-								<Grid item key={index}>
+								<Grid2 item key={index}>
 									<CardMedia
 										component='img'
 										src={img}
@@ -176,9 +175,9 @@ export default function ProductDetail() {
 										sx={{ width: 80, height: 80, borderRadius: 2, cursor: 'pointer' }}
 										onClick={() => setSelectedImage(img)}
 									/>
-								</Grid>
+								</Grid2>
 							))}
-						</Grid>
+						</Grid2>
 					</Card>
 				</Grid2>
 				<Grid2 item xs={12} lg={5}>
