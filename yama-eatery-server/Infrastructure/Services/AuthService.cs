@@ -1,12 +1,12 @@
-﻿using Application.Exceptions;
-using Application.ViewModels.UserViewModels;
-using Application;
-using AutoMapper;
+﻿using Application;
+using Application.Exceptions;
+using Application.Services;
 using Application.Utils;
+using Application.ViewModels.UserViewModels;
+using AutoMapper;
 using Domain.Enums;
 using Domain.Models;
 using Microsoft.Extensions.Configuration;
-using Application.Services;
 
 namespace Infrastructure.Services
 {
