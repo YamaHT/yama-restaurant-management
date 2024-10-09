@@ -7,8 +7,7 @@ const Membership = () => {
 	return (
 		<Paper
 			width={'100%'}
-			sx={{
-				
+			sx={{			
 				flexDirection: 'column',
 				alignItems: 'center',
 				justifyContent: 'center',
@@ -20,18 +19,17 @@ const Membership = () => {
 				boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
 			}}
 		>
-			<Typography variant='h4' fontWeight='bold' gutterBottom>
-				Membership Progress
+			<Typography variant='h4' fontWeight='bold' gutterBottom paddingTop={3} paddingBottom={5}>
+				Membership System
 			</Typography>
-			<Typography variant='body1' gutterBottom>
-				Keep shopping to unlock more rewards and exclusive benefits as you progress through the membership ranks.
+			<Typography variant='body1'  gutterBottom paddingBottom={5}>
+			Membership not only offers attractive privileges such as exclusive offers, special discounts, and regular gifts, but also helps you enhance your shopping experience. As a member, you will always be prioritized in promotions, have early access to new products, and receive dedicated care from the customer support team.
 			</Typography>
 			<Box sx={{ marginY: 2, width: '100%' }}>
 				<Stack direction='row' justifyContent='space-between' sx={{ width: '100%' }}>
 					<Typography variant='body1'>Money spent ($500/2000)</Typography>
 					<Typography variant='body1'>{progress}%</Typography>
 				</Stack>
-
 				<LinearProgress variant='determinate' value={progress} sx={{ height: 10, borderRadius: 1, marginY: 1 }} />
 			</Box>
 			<Grid2 container spacing={3} justifyContent='center'>
@@ -82,7 +80,7 @@ const Membership = () => {
 							<Typography variant='h6' fontWeight='bold'>
 								Rank 2
 							</Typography>
-							<Typography variant='h5' fontWeight='bold' color='white'>
+							<Typography variant='h5' fontWeight='bold' color='gold '>
 								Gold
 							</Typography>
 							<ul style={{ textAlign: 'left', padding: '10px' }}>
@@ -113,7 +111,7 @@ const Membership = () => {
 							<Typography variant='h6' fontWeight='bold'>
 								Rank 3
 							</Typography>
-							<Typography variant='h5' fontWeight='bold' color='white'>
+							<Typography variant='h5' fontWeight='bold' color='purple'>
 								Platinum
 							</Typography>
 							<ul style={{ textAlign: 'left', padding: '10px' }}>
