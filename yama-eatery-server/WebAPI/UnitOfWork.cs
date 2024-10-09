@@ -12,7 +12,8 @@ namespace WebAPI
     #endregion
         ApplicationDbContext dbContext,
         IUserRepository userRepository,
-        IProductRepository productRepository) : IUnitOfWork
+        IProductRepository productRepository,
+        ITableRepository tableRepository) : IUnitOfWork
     {
         #region All EnumRepository
         public IRoleRepository RoleRepository => roleRepository;
@@ -22,6 +23,7 @@ namespace WebAPI
 
         public IUserRepository UserRepository => userRepository;
         public IProductRepository ProductRepository => productRepository;
+        public ITableRepository TableRepository => tableRepository;
 
         public async Task<int> SaveChangeAsync()
         {
