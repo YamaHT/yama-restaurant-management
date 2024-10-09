@@ -23,6 +23,7 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 	const fieldsRef = useRef({})
 	const [imageBase64Array, setImageBase64Array] = useState([])
 	const [values, setValues] = useState({
+		id: '',
 		images: [],
 		name: '',
 		price: '',
@@ -38,6 +39,7 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 		// Load existing product data into form when the dialog opens
 		if (existingProduct) {
 			setValues({
+				id: existingProduct.id || '', // Set the id here
 				images: existingProduct.images || [],
 				name: existingProduct.name || '',
 				price: existingProduct.price?.toString() || '',
@@ -259,6 +261,14 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 						variant='filled'
 						name='image'
 						value={values.images.join(', ')}
+						slotProps={customInputImageProperties}
+					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['id'] = el)}
+						label='ID'
+						name='id'
+						variant='filled'
+						value={values.id}
 						slotProps={customInputImageProperties}
 					/>
 					<ValidationTextField

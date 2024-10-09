@@ -157,12 +157,9 @@ const ProductManagement = () => {
 	const [rows, setRows] = useState(initialRows)
 	const [filteredRows, setFilteredRows] = useState(initialRows)
 
-	// Category filtering logic
 	useEffect(() => {
-		// Map categoryTab to category names
 		const categoryFilterMap = ['All', 'Food', 'Drink', 'Dessert', 'Snack']
 
-		// If 'All' is selected, show all rows, otherwise filter by category
 		if (categoryFilterMap[categoryTab] === 'All') {
 			setFilteredRows(rows)
 		} else {
@@ -170,7 +167,6 @@ const ProductManagement = () => {
 		}
 	}, [categoryTab, rows])
 
-	// Search filtering logic
 	useEffect(() => {
 		if (searchName) {
 			setFilteredRows(
@@ -320,7 +316,7 @@ const ProductManagement = () => {
 											</Stack>
 										</TableCell>
 										<TableCell>{row.category}</TableCell>
-										<TableCell align='right'>${row.price}</TableCell>
+										<TableCell align='right'>${row.price.toFixed(2)}</TableCell>
 										<TableCell align='right'>
 											<Chip
 												label={row.quantity}

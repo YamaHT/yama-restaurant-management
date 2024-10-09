@@ -4,7 +4,7 @@ import React from 'react'
 const CrudTabs = ({ children, value, handleChange }) => {
 	return (
 		<Tabs
-			variant='scrollable'
+			variant='fullWidth'
 			scrollButtons={'auto'}
 			textColor='inherit'
 			TabIndicatorProps={{
