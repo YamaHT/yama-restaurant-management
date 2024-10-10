@@ -7,7 +7,6 @@ const ContactUs = () => {
 		email: '',
 		message: '',
 	})
-
 	const commonTextFieldStyles = {
 		backgroundColor: 'rgba(255, 255, 255, 0.3)',
 		'&:hover': {
@@ -16,7 +15,6 @@ const ContactUs = () => {
 		border: 'none',
 		'& fieldset': { border: 'none' },
 	}
-
 	const contactDetails = [
 		{
 			icon: <LanguageSharp sx={{ fontSize: '3.25rem', color: 'blue', width: '15%' }} />,
@@ -37,7 +35,6 @@ const ContactUs = () => {
 			link: '#',
 		},
 	]
-
 	const contactFields = [
 		{ label: 'Your name', name: 'name', type: 'text', value: formData.name },
 		{ label: 'Your email', name: 'email', type: 'email', value: formData.email },
@@ -50,7 +47,6 @@ const ContactUs = () => {
 			minRows: 5,
 		},
 	]
-
 	const handleChange = (event) => {
 		const { name, value } = event.target
 		setFormData({
@@ -84,7 +80,6 @@ const ContactUs = () => {
 						Give us a call or drop by anytime, we endeavour to answer all enquiries within 24 hours
 						on business days. We will be happy to answer your questions.
 					</Typography>
-
 					{contactDetails.map(({ icon, title, content, link }, index) => (
 						<Stack
 							key={index}

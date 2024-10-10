@@ -26,7 +26,6 @@ import {
 	Close,
 } from '@mui/icons-material'
 import React, { useState } from 'react'
-
 const fieldRow = [
 	{ name: 'name', label: 'Name', type: 'text' },
 	{ name: 'phone', label: 'Phone', type: 'text' },
@@ -84,7 +83,6 @@ const Profile = () => {
 		const { name, value } = e.target
 		let isValid = true,
 			txt = ''
-
 		const validators = {
 			name: /^[\p{L}\s]*$/gu.test(value) && value.length <= 50,
 			phone: /^\d{0,10}$/.test(value),
