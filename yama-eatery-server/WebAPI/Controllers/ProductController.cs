@@ -1,17 +1,8 @@
-﻿using Application;
-using Domain.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using WebAPI.Utils;
 
 namespace WebAPI.Controllers
 {
     public class ProductController(IUnitOfWork _unitOfWork) : ApiController
     {
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            string[] include = [nameof(Category), nameof(Product.Feedbacks)];
-            return Ok(await _unitOfWork.ProductRepository.GetAllAsync(include));
-        }
     }
 }

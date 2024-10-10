@@ -1,6 +1,5 @@
-using Infrastructure;
 using WebAPI;
-using WebAPI.Middlewares;
+using WebAPI.Utils.Middlewares;
 
 var apiPolicy = "YamaCorsPolicy";
 var builder = WebApplication.CreateBuilder(args);
@@ -10,12 +9,12 @@ builder.Services.AddWebAPIService();
 
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy(apiPolicy, policy =>
-	{
-		policy.WithOrigins("http://localhost:3000")
-		.AllowAnyMethod()
-		.AllowAnyHeader();
-	});
+    options.AddPolicy(apiPolicy, policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();
