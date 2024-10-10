@@ -29,18 +29,6 @@ namespace WebAPI.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Booking>()
-                .HasOne(b => b.User)
-                .WithMany(u => u.BookingsUser)
-                .HasForeignKey(b => b.UserId);
-
-            modelBuilder.Entity<Booking>()
-                .HasOne(b => b.Waiter)
-                .WithMany(w => w.BookingsWaiter)
-                .HasForeignKey(b => b.WaiterId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-
             modelBuilder.Entity<Category>().HasData(
                 Enum.GetValues(typeof(CategoryEnum))
                     .Cast<CategoryEnum>()
@@ -48,16 +36,6 @@ namespace WebAPI.Data
                     {
                         Id = (int)categoryEnum,
                         Name = categoryEnum.ToString()
-                    })
-            );
-
-            modelBuilder.Entity<Role>().HasData(
-                Enum.GetValues(typeof(RoleEnum))
-                    .Cast<RoleEnum>()
-                    .Select(roleEnum => new Role
-                    {
-                        Id = (int)roleEnum,
-                        Name = roleEnum.ToString()
                     })
             );
 

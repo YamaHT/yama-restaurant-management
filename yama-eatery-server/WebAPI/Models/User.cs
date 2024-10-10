@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace WebAPI.Models
@@ -26,8 +27,8 @@ namespace WebAPI.Models
         [StringLength(10, ErrorMessage = "Phone must be exactly at 10 characters")]
         public char[]? Phone { get; set; }
 
-        [MaxLength(255, ErrorMessage = "Address can't exceed 255 characters")]
-        public string? Address { get; set; }
+        [Column(TypeName = "char(6)")]
+        public char[]? Gender { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public virtual ICollection<FeedbackProduct>? Feedbacks { get; set; } = null;
