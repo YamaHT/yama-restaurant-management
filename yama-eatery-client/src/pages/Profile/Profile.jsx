@@ -10,6 +10,8 @@ import {
 	FormControlLabel,
 	Radio,
 	Paper,
+	Avatar,
+	Collapse,
 	Slide,
 } from '@mui/material'
 import {
@@ -23,24 +25,22 @@ import {
 	Female,
 	Close,
 } from '@mui/icons-material'
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 
 const fieldRow = [
 	{ name: 'name', label: 'Name', type: 'text' },
 	{ name: 'phone', label: 'Phone', type: 'text' },
 	{ name: 'birthday', label: 'Birthday', type: 'date' },
 ]
-
 const formatDate = (dateStr) => {
 	const date = new Date(dateStr)
 	return date.toLocaleDateString('en-GB')
 }
 const Today = new Date(new Date().setDate(new Date().getDate() - 1)).toJSON().split('T')[0]
-
 const Profile = () => {
 	const [profile, setProfile] = useState({
 		role: 'Customer',
-		image: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_68.jpg',
+		image: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_0.jpg',
 		name: 'Yasuo',
 		email: '123@example.com',
 		gender: true,
@@ -52,7 +52,6 @@ const Profile = () => {
 	const [isEditing, setIsEditing] = useState(false)
 	const [open, setOpen] = useState(false)
 	const [showButton, setShowButton] = useState(false)
-	const containerRef = useRef(null)
 	const [alert, setAlert] = useState({ message: '', open: false, severity: '' })
 	const [errors, setErrors] = useState({
 		name: false,
@@ -64,7 +63,6 @@ const Profile = () => {
 		address: '',
 		phone: '',
 	})
-
 	const handleImageChange = (e) => {
 		const file = e.target.files[0]
 		if (file) {
@@ -72,7 +70,6 @@ const Profile = () => {
 			setEditableProfile((prev) => ({ ...prev, image: imageUrl }))
 		}
 	}
-
 	const handleCancel = () => {
 		setHelperTxt({
 			name: '',
@@ -83,7 +80,6 @@ const Profile = () => {
 		setErrors({ name: false, address: false, phone: false })
 		setIsEditing(false)
 	}
-
 	const handleChange = (e) => {
 		const { name, value } = e.target
 		let isValid = true,
@@ -116,7 +112,6 @@ const Profile = () => {
 		setHelperTxt({ ...helperTxt, [name]: txt })
 		if (isValid) setEditableProfile({ ...editableProfile, [name]: value })
 	}
-
 	const handleSave = () => {
 		const validValue = {
 			name: editableProfile.name.trim(),
@@ -145,15 +140,14 @@ const Profile = () => {
 		setIsEditing(false)
 		toggleSlide()
 	}
-
 	const handleEntered = () => {
 		setShowButton(true)
 	}
 	const toggleSlide = () => {
+		handleCancel()
 		setShowButton(false)
 		setOpen(!open)
 	}
-
 	const profileFields = [
 		{ key: 'role', icon: <Work fontSize='large' /> },
 		{ key: 'name', icon: <Person fontSize='large' /> },
@@ -166,31 +160,36 @@ const Profile = () => {
 		{ key: 'birthday', icon: <Cake fontSize='large' /> },
 	]
 	return (
-		<Box p={'0 2%'} ref={containerRef}>
+		<Box p={'0 2%'}>
 			<Typography variant='h2' textAlign='center' m={3} textTransform='uppercase'>
 				Profile
 			</Typography>
-			<Slide
-				timeout={open ? 0 : 1000}
-				direction='down'
+			<Collapse
+				timeout={500}
 				in={!open}
+				mountOnEnter
 				unmountOnExit
 				onEntered={handleEntered}
-				container={containerRef.current}
+				appear
 			>
 				<Box
 					display={'flex'}
 					justifyContent='space-between'
 					alignItems='center'
 					component={Paper}
-					margin='2%'
 					p='0% 2%'
 				>
-					<Box width='30%' p='2%'>
-						<img
-							src={editableProfile.image ? editableProfile.image : 'logo.192.png'}
-							alt={editableProfile.name}
-							style={{ width: '100%', aspectRatio: 7 / 6, objectFit: 'cover' }}
+					<Box width={'25%'} p={'2%'}>
+						<Avatar
+							variant='rounded'
+							src={profile.image}
+							alt={profile.name}
+							sx={{
+								width: '100%',
+								height: '100%',
+								aspectRatio: 7 / 6,
+								objectFit: 'cover',
+							}}
 						/>
 					</Box>
 					<Box
@@ -198,7 +197,7 @@ const Profile = () => {
 						gridTemplateColumns='repeat(2, 1fr)'
 						alignContent='center'
 						gap='25% 0'
-						width='69%'
+						width='70%'
 						pl='1%'
 					>
 						{profileFields.map((field, index) => (
@@ -220,18 +219,18 @@ const Profile = () => {
 									}}
 								>
 									{field.key === 'birthday'
-										? formatDate(editableProfile[field.key])
+										? formatDate(profile[field.key])
 										: field.key === 'gender'
-										? editableProfile[field.key]
+										? profile[field.key]
 											? 'Male'
 											: 'Female'
-										: editableProfile[field.key]}
+										: profile[field.key]}
 								</Typography>
 							</Box>
 						))}
 					</Box>
 				</Box>
-			</Slide>
+			</Collapse>
 			{showButton && (
 				<Button
 					variant='text'
@@ -240,88 +239,104 @@ const Profile = () => {
 					sx={{
 						position: 'absolute',
 						top: '20%',
-						right: '5%',
-						zIndex: 10,
+						right: '3%',
+						zIndex: 2,
 					}}
 				>
 					{open ? <Close fontSize='large' /> : <Edit fontSize='large' />}
 				</Button>
 			)}
-
 			<Slide
 				direction='up'
-				timeout={open ? 1000 : 0}
+				timeout={500}
 				mountOnEnter
 				unmountOnExit
 				onEntered={handleEntered}
 				in={open}
-				container={containerRef.current}
 			>
-				<Box
-					display={'flex'}
-					justifyContent='space-between'
-					margin='2%'
-					p='0% 2%'
-					component={Paper}
-				>
-					<Box width='25%' p='2%'>
+				<Box display={'flex'} justifyContent='space-between' p='0% 2%' component={Paper}>
+					<Box width='25%' p={'1%'}>
 						{isEditing ? (
 							<Box
+								width={'100%'}
+								m={'2%'}
 								sx={{
 									position: 'relative',
-									...(isEditing && {
-										':hover img': { filter: 'brightness(0.5)' },
-										':hover .editIcon': { opacity: 1 },
-									}),
+									'&:hover .avatar-overlay': {
+										opacity: 1,
+									},
+									'&:hover .avatar-image': {
+										filter: 'blur(1px)',
+									},
 								}}
 							>
-								<img
-									style={{
+								<Avatar
+									variant='rounded'
+									src={editableProfile.image}
+									alt={editableProfile.name}
+									className='avatar-image'
+									sx={{
 										width: '100%',
+										height: '100%',
+										aspectRatio: '7/6',
 										objectFit: 'cover',
-										aspectRatio: 7 / 6,
 										transition: 'filter 0.3s ease',
 									}}
-									alt={editableProfile.name}
-									src={editableProfile.image ? editableProfile.image : '/logo192.png'}
 								/>
-								<IconButton
-									className='editIcon'
+								<Box
+									className='avatar-overlay'
 									sx={{
 										position: 'absolute',
-										top: '50%',
-										left: '50%',
-										transform: 'translate(-50%, -50%)',
-										color: 'white',
+										top: 0,
+										left: 0,
+										right: 0,
+										bottom: 0,
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+										background: 'rgba(0,0,0,0.5)',
 										opacity: 0,
 										transition: 'opacity 0.3s ease',
 									}}
-									onClick={() => document.getElementById('file-input').click()}
 								>
-									<Edit fontSize='large' />
-									<input
-										id='file-input'
-										type='file'
-										style={{ display: 'none' }}
-										accept='image/*'
-										onChange={handleImageChange}
-									/>
-								</IconButton>
+									<IconButton
+										onClick={() => document.getElementById('file-input').click()}
+										sx={{
+											zIndex: 10,
+											background: 'rgba(255,255,255,0.8)',
+											'&:hover': {
+												background: 'rgba(255,255,255,1)',
+											},
+										}}
+									>
+										<Edit />
+										<input
+											id='file-input'
+											type='file'
+											style={{ display: 'none' }}
+											accept='image/*'
+											onChange={handleImageChange}
+										/>
+									</IconButton>
+								</Box>
 							</Box>
 						) : (
-							<img
-								style={{
-									width: '100%',
-									objectFit: 'cover',
-									aspectRatio: 7 / 6,
-									transition: 'filter 0.3s ease',
-								}}
-								alt={editableProfile.name}
-								src={editableProfile.image ? editableProfile.image : '/logo192.png'}
-							/>
+							<Box width={'100%'} m={'2%'}>
+								<Avatar
+									variant='rounded'
+									src={editableProfile.image}
+									alt={editableProfile.name}
+									sx={{
+										width: '100%',
+										height: '100%',
+										aspectRatio: 7 / 6,
+										objectFit: 'cover',
+									}}
+								/>
+							</Box>
 						)}
 						{profileFields.map((field, index) => (
-							<Box key={index} display='flex' p='2% 0' alignItems='center'>
+							<Box key={index} display='flex' p='1% 0' alignItems='center'>
 								{field.icon}
 								<Typography
 									ml={2}
@@ -350,15 +365,13 @@ const Profile = () => {
 							<Grow
 								timeout={500}
 								in={alert.open}
-								style={{ width: '95%', top: '2%', left: '3%', position: 'absolute' }}
+								style={{ width: '100%', top: '2%', left: '3%', position: 'absolute' }}
 							>
 								<Alert variant='filled' severity={alert.severity}>
 									{alert.message}
 								</Alert>
 							</Grow>
 						</Box>
-
-						{/* Changing profile */}
 						{fieldRow.map((field) => (
 							<Box
 								key={field.name}

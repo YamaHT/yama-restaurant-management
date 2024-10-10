@@ -7,13 +7,6 @@ const ContactUs = () => {
 		email: '',
 		message: '',
 	})
-	const handleChange = (event) => {
-		const { name, value } = event.target
-		setFormData({
-			...formData,
-			[name]: value,
-		})
-	}
 
 	const commonTextFieldStyles = {
 		backgroundColor: 'rgba(255, 255, 255, 0.3)',
@@ -57,13 +50,21 @@ const ContactUs = () => {
 			minRows: 5,
 		},
 	]
+
+	const handleChange = (event) => {
+		const { name, value } = event.target
+		setFormData({
+			...formData,
+			[name]: value,
+		})
+	}
 	return (
 		<Box>
 			<Stack>
 				<img
 					src='https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_0.jpg'
 					alt='logo'
-					style={{ width: '100%', aspectRatio: 5 / 1, objectFit: 'fill' }}
+					style={{ width: '100%', aspectRatio: 5 / 1, objectFit: 'cover' }}
 				/>
 			</Stack>
 			<Stack direction='row' padding={'3%'} justifyContent={'space-between'}>
