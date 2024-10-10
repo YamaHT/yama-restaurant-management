@@ -15,9 +15,19 @@ namespace WebAPI.Models
         [JsonIgnore]
         public string? Password { get; set; }
 
-        public Role? Role { get; set; }
+        public string? Image { get; set; }
 
-        public Profile? Profile { get; set; }
+        public DateOnly? Birthday { get; set; } = new DateOnly(1900, 01, 01);
+
+        [MaxLength(255, ErrorMessage = "Name can't exceed 255 characters")]
+        public string? Name { get; set; }
+
+        [Phone(ErrorMessage = "Phone must only contain numbers")]
+        [StringLength(10, ErrorMessage = "Phone must be exactly at 10 characters")]
+        public char[]? Phone { get; set; }
+
+        [MaxLength(255, ErrorMessage = "Address can't exceed 255 characters")]
+        public string? Address { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public virtual ICollection<FeedbackProduct>? Feedbacks { get; set; } = null;
@@ -26,9 +36,6 @@ namespace WebAPI.Models
         public virtual ICollection<UserVoucher>? UserVouchers { get; set; } = null;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<Booking>? BookingsUser { get; set; } = null;
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<Booking>? BookingsWaiter { get; set; } = null;
+        public virtual ICollection<Booking>? Bookings { get; set; } = null;
     }
 }

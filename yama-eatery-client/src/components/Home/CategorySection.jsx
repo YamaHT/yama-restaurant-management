@@ -65,7 +65,7 @@ const CategorySection = () => {
 								boxShadow: '0px 2px 10px -3px rgba(6,81,237,0.3)',
 								position: 'relative',
 								'&:hover .content': {
-									height: '4rem',
+									height: '6rem',
 									mt: 1,
 								},
 								transition: 'all 0.3s ease',
@@ -83,11 +83,11 @@ const CategorySection = () => {
 									left: 0,
 									right: 0,
 									backgroundColor: '#FBBF24',
-									opacity: 0.8,
+									opacity: 0.9,
 									padding: 3,
 								}}
 							>
-								<Typography variant='body2' textTransform={'uppercase'}>
+								<Typography variant='body1' textTransform={'uppercase'}>
 									Stage 0{index + 1} | BY YMRS
 								</Typography>
 								<Typography variant='h6' fontWeight={'bold'}>
@@ -102,12 +102,12 @@ const CategorySection = () => {
 									}}
 								>
 									<Typography
-										variant='body2'
+										variant='body1'
 										sx={{
 											textOverflow: 'ellipsis',
 											display: '-webkit-box',
 											WebkitBoxOrient: 'vertical',
-											WebkitLineClamp: 3,
+											WebkitLineClamp: 4,
 										}}
 									>
 										{category.description}

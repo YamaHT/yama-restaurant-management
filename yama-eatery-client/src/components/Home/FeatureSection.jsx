@@ -69,7 +69,7 @@ const FeatureSection = () => {
 							<Typography variant='h6' gutterBottom>
 								{feature.title}
 							</Typography>
-							<Typography variant='body2'>{feature.description}</Typography>
+							<Typography variant='body1'>{feature.description}</Typography>
 						</Box>
 					</Grid2>
 				))}

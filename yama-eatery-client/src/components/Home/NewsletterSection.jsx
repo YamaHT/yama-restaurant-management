@@ -6,9 +6,9 @@ const NewsletterSection = () => {
 		<Box bgcolor='white' py={4}>
 			<Box textAlign='center'>
 				<Typography variant='h3' fontWeight='bold'>
-					Newsletter
+					Subscribe
 				</Typography>
-				<Typography variant='body2' mt={2}>
+				<Typography variant='body1' mt={2}>
 					Subscribe to our newsletter and stay up to date with the latest news, updates, and
 					exclusive offers. Get valuable insights. Join our community today!
 				</Typography>
@@ -47,7 +47,7 @@ const NewsletterSection = () => {
 							px: 4,
 							textTransform: 'none',
 							fontWeight: 'semibold',
-							fontSize: '0.875rem',
+							py: 1,
 						}}
 					>
 						Submit
