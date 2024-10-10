@@ -1,3 +1,4 @@
+import { AssetImage } from '@/utilities/AssetImage'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import React from 'react'
 
@@ -5,8 +6,8 @@ const HeroSection = () => {
 	return (
 		<Box position={'relative'} width={'100%'} height={400}>
 			<img
-				src='https://readymadeui.com/cardImg.webp'
-				alt='Banner Image'
+				src={AssetImage.HomeHeroBackgroundImage}
+				alt='Background Image'
 				style={{
 					position: 'absolute',
 					inset: 0,
@@ -49,13 +50,14 @@ const HeroSection = () => {
 					blandit, metus mi consectetur felis turpis vitae ligula.
 				</Typography>
 				<Button
-					variant='outlined'
+					variant='contained'
 					sx={{
 						m: 'auto',
 						mt: 3,
 						p: '0.75% 1.5%',
-						color: '#FBBF24C0',
+						color: '#FBBF24',
 						border: '2px solid #F59E0BC0',
+						bgcolor: '#F59E0B50',
 						':hover': {
 							color: '#FBBF24',
 							borderColor: '#FBBF24',
