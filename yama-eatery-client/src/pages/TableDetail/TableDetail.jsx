@@ -7,7 +7,14 @@ import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 import { tables } from '../TableMockData/TableMockData'
 import styles from './TableSlide.module.css'
-import { Add } from '@mui/icons-material'
+import {
+	Add,
+	ArrowBack,
+	ArrowBackIos,
+	ArrowForwardIos,
+	ArrowLeft,
+	ArrowRight,
+} from '@mui/icons-material'
 
 export default function TableDetail() {
 	const { id } = useParams()
@@ -118,32 +125,44 @@ export default function TableDetail() {
 					Floor {table.floor}
 				</Typography>
 
-				<div className={styles.container}>
-					<Slide easing='ease' duration={5000} ref={slideRef}>
+				<Box width={'100%'}>
+					<Slide
+						prevArrow={
+							<ArrowBackIos
+								sx={{
+									transform: 'scale(2)',
+									ml: 3,
+									color: 'white',
+									filter: 'drop-shadow(0px 0px 5px black)',
+								}}
+							/>
+						}
+						nextArrow={
+							<ArrowForwardIos
+								sx={{
+									transform: 'scale(2)',
+									mr: 3,
+									color: 'white',
+									filter: 'drop-shadow(0px 0px 5px black)',
+								}}
+							/>
+						}
+						easing='ease'
+						duration={5000}
+						ref={slideRef}
+					>
 						{table.img.map((slide, index) => {
 							return (
-								<div className={styles.slide} key={slide}>
-									<div
-										alt='Table image'
-										style={{
-											backgroundImage: `url(${table.img[index]})`,
-											backgroundColor: '#f0f0f0',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-										}}
-									>
-										{table.img[index] ? null : (
-											<Typography variant='h6' color='textSecondary'>
-												Image not found
-											</Typography>
-										)}
-									</div>
-								</div>
+								<Box height={500} key={index}>
+									<img
+										style={{ width: '100%', aspectRatio: 2 / 1, objectFit: 'fill' }}
+										src={slide}
+									/>
+								</Box>
 							)
 						})}
 					</Slide>
-				</div>
+				</Box>
 			</Card>
 
 			<Stack direction='row' justifyContent='center' mt={1}>
@@ -157,7 +176,6 @@ export default function TableDetail() {
 							width: '80px',
 							height: '50px',
 							marginRight: '10px',
-							border: selectedImageIndex === index ? '2px solid #ff6347' : '2px solid transparent',
 							cursor: 'pointer',
 							objectFit: 'cover',
 						}}
@@ -242,9 +260,7 @@ export default function TableDetail() {
 							displayEmpty
 							error={!!formErrors.dayPart}
 						>
-							<MenuItem value=''>
-								<em>Day Part</em>
-							</MenuItem>
+							<MenuItem value=''>Day Part</MenuItem>
 							<MenuItem value='Morning'>Morning</MenuItem>
 							<MenuItem value='Afternoon'>Afternoon</MenuItem>
 							<MenuItem value='Evening'>Evening</MenuItem>

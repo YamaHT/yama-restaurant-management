@@ -13,8 +13,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { tables } from '../TableMockData/TableMockData'
 
-const drawerWidth = 240
-
 export default function TableList() {
 	const [filteredTables, setFilteredTables] = useState([])
 	const [filterOption, setFilterOption] = useState('')
@@ -61,20 +59,17 @@ export default function TableList() {
 	}
 
 	return (
-		<Box display={'flex'}>
-			<CssBaseline />
-			<TableMenu
-				handleShowAll={handleShowAll}
-				filterOption={filterOption}
-				sortOption={sortOption}
-				setFilterOption={setFilterOption}
-				setSortOption={setSortOption}
-			/>
-			<Box
-				component='main'
-				sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-			>
-				<Toolbar />
+		<Grid2 container spacing={2}>
+			<Grid2 size={3}>
+				<TableMenu
+					handleShowAll={handleShowAll}
+					filterOption={filterOption}
+					sortOption={sortOption}
+					setFilterOption={setFilterOption}
+					setSortOption={setSortOption}
+				/>
+			</Grid2>
+			<Grid2 size={9}>
 				{filteredTables.length === 0 ? (
 					<Typography variant='h6' align='center' sx={{ mt: 10 }}>
 						No tables found matching the selected filters.
@@ -111,7 +106,7 @@ export default function TableList() {
 											display: 'flex',
 											justifyContent: 'center',
 											height: 260,
-											padding: 2,
+
 											backgroundColor: 'gray.100',
 										}}
 									>
@@ -119,7 +114,7 @@ export default function TableList() {
 											src={table.img[0]}
 											alt={table.tableType}
 											style={{
-												objectFit: 'contain',
+												objectFit: 'fill',
 												maxHeight: '100%',
 												maxWidth: '100%',
 											}}
@@ -151,7 +146,7 @@ export default function TableList() {
 						/>
 					</>
 				)}
-			</Box>
-		</Box>
+			</Grid2>
+		</Grid2>
 	)
 }

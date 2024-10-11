@@ -1,5 +1,4 @@
-// ProductDrawer.js
-import { Box, Button, MenuItem, Select, Slider, Toolbar, Typography } from '@mui/material'
+import { Box, Button, MenuItem, Paper, Select, Slider, Toolbar, Typography } from '@mui/material'
 
 export default function ProductMenu({
 	handleShowAll,
@@ -11,12 +10,10 @@ export default function ProductMenu({
 	setFilterOption,
 }) {
 	return (
-		<Box>
-			<Toolbar />
-			<Button variant='contained' onClick={handleShowAll} sx={{ m: 2 }}>
+		<Paper sx={{ p: 2 }}>
+			<Button variant='contained' onClick={handleShowAll} fullWidth>
 				All Products
 			</Button>
-
 			<Box sx={{ p: 2 }}>
 				<Typography variant='h6'>Filter by Price</Typography>
 				<Slider
@@ -30,7 +27,6 @@ export default function ProductMenu({
 					Price Range: ${priceRange[0]} - ${priceRange[1]}
 				</Typography>
 			</Box>
-
 			<Box sx={{ p: 2 }}>
 				<Typography variant='h6'>Sort Options</Typography>
 				<Select
@@ -43,11 +39,12 @@ export default function ProductMenu({
 					<MenuItem value=''>Sort by</MenuItem>
 					<MenuItem value='low-to-high'>Price: Low to High</MenuItem>
 					<MenuItem value='high-to-low'>Price: High to Low</MenuItem>
+					<MenuItem value='rating-high-to-low'>Rating: High to Low</MenuItem>
+					<MenuItem value='rating-low-to-high'>Rating: Low to High</MenuItem>
 					<MenuItem value='a-to-z'>Name: A-Z</MenuItem>
 					<MenuItem value='z-to-a'>Name: Z-A</MenuItem>
 				</Select>
 			</Box>
-
 			<Box sx={{ p: 2 }}>
 				<Typography variant='h6'>Category</Typography>
 				<Select
@@ -64,6 +61,6 @@ export default function ProductMenu({
 					<MenuItem value='snack'>Category: Snack</MenuItem>
 				</Select>
 			</Box>
-		</Box>
+		</Paper>
 	)
 }

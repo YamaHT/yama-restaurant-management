@@ -17,9 +17,24 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 	const [error, setError] = useState('')
 	const quantityFieldRef = useRef(null)
 
+	const customInputImageProperties = {
+		inputLabel: {
+			style: { color: 'gray' },
+		},
+		input: {
+			disabled: true,
+			style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+			endAdornment: (
+				<>
+					<input multiple hidden />
+				</>
+			),
+		},
+	}
+
 	const handleIncrease = () => {
 		if (quantity < 1000) {
-			setQuantity((prev) => prev + 1)
+			setQuantity((prev) => prev + prev)
 			setError('')
 		} else {
 			setError('Maximum quantity reached.')
@@ -28,7 +43,7 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 
 	const handleDecrease = () => {
 		if (quantity > 0) {
-			setQuantity((prev) => prev - 1)
+			setQuantity((prev) => prev - prev)
 			setError('')
 		}
 	}
@@ -60,9 +75,7 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 				<ValidationTextField
 					label='Product Name'
 					value={productName}
-					InputProps={{
-						readOnly: true,
-					}}
+					slotProps={customInputImageProperties}
 					fullWidth
 					margin='dense'
 				/>

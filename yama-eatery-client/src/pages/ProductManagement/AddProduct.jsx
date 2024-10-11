@@ -9,6 +9,7 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	Grid2,
 	IconButton,
 	MenuItem,
 	Stack,
@@ -181,18 +182,18 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 			<DialogTitle>Add New Product</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					<Stack direction='row' style={{ flexWrap: 'wrap' }} gap={2}>
+					<Grid2 container spacing={2}>
 						{imageBase64Array.length > 0
 							? imageBase64Array.map((base64, index) => (
-									<Box
+									<Grid2
 										key={index}
+										size={4}
 										draggable
 										onDragStart={() => handleDragStart(index)}
 										onDragOver={(e) => handleDragOver(e, index)}
 										onDragEnd={handleDragEnd}
 										sx={{
 											position: 'relative',
-											width: 160,
 											height: 130,
 											border: draggingIndex === index ? '2px dashed #000' : 'none',
 											borderRadius: '10px',
@@ -216,24 +217,26 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 										>
 											<Close />
 										</IconButton>
-									</Box>
+									</Grid2>
 							  ))
 							: null}
-						<IconButton
-							sx={{
-								width: 160,
-								height: 130,
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-								border: '1px dashed gray',
-								borderRadius: '10px',
-							}}
-							onClick={() => fileRef.current.click()}
-						>
-							<Add sx={{ fontSize: 50 }} />
-						</IconButton>
-					</Stack>
+						<Grid2 size={4}>
+							<IconButton
+								sx={{
+									width: '100%',
+									height: 130,
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									border: '1px dashed gray',
+									borderRadius: '10px',
+								}}
+								onClick={() => fileRef.current.click()}
+							>
+								<Add sx={{ fontSize: 50 }} />
+							</IconButton>
+						</Grid2>
+					</Grid2>
 					{error && <Typography color='error'>{error}</Typography>}
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['image'] = el)}
