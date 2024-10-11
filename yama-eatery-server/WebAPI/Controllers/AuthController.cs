@@ -29,7 +29,6 @@ namespace WebAPI.Controllers
             user.TryValidate();
 
             user.Password = CryptoUtils.EncryptPassword(user.Password);
-            user.Role = await _unitOfWork.RoleRepository.GetByIdAsync((int)RoleEnum.Customer);
 
             await _unitOfWork.UserRepository.AddAsync(user);
             await _unitOfWork.SaveChangeAsync();

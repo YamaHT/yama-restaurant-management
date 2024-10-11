@@ -12,7 +12,6 @@ namespace WebAPI.Repositories
         public async Task<User?> GetUserByEmailAndPassword(string email, string password)
         {
             var user = await _dbContext.User
-                .Include(x => x.Role)
                 .FirstOrDefaultAsync(x => x.Email == email);
 
             return CryptoUtils.IsPasswordCorrect(password, user?.Password) ? user : null;

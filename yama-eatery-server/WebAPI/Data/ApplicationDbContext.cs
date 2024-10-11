@@ -9,15 +9,19 @@ namespace WebAPI.Data
     {
         public ApplicationDbContext() { }
 
+        public DbSet<Attendance> Attendance { get; set; }
         public DbSet<Booking> Booking { get; set; }
         public DbSet<BookingDetail> BookingDetail { get; set; }
         public DbSet<Category> Category { get; set; }
+        public DbSet<Contact> Contact { get; set; }
+        public DbSet<Employee> Employee { get; set; }
         public DbSet<FeedbackProduct> FeedbackProduct { get; set; }
+        public DbSet<Membership> Membership { get; set; }
+        public DbSet<Position> Position { get; set; }
         public DbSet<Product> Product { get; set; }
-        public DbSet<Profile> Profile { get; set; }
-        public DbSet<Role> Role { get; set; }
+        public DbSet<Salary> Salary { get; set; }
+        public DbSet<SubCategory> SubCategory { get; set; }
         public DbSet<Table> Table { get; set; }
-        public DbSet<TableType> TableType { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<UserVoucher> UserVoucher { get; set; }
         public DbSet<Voucher> Voucher { get; set; }
@@ -29,18 +33,6 @@ namespace WebAPI.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Booking>()
-                .HasOne(b => b.User)
-                .WithMany(u => u.BookingsUser)
-                .HasForeignKey(b => b.UserId);
-
-            modelBuilder.Entity<Booking>()
-                .HasOne(b => b.Waiter)
-                .WithMany(w => w.BookingsWaiter)
-                .HasForeignKey(b => b.WaiterId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-
             modelBuilder.Entity<Category>().HasData(
                 Enum.GetValues(typeof(CategoryEnum))
                     .Cast<CategoryEnum>()
@@ -51,26 +43,16 @@ namespace WebAPI.Data
                     })
             );
 
-            modelBuilder.Entity<Role>().HasData(
-                Enum.GetValues(typeof(RoleEnum))
-                    .Cast<RoleEnum>()
-                    .Select(roleEnum => new Role
+            modelBuilder.Entity<Position>().HasData(
+                Enum.GetValues(typeof(PositionEnum))
+                    .Cast<PositionEnum>()
+                    .Select(positionEnum => new Position
                     {
-                        Id = (int)roleEnum,
-                        Name = roleEnum.ToString()
+                        Id = int.TryParse(positionEnum.GetDisplayName(), null, out var id) ? id : 0,
+                        Name = positionEnum.ToString(),
+                        BaseSalary = (int)positionEnum
                     })
             );
-
-            modelBuilder.Entity<TableType>().HasData(
-                Enum.GetValues(typeof(TableTypeEnum))
-                    .Cast<TableTypeEnum>()
-                    .Select(tableTypeEnum => new TableType
-                    {
-                        Id = (int)tableTypeEnum,
-                        Name = tableTypeEnum.ToString()
-                    })
-            );
-
         }
     }
 }
