@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.OpenApi.Models;
 using WebAPI.Data;
 using WebAPI.Repositories;
 using WebAPI.Repositories.IRepositories;
 using WebAPI.Utils;
+using WebAPI.Utils.EmailSender;
 using WebAPI.Utils.Middlewares;
 
 namespace WebAPI
@@ -26,6 +28,8 @@ namespace WebAPI
 
             // Others
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IEmailSender, EmailSender>();
+
             services.AddDbContext<ApplicationDbContext>();
 
             return services;
