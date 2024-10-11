@@ -9,7 +9,7 @@ namespace WebAPI.Utils.Middlewares
 {
     public class JWTAuthenticationMiddleware(IConfiguration _configuration) : IMiddleware
     {
-        private readonly string[] allowAnonymousAPI = { "Auth", "Product" };
+        private readonly string[] allowAnonymousAPI = { "Auth", "Product", "Table" };
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
