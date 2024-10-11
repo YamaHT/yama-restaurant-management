@@ -13,11 +13,6 @@ namespace WebAPI
         public static IServiceCollection AddInfrastructureService(this IServiceCollection services)
         {
             // Repository
-            #region AddScoped() For EnumRepository
-            services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<ITableTypeRepository, TableTypeRepository>();
-            #endregion
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
