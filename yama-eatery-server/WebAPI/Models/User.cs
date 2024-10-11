@@ -12,7 +12,7 @@ namespace WebAPI.Models
         public required string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
-        [MaxLength(50, ErrorMessage = "Password can't exceed 50 characters")]
+        [MaxLength(255)]
         [JsonIgnore]
         public string? Password { get; set; }
 
