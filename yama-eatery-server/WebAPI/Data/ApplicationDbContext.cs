@@ -42,17 +42,6 @@ namespace WebAPI.Data
                         Name = categoryEnum.ToString()
                     })
             );
-
-            modelBuilder.Entity<Position>().HasData(
-                Enum.GetValues(typeof(PositionEnum))
-                    .Cast<PositionEnum>()
-                    .Select(positionEnum => new Position
-                    {
-                        Id = int.TryParse(positionEnum.GetDisplayName(), null, out var id) ? id : 0,
-                        Name = positionEnum.ToString(),
-                        BaseSalary = (int)positionEnum
-                    })
-            );
         }
     }
 }
