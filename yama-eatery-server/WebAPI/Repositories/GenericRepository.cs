@@ -20,6 +20,23 @@ namespace WebAPI.Repositories
                 }
             }
 
+            return typeof(TrackableEntity).IsAssignableFrom(typeof(T))
+                ? await query.AsNoTracking().Where(x => !(x as TrackableEntity).IsDeleted).ToListAsync() 
+                : await query.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<List<T>> GetAllWithDeletedAsync(string[]? includes = null)
+        {
+            IQueryable<T> query = _dbContext.Set<T>();
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
             return await query.AsNoTracking().ToListAsync();
         }
 
@@ -54,6 +71,19 @@ namespace WebAPI.Repositories
             await _dbContext.Set<T>().AddAsync(entity);
         }
 
+        public async Task AddRangeAsync(List<T> entities)
+        {
+            if (typeof(TrackableEntity).IsAssignableFrom(typeof(T)))
+            {
+                foreach (var entity in entities.Cast<TrackableEntity>())
+                {
+                    entity.CreationDate = DateTime.Now;
+                }
+            }
+
+            await _dbContext.Set<T>().AddRangeAsync(entities);
+        }
+
         public void Remove(T entity)
         {
             if (entity is TrackableEntity trackableEntity)
@@ -80,9 +110,9 @@ namespace WebAPI.Repositories
 
         public void UpdateRange(List<T> entities)
         {
-            if (entities is List<TrackableEntity> listTrackable)
+            if (typeof(TrackableEntity).IsAssignableFrom(typeof(T)))
             {
-                foreach (var entity in listTrackable)
+                foreach (var entity in entities.Cast<TrackableEntity>())
                 {
                     entity.ModificationDate = DateTime.Now;
                 }
