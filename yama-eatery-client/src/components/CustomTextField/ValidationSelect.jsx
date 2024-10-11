@@ -5,51 +5,56 @@ import React, { forwardRef, useImperativeHandle, useState } from 'react'
  * @typedef {Object} CustomProps
  * @property {string} label
  * @property {string|number} value
- * @property {function} onChange
- * @property {string} [regex]
- * @property {string} [regexErrorText]
+ * @property {(event: React.ChangeEvent<{ name?: string; value: unknown }>) => void} onChange
+ * @property {"filled"|"outlined"|"standard"} [variant]
  */
 
 /**
  * @param {import('@mui/material').SelectProps & CustomProps} props
- * @param {React.Ref} ref
+ * @param {React.Ref<HTMLSelectElement>} ref
  */
-const ValidationSelect = forwardRef(({ label, value, onChange, children, ...props }, ref) => {
-	const [error, setError] = useState('')
+const ValidationSelect = forwardRef(
+	({ label, value, onChange, variant = 'outlined', children, ...props }, ref) => {
+		const [error, setError] = useState('')
 
-	const validateInput = () => {
-		if (!value) {
-			setError('This field is required')
-			return false
+		const validateInput = () => {
+			if (!value) {
+				setError('This field is required')
+				return false
+			}
+
+			setError('')
+			return true
 		}
 
-		setError('')
-		return true
+		useImperativeHandle(ref, () => ({
+			validate: () => validateInput(),
+		}))
+
+		return (
+			<FormControl fullWidth variant={variant}>
+				<InputLabel
+					id={label}
+					error={!!error}
+					sx={{ bgcolor: variant === 'outlined' ? 'white' : 'transparent' }}
+				>
+					{label}
+				</InputLabel>
+				<Select
+					labelId={label}
+					value={value}
+					error={!!error}
+					onChange={onChange}
+					onBlur={validateInput}
+					required
+					{...props}
+				>
+					{children}
+				</Select>
+				<FormHelperText sx={{ color: 'red' }}>{error ? error : ''}</FormHelperText>
+			</FormControl>
+		)
 	}
-
-	useImperativeHandle(ref, () => ({
-		validate: () => validateInput(),
-	}))
-
-	return (
-		<FormControl fullWidth variant='filled'>
-			<InputLabel id={label} error={!!error}>
-				{label}
-			</InputLabel>
-			<Select
-				labelId={label}
-				value={value}
-				error={!!error}
-				onChange={onChange}
-				onBlur={validateInput}
-				required
-				{...props}
-			>
-				{children}
-			</Select>
-			<FormHelperText sx={{ color: 'red' }}>{error ? error : ''}</FormHelperText>
-		</FormControl>
-	)
-})
+)
 
 export default ValidationSelect
