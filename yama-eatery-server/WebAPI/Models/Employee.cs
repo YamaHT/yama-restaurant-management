@@ -1,18 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace WebAPI.Models
 {
-    public class User : TrackableEntity
+    public class Employee : TrackableEntity
     {
         [Required(ErrorMessage = "Email is required")]
-        [MaxLength(255, ErrorMessage = "Email can't exceed 255 characters")]
+        [MaxLength(50, ErrorMessage = "Email can't exceed 50 characters")]
         [EmailAddress(ErrorMessage = "Email must be in correct format")]
         public required string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
-        [MaxLength(50, ErrorMessage = "Password can't exceed 50 characters")]
+        [MaxLength(255)]
         [JsonIgnore]
         public string? Password { get; set; }
 
@@ -30,15 +30,14 @@ namespace WebAPI.Models
         [Column(TypeName = "char(6)")]
         public char[]? Gender { get; set; }
 
-        public Membership? Membership { get; set; }
+        [Required(ErrorMessage = "Position is required")]
+        public Position? Position { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<FeedbackProduct>? Feedbacks { get; set; } = null;
+        public virtual ICollection<Salary>? Salaries { get; set; } = null;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<UserVoucher>? UserVouchers { get; set; } = null;
+        public virtual ICollection<Attendance>? Attendances { get; set; } = null;
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<Booking>? Bookings { get; set; } = null;
     }
 }

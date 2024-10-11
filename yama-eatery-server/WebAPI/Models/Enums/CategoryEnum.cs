@@ -1,10 +1,12 @@
-﻿namespace WebAPI.Models.Enums
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebAPI.Models.Enums
 {
     public enum CategoryEnum
     {
-        Food = 1,
-        Drink = 2,
-        Dessert = 3,
-        Snack = 4
+        Starters = 1,
+        Main = 2,
+        Beverages = 3,
+        Desserts = 4
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace WebAPI.Models.Enums
 {
-    public enum TableTypeEnum
+    public enum TypeEnum
     {
         Small = 1,
         Big = 2,

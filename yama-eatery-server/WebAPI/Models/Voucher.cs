@@ -5,8 +5,8 @@ namespace WebAPI.Models
 {
     public class Voucher : TrackableEntity
     {
-        [Required(ErrorMessage = "Image name is required")]
-        [MaxLength(255, ErrorMessage = "Image name can't exceed 255 characters")]
+        [Required(ErrorMessage = "Image is required")]
+        [MaxLength(255, ErrorMessage = "Image can't exceed 255 characters")]
         public required string Image { get; set; }
 
         [Required(ErrorMessage = "Name is required")]

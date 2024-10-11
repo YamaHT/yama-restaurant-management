@@ -6,16 +6,14 @@ namespace WebAPI.Models
 {
     public class Product : TrackableEntity
     {
-        [Required(ErrorMessage = "Image name is required")]
-        [MaxLength(255, ErrorMessage = "Image name can't exceed 255 characters")]
-        public required string Image { get; set; }
+        [Required(ErrorMessage = "Image is required")]
+        public required List<string> Image { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
         [MaxLength(255, ErrorMessage = "Name can't exceed 255 characters")]
         public required string Name { get; set; }
 
         [Column(TypeName = "numeric(10, 2)")]
-        [Required(ErrorMessage = "Price is required")]
         [Range(0, Double.PositiveInfinity, ErrorMessage = "Price can't be negative")]
         public double Price { get; set; }
 
@@ -26,8 +24,8 @@ namespace WebAPI.Models
         [Range(0, Double.PositiveInfinity, ErrorMessage = "StockQuantity can't be negative")]
         public int StockQuantity { get; set; }
 
-        [Required(ErrorMessage = "Category is required")]
-        public Category? Category { get; set; }
+        [Required(ErrorMessage = "SubCategory is required")]
+        public SubCategory? SubCategory { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public virtual ICollection<FeedbackProduct>? Feedbacks { get; set; } = null;
