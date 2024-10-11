@@ -13,9 +13,16 @@ namespace WebAPI
         public static IServiceCollection AddInfrastructureService(this IServiceCollection services)
         {
             // Repository
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IBookingDetailRepository, BookingDetailRepository>();
+            services.AddScoped<IBookingRepository, BookingRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IContactRepository, ContactRepository>();
+            services.AddScoped<IFeedbackProductRepository, FeedbackProductRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserVoucherRepository, UserVoucherRepository>();
+            services.AddScoped<IVoucherRepository, VoucherRepository>();
 
             // Others
             services.AddScoped<IUnitOfWork, UnitOfWork>();
