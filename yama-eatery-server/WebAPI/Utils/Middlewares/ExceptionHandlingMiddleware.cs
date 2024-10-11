@@ -31,7 +31,7 @@ namespace WebAPI.Utils.Middlewares
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex);
                 await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, "Internal Server Error");
             }
         }
