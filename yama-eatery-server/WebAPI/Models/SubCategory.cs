@@ -10,7 +10,6 @@ namespace WebAPI.Models
 
         public Category? Category { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<Product>? Products { get; set; } = null;
+        public virtual ICollection<Product> Products { get; set; } = [];
     }
 }

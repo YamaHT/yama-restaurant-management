@@ -32,13 +32,10 @@ namespace WebAPI.Models
 
         public Membership? Membership { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<FeedbackProduct>? Feedbacks { get; set; } = null;
+        public virtual ICollection<FeedbackProduct> Feedbacks { get; set; } = [];
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<UserVoucher>? UserVouchers { get; set; } = null;
+        public virtual ICollection<UserVoucher> UserVouchers { get; set; } = [];
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<Booking>? Bookings { get; set; } = null;
+        public virtual ICollection<Booking> Bookings { get; set; } = [];
     }
 }

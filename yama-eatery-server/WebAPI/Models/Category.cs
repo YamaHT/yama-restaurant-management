@@ -8,7 +8,6 @@ namespace WebAPI.Models
         [MaxLength(255)]
         public required string Name { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<SubCategory>? SubCategories { get; set; } = null;
+        public virtual ICollection<SubCategory> SubCategories { get; set; } = [];
     }
 }
