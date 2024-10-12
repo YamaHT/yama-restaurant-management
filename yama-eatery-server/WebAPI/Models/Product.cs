@@ -27,7 +27,6 @@ namespace WebAPI.Models
         [Required(ErrorMessage = "SubCategory is required")]
         public SubCategory? SubCategory { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<FeedbackProduct>? Feedbacks { get; set; } = null;
+        public virtual ICollection<FeedbackProduct> Feedbacks { get; set; } = [];
     }
 }
