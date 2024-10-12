@@ -51,7 +51,7 @@ export default function ForgotPassword() {
 				}
 			})
 			.catch((error) => {
-				console.error('Error:', error) // Log the error if there is a connection issue
+				console.error('Error:', error) 
 				setSnackbarMessage('An error occurred while sending the request.')
 				setSnackbarOpen(true)
 				setSnackbarSeverity('error')
