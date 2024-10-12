@@ -33,11 +33,9 @@ namespace WebAPI.Models
         [Required(ErrorMessage = "Position is required")]
         public Position? Position { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<Salary>? Salaries { get; set; } = null;
+        public virtual ICollection<Salary> Salaries { get; set; } = [];
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<Attendance>? Attendances { get; set; } = null;
+        public virtual ICollection<Attendance> Attendances { get; set; } = [];
 
     }
 }

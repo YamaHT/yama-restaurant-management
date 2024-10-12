@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 using WebAPI.Data;
 using WebAPI.Repositories;
 using WebAPI.Repositories.IRepositories;
@@ -42,7 +43,10 @@ namespace WebAPI
             services.AddScoped<JWTAuthenticationMiddleware>();
 
             // Add other services
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
             services.AddEndpointsApiExplorer();
             services.AddHttpContextAccessor();
 

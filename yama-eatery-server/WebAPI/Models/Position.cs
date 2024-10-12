@@ -12,7 +12,6 @@ namespace WebAPI.Models
         [Column(TypeName = "numeric(10, 2)")]
         public double BaseSalary { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public virtual ICollection<Employee>? Employees { get; set; } = null;
+        public virtual ICollection<Employee> Employees { get; set; } = [];
     }
 }
