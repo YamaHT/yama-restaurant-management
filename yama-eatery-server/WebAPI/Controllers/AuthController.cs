@@ -45,5 +45,22 @@ namespace WebAPI.Controllers
             await SendMailUtil.SendMailOtpAsync(_configuration, userSendOtpDTO.Email, userSendOtpDTO.OTP);
             return Ok(new { success = "Send OTP successfully" });
         }
+        [HttpPost]
+        public async Task<IActionResult> SendMailPassword([FromBody] string email)
+        {
+            var user = await _unitOfWork.UserRepository.GetUserByEmail(email);
+            if (user == null)
+            {
+                throw new DataNotFoundException("Email not existed");
+            }
+
+            string password = StringUtil.GenerateRandomPassword();
+            await SendMailUtil.SendMailPasswordAsync(_configuration, email, password);
+
+            user.Password = CryptoUtils.EncryptPassword(password);
+            await _unitOfWork.SaveChangeAsync();
+            return Ok(new { success = "Reset Password successfully" });
+        }
+       
     }
 }

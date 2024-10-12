@@ -12,5 +12,12 @@ namespace WebAPI.Utils.EmailSender
             await emailSender.SendEmailAsync(email, $"YRMS, Your OTP is {otp}",
                 $"Here is your otp (one time password): {otp}");
         }
+        public static async Task SendMailPasswordAsync(IConfiguration configuration, string email, string password)
+        {
+            IEmailSender emailSender = new EmailSender(configuration);
+            await emailSender.SendEmailAsync(email, $"YRMS, New Password Arrived",
+                $"Here is your password: {password}");
+        }
+
     }
 }
