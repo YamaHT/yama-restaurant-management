@@ -1,6 +1,8 @@
-﻿namespace WebAPI.Controllers
+﻿using WebAPI.Utils;
+
+namespace WebAPI.Controllers
 {
-    public class UserController : ApiController
+    public class UserController(IUnitOfWork _unitOfWork, IConfiguration _configuration) : ApiController
     {
     }
 }

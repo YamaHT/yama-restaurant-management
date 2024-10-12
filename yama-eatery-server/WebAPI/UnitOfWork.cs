@@ -5,15 +5,28 @@ using WebAPI.Utils;
 namespace WebAPI
 {
     public class UnitOfWork(
-    
         ApplicationDbContext dbContext,
-        IUserRepository userRepository,
+        IBookingDetailRepository bookingDetailRepository,
+        IBookingRepository bookingRepository,
+        ICategoryRepository categoryRepository,
+        IContactRepository contactRepository,
+        IFeedbackProductRepository feedbackProductRepository,
         IProductRepository productRepository,
-        ITableRepository tableRepository) : IUnitOfWork
+        ITableRepository tableRepository,
+        IUserRepository userRepository,
+        IUserVoucherRepository userVoucherRepository,
+        IVoucherRepository voucherRepository) : IUnitOfWork
     {
         public IUserRepository UserRepository => userRepository;
         public IProductRepository ProductRepository => productRepository;
         public ITableRepository TableRepository => tableRepository;
+        public IBookingDetailRepository BookingDetailRepository => bookingDetailRepository;
+        public IBookingRepository BookingRepository => bookingRepository;
+        public ICategoryRepository CategoryRepository => categoryRepository;
+        public IContactRepository ContactRepository => contactRepository;
+        public IFeedbackProductRepository FeedbackProductRepository => feedbackProductRepository;
+        public IUserVoucherRepository UserVoucherRepository => userVoucherRepository;
+        public IVoucherRepository VoucherRepository => voucherRepository;
 
         public async Task<int> SaveChangeAsync()
         {
