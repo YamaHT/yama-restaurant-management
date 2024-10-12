@@ -21,7 +21,7 @@ import {
 
 import { Search } from '@mui/icons-material'
 import React, { useState } from 'react'
-import ViewMembershipRequest from './../ViewMembershipRequest/ViewMebershipRequest'
+import ViewMembershipRequest from './ViewMebershipRequest'
 
 const headCells = [
 	{

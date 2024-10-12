@@ -36,8 +36,8 @@ import {
 	Typography,
 } from '@mui/material'
 import React, { useState } from 'react'
-import CrudAdd from './AddtTable'
-import CrudUpdate from './UpdateTable'
+import AddTable from './AddTable'
+import UpdateTable from './UpdateTable'
 
 const headCells = [
 	{
@@ -225,7 +225,7 @@ const TableManagement = () => {
 							Add New
 						</Button>
 						{openAddPage && (
-							<CrudAdd open={openAddPage} handleClose={() => setOpenAddPage(false)} />
+							<AddTable open={openAddPage} handleClose={() => setOpenAddPage(false)} />
 						)}
 					</React.Fragment>
 				</Stack>
@@ -273,7 +273,7 @@ const TableManagement = () => {
 														Update Table
 													</Button>
 													{openAddPage && (
-														<CrudUpdate
+														<UpdateTable
 															open={openAddPage}
 															handleClose={() => setOpenAddPage(false)}
 														/>

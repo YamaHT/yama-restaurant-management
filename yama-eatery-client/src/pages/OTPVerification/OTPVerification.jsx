@@ -60,7 +60,7 @@ export default function OTPVerification() {
 	const createOtp = () => {
 		const otp = Math.floor(100000 + Math.random() * 900000)
 		setGenerateOtp(otp)
-		//Gửi email cho người dùng ở backend sau khi đã tạo
+		
 	}
 
 	const handleSubmit = (event) => {
