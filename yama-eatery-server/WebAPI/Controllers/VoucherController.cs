@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Utils;
 
 namespace WebAPI.Controllers
 {
-    public class VoucherController : ApiController
+    public class VoucherController(IUnitOfWork _unitOfWork) : ApiController
     {
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace WebAPI.Controllers
+﻿using WebAPI.Utils;
+
+namespace WebAPI.Controllers
 {
-    public class TableController : ApiController
+    public class TableController(IUnitOfWork _unitOfWork) : ApiController
     {
     }
 }
