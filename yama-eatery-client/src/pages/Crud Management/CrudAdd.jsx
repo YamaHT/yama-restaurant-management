@@ -210,6 +210,7 @@ const CrudAdd = ({ open, handleClose }) => {
 						name='category'
 						value={values.category}
 						onChange={handleValueChange}
+						variant='outlined'
 					>
 						<MenuItem value={1}>Category 1</MenuItem>
 						<MenuItem value={2}>Category 2</MenuItem>

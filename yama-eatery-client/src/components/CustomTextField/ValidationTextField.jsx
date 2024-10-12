@@ -6,6 +6,7 @@ import React, { forwardRef, useImperativeHandle, useState } from 'react'
  * @property {string} label
  * @property {string|number} value
  * @property {function} onChange
+ * @property {number} [maxLength]
  * @property {string} [regex]
  * @property {string} [regexErrorText]
  */
@@ -16,7 +17,7 @@ import React, { forwardRef, useImperativeHandle, useState } from 'react'
  *
  */
 const ValidationTextField = (
-	{ label, type = 'text', value, onChange, regex, regexErrorText, ...props },
+	{ label, type = 'text', value, onChange, maxLength, regex, regexErrorText, ...props },
 	ref
 ) => {
 	const [error, setError] = useState('')
@@ -40,6 +41,10 @@ const ValidationTextField = (
 		if (type === 'email' && !/^[a-zA-Z]+[-.]?\w+@([\w-]+\.)+[\w]{2,}$/.test(value)) {
 			setError('Please enter a valid email address')
 			return false
+		}
+
+		if (maxLength && value.length > maxLength) {
+			setError(`This field can't exceed ${maxLength} characters`)
 		}
 
 		setError('')

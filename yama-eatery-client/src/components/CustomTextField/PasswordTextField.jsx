@@ -25,6 +25,7 @@ const PasswordTextField = forwardRef(({ label, name, value, onChange, ...props }
 			onChange={onChange}
 			regex='^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!*()]).{8,}$'
 			regexErrorText='Password must at least 8 characters and contains UPPERCASE, lowercase, number and special characters'
+			maxLength={50}
 			slotProps={{
 				input: {
 					endAdornment: (
