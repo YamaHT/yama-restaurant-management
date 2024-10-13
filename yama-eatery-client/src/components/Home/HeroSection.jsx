@@ -1,13 +1,12 @@
-import { AssetImage } from '@/utilities/AssetImage'
-import { Box, Button, Stack, Typography } from '@mui/material'
-import React from 'react'
+import { AssetImages } from '@/utilities/AssetImages'
+import { Avatar, Box, Stack, Typography } from '@mui/material'
 
 const HeroSection = () => {
 	return (
 		<Box position={'relative'} width={'100%'} height={400}>
-			<img
-				src={AssetImage.HomeHeroBackgroundImage}
-				alt='Background Image'
+			<Avatar
+				variant='square'
+				src={AssetImages.BACKGROUND.HOME_HERO}
 				style={{
 					position: 'absolute',
 					inset: 0,
@@ -23,7 +22,7 @@ const HeroSection = () => {
 					height: '100%',
 					inset: 0,
 					backgroundColor: 'black',
-					opacity: 0.5,
+					opacity: 0.6,
 					zIndex: 1,
 				}}
 			/>
@@ -45,27 +44,13 @@ const HeroSection = () => {
 				>
 					Welcome to <span style={{ color: '#FBBF24' }}>Yama</span>
 				</Typography>
-				<Typography variant='body1' sx={{ color: '#E5E7EB', fontSize: '1.125rem' }}>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis accumsan, nunc et tempus
-					blandit, metus mi consectetur felis turpis vitae ligula.
-				</Typography>
-				<Button
-					variant='contained'
-					sx={{
-						m: 'auto',
-						mt: 3,
-						p: '0.75% 1.5%',
-						color: '#FBBF24',
-						border: '2px solid #F59E0BC0',
-						bgcolor: '#F59E0B50',
-						':hover': {
-							color: '#FBBF24',
-							borderColor: '#FBBF24',
-						},
-					}}
+				<Typography
+					variant='body1'
+					sx={{ color: '#E5E7EB', fontSize: '1.25rem', filter: 'drop-shadow(0 2px 5px #444)' }}
 				>
-					Get started
-				</Button>
+					Experience Fine Dining and Effortless Table Booking at Yama Restaurant – Where Exquisite
+					Cuisine Meets Seamless Service.
+				</Typography>
 			</Stack>
 		</Box>
 	)

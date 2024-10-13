@@ -1,17 +1,28 @@
 import LoginBackground from '@/assets/img/general/LoginBackground.jpg'
 import PasswordTextField from '@/components/CustomTextField/PasswordTextField'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import LoginLayout from '@/components/LoginLayout/LoginLayout'
-import { Box, Button, Link, Stack, Typography } from '@mui/material'
-import { useEffect, useRef, useState } from 'react'
+import LayoutLogin from '@/components/LayoutLogin/LoginLayout'
+import { Box, Button, Stack, Typography } from '@mui/material'
+import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Register = () => {
-	const [firstName, setFirstName] = useState('')
-	const [lastName, setLastName] = useState('')
-	const [email, setEmail] = useState('')
-	const [password, setPassword] = useState('')
+	const [value, setValue] = useState({
+		firstName: '',
+		lastName: '',
+		phone: '',
+		email: '',
+		password: '',
+	})
+
+	const navigate = useNavigate()
 
 	const fieldsRef = useRef({})
+
+	const handleChange = (e) => {
+		const { name, value } = e.target
+		setValue((prevValue) => ({ ...prevValue, [name]: value }))
+	}
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
@@ -25,14 +36,14 @@ const Register = () => {
 		})
 
 		if (isValid) {
-			console.log('Form submitted:', { email, password })
+			console.log('Form submitted:', value)
 		} else {
 			console.log('Please fill in valid fields.')
 		}
 	}
 
 	return (
-		<LoginLayout
+		<LayoutLogin
 			title='Register'
 			description='Please provide your information for us to register your account'
 			isLeftPosition={false}
@@ -51,31 +62,42 @@ const Register = () => {
 							type='text'
 							label='First Name'
 							name='firstName'
-							value={firstName}
-							onChange={(e) => setFirstName(e.target.value)}
+							value={value.firstName}
+							onChange={handleChange}
 						/>
 						<ValidationTextField
 							ref={(el) => (fieldsRef.current['lastName'] = el)}
 							type='text'
 							label='Last Name'
 							name='lastName'
-							value={lastName}
-							onChange={(e) => setLastName(e.target.value)}
+							value={value.lastName}
+							onChange={handleChange}
 						/>
 					</Stack>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['phone'] = el)}
+						type='tel'
+						label='Phone'
+						name='phone'
+						regex='\d{10}'
+						regexErrorText='Phone must be 10 digits'
+						value={value.phone}
+						onChange={handleChange}
+					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['email'] = el)}
 						type='email'
 						label='Email'
 						name='email'
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
+						value={value.email}
+						onChange={handleChange}
 					/>
 					<PasswordTextField
 						ref={(el) => (fieldsRef.current['password'] = el)}
 						label='Password'
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
+						name='password'
+						value={value.password}
+						onChange={handleChange}
 					/>
 				</Stack>
 
@@ -85,15 +107,15 @@ const Register = () => {
 					</Button>
 				</Box>
 				<Box mt={3} textAlign='center'>
-					<Typography variant='button' color='text' fontWeight='regular'>
+					<Typography color='text' fontWeight={500}>
 						Already have an account?{' '}
-						<Link href='/authentication/sign-up' fontWeight='medium' underline='hover'>
-							Login Here
-						</Link>
+						<Button onClick={() => navigate('/auth/login')}>
+							<Typography textTransform={'none'}>Login Here</Typography>
+						</Button>
 					</Typography>
 				</Box>
 			</Box>
-		</LoginLayout>
+		</LayoutLogin>
 	)
 }
 

@@ -1,6 +1,5 @@
-import { AssetImage } from '@/utilities/AssetImage'
-import { Box, Typography, Grid, Card, CardMedia, CardContent, Divider, Grid2 } from '@mui/material'
-import React from 'react'
+import { AssetImages } from '@/utilities/AssetImages'
+import { Box, Card, CardContent, CardMedia, Grid2, Typography } from '@mui/material'
 
 const CategorySection = () => {
 	const categories = [
@@ -26,7 +25,7 @@ const CategorySection = () => {
 	]
 
 	return (
-		<Box sx={{ mx: 'auto' }}>
+		<Box sx={{ mx: '2%' }}>
 			<Box textAlign='center'>
 				<Typography
 					variant='h2'
@@ -73,7 +72,7 @@ const CategorySection = () => {
 						>
 							<CardMedia
 								component='img'
-								image={AssetImage.HomeCategoryImage(index)}
+								image={AssetImages.HomeCategory(index)}
 								sx={{ height: 400, objectFit: 'cover' }}
 							/>
 							<CardContent

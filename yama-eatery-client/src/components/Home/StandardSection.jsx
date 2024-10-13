@@ -1,6 +1,5 @@
-import { AssetImage } from '@/utilities/AssetImage'
+import { AssetImages } from '@/utilities/AssetImages'
 import { Box, Grid2, Stack, Typography } from '@mui/material'
-import React from 'react'
 
 const StandardComponent = ({ image, description }) => {
 	return (
@@ -68,7 +67,7 @@ const StandardSection = () => {
 				{standards.map((standard, index) => (
 					<Grid2 size={3}>
 						<StandardComponent
-							image={AssetImage.HomeStandardImage(index)}
+							image={AssetImages.HomeStandard(index)}
 							description={standard.description}
 						/>
 					</Grid2>

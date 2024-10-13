@@ -99,7 +99,7 @@ const ContactUs = () => {
 			<Stack
 				justifyContent={'space-between'}
 				alignItems={'center'}
-				padding={'2%'}
+				padding={'2% 10%'}
 				direction={{ sm: 'column', md: 'row' }}
 				spacing={5}
 				flexWrap={true}
@@ -135,23 +135,24 @@ const ContactUs = () => {
 				</Box>
 				<Box
 					width={{ sm: '100%', md: '50%' }}
-					padding={'3%'}
+					padding={'5% 4%'}
 					sx={{
-						background: 'linear-gradient(90deg, #3DBEFFEE 0%, #9955ffEE 100%)',
+						bgcolor: '#5abfff',
 					}}
 				>
-					<Stack spacing={2}>
+					<Stack spacing={5}>
 						<FormLabel>
 							<Typography
 								variant='h3'
-								color='white'
-								fontWeight={'bold'}
+								color='#fff'
+								fontWeight={800}
 								textTransform={'capitalize'}
 								letterSpacing={1}
+								sx={{ textShadow: '0 0 10px #4444' }}
 							>
 								Ready to get started?
 							</Typography>
-							<Typography variant='body2' color='white'>
+							<Typography variant='body1' mt={2} color='white' sx={{ textShadow: '0 0 5px #4448' }}>
 								Your email address will not be published. Required fields are marked *
 							</Typography>
 						</FormLabel>
@@ -210,6 +211,7 @@ const ContactUs = () => {
 			<iframe
 				src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.0533542574994!2d105.72985131022457!3d10.01245179005225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0890033b0a4d5%3A0x5360c94ba9e67842!2zNjAwIE5ndXnhu4VuIFbEg24gQ-G7qyBO4buRaSBEw6BpLCBBbiBCw6xuaCwgTmluaCBLaeG7gXUsIEPhuqduIFRoxqEgOTAwMDAwLCBWaWV0bmFt!5e0!3m2!1sen!2s!4v1723875797178!5m2!1sen!2s'
 				width='100%'
+				title='map'
 				height='450'
 				loading='lazy'
 				style={{ border: 'none' }}
