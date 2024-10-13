@@ -13,11 +13,12 @@ namespace WebAPI.Models
         public required string Title { get; set; }
 
         [Required(ErrorMessage = "Message is required")]
-        [MaxLength(255, ErrorMessage = "Message can't exceed 1000 characters")]
+        [MaxLength(1000, ErrorMessage = "Message can't exceed 1000 characters")]
         public required string Message { get; set; }
 
         public bool IsIgnored { get; set; } = false;
 
+        [MaxLength(1000, ErrorMessage = "Message can't exceed 1000 characters")]
         public string? Respond { get; set; } = null;
 
         public User? User { get; set; }

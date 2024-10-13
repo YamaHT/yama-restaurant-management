@@ -17,7 +17,7 @@ namespace WebAPI.Models
         [Range(0, Double.PositiveInfinity, ErrorMessage = "NetSalary can't be negative")]
         public double NetSalary { get; set; }
 
-        public DateOnly SalaryDate { get; set; }
+        public DateOnly? SalaryDate { get; set; } = null;
 
         [Required(ErrorMessage = "Employee is required")]
         public Employee? Employee { get; set; }

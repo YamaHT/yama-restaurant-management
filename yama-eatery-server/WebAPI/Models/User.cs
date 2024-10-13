@@ -19,6 +19,7 @@ namespace WebAPI.Models
         [MaxLength(255, ErrorMessage = "Name can't exceed 255 characters")]
         public string? Name { get; set; }
 
+        [MaxLength(255, ErrorMessage = "Image can't exceed 255 characters")]
         public string? Image { get; set; }
 
         public DateOnly? Birthday { get; set; } = new DateOnly(1900, 01, 01);
@@ -37,5 +38,7 @@ namespace WebAPI.Models
         public virtual ICollection<UserVoucher> UserVouchers { get; set; } = [];
 
         public virtual ICollection<Booking> Bookings { get; set; } = [];
+
+        public virtual ICollection<Contact> Contacts { get; set; } = [];
     }
 }

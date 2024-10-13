@@ -35,12 +35,13 @@ namespace WebAPI.Models
 
         [Required(ErrorMessage = "DayPart is required")]
         [Column(TypeName = "nvarchar(10)")]
+        [EnumDataType(typeof(DayPartEnum), ErrorMessage = "This day part is not available")]
         public required string DayPart { get; set; }
 
         [Required(ErrorMessage = "Booking Status is required")]
         [EnumDataType(typeof(BookingStatusEnum), ErrorMessage = "This status of booking is not available")]
         public required string BookingStatus { get; set; }
-
+        
         public User? User { get; set; }
 
         [Required(ErrorMessage = "Table is required")]

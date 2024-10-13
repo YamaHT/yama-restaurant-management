@@ -14,11 +14,12 @@ namespace WebAPI.Models
         [Required(ErrorMessage = "Password is required")]
         [MaxLength(255)]
         [JsonIgnore]
-        public string? Password { get; set; }
+        public required string Password { get; set; }
 
         [MaxLength(255, ErrorMessage = "Name can't exceed 255 characters")]
         public string? Name { get; set; }
 
+        [MaxLength(255, ErrorMessage = "Image can't exceed 255 characters")]
         public string? Image { get; set; }
 
         public DateOnly? Birthday { get; set; } = new DateOnly(1900, 01, 01);

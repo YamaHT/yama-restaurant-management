@@ -14,6 +14,7 @@ namespace WebAPI.Models
         public int ProductId { get; set; }
         public Product? Product { get; set; }
 
-        public bool IsPaid { get; set; } = false;
+        [Range(0, int.MaxValue, ErrorMessage = "Quantity can't be negative")]
+        public int Quantity { get; set; }
     }
 }
