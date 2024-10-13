@@ -12,7 +12,7 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241011155702_A")]
+    [Migration("20241013194923_A")]
     partial class A
     {
         /// <inheritdoc />
@@ -52,7 +52,7 @@ namespace WebAPI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("WorkHours")
-                        .HasColumnType("numeric(2, 1)");
+                        .HasColumnType("numeric(3, 1)");
 
                     b.HasKey("Id");
 
@@ -98,7 +98,7 @@ namespace WebAPI.Migrations
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("char(10)");
 
                     b.Property<decimal>("RemainPayment")
                         .HasColumnType("numeric(10, 2)");
@@ -131,8 +131,8 @@ namespace WebAPI.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.HasKey("BookingId", "ProductId");
 
@@ -199,11 +199,12 @@ namespace WebAPI.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Respond")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -246,7 +247,8 @@ namespace WebAPI.Migrations
                         .HasColumnType("char(6)");
 
                     b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -265,7 +267,7 @@ namespace WebAPI.Migrations
 
                     b.Property<string>("Phone")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("char(10)");
 
                     b.Property<int>("PositionId")
                         .HasColumnType("int");
@@ -285,12 +287,18 @@ namespace WebAPI.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Message")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("Rating")
-                        .HasColumnType("numeric(1,1)");
+                        .HasColumnType("numeric(2,1)");
 
                     b.HasKey("UserId", "ProductId");
 
@@ -415,7 +423,7 @@ namespace WebAPI.Migrations
                     b.Property<decimal>("NetSalary")
                         .HasColumnType("numeric(10, 2)");
 
-                    b.Property<DateOnly>("SalaryDate")
+                    b.Property<DateOnly?>("SalaryDate")
                         .HasColumnType("date");
 
                     b.HasKey("Id");
@@ -511,7 +519,8 @@ namespace WebAPI.Migrations
                         .HasColumnType("char(6)");
 
                     b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -533,7 +542,7 @@ namespace WebAPI.Migrations
 
                     b.Property<string>("Phone")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("char(10)");
 
                     b.HasKey("Id");
 
@@ -676,7 +685,7 @@ namespace WebAPI.Migrations
             modelBuilder.Entity("WebAPI.Models.Contact", b =>
                 {
                     b.HasOne("WebAPI.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Contacts")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -806,6 +815,8 @@ namespace WebAPI.Migrations
             modelBuilder.Entity("WebAPI.Models.User", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("Contacts");
 
                     b.Navigation("Feedbacks");
 

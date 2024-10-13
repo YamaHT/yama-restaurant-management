@@ -125,9 +125,9 @@ namespace WebAPI.Migrations
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Birthday = table.Column<DateOnly>(type: "date", nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    Phone = table.Column<string>(type: "char(10)", maxLength: 10, nullable: true),
                     Gender = table.Column<string>(type: "char(6)", nullable: true),
                     MembershipId = table.Column<int>(type: "int", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -154,9 +154,9 @@ namespace WebAPI.Migrations
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Birthday = table.Column<DateOnly>(type: "date", nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    Phone = table.Column<string>(type: "char(10)", maxLength: 10, nullable: true),
                     Gender = table.Column<string>(type: "char(6)", nullable: true),
                     PositionId = table.Column<int>(type: "int", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -211,9 +211,9 @@ namespace WebAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FullName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     IsIgnored = table.Column<bool>(type: "bit", nullable: false),
-                    Respond = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Respond = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -262,7 +262,7 @@ namespace WebAPI.Migrations
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     CheckInTime = table.Column<TimeOnly>(type: "time", nullable: false),
                     CheckOutTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    WorkHours = table.Column<decimal>(type: "numeric(2,1)", nullable: false),
+                    WorkHours = table.Column<decimal>(type: "numeric(3,1)", nullable: false),
                     LateArrival = table.Column<bool>(type: "bit", nullable: false),
                     EarlyLeave = table.Column<bool>(type: "bit", nullable: false),
                     EmployeeId = table.Column<int>(type: "int", nullable: false)
@@ -285,7 +285,7 @@ namespace WebAPI.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Phone = table.Column<string>(type: "char(10)", maxLength: 10, nullable: false),
                     Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     TotalPayment = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     DepositPrice = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
@@ -327,7 +327,7 @@ namespace WebAPI.Migrations
                     Bonus = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     Deductions = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     NetSalary = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
-                    SalaryDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    SalaryDate = table.Column<DateOnly>(type: "date", nullable: true),
                     EmployeeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -347,8 +347,10 @@ namespace WebAPI.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    Rating = table.Column<decimal>(type: "numeric(1,1)", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
+                    Rating = table.Column<decimal>(type: "numeric(2,1)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -373,7 +375,7 @@ namespace WebAPI.Migrations
                 {
                     BookingId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false)
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
