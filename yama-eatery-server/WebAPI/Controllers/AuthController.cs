@@ -21,15 +21,21 @@ namespace WebAPI.Controllers
             return !string.IsNullOrEmpty(jwt) ? Ok(jwt) : throw new DataNotFoundException("Invalid email or password");
         }
 
-        [HttpPost] // This function must change to use UserRegisterDTO for FirstName and LastName
-        public async Task<IActionResult> Register([FromBody] UserLoginDTO userLoginDTO)
+        [HttpPost]
+        public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegisterDTO)
         {
-            if (await _unitOfWork.UserRepository.CheckEmailExisted(userLoginDTO.Email))
+            if (await _unitOfWork.UserRepository.CheckEmailExisted(userRegisterDTO.Email))
             {
                 throw new DataConflictException("Email existed");
             }
 
-            var user = new User { Email = userLoginDTO.Email, Password = userLoginDTO.Password };
+            var user = new User
+            {
+                Email = userRegisterDTO.Email,
+                Password = userRegisterDTO.Password,
+                Name = $"{userRegisterDTO.LastName} {userRegisterDTO.FirstName}".Trim(),
+                Phone = userRegisterDTO.Phone
+            };
             user.TryValidate();
 
             user.Password = CryptoUtils.EncryptPassword(user.Password);
