@@ -45,6 +45,7 @@ const ValidationTextField = (
 
 		if (maxLength && value.length > maxLength) {
 			setError(`This field can't exceed ${maxLength} characters`)
+			return false
 		}
 
 		setError('')
