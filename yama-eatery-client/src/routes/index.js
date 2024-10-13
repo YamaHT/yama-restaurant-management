@@ -1,15 +1,52 @@
-import CrudManagement from "@/pages/Crud Management/CrudManagement";
-import Home from "@/pages/Home/Home";
-import ProductDetail from "@/pages/ProductDetail/ProductDetail";
-import ProductList from "@/pages/ProductList/ProductList";
-import WeatherList from "@/pages/WeatherList";
+import AboutUs from '@/pages/AboutUs/AboutUs'
+import ChangePassword from '@/pages/ChangePassword/ChangePassword'
+import ContactManagement from '@/pages/ContactManagement/ContactManagement'
+import ContactUs from '@/pages/ContactUs/ContactUs'
+import ForgotPassword from '@/pages/ForgotPassword/ForgotPassword'
+import HistoryBooking from '@/pages/HistoryBooking/HistoryBooking'
+import FeedbackHistory from '@/pages/HistoryFeedback/HistoryFeedback'
+import Home from '@/pages/Home/Home'
+import Login from '@/pages/Login/Login'
+import Membership from '@/pages/Membership/Membership'
+import MyVoucher from '@/pages/MyVoucher/MyVoucher'
+import OtpVerification from '@/pages/OTPVerification/OTPVerification'
+import ProductDetail from '@/pages/ProductDetail/ProductDetail'
+import ProductList from '@/pages/ProductList/ProductList'
+import ProductManagement from '@/pages/ProductManagement/ProductManagement'
+import Profile from '@/pages/Profile/Profile'
+import Register from '@/pages/Register/Register'
+import TableDetail from '@/pages/TableDetail/TableDetail'
+import TableList from '@/pages/TableList/TableList'
+import TableManagement from '@/pages/TableManagement/TableManagemen'
+import UserManagement from '@/pages/UserManagement/UserManagement'
+import VoucherManage from '@/pages/VoucherManagement/VoucherManagement'
 
 const publicRoutes = [
-  { path: "/", component: Home },
-  { path: "/weather", component: WeatherList },
-  { path: "/Product/Detail/:id", component: ProductDetail },
-];
+	{ path: '/', component: Home },
+	{ path: '/product', component: ProductList },
+	{ path: '/product/detail/:id', component: ProductDetail },
+	{ path: '/table', component: TableList },
+	{ path: '/table/detail/:id', component: TableDetail },
+	{ path: '/about', component: AboutUs },
+	{ path: '/contact', component: ContactUs },
 
+	{ path: '/user/profile', component: Profile },
+	{ path: '/user/history-feedback', component: FeedbackHistory },
+	{ path: '/user/history-booking', component: HistoryBooking },
+	{ path: '/user/change-password', component: ChangePassword },
+	{ path: '/user/membership', component: Membership },
+	{ path: '/user/my-voucher', component: MyVoucher },
+
+	{ path: '/auth/forgot-password', component: ForgotPassword },
+	{ path: '/auth/otp-verification', component: OtpVerification },
+	{ path: '/auth/login', component: Login, layout: null },
+	{ path: '/auth/register', component: Register, layout: null },
+
+	{ path: '/manager/product', component: ProductManagement },
+	{ path: '/manager/table', component: TableManagement },
+	{ path: '/manager/contact', component: ContactManagement },
+	{ path: '/manager/user', component: UserManagement },
+	{ path: '/manager/voucher', component: VoucherManage },
+]
 
 export { publicRoutes }
-
