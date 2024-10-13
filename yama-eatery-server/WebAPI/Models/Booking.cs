@@ -12,8 +12,9 @@ namespace WebAPI.Models
 
         [Required(ErrorMessage = "Phone is required")]
         [Phone(ErrorMessage = "Phone must only contain numbers")]
-        [StringLength(10, ErrorMessage = "Phone must be exactly at 10 characters")]
-        public required char[] Phone { get; set; }
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "Phone must be exactly at 10 characters")]
+        [Column(TypeName = "char(10)")]
+        public required string Phone { get; set; }
 
         [MaxLength(1000, ErrorMessage = "Note can't exceed 1000 characters")]
         public string? Note { get; set; }
