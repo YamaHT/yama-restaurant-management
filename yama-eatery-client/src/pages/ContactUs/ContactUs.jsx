@@ -43,7 +43,7 @@ const contactInfo = [
 		icon: <Language sx={{ width: '10%', color: 'royalblue', fontSize: '2.5rem' }} />,
 		title: 'Our address:',
 		description: '600, Nguyen Van Cu Street, An Binh Ward, Ninh Kieu District, Can Tho City',
-		href: 'https://www.google.com',
+		href: 'https://maps.app.goo.gl/7iAuVaaPNRk1aGbJ9',
 	},
 	{
 		icon: <Mail sx={{ width: '10%', color: 'royalblue', fontSize: '2.5rem' }} />,
@@ -96,7 +96,6 @@ const ContactUs = () => {
 				src={contactBanner}
 				sx={{ width: '100%', height: 400, objectFit: 'cover' }}
 			/>
-
 			<Stack
 				justifyContent={'space-between'}
 				alignItems={'center'}
@@ -134,7 +133,6 @@ const ContactUs = () => {
 						))}
 					</Stack>
 				</Box>
-
 				<Box
 					width={{ sm: '100%', md: '50%' }}
 					padding={'3%'}
