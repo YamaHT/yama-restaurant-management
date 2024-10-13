@@ -99,7 +99,7 @@ const ContactUs = () => {
 			<Stack
 				justifyContent={'space-between'}
 				alignItems={'center'}
-				padding={'2%'}
+				padding={'2% 10%'}
 				direction={{ sm: 'column', md: 'row' }}
 				spacing={5}
 				flexWrap={true}
@@ -135,23 +135,24 @@ const ContactUs = () => {
 				</Box>
 				<Box
 					width={{ sm: '100%', md: '50%' }}
-					padding={'3%'}
+					padding={'5% 4%'}
 					sx={{
-						background: 'linear-gradient(90deg, #3DBEFFEE 0%, #9955ffEE 100%)',
+						bgcolor: '#5abfff',
 					}}
 				>
-					<Stack spacing={2}>
+					<Stack spacing={5}>
 						<FormLabel>
 							<Typography
 								variant='h3'
-								color='white'
-								fontWeight={'bold'}
+								color='#fff'
+								fontWeight={800}
 								textTransform={'capitalize'}
 								letterSpacing={1}
+								sx={{ textShadow: '0 0 10px #4444' }}
 							>
 								Ready to get started?
 							</Typography>
-							<Typography variant='body2' color='white'>
+							<Typography variant='body1' mt={2} color='white' sx={{ textShadow: '0 0 5px #4448' }}>
 								Your email address will not be published. Required fields are marked *
 							</Typography>
 						</FormLabel>
