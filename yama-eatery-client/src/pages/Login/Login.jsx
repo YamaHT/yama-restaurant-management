@@ -1,7 +1,7 @@
 import LoginBackground from '@/assets/img/general/LoginBackground.jpg'
 import PasswordTextField from '@/components/CustomTextField/PasswordTextField'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import LoginLayout from '@/components/LoginLayout/LoginLayout'
+import LayoutLogin from '@/components/LayoutLogin/LoginLayout'
 import { Box, Button, Checkbox, FormControlLabel, Link, Stack, Typography } from '@mui/material'
 import { useRef, useState } from 'react'
 
@@ -31,7 +31,7 @@ const Login = () => {
 	}
 
 	return (
-		<LoginLayout
+		<LayoutLogin
 			title='Sign In'
 			description='Enter your email and password to sign in'
 			isLeftPosition={true}
@@ -85,7 +85,7 @@ const Login = () => {
 					</Typography>
 				</Box>
 			</Box>
-		</LoginLayout>
+		</LayoutLogin>
 	)
 }
 

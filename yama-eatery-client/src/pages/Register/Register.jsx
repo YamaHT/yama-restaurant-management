@@ -1,7 +1,7 @@
 import LoginBackground from '@/assets/img/general/LoginBackground.jpg'
 import PasswordTextField from '@/components/CustomTextField/PasswordTextField'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import LoginLayout from '@/components/LoginLayout/LoginLayout'
+import LayoutLogin from '@/components/LayoutLogin/LoginLayout'
 import { Box, Button, Link, Stack, Typography } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 
@@ -32,7 +32,7 @@ const Register = () => {
 	}
 
 	return (
-		<LoginLayout
+		<LayoutLogin
 			title='Register'
 			description='Please provide your information for us to register your account'
 			isLeftPosition={false}
@@ -93,7 +93,7 @@ const Register = () => {
 					</Typography>
 				</Box>
 			</Box>
-		</LoginLayout>
+		</LayoutLogin>
 	)
 }
 

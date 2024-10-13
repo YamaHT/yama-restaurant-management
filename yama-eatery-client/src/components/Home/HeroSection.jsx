@@ -49,23 +49,6 @@ const HeroSection = () => {
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis accumsan, nunc et tempus
 					blandit, metus mi consectetur felis turpis vitae ligula.
 				</Typography>
-				<Button
-					variant='contained'
-					sx={{
-						m: 'auto',
-						mt: 3,
-						p: '0.75% 1.5%',
-						color: '#FBBF24',
-						border: '2px solid #F59E0BC0',
-						bgcolor: '#F59E0B50',
-						':hover': {
-							color: '#FBBF24',
-							borderColor: '#FBBF24',
-						},
-					}}
-				>
-					Get started
-				</Button>
 			</Stack>
 		</Box>
 	)

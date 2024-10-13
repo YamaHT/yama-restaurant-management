@@ -1,9 +1,20 @@
-import { StarBorderOutlined, StarRounded } from '@mui/icons-material'
-import { Box, Card, CardContent, CardMedia, Grid2, Rating, Stack, Typography } from '@mui/material'
+import { StarBorderOutlined, StarRounded, Translate } from '@mui/icons-material'
+import {
+	Box,
+	Card,
+	CardActionArea,
+	CardContent,
+	CardMedia,
+	Grid2,
+	Rating,
+	Stack,
+	Typography,
+} from '@mui/material'
 import React from 'react'
 
 const products = [
 	{
+		id: 1,
 		image: 'https://readymadeui.com/images/food1.webp',
 		name: 'Spicy Veg Burger',
 		rating: 4.5,
@@ -11,6 +22,7 @@ const products = [
 		price: 99.99,
 	},
 	{
+		id: 2,
 		image: 'https://readymadeui.com/images/food5.webp',
 		name: 'Burgers with fries',
 		rating: 4.7,
@@ -18,6 +30,7 @@ const products = [
 		price: 699.99,
 	},
 	{
+		id: 3,
 		image: 'https://readymadeui.com/images/food8.webp',
 		name: 'Vegetable Food',
 		rating: 4.3,
@@ -25,6 +38,7 @@ const products = [
 		price: 11,
 	},
 	{
+		id: 4,
 		image: 'https://readymadeui.com/images/food3.webp',
 		name: 'Pasta with meatballs',
 		rating: 4.6,
@@ -35,34 +49,42 @@ const products = [
 
 const ProductCard = ({ product }) => {
 	return (
-		<Card>
-			<CardMedia sx={{ height: 300 }} image={product.image} title='green iguana' />
-			<CardContent>
-				<Typography gutterBottom variant='h5'>
-					{product.name}
-				</Typography>
-				<Stack direction={'row'} spacing={1}>
-					<Rating
-						value={product.rating}
-						readOnly
-						icon={<StarRounded fontSize='inherit' />}
-						emptyIcon={<StarBorderOutlined fontSize='inherit' />}
-					/>
-					<Typography variant='body1' color='initial'>
-						{`(${product.totalReviews})`}
+		<Card
+			sx={{
+				transition: '0.2s linear',
+				cursor: 'pointer',
+				':hover': { transform: 'translateY(-10px)', boxShadow: '0 2px 10px #aaa' },
+			}}
+		>
+			<CardActionArea href={`/product/detail/${product.id}`}>
+				<CardMedia sx={{ height: 300 }} image={product.image} title='green iguana' />
+				<CardContent>
+					<Typography gutterBottom variant='h5'>
+						{product.name}
 					</Typography>
-				</Stack>
-				<Typography fontWeight={'bold'} variant='h6'>
-					${product.price}
-				</Typography>
-			</CardContent>
+					<Stack direction={'row'} spacing={1}>
+						<Rating
+							value={product.rating}
+							readOnly
+							icon={<StarRounded fontSize='inherit' />}
+							emptyIcon={<StarBorderOutlined fontSize='inherit' />}
+						/>
+						<Typography variant='body1' color='initial'>
+							{`(${product.totalReviews})`}
+						</Typography>
+					</Stack>
+					<Typography fontWeight={'bold'} variant='h6'>
+						${product.price}
+					</Typography>
+				</CardContent>
+			</CardActionArea>
 		</Card>
 	)
 }
 
 const ProductIntroSection = () => {
 	return (
-		<Stack spacing={4}>
+		<Stack mx={'2%'} spacing={4}>
 			<Box textAlign={'center'}>
 				<Typography
 					variant='h2'

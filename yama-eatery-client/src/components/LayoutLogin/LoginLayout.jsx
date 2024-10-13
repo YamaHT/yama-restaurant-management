@@ -1,7 +1,7 @@
 import { Box, Grid2, Typography } from '@mui/material'
 import React from 'react'
 
-const LoginLayout = ({ title, description, isLeftPosition, illustration, children }) => {
+const LayoutLogin = ({ title, description, isLeftPosition, illustration, children }) => {
 	return (
 		<Grid2 container sx={{ bgcolor: '#6ff1' }} direction={isLeftPosition ? 'row' : 'row-reverse'}>
 			<Grid2 size={{ xs: 11, sm: 8, md: 4, lg: 4 }} sx={{ mx: 'auto' }}>
@@ -79,4 +79,4 @@ const LoginLayout = ({ title, description, isLeftPosition, illustration, childre
 	)
 }
 
-export default LoginLayout
+export default LayoutLogin
