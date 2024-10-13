@@ -25,11 +25,12 @@ namespace WebAPI.Models
         public DateOnly? Birthday { get; set; } = new DateOnly(1900, 01, 01);
 
         [Phone(ErrorMessage = "Phone must only contain numbers")]
-        [StringLength(10, ErrorMessage = "Phone must be exactly at 10 characters")]
-        public char[]? Phone { get; set; }
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "Phone must be exactly at 10 characters")]
+        [Column(TypeName = "char(10)")]
+        public string? Phone { get; set; }
 
         [Column(TypeName = "char(6)")]
-        public char[]? Gender { get; set; }
+        public string? Gender { get; set; }
 
         public Membership? Membership { get; set; }
 
