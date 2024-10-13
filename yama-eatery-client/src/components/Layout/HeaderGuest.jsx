@@ -1,19 +1,6 @@
-import { Login, MenuSharp, Person } from '@mui/icons-material'
-import {
-	AppBar,
-	Avatar,
-	Box,
-	Button,
-	Drawer,
-	IconButton,
-	List,
-	Menu,
-	MenuItem,
-	Stack,
-	Toolbar,
-	Typography,
-} from '@mui/material'
-import { useState } from 'react'
+import { AssetImages } from '@/utilities/AssetImages'
+import { Login } from '@mui/icons-material'
+import { AppBar, Avatar, Button, Stack, Toolbar, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
 const menuItems = [
@@ -52,17 +39,22 @@ const HeaderGuest = () => {
 					direction={'row'}
 					p={'5px 5%'}
 				>
-					<Avatar onClick={() => navigate('/')} sx={{ cursor: 'pointer', width: 60, height: 60 }} />
+					<Avatar
+						src={AssetImages.SYSTEM_LOGO}
+						onClick={() => navigate('/')}
+						sx={{ cursor: 'pointer', width: 60, height: 60 }}
+					/>
 					<Stack direction={'row'} spacing={5}>
 						{menuItems.map((item) => (
-							<Typography
-								key={item.value}
-								variant='h6'
-								fontWeight={'600'}
+							<Button
+								variant='text'
+								disableTouchRipple={!!item.childrens}
+								disableElevation={!!item.childrens}
 								onClick={() => navigate(item.link)}
 								sx={{
 									cursor: 'pointer',
 									position: 'relative',
+									textTransform: 'none',
 									':hover': {
 										color: 'primary.light',
 										'::after': {
@@ -77,11 +69,18 @@ const HeaderGuest = () => {
 									},
 								}}
 							>
-								{item.value}
-							</Typography>
+								<Typography key={item.value} variant='h6' fontWeight={'600'}>
+									{item.value}
+								</Typography>
+							</Button>
 						))}
 					</Stack>
-					<Button variant='outlined' size='large' endIcon={<Login />}>
+					<Button
+						variant='outlined'
+						size='large'
+						onClick={() => navigate('/auth/login')}
+						endIcon={<Login />}
+					>
 						Sign in
 					</Button>
 				</Stack>
