@@ -15,11 +15,15 @@ namespace WebAPI.Models
         public int ProductId { get; set; }
         public Product? Product { get; set; }
 
-        [Column(TypeName = "numeric(1,1)")]
+        [Column(TypeName = "numeric(2,1)")]
         [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5")]
         public double Rating { get; set; }
 
         [MaxLength(1000, ErrorMessage = "Message can't exceed 1000 characters")]
         public string? Message { get; set; }
+
+        public DateTime CreationDate { get; set; }
+
+        public DateTime? ModificationDate { get; set; }
     }
 }

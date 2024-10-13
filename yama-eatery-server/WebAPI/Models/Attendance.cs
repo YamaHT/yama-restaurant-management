@@ -11,7 +11,7 @@ namespace WebAPI.Models
 
         public TimeOnly CheckOutTime { get; set; }
 
-        [Column(TypeName = "numeric(2, 1)")]
+        [Column(TypeName = "numeric(3, 1)")]
         [Range(0, Double.PositiveInfinity, ErrorMessage = "WorkHours can't be negative")]
         public double WorkHours { get; set; }
 
