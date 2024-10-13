@@ -20,6 +20,6 @@ namespace WebAPI.Models
         public double Rating { get; set; }
 
         [MaxLength(1000, ErrorMessage = "Message can't exceed 1000 characters")]
-        public string? Message { get; set; }
+        public string? Message { get; set; }    
     }
 }
