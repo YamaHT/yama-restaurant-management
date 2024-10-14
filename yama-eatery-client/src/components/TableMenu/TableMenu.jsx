@@ -32,7 +32,6 @@ export default function TableMenu({
 						value={filterOption}
 						onChange={(e) => setFilterOption(e.target.value)}
 					>
-						<MenuItem value=''>All</MenuItem>
 						{tableTypes.map((type) => (
 							<MenuItem key={type.value} value={type.value}>
 								{type.label}

@@ -19,7 +19,8 @@ import TableDetail from '@/pages/TableDetail/TableDetail'
 import TableList from '@/pages/TableList/TableList'
 import TableManagement from '@/pages/TableManagement/TableManagemen'
 import UserManagement from '@/pages/UserManagement/UserManagement'
-import VoucherManage from '@/pages/VoucherManagement/VoucherManagement'
+import VoucherList from '@/pages/VoucherList/VoucherList'
+import VoucherManagement from '@/pages/VoucherManagement/VoucherManagement'
 
 const publicRoutes = [
 	{ path: '/', component: Home },
@@ -27,6 +28,7 @@ const publicRoutes = [
 	{ path: '/product/detail/:id', component: ProductDetail },
 	{ path: '/table', component: TableList },
 	{ path: '/table/detail/:id', component: TableDetail },
+	{ path: '/voucher', component: VoucherList },
 	{ path: '/about', component: AboutUs },
 	{ path: '/contact', component: ContactUs },
 
@@ -46,7 +48,7 @@ const publicRoutes = [
 	{ path: '/manager/table', component: TableManagement },
 	{ path: '/manager/contact', component: ContactManagement },
 	{ path: '/manager/user', component: UserManagement },
-	{ path: '/manager/voucher', component: VoucherManage },
+	{ path: '/manager/voucher', component: VoucherManagement },
 ]
 
 export { publicRoutes }

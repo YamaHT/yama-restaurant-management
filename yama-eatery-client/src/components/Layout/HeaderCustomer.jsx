@@ -1,5 +1,5 @@
 import { AssetImages } from '@/utilities/AssetImages'
-import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
+import { ArrowDropDown, ArrowDropUp, Logout } from '@mui/icons-material'
 import {
 	AppBar,
 	Avatar,
@@ -13,9 +13,11 @@ import {
 	Stack,
 	Toolbar,
 	Typography,
+	IconButton,
 } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import secureLocalStorage from 'react-secure-storage'
 
 const menuItems = [
 	{
@@ -50,9 +52,19 @@ const menuItems = [
 ]
 
 const HeaderCustomer = () => {
+	const [openMore, setOpenMore] = useState(false)
+
 	const navigate = useNavigate()
 
-	const [openMore, setOpenMore] = useState(false)
+	const handleLogout = () => {
+		localStorage.removeItem('token')
+		secureLocalStorage.removeItem('role')
+
+		const event = new Event('roleChange')
+		window.dispatchEvent(event)
+
+		navigate('/')
+	}
 
 	return (
 		<AppBar position='sticky' color='inherit'>
@@ -123,31 +135,36 @@ const HeaderCustomer = () => {
 							</Button>
 						))}
 					</Stack>
-					<Button
-						variant='outlined'
-						onClick={() => navigate('/user/profile')}
-						sx={{
-							borderWidth: 2,
-							textTransform: 'none',
-							p: '8px 1.5%',
-							width: 250,
-							gap: 2,
-							alignItems: 'center',
-						}}
-					>
-						<Avatar sx={{ width: 30, height: 30 }}>D</Avatar>
-						<Typography
-							fontWeight={700}
-							variant='body1'
+					<Stack direction={'row'} spacing={2}>
+						<Button
+							variant='outlined'
+							onClick={() => navigate('/user/profile')}
 							sx={{
-								overflow: 'hidden',
-								textOverflow: 'ellipsis',
-								textWrap: 'nowrap',
+								borderWidth: 2,
+								textTransform: 'none',
+								p: '5px 1.5%',
+								width: 250,
+								gap: 2,
+								alignItems: 'center',
 							}}
 						>
-							Le Phuoc Duy
-						</Typography>
-					</Button>
+							<Avatar sx={{ width: 30, height: 30 }}>D</Avatar>
+							<Typography
+								fontWeight={700}
+								variant='body1'
+								sx={{
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									textWrap: 'nowrap',
+								}}
+							>
+								Le Phuoc Duy
+							</Typography>
+						</Button>
+						<IconButton color='primary' onClick={handleLogout}>
+							<Logout />
+						</IconButton>
+					</Stack>
 				</Stack>
 			</Toolbar>
 		</AppBar>

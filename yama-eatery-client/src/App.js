@@ -1,38 +1,74 @@
 import { publicRoutes } from '@/routes'
-import { Fragment } from 'react'
+import { SnackbarProvider } from 'notistack'
+import { Fragment, useEffect, useState } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import LayoutGuest from './layouts/LayoutGuest'
+import secureLocalStorage from 'react-secure-storage'
+import LayoutCustomer from './layouts/LayoutCustomer'
 
 function App() {
+	const [role, setRole] = useState(secureLocalStorage.getItem('role'))
+
+	// Function to determine the correct layout based on the role
+	const getLayout = (role) => {
+		switch (role) {
+			case 'Customer':
+				return LayoutCustomer
+			case 'Manager':
+				return LayoutCustomer
+			case 'Staff':
+				return LayoutCustomer
+			default:
+				return LayoutGuest
+		}
+	}
+
+	useEffect(() => {
+		const handleRoleChange = () => {
+			const updatedRole = secureLocalStorage.getItem('role')
+			setRole(updatedRole)
+		}
+
+		window.addEventListener('roleChange', handleRoleChange)
+		return () => window.removeEventListener('roleChange', handleRoleChange)
+	}, [])
+
 	let routes = publicRoutes
 	return (
-		<Router>
-			<div className='App'>
-				<Routes>
-					{routes.map((route, index) => {
-						let Layout = LayoutGuest
-						if (route.layout) {
-							Layout = route.layout
-						} else if (route.layout === null) {
-							Layout = Fragment
-						}
+		<SnackbarProvider
+			maxSnack={3}
+			autoHideDuration={3000}
+			style={{ fontFamily: 'Roboto' }}
+			anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+		>
+			<Router>
+				<div className='App'>
+					<Routes>
+						{routes.map((route, index) => {
+							let Layout = getLayout(role)
+							if (route.layout) {
+								Layout = route.layout
+							} else if (route.layout === null) {
+								Layout = Fragment
+							}
 
-						const Page = route.component
-						return (
-							<Route
-								key={index}
-								path={route.path}
-								element={
-									<Layout>
-										<Page />
-									</Layout>
-								}
-							/>
-						)
-					})}
-				</Routes>
-			</div>
-		</Router>
+							const Page = route.component
+							return (
+								<Route
+									key={index}
+									path={route.path}
+									element={
+										<Layout>
+											<Page />
+										</Layout>
+									}
+								/>
+							)
+						})}
+					</Routes>
+				</div>
+			</Router>
+		</SnackbarProvider>
 	)
 }
 

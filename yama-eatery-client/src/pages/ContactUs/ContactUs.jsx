@@ -135,7 +135,7 @@ const ContactUs = () => {
 				</Box>
 				<Box
 					width={{ sm: '100%', md: '50%' }}
-					padding={'5% 4%'}
+					padding={'5% 3%'}
 					sx={{
 						bgcolor: '#5abfff',
 					}}
@@ -148,11 +148,17 @@ const ContactUs = () => {
 								fontWeight={800}
 								textTransform={'capitalize'}
 								letterSpacing={1}
-								sx={{ textShadow: '0 0 10px #4444' }}
+								sx={{ textShadow: '0 0 5px #444A' }}
 							>
 								Ready to get started?
 							</Typography>
-							<Typography variant='body1' mt={2} color='white' sx={{ textShadow: '0 0 5px #4448' }}>
+							<Typography
+								variant='body1'
+								fontSize={'1.125rem'}
+								mt={2}
+								color='white'
+								sx={{ textShadow: '0 0 5px #444A' }}
+							>
 								Your email address will not be published. Required fields are marked *
 							</Typography>
 						</FormLabel>

@@ -2,9 +2,12 @@ import LoginBackground from '@/assets/img/general/LoginBackground.jpg'
 import PasswordTextField from '@/components/CustomTextField/PasswordTextField'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import LayoutLogin from '@/components/LayoutLogin/LoginLayout'
+import { AuthService } from '@/services/AuthService'
 import { Box, Button, Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import secureLocalStorage from 'react-secure-storage'
 
 const Login = () => {
 	const [email, setEmail] = useState('')
@@ -15,7 +18,7 @@ const Login = () => {
 
 	const fieldsRef = useRef({})
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault()
 
 		let isValid = true
@@ -27,9 +30,21 @@ const Login = () => {
 		})
 
 		if (isValid) {
-			console.log('Form submitted:', { email, password })
-		} else {
-			console.log('Please fill in valid fields.')
+			const data = await AuthService.login({ email, password })
+
+			if (data) {
+				enqueueSnackbar('Login succesfully', { variant: 'success', autoHideDuration: 1000 })
+
+				localStorage.setItem('token', data.token)
+				secureLocalStorage.setItem('role', data.role)
+
+				const event = new Event('roleChange')
+				window.dispatchEvent(event)
+
+				setTimeout(() => {
+					navigate('/')
+				}, 1000)
+			}
 		}
 	}
 
