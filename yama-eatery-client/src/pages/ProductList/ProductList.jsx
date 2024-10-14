@@ -4,11 +4,8 @@ import { Dining, StarBorderRounded, StarRounded } from '@mui/icons-material'
 import { Box, Chip, Divider, Grid2, Pagination, Rating, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { products } from '../ProductMockData/ProductMockData'
+import { ProductService } from '@/services/ProductService'
 
-const drawerWidth = 240
-
-// Function to calculate average rating from reviews
 export function calculateAverageRating(reviews) {
 	if (!reviews || reviews.length === 0) return 0
 	const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
@@ -16,23 +13,37 @@ export function calculateAverageRating(reviews) {
 }
 
 export default function ProductList(props) {
-	const [priceRange, setPriceRange] = useState([0, 1000])
+	const [products, setProducts] = useState([])
 	const [filteredProducts, setFilteredProducts] = useState([])
+	const [priceRange, setPriceRange] = useState([0, 1000])
 	const [sortOption, setSortOption] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
-	const [hoveredProductId, setHoveredProductId] = useState(null)
+	const [hoveredProductId, setHoveredProductId] = useState(0)
 	const [hoverTimeout, setHoverTimeout] = useState(null)
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selectedCategories, setSelectedCategories] = useState({})
+	const navigate = useNavigate()
 
 	const productsPerPage = 8
+	const indexOfLastProduct = currentPage * productsPerPage
+	const indexOfFirstProduct = indexOfLastProduct - productsPerPage
+	const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+
+	useEffect(
+		() => async () => {
+			const data = await ProductService.getAll()
+			if (data) {
+				setProducts(data)
+			}
+		},
+		[]
+	)
 
 	useEffect(() => {
 		let filtered = products.filter(
 			(product) => product.price >= priceRange[0] && product.price <= priceRange[1]
 		)
 
-		// Filter by category
 		if (
 			Object.keys(selectedCategories).length > 0 &&
 			Object.values(selectedCategories).some((subs) => subs.length > 0)
@@ -41,23 +52,19 @@ export default function ProductList(props) {
 				const productCategory = product.category
 				const productSubcategory = product.subcategory
 
-				// Check if the product category is selected
 				if (selectedCategories[productCategory]) {
-					// Check if the product's subcategory is also selected
 					return selectedCategories[productCategory].includes(productSubcategory)
 				}
-				return false // Exclude product if category is not selected
+				return false
 			})
 		}
 
-		// Filter by search term
 		if (searchTerm) {
 			filtered = filtered.filter((product) =>
 				product.name.toLowerCase().includes(searchTerm.toLowerCase())
 			)
 		}
 
-		// Sort products based on the selected sort option
 		switch (sortOption) {
 			case 'low-to-high':
 				filtered = filtered.sort((a, b) => a.price - b.price)
@@ -88,18 +95,10 @@ export default function ProductList(props) {
 		setFilteredProducts(filtered)
 	}, [priceRange, selectedCategories, sortOption, searchTerm])
 
-	// Pagination logic
-	const indexOfLastProduct = currentPage * productsPerPage
-	const indexOfFirstProduct = indexOfLastProduct - productsPerPage
-	const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
-
 	const handlePageChange = (event, value) => {
 		setCurrentPage(value)
 	}
 
-	const navigate = useNavigate()
-
-	// Handle product click to navigate to product detail
 	const handleClick = (id) => {
 		navigate(`/Product/Detail/${id}`)
 	}
@@ -118,7 +117,7 @@ export default function ProductList(props) {
 	}
 
 	return (
-		<Grid2 container spacing={2}>
+		<Grid2 container p={'5%'} spacing={2}>
 			<Grid2 size={3}>
 				<ProductDrawer
 					products={products}
@@ -170,7 +169,9 @@ export default function ProductList(props) {
 												}}
 											>
 												<img
-													src={hoveredProductId === product.id ? product.img[1] : product.img[0]}
+													src={
+														hoveredProductId === product.id ? product.image[1] : product.image[0]
+													}
 													alt={product.name}
 													style={{
 														objectFit: 'fill',

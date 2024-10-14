@@ -14,7 +14,7 @@ namespace WebAPI.Models
         [Required(ErrorMessage = "Password is required")]
         [MaxLength(255)]
         [JsonIgnore]
-        public required string Password { get; set; }
+        public string? Password { get; set; }
 
         [MaxLength(255, ErrorMessage = "Name can't exceed 255 characters")]
         public string? Name { get; set; }

@@ -1,3 +1,4 @@
+import { EnumService } from '@/services/EnumService'
 import {
 	Box,
 	Button,
@@ -21,27 +22,24 @@ export default function ProductMenu({
 	setSortOption,
 	setSelectedCategories,
 }) {
-	const getCategories = (products) => {
-		const categories = {}
-		products.forEach((product) => {
-			if (!categories[product.category]) {
-				categories[product.category] = new Set()
-			}
-			categories[product.category].add(product.subcategory)
-		})
-		for (const key in categories) {
-			categories[key] = Array.from(categories[key])
-		}
-		return categories
-	}
-
-	const categories = getCategories(products)
+	const [categories, setCategories] = useState([])
 
 	const [checkedCategories, setCheckedCategories] = useState(
 		Object.keys(categories).reduce((acc, category) => {
 			acc[category] = Array(categories[category].length).fill(false)
 			return acc
 		}, {})
+	)
+
+	useEffect(
+		() => async () => {
+			const data = await EnumService.getAllCategory()
+			if (data) {
+				setCategories(data)
+				console.log(data)
+			}
+		},
+		[]
 	)
 
 	useEffect(() => {
@@ -144,7 +142,7 @@ export default function ProductMenu({
 			<Box sx={{ p: 2 }}>
 				<Typography variant='h6'>Category</Typography>
 				{Object.keys(categories).map((category) => (
-					<div key={category}>
+					<Box ml={2} key={category}>
 						<FormControlLabel
 							control={
 								<Checkbox
@@ -159,7 +157,7 @@ export default function ProductMenu({
 							label={category.charAt(0).toUpperCase() + category.slice(1)}
 						/>
 						{renderSubCategories(category, categories[category])}
-					</div>
+					</Box>
 				))}
 			</Box>
 		</Paper>
