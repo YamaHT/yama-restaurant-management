@@ -1,6 +1,5 @@
 import axios from 'axios'
-import { BASE_URL } from './apiRequest'
-import { useNavigate } from 'react-router-dom'
+import { BASE_URL } from './ApiRequest'
 
 const axiosConfig = axios.create({
 	baseURL: BASE_URL,
@@ -33,22 +32,20 @@ axiosConfig.interceptors.response.use(
 		const errorMessage = error.response?.data?.error
 		const role = localStorage.getItem('role')
 
-		const navigate = useNavigate()
-
 		switch (status) {
 			case 401:
-				navigate('/')
+				window.location.href = '/'
 				break
 			case 403:
 				switch (role) {
 					case 'Manager':
-						navigate('/manager')
+						window.location.href = '/manager'
 						break
 					case 'Staff':
-						navigate('staff')
+						window.location.href = '/staff'
 						break
 					default:
-						navigate('/')
+						window.location.href = '/'
 				}
 				break
 			case 400:

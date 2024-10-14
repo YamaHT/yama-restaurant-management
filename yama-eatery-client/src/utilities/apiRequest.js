@@ -1,6 +1,8 @@
-import { requestWeather } from './requests/requestWeather'
+import { EnumRequest } from '@/requests/EnumRequest'
+import { ProductRequest } from '@/requests/ProductRequest'
 
-export const BASE_URL = 'https://localhost:7098'
+export const BASE_URL = 'https://localhost:7219/api/v1'
 export const API_REQUEST = {
-	requestWeather,
+	EnumRequest,
+	ProductRequest,
 }
