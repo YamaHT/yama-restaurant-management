@@ -22,6 +22,7 @@ const vouchers = [
     { id: 5, image: 'https://th.bing.com/th/id/OIP.nERqFvU2EjT69-juJkgQzAHaKX?pid=ImgDet&w=184&h=258&c=7&dpr=1.3', name: 'Voucher Khai Trương', description: 'Giảm giá 10% trong sự kiện khai trương cửa hàng mới', expiredDate: '2024-10-15', reducedPercent: 10, maxReducing: 50, quantity: 300 },
 ];
 
+
 const VOUCHERS_PER_PAGE = 4;
 
 function VoucherList() {

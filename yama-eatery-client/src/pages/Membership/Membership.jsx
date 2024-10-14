@@ -3,7 +3,6 @@ import { Box, Typography, Button, LinearProgress, Grid2, Card, CardContent, Chip
 
 const Membership = () => {
 	const progress = 50
-
 	return (
 		<Paper
 			width={'100%'}

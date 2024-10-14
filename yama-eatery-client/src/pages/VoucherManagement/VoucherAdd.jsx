@@ -80,7 +80,6 @@ const VoucherAdd = ({ open, handleClose }) => {
         handleClose()
         alert('Voucher added successfully!')
     }
-
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
             <DialogTitle>

@@ -123,13 +123,12 @@ const FeedbackHistory = () => {
 		},
 	]
 
-	// Filter reviews based on the selected rating or show all
 	const filteredReviews = reviews.filter((review) => {
 		if (reviewType === 'All reviews') return true
 		return review.rating === parseInt(reviewType.charAt(0))
 	})
 
-	// Pagination logic
+
 	const indexOfLastReview = currentPage * reviewsPerPage
 	const indexOfFirstReview = indexOfLastReview - reviewsPerPage
 	const currentReviews = filteredReviews.slice(indexOfFirstReview, indexOfLastReview)
@@ -142,7 +141,6 @@ const FeedbackHistory = () => {
 					<Typography variant='h4' fontFamily={'monospace'} textTransform={'uppercase'}>
 						Feedback
 					</Typography>
-
 					<Select value={reviewType} onChange={handleReviewTypeChange}>
 						<MenuItem value='All reviews'>All Reviews</MenuItem>
 						<MenuItem value='5 Stars'>5 Stars</MenuItem>
@@ -152,9 +150,7 @@ const FeedbackHistory = () => {
 						<MenuItem value='1 Stars'>1 Star</MenuItem>
 					</Select>
 				</Stack>
-
 				<StyledDivider />
-
 				<Box>
 					<TableContainer>
 						<Table>
@@ -166,7 +162,6 @@ const FeedbackHistory = () => {
 									<TableCell  component={'th'} sx={{ width: '5%' }} />
 								</TableRow>
 							</TableHead>
-
 							<TableBody>
 								{currentReviews.length > 0 ? (
 									currentReviews.map((review, index) => (
@@ -195,13 +190,10 @@ const FeedbackHistory = () => {
 							</TableBody>
 						</Table>
 					</TableContainer>
-
-					{/* Pagination Component */}
 					<Pagination count={pageCount} page={currentPage} onChange={handlePageChange} color='primary' sx={{ marginTop: 2, display: 'flex', justifyContent: 'center' }} />
 				</Box>
 			</Container>
 		</Box>
 	)
 }
-
 export default FeedbackHistory

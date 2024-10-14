@@ -15,7 +15,7 @@ function MyVoucher() {
 	const [page, setPage] = useState(1)
 	const [dateFilter, setDateFilter] = useState('')
 	const [searchTerm, setSearchTerm] = useState('')
-	const [tabValue, setTabValue] = useState(0) // 0: All, 1: Expired, 2: Valid
+	const [tabValue, setTabValue] = useState(0)
 
 	const today = new Date()
 
@@ -27,8 +27,7 @@ function MyVoucher() {
 
 	const filteredVouchers = vouchers.filter((voucher) => {
 		const voucherDate = new Date(voucher.expiredDate)
-		const isExpired = voucherDate < today // Check if voucher is expired
-
+		const isExpired = voucherDate < today
 		const passesTabFilter = tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
 
 		return voucher.reducedPercent >= (filter ? parseInt(filter) : 0) && (!filteredDate || voucherDate <= filteredDate) && voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) && passesTabFilter
@@ -49,7 +48,6 @@ function MyVoucher() {
 					<Tab label='Expired' />
 					<Tab label='Valid' />
 				</Tabs>
-
 				<Grid2 container spacing={2} justifyContent='center' mt={2}>
 					<Grid2 size={{ xs: 12, md: 3 }}>
 						<TextField label='Search by Name' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} fullWidth />

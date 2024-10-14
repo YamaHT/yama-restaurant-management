@@ -15,7 +15,7 @@ const headCells = [
     { name: 'Reduced Percent', orderData: 'reducedPercent', numeric: true, widthPercent: 15 },
     { name: 'Max Reducing', orderData: 'maxReducing', numeric: true, widthPercent: 20 },
     { name: 'Quantity', orderData: 'quantity', numeric: true, widthPercent: 10 },
-    { name: 'Status', orderData: 'isDeleted', numeric: false, widthPercent: 15 }, // Liên kết với Status
+    { name: 'Status', orderData: 'isDeleted', numeric: false, widthPercent: 15 }, 
     { name: '', numeric: false, widthPercent: 5 },
 ]
 
@@ -50,7 +50,6 @@ const VoucherManage = () => {
     const [selectedTab, setSelectedTab] = useState(0)
 
     const handleRequestSort = (property) => {
-        // Nếu người dùng nhấn vào cột Status, thì sắp xếp theo quantity
         const sortProperty = property === 'isDeleted' ? 'quantity' : property
         const isAsc = orderBy === sortProperty && order === 'asc'
         setOrder(isAsc ? 'desc' : 'asc')

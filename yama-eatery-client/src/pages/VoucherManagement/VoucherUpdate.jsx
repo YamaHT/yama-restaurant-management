@@ -30,7 +30,6 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 		console.log('Updated Voucher Data: ', data)
 		handleClose()
 	}
-
 	return (
 		<Dialog open={open} onClose={handleClose}>
 			<DialogTitle>Update Voucher</DialogTitle>

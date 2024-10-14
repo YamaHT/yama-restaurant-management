@@ -18,8 +18,6 @@ const AboutUs = () => {
 					Yama Restaurant
 				</Typography>
 			</Box>
-
-			{/* Image and Text in the same row */}
 			<Grid2 container justifyContent='center' alignItems='center'>
 				<Grid2 item xs={12} md={8} display='flex' justifyContent='center' alignItems='center'>
 					<Typography variant='body1' color='textSecondary' fontWeight={'bold'} fontFamily={'Poppins, sans-serif'}>
@@ -29,7 +27,7 @@ const AboutUs = () => {
 						component='img'
 						alt='Team 6'
 						src='https://th.bing.com/th/id/OIP.haSIo4BY9SLJLINLxzquqAHaEK?rs=1&pid=ImgDetMain'
-						sx={{ width: '50%', height: 300, mx: 2, borderRadius: '10px' }} // Adjusted width and added margin
+						sx={{ width: '50%', height: 300, mx: 2, borderRadius: '10px' }}
 					/>
 				</Grid2>
 			</Grid2>
@@ -47,7 +45,6 @@ const AboutUs = () => {
 					</Grid2>
 				</Grid2>
 			</Box>
-
 			<Box textAlign='center' my={4}>
 				<ImageList variant='masonry' cols={3} gap={8}>
 					{images.map((image, index) => (
