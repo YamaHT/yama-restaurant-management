@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material'
 
 const VoucherUpdate = ({ open, handleClose, row }) => {
-	const [formData, setFormData] = useState({
+	const [data, setData] = useState({
 		name: '',
 		expiredDate: '',
 		reducedPercent: '',
@@ -12,7 +12,7 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 
 	useEffect(() => {
 		if (row) {
-			setFormData({
+			setData({
 				name: row.name,
 				expiredDate: row.expiredDate,
 				reducedPercent: row.reducedPercent,
@@ -23,14 +23,13 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 	}, [row])
 
 	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value })
+		setData({ ...data, [e.target.name]: e.target.value })
 	}
 
 	const handleSubmit = () => {
-		console.log('Updated Voucher Data: ', formData)
+		console.log('Updated Voucher Data: ', data)
 		handleClose()
 	}
-
 	return (
 		<Dialog open={open} onClose={handleClose}>
 			<DialogTitle>Update Voucher</DialogTitle>
@@ -38,7 +37,7 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 				<TextField
 					name="name"
 					label="Voucher Name"
-					value={formData.name}
+					value={data.name}
 					onChange={handleChange}
 					fullWidth
 					margin="normal"
@@ -46,7 +45,7 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 				<TextField
 					name="expiredDate"
 					label="Expiration Date"
-					value={formData.expiredDate}
+					value={data.expiredDate}
 					onChange={handleChange}
 					fullWidth
 					margin="normal"
@@ -55,7 +54,7 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 					name="reducedPercent"
 					label="Reduced Percent"
 					type="number"
-					value={formData.reducedPercent}
+					value={data.reducedPercent}
 					onChange={handleChange}
 					fullWidth
 					margin="normal"
@@ -64,7 +63,7 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 					name="maxReducing"
 					label="Max Reducing (VND)"
 					type="number"
-					value={formData.maxReducing}
+					value={data.maxReducing}
 					onChange={handleChange}
 					fullWidth
 					margin="normal"
@@ -73,7 +72,7 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 					name="quantity"
 					label="Quantity"
 					type="number"
-					value={formData.quantity}
+					value={data.quantity}
 					onChange={handleChange}
 					fullWidth
 					margin="normal"

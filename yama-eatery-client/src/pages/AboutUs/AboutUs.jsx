@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Typography, Box, Avatar, ImageList, ImageListItem, Grid2 } from '@mui/material'
+import { Container, Typography, Box, ImageList, ImageListItem, Grid2 } from '@mui/material'
 
 const AboutUs = () => {
 	const images = [
@@ -17,20 +17,18 @@ const AboutUs = () => {
 				<Typography variant='h3' gutterBottom>
 					Yama Restaurant
 				</Typography>
-				<Typography variant='body1' color='textSecondary'>
-					It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum. In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire.
-				</Typography>
 			</Box>
 			<Grid2 container justifyContent='center' alignItems='center'>
-				<Grid2 item xs={12} md={8}>
-					<img
+				<Grid2 item xs={12} md={8} display='flex' justifyContent='center' alignItems='center'>
+					<Typography variant='body1' color='textSecondary' fontWeight={'bold'} fontFamily={'Poppins, sans-serif'}>
+						It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum. In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire.
+					</Typography>
+					<Box
+						component='img'
 						alt='Team 6'
 						src='https://th.bing.com/th/id/OIP.haSIo4BY9SLJLINLxzquqAHaEK?rs=1&pid=ImgDetMain'
-						sx={{ width: '50%', height: 300, mx: 'auto' }} // Increased size for a bigger avatar image
+						sx={{ width: '50%', height: 300, mx: 2, borderRadius: '10px' }}
 					/>
-					<Typography variant='h6' textAlign='center' mt={3}>
-					Team 6
-					</Typography>
 				</Grid2>
 			</Grid2>
 			<Box my={4}>
@@ -59,4 +57,5 @@ const AboutUs = () => {
 		</Container>
 	)
 }
+
 export default AboutUs
