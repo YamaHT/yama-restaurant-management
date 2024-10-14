@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, Stack } from '@mui/material'
 
 export default function TableMenu({
 	filterOption,
@@ -21,37 +21,45 @@ export default function TableMenu({
 	]
 
 	return (
-		<Box sx={{ mt: 8, p: 3, width: 240 }}>
-			<FormControl fullWidth sx={{ mb: 3, mt: 1 }}>
-				<InputLabel sx={{ ml: 1, backgroundColor: 'rgba(236, 236, 236, 1)', paddingRight: '4px' }}>
-					Table Type
-				</InputLabel>
-				<Select value={filterOption} onChange={(e) => setFilterOption(e.target.value)}>
-					<MenuItem value=''>All</MenuItem>
-					{tableTypes.map((type) => (
-						<MenuItem key={type.value} value={type.value}>
-							{type.label}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
-
-			<FormControl fullWidth sx={{ mb: 3, mt: 1 }}>
-				<InputLabel sx={{ ml: 1, backgroundColor: 'rgba(236, 236, 236, 1)', paddingRight: '4px' }}>
-					Sort By
-				</InputLabel>
-				<Select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-					{sortOptions.map((option) => (
-						<MenuItem key={option.value} value={option.value}>
-							{option.label}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
-
-			<Button variant='outlined' color='primary' fullWidth onClick={handleShowAll}>
-				Reset Filters
-			</Button>
-		</Box>
+		<Paper sx={{ py: 4, px: 2 }}>
+			<Stack spacing={4}>
+				<FormControl fullWidth variant='outlined'>
+					<InputLabel id='table-type' sx={{ bgcolor: 'white' }}>
+						Table Type
+					</InputLabel>
+					<Select
+						labelId='table-type'
+						value={filterOption}
+						onChange={(e) => setFilterOption(e.target.value)}
+					>
+						<MenuItem value=''>All</MenuItem>
+						{tableTypes.map((type) => (
+							<MenuItem key={type.value} value={type.value}>
+								{type.label}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+				<FormControl fullWidth variant='outlined'>
+					<InputLabel id='sort-table' sx={{ bgcolor: 'white' }}>
+						Sort By
+					</InputLabel>
+					<Select
+						labelId='sort-table'
+						value={sortOption}
+						onChange={(e) => setSortOption(e.target.value)}
+					>
+						{sortOptions.map((option) => (
+							<MenuItem key={option.value} value={option.value}>
+								{option.label}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+				<Button variant='outlined' color='primary' fullWidth onClick={handleShowAll}>
+					Reset Filters
+				</Button>
+			</Stack>
+		</Paper>
 	)
 }

@@ -1,10 +1,20 @@
-import { Box, Button, Card, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, IconButton, MenuItem, Stack, Typography } from '@mui/material'
+import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
+import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import { useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 import { tables } from '../TableMockData/TableMockData'
-import styles from './TableSlider.module.css'
+import styles from './TableSlide.module.css'
+import {
+	Add,
+	ArrowBack,
+	ArrowBackIos,
+	ArrowForwardIos,
+	ArrowLeft,
+	ArrowRight,
+} from '@mui/icons-material'
 
 export default function TableDetail() {
 	const { id } = useParams()
@@ -89,10 +99,7 @@ export default function TableDetail() {
 
 	return (
 		<Box sx={{ maxWidth: '1200px', margin: '0 auto' }}>
-			<Stack direction='row' justifyContent='space-between' alignItems='center' mb={2}>
-				
-				
-			</Stack>
+			<Stack direction='row' justifyContent='space-between' alignItems='center' mb={2}></Stack>
 			<Card
 				sx={{
 					minHeight: 500,
@@ -102,37 +109,62 @@ export default function TableDetail() {
 					justifyContent: 'center',
 					background: 'linear-gradient(to top right, #F8C794, #FFE0B5, #FFF2D7)',
 					p: 4,
+					position: 'relative',
 				}}
 			>
-				<Typography variant='h5'>{table.tableType} Table</Typography>
-				<Typography variant='subtitle1'>Floor {table.floor}</Typography>
-				<div className={styles.container}>
-					<Slide easing='ease' duration={7000} ref={slideRef}>
+				<Typography variant='h4'>{table.tableType} Table</Typography>
+
+				<Typography
+					variant='h5'
+					sx={{
+						position: 'absolute',
+						top: 16,
+						right: 16,
+					}}
+				>
+					Floor {table.floor}
+				</Typography>
+
+				<Box width={'100%'}>
+					<Slide
+						prevArrow={
+							<ArrowBackIos
+								sx={{
+									transform: 'scale(2)',
+									ml: 3,
+									color: 'white',
+									filter: 'drop-shadow(0px 0px 5px black)',
+								}}
+							/>
+						}
+						nextArrow={
+							<ArrowForwardIos
+								sx={{
+									transform: 'scale(2)',
+									mr: 3,
+									color: 'white',
+									filter: 'drop-shadow(0px 0px 5px black)',
+								}}
+							/>
+						}
+						easing='ease'
+						duration={5000}
+						ref={slideRef}
+					>
 						{table.img.map((slide, index) => {
 							return (
-								<div className={styles.slide} key={slide}>
-									<div
-										alt='Table image'
-										style={{
-											backgroundImage: `url(${table.img[index]})`,
-											backgroundColor: '#f0f0f0',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-										}}
-									>
-										{table.img[index] ? null : (
-											<Typography variant='h6' color='textSecondary'>
-												Image not found
-											</Typography>
-										)}
-									</div>
-								</div>
+								<Box height={500} key={index}>
+									<img
+										style={{ width: '100%', aspectRatio: 2 / 1, objectFit: 'fill' }}
+										src={slide}
+									/>
+								</Box>
 							)
 						})}
 					</Slide>
-				</div>
+				</Box>
 			</Card>
+
 			<Stack direction='row' justifyContent='center' mt={1}>
 				{table.img.map((img, index) => (
 					<Box
@@ -144,7 +176,6 @@ export default function TableDetail() {
 							width: '80px',
 							height: '50px',
 							marginRight: '10px',
-							border: selectedImageIndex === index ? '2px solid #ff6347' : '2px solid transparent',
 							cursor: 'pointer',
 							objectFit: 'cover',
 						}}
@@ -165,9 +196,22 @@ export default function TableDetail() {
 				}}
 			>
 				<Typography variant='h6'>Booking Information</Typography>
-				<form onSubmit={handleSubmit}>
-					<Stack direction='row' spacing={2} mb={2}>
-						<TextField
+				<IconButton
+					sx={{
+						width: 160,
+						height: 130,
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						border: '1px dashed gray',
+						borderRadius: '10px',
+					}}
+				>
+					<Add sx={{ fontSize: 50 }} />
+				</IconButton>
+				<form onSubmit={handleSubmit} noValidate>
+					<Stack direction='row' spacing={2} my={2}>
+						<ValidationTextField
 							fullWidth
 							name='firstName'
 							label='First Name'
@@ -176,7 +220,7 @@ export default function TableDetail() {
 							error={!!formErrors.firstName}
 							helperText={formErrors.firstName}
 						/>
-						<TextField
+						<ValidationTextField
 							fullWidth
 							name='lastName'
 							label='Last Name'
@@ -187,7 +231,7 @@ export default function TableDetail() {
 						/>
 					</Stack>
 					<Stack direction='row' spacing={2} mb={2}>
-						<TextField
+						<ValidationTextField
 							fullWidth
 							name='phone'
 							label='Phone'
@@ -197,7 +241,7 @@ export default function TableDetail() {
 							error={!!formErrors.phone}
 							helperText={formErrors.phone}
 						/>
-						<TextField
+						<ValidationTextField
 							fullWidth
 							name='date'
 							label='Date'
@@ -208,7 +252,7 @@ export default function TableDetail() {
 							error={!!formErrors.date}
 							helperText={formErrors.date}
 						/>
-						<Select
+						<ValidationSelect
 							fullWidth
 							name='dayPart'
 							value={formData.dayPart}
@@ -216,20 +260,18 @@ export default function TableDetail() {
 							displayEmpty
 							error={!!formErrors.dayPart}
 						>
-							<MenuItem value=''>
-								<em>Day Part</em>
-							</MenuItem>
+							<MenuItem value=''>Day Part</MenuItem>
 							<MenuItem value='Morning'>Morning</MenuItem>
 							<MenuItem value='Afternoon'>Afternoon</MenuItem>
 							<MenuItem value='Evening'>Evening</MenuItem>
-						</Select>
+						</ValidationSelect>
 						{formErrors.dayPart && (
 							<Typography variant='caption' color='error'>
 								{formErrors.dayPart}
 							</Typography>
 						)}
 					</Stack>
-					<TextField
+					<ValidationTextField
 						fullWidth
 						name='note'
 						label='Note'
@@ -239,19 +281,17 @@ export default function TableDetail() {
 						onChange={handleFormChange}
 						sx={{ mb: 2 }}
 					/>
-					<Stack direction='row' justifyContent='space-between' mb={2}>
-						<Typography>Total Reserve: ${table.price || 1000}</Typography>
-						<Typography>Deposit: ${table.deposit || 100}</Typography>
+					<Stack direction='row' justifyContent='space-between' my={1}>
+						<Box>
+							<Typography>Total Reserve: ${table.price || 1000}</Typography>
+							<Typography>Deposit: ${table.deposit || 100}</Typography>
+						</Box>
+						<Box mt={1}>
+							<Button type='submit' fullWidth variant='contained' primary>
+								Book Now
+							</Button>
+						</Box>
 					</Stack>
-
-					<Button
-						type='submit'
-						fullWidth
-						variant='contained'
-						sx={{ backgroundColor: '#ff6347', color: 'white' }}
-					>
-						Book Now
-					</Button>
 				</form>
 			</Box>
 		</Box>

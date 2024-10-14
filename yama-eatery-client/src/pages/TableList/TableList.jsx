@@ -3,7 +3,7 @@ import {
 	Box,
 	CssBaseline,
 	Divider,
-	Grid,
+	Grid2,
 	Pagination,
 	Stack,
 	Toolbar,
@@ -13,16 +13,14 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { tables } from '../TableMockData/TableMockData'
 
-const drawerWidth = 240
-
 export default function TableList() {
-	const [filteredTables, setFilteredTables] = useState([]) // State for filtered tables
-	const [filterOption, setFilterOption] = useState('') // For table type filtering
-	const [sortOption, setSortOption] = useState('') // For sorting
-	const [currentPage, setCurrentPage] = useState(1) // Current page state
-	const [tablesPerPage] = useState(8) // Tables per page
+	const [filteredTables, setFilteredTables] = useState([])
+	const [filterOption, setFilterOption] = useState('')
+	const [sortOption, setSortOption] = useState('')
+	const [currentPage, setCurrentPage] = useState(1)
+	const [tablesPerPage] = useState(8)
 
-	const navigate = useNavigate() // Initialize the useNavigate hook for navigation
+	const navigate = useNavigate()
 
 	const handleShowAll = () => {
 		setFilterOption('')
@@ -30,14 +28,10 @@ export default function TableList() {
 	}
 
 	useEffect(() => {
-		let filtered = tables // Use imported tables
-
-		// Filter by table type if an option is selected
+		let filtered = tables
 		if (filterOption) {
 			filtered = filtered.filter((table) => table.tableType === filterOption)
 		}
-
-		// Sorting based on user selection (floor sorting)
 		switch (sortOption) {
 			case 'low-to-high':
 				filtered = filtered.sort((a, b) => a.floor - b.floor)
@@ -49,10 +43,9 @@ export default function TableList() {
 				break
 		}
 
-		setFilteredTables(filtered) // Set filtered tables state
+		setFilteredTables(filtered)
 	}, [filterOption, sortOption])
 
-	// Pagination logic
 	const indexOfLastTable = currentPage * tablesPerPage
 	const indexOfFirstTable = indexOfLastTable - tablesPerPage
 	const currentTables = filteredTables.slice(indexOfFirstTable, indexOfLastTable)
@@ -66,27 +59,24 @@ export default function TableList() {
 	}
 
 	return (
-		<Box display={'flex'}>
-			<CssBaseline />
-			<TableMenu
-				handleShowAll={handleShowAll}
-				filterOption={filterOption}
-				sortOption={sortOption}
-				setFilterOption={setFilterOption}
-				setSortOption={setSortOption}
-			/>
-			<Box
-				component='main'
-				sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-			>
-				<Toolbar />
+		<Grid2 container spacing={2}>
+			<Grid2 size={3}>
+				<TableMenu
+					handleShowAll={handleShowAll}
+					filterOption={filterOption}
+					sortOption={sortOption}
+					setFilterOption={setFilterOption}
+					setSortOption={setSortOption}
+				/>
+			</Grid2>
+			<Grid2 size={9}>
 				{filteredTables.length === 0 ? (
 					<Typography variant='h6' align='center' sx={{ mt: 10 }}>
 						No tables found matching the selected filters.
 					</Typography>
 				) : (
 					<>
-						<Grid
+						<Grid2
 							container
 							sx={{
 								display: 'grid',
@@ -109,22 +99,22 @@ export default function TableList() {
 										'&:hover': { transform: 'translateY(-8px)' },
 										transition: 'all 0.3s ease-in-out',
 									}}
-									onClick={() => handleClick(table.id)} // Handle click event
+									onClick={() => handleClick(table.id)}
 								>
 									<Box
 										sx={{
 											display: 'flex',
 											justifyContent: 'center',
 											height: 260,
-											padding: 2,
+
 											backgroundColor: 'gray.100',
 										}}
 									>
 										<img
-											src={table.img[0]} // Use the first image as the main image
+											src={table.img[0]}
 											alt={table.tableType}
 											style={{
-												objectFit: 'contain',
+												objectFit: 'fill',
 												maxHeight: '100%',
 												maxWidth: '100%',
 											}}
@@ -143,20 +133,20 @@ export default function TableList() {
 									</Box>
 								</Box>
 							))}
-						</Grid>
+						</Grid2>
 						<Divider sx={{ mt: 2 }} />
 						<Pagination
 							size='large'
-							count={Math.ceil(filteredTables.length / tablesPerPage)} // Total pages
-							page={currentPage} // Current page
-							onChange={handlePageChange} // Handle page change
+							count={Math.ceil(filteredTables.length / tablesPerPage)}
+							page={currentPage}
+							onChange={handlePageChange}
 							color='primary'
 							sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
-							disabled={filteredTables.length <= tablesPerPage} // Disable if there's only one page
+							disabled={filteredTables.length <= tablesPerPage}
 						/>
 					</>
 				)}
-			</Box>
-		</Box>
+			</Grid2>
+		</Grid2>
 	)
 }

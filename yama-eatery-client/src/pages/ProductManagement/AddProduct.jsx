@@ -9,13 +9,13 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	Grid2,
 	IconButton,
 	MenuItem,
 	Stack,
 	TextField,
 	Typography,
 } from '@mui/material'
-
 import { useRef, useState } from 'react'
 
 const AddProduct = ({ open, handleClose, handleAddProduct }) => {
@@ -103,7 +103,6 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 
 	const handleAdd = () => {
 		let isValid = true
-
 		Object.keys(fieldsRef.current).forEach((key) => {
 			if (!fieldsRef.current[key]?.validate()) {
 				isValid = false
@@ -112,23 +111,21 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 
 		if (isValid) {
 			const newProduct = {
-				id: Date.now(), // Simple unique ID generation
+				id: Date.now(),
 				images: values.images,
 				imageBase64Array: imageBase64Array,
 				name: values.name,
 				price: parseFloat(values.price),
 				description: values.description,
 				category: values.category,
-				quantity: 0, // Default quantity
-				isDeleted: false, // Default status
+				quantity: 0,
+				isDeleted: false,
 			}
-
 			handleAddProduct(newProduct)
 			handleClose()
 		}
 	}
 
-	// Drag-and-Drop Handlers
 	const handleDragStart = (index) => {
 		setDraggingIndex(index)
 	}
@@ -140,11 +137,9 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 		const reorderedImages = [...values.images]
 		const reorderedBase64 = [...imageBase64Array]
 
-		// Remove the dragged item
 		const [movedImage] = reorderedImages.splice(draggingIndex, 1)
 		const [movedBase64] = reorderedBase64.splice(draggingIndex, 1)
 
-		// Insert it at the new position
 		reorderedImages.splice(index, 0, movedImage)
 		reorderedBase64.splice(index, 0, movedBase64)
 
@@ -187,18 +182,18 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 			<DialogTitle>Add New Product</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					<Stack direction='row' style={{ flexWrap: 'wrap' }} gap={2}>
+					<Grid2 container spacing={2}>
 						{imageBase64Array.length > 0
 							? imageBase64Array.map((base64, index) => (
-									<Box
+									<Grid2
 										key={index}
+										size={4}
 										draggable
 										onDragStart={() => handleDragStart(index)}
 										onDragOver={(e) => handleDragOver(e, index)}
 										onDragEnd={handleDragEnd}
 										sx={{
 											position: 'relative',
-											width: 160,
 											height: 130,
 											border: draggingIndex === index ? '2px dashed #000' : 'none',
 											borderRadius: '10px',
@@ -222,24 +217,26 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 										>
 											<Close />
 										</IconButton>
-									</Box>
+									</Grid2>
 							  ))
 							: null}
-						<IconButton
-							sx={{
-								width: 160,
-								height: 130,
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-								border: '1px dashed gray',
-								borderRadius: '10px',
-							}}
-							onClick={() => fileRef.current.click()}
-						>
-							<Add sx={{ fontSize: 50 }} />
-						</IconButton>
-					</Stack>
+						<Grid2 size={4}>
+							<IconButton
+								sx={{
+									width: '100%',
+									height: 130,
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									border: '1px dashed gray',
+									borderRadius: '10px',
+								}}
+								onClick={() => fileRef.current.click()}
+							>
+								<Add sx={{ fontSize: 50 }} />
+							</IconButton>
+						</Grid2>
+					</Grid2>
 					{error && <Typography color='error'>{error}</Typography>}
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['image'] = el)}
