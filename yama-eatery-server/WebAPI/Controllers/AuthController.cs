@@ -18,7 +18,13 @@ namespace WebAPI.Controllers
         {
             var user = await _unitOfWork.UserRepository.GetUserByEmailAndPassword(userLoginDTO.Email, userLoginDTO.Password);
             var jwt = user?.GenerateJWT(_configuration["JWT:SecretKey"]);
-            return !string.IsNullOrEmpty(jwt) ? Ok(jwt) : throw new DataNotFoundException("Invalid email or password");
+            return !string.IsNullOrEmpty(jwt)
+                ? Ok(new
+                {
+                    token = jwt,
+                    role = RoleEnum.Customer.ToString()
+                })
+                : throw new DataNotFoundException("Invalid email or password");
         }
 
         [HttpPost]
