@@ -3,7 +3,7 @@ import HeaderCustomer from '@/components/Layout/HeaderCustomer'
 import { Box } from '@mui/material'
 import React from 'react'
 
-const LayoutCustomer = () => {
+const LayoutCustomer = ({ children }) => {
 	return (
 		<>
 			<HeaderCustomer />

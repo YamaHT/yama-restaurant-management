@@ -34,10 +34,10 @@ export default function TableList() {
 		}
 		switch (sortOption) {
 			case 'low-to-high':
-				filtered = filtered.sort((a, b) => a.floor - b.floor)
+				filtered = filtered.sort((a, b) => b.floor - a.floor)
 				break
 			case 'high-to-low':
-				filtered = filtered.sort((a, b) => b.floor - a.floor)
+				filtered = filtered.sort((a, b) => a.floor - b.floor)
 				break
 			default:
 				break
@@ -55,7 +55,7 @@ export default function TableList() {
 	}
 
 	const handleClick = (id) => {
-		navigate(`/Table/Detail/${id}`)
+		navigate(`/table/detail/${id}`)
 	}
 
 	return (

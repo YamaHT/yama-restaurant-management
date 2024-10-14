@@ -1,4 +1,4 @@
-import { API_REQUEST } from '@/utilities/ApiRequest'
+import { API_REQUEST } from '@/utilities/apiRequest'
 import axiosConfig from '@/utilities/axiosConfig'
 
 export const EnumService = {

@@ -1,5 +1,7 @@
 import axios from 'axios'
-import { BASE_URL } from './ApiRequest'
+import { BASE_URL } from './apiRequest'
+import secureLocalStorage from 'react-secure-storage'
+import { enqueueSnackbar } from 'notistack'
 
 const axiosConfig = axios.create({
 	baseURL: BASE_URL,
@@ -30,11 +32,12 @@ axiosConfig.interceptors.response.use(
 	(error) => {
 		const status = error.response?.status
 		const errorMessage = error.response?.data?.error
-		const role = localStorage.getItem('role')
+		const role = secureLocalStorage.getItem('role')
 
 		switch (status) {
 			case 401:
 				window.location.href = '/'
+				enqueueSnackbar('Unauthorized', { variant: 'warning' })
 				break
 			case 403:
 				switch (role) {
@@ -47,17 +50,30 @@ axiosConfig.interceptors.response.use(
 					default:
 						window.location.href = '/'
 				}
+				enqueueSnackbar('Access Denied', { variant: 'error' })
 				break
 			case 400:
 			case 404:
 			case 409:
 			case 500:
-				console.log(errorMessage)
+				enqueueSnackbar(errorMessage, { variant: 'error' })
 				break
 			case 422:
-				console.log(errorMessage)
+				if (Array.isArray(errorMessage)) {
+					const errorList = errorMessage.join('\n')
+					enqueueSnackbar(errorList, {
+						variant: 'error',
+						autoHideDuration: 8000,
+					})
+				} else {
+					enqueueSnackbar(errorMessage, { variant: 'error' })
+				}
+				break
+			default:
+				enqueueSnackbar('Internal Server Error', { variant: 'error' })
+				break
 		}
-		return Promise.reject(error)
+		return error
 	}
 )
 

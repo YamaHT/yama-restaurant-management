@@ -1,27 +1,28 @@
-import { Box, Button, Card, IconButton, MenuItem, Stack, Typography } from '@mui/material'
 import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import { useState, useRef } from 'react'
+import { Add, ArrowBackIos, ArrowForwardIos } from '@mui/icons-material'
+import {
+	Box,
+	Button,
+	Card,
+	FormControl,
+	IconButton,
+	MenuItem,
+	Stack,
+	TextField,
+	Typography,
+} from '@mui/material'
+import { useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 import { tables } from '../TableMockData/TableMockData'
-import styles from './TableSlide.module.css'
-import {
-	Add,
-	ArrowBack,
-	ArrowBackIos,
-	ArrowForwardIos,
-	ArrowLeft,
-	ArrowRight,
-} from '@mui/icons-material'
 
 export default function TableDetail() {
 	const { id } = useParams()
 	const table = tables.find((t) => t.id === parseInt(id))
 	const navigate = useNavigate()
 
-	const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
@@ -30,66 +31,30 @@ export default function TableDetail() {
 		dayPart: '',
 		note: '',
 	})
-	const [formErrors, setFormErrors] = useState({})
 	const slideRef = useRef(null)
+	const fieldsRef = useRef([])
 
 	const handleFormChange = (e) => {
 		const { name, value } = e.target
 		setFormData((prev) => ({ ...prev, [name]: value }))
 	}
 
-	const validateForm = () => {
-		let errors = {}
-		if (!formData.firstName) errors.firstName = 'First name is required'
-		if (!formData.lastName) errors.lastName = 'Last name is required'
-		if (!formData.phone) {
-			errors.phone = 'Phone number is required'
-		} else if (!/^\d{10}$/.test(formData.phone)) {
-			errors.phone = 'Phone number must be 10 digits'
-		}
-		const currentDate = new Date()
-		if (!formData.date) {
-			errors.date = 'Date is required'
-		} else {
-			const selectedDate = new Date(formData.date)
-			if (selectedDate < currentDate.setHours(0, 0, 0, 0)) {
-				errors.date = 'Date cannot be in the past'
-			}
-		}
-		if (!formData.dayPart) {
-			errors.dayPart = 'Please select a time of day'
-		} else {
-			const vietnamTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })
-			const currentTimeInVietnam = new Date(vietnamTime)
-			const currentHour = currentTimeInVietnam.getHours()
-			const dayParts = {
-				Morning: { start: 6, end: 12 },
-				Afternoon: { start: 12, end: 18 },
-				Evening: { start: 18, end: 24 },
-			}
-			const selectedPart = dayParts[formData.dayPart]
-			const isToday =
-				new Date(formData.date).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0)
-
-			if (isToday && selectedPart && currentHour >= selectedPart.start) {
-				errors.dayPart = `The selected ${formData.dayPart.toLowerCase()} time has passed in Vietnam`
-			}
-		}
-
-		setFormErrors(errors)
-		return Object.keys(errors).length === 0
-	}
-
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		if (validateForm()) {
-			console.log('Form submitted:', formData)
-			navigate('/confirmation')
+
+		let isValid = true
+
+		Object.keys(fieldsRef.current).map((key) => {
+			if (!fieldsRef.current[key]?.validate()) {
+				isValid = false
+			}
+		})
+
+		if (isValid) {
 		}
 	}
 
 	const handleThumbnailClick = (index) => {
-		setSelectedImageIndex(index)
 		slideRef.current.goTo(index)
 	}
 
@@ -209,69 +174,63 @@ export default function TableDetail() {
 				>
 					<Add sx={{ fontSize: 50 }} />
 				</IconButton>
-				<form onSubmit={handleSubmit} noValidate>
+				<Box width={'100%'}>
 					<Stack direction='row' spacing={2} my={2}>
 						<ValidationTextField
+							ref={(el) => (fieldsRef.current['firstName'] = el)}
 							fullWidth
 							name='firstName'
 							label='First Name'
 							value={formData.firstName}
 							onChange={handleFormChange}
-							error={!!formErrors.firstName}
-							helperText={formErrors.firstName}
 						/>
 						<ValidationTextField
+							ref={(el) => (fieldsRef.current['lastName'] = el)}
 							fullWidth
 							name='lastName'
 							label='Last Name'
 							value={formData.lastName}
 							onChange={handleFormChange}
-							error={!!formErrors.lastName}
-							helperText={formErrors.lastName}
 						/>
 					</Stack>
 					<Stack direction='row' spacing={2} mb={2}>
 						<ValidationTextField
+							ref={(el) => (fieldsRef.current['phone'] = el)}
 							fullWidth
 							name='phone'
 							label='Phone'
 							type='tel'
 							value={formData.phone}
 							onChange={handleFormChange}
-							error={!!formErrors.phone}
-							helperText={formErrors.phone}
 						/>
 						<ValidationTextField
+							ref={(el) => (fieldsRef.current['date'] = el)}
 							fullWidth
 							name='date'
 							label='Date'
 							type='date'
-							InputLabelProps={{ shrink: true }}
+							slotProps={{
+								inputLabel: { shrink: true },
+								input: { inputProps: { min: new Date().toISOString().split('T')[0] } },
+							}}
 							value={formData.date}
 							onChange={handleFormChange}
-							error={!!formErrors.date}
-							helperText={formErrors.date}
 						/>
 						<ValidationSelect
+							ref={(el) => (fieldsRef.current['dayPart'] = el)}
 							fullWidth
 							name='dayPart'
+							label='Day Part'
 							value={formData.dayPart}
 							onChange={handleFormChange}
 							displayEmpty
-							error={!!formErrors.dayPart}
 						>
-							<MenuItem value=''>Day Part</MenuItem>
 							<MenuItem value='Morning'>Morning</MenuItem>
 							<MenuItem value='Afternoon'>Afternoon</MenuItem>
 							<MenuItem value='Evening'>Evening</MenuItem>
 						</ValidationSelect>
-						{formErrors.dayPart && (
-							<Typography variant='caption' color='error'>
-								{formErrors.dayPart}
-							</Typography>
-						)}
 					</Stack>
-					<ValidationTextField
+					<TextField
 						fullWidth
 						name='note'
 						label='Note'
@@ -287,12 +246,12 @@ export default function TableDetail() {
 							<Typography>Deposit: ${table.deposit || 100}</Typography>
 						</Box>
 						<Box mt={1}>
-							<Button type='submit' fullWidth variant='contained' primary>
+							<Button onClick={handleSubmit} fullWidth variant='contained' primary>
 								Book Now
 							</Button>
 						</Box>
 					</Stack>
-				</form>
+				</Box>
 			</Box>
 		</Box>
 	)
