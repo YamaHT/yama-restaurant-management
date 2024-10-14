@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.OpenApi.Extensions;
 using WebAPI.Models;
 using WebAPI.Models.Enums;
@@ -42,6 +43,21 @@ namespace WebAPI.Data
                         Name = categoryEnum.ToString()
                     })
             );
+
+            var charArrayToStringConverter = new ValueConverter<char[], string>(
+                v => new string(v),
+                v => v.ToCharArray());
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Gender)
+                .HasConversion(charArrayToStringConverter)
+                .HasMaxLength(6)
+                .IsFixedLength();
+            modelBuilder.Entity<User>()
+               .Property(u => u.Phone)
+               .HasConversion(charArrayToStringConverter)
+               .HasMaxLength(10)
+               .IsFixedLength();
         }
     }
 }
