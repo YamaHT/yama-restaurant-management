@@ -14,6 +14,7 @@ namespace WebAPI.Controllers
             var products = await _unitOfWork.ProductRepository.GetAllAsync(includes);
             return Ok(products);
         }
+
         [HttpGet("Detail/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
@@ -22,21 +23,17 @@ namespace WebAPI.Controllers
 
             if (product == null)
             {
-                throw new DataNotFoundException("Product Detail not found");
+                throw new DataNotFoundException("Product not found");
             }
 
             return Ok(product);
         }
+
         [HttpGet]
         public async Task<IActionResult> GetSimilar(string categoryName)
         {
             var similarProduct = await _unitOfWork.ProductRepository.GetRandom10ProductsByCategoryName(categoryName);
-            if (similarProduct == null)
-            {
-                throw new DataNotFoundException("List similar not found");
-            }
-
-            return Ok(similarProduct);
+                  return Ok(similarProduct);
         }
     }
 }

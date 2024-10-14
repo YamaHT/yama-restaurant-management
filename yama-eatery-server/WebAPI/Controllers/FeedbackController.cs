@@ -11,14 +11,8 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] ProductFeedbackDTO productFeedbackDTO)
         {
-            var feedbacks = await _unitOfWork.FeedbackProductRepository.GetByUserIdAndProductId(productFeedbackDTO.userId, productFeedbackDTO.productId);
-
-            if (feedbacks == null)
-            {
-                throw new DataNotFoundException("Feedback Detail not found");
-            }
-
-            return Ok(feedbacks);
+            var feedback = await _unitOfWork.FeedbackProductRepository.GetByUserIdAndProductId(productFeedbackDTO.userId, productFeedbackDTO.productId);
+            return Ok(feedback);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace WebAPI.Controllers
             var tables = await _unitOfWork.TableRepository.GetAllAsync();
             return Ok(tables);
         }
+
         [HttpGet("Detail/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
@@ -19,7 +20,7 @@ namespace WebAPI.Controllers
 
             if (table == null)
             {
-                throw new DataNotFoundException("Table Detail not found");
+                throw new DataNotFoundException("Table not found");
             }
 
             return Ok(table);
