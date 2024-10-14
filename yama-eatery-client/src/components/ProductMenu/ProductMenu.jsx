@@ -1,19 +1,113 @@
-import { Box, Button, MenuItem, Paper, Select, Slider, Toolbar, Typography } from '@mui/material'
+import {
+	Box,
+	Button,
+	Checkbox,
+	FormControlLabel,
+	FormGroup,
+	MenuItem,
+	Paper,
+	Select,
+	Slider,
+	Typography,
+} from '@mui/material'
+import { useEffect, useState } from 'react'
 
 export default function ProductMenu({
-	handleShowAll,
+	products,
 	priceRange,
 	setPriceRange,
 	sortOption,
+	setSearchTerm,
 	setSortOption,
-	filterOption,
-	setFilterOption,
+	setSelectedCategories,
 }) {
+	const getCategories = (products) => {
+		const categories = {}
+		products.forEach((product) => {
+			if (!categories[product.category]) {
+				categories[product.category] = new Set()
+			}
+			categories[product.category].add(product.subcategory)
+		})
+		for (const key in categories) {
+			categories[key] = Array.from(categories[key])
+		}
+		return categories
+	}
+
+	const categories = getCategories(products)
+
+	const [checkedCategories, setCheckedCategories] = useState(
+		Object.keys(categories).reduce((acc, category) => {
+			acc[category] = Array(categories[category].length).fill(false)
+			return acc
+		}, {})
+	)
+
+	useEffect(() => {
+		const selectedCategories = {}
+		Object.keys(checkedCategories).forEach((category) => {
+			const subcategories = categories[category].filter(
+				(_, index) => checkedCategories[category][index]
+			)
+			if (subcategories.length > 0) {
+				selectedCategories[category] = subcategories
+			}
+		})
+		setSelectedCategories(selectedCategories)
+	}, [checkedCategories])
+
+	const handleCategoryChange = (category, index) => (event) => {
+		const newChecked = [...checkedCategories[category]]
+		newChecked[index] = event.target.checked
+		setCheckedCategories({ ...checkedCategories, [category]: newChecked })
+	}
+
+	const handleParentCategoryChange = (category) => (event) => {
+		const newChecked = Array(checkedCategories[category].length).fill(event.target.checked)
+		setCheckedCategories({ ...checkedCategories, [category]: newChecked })
+	}
+
+	const renderSubCategories = (category, subcategories) => (
+		<FormGroup sx={{ ml: 3 }}>
+			{subcategories.map((sub, idx) => (
+				<FormControlLabel
+					key={idx}
+					control={
+						<Checkbox
+							checked={checkedCategories[category][idx]}
+							onChange={handleCategoryChange(category, idx)}
+						/>
+					}
+					label={sub}
+				/>
+			))}
+		</FormGroup>
+	)
+
+	const resetCaategory = () => {
+		setCheckedCategories(
+			Object.keys(categories).reduce((acc, category) => {
+				acc[category] = Array(categories[category].length).fill(false)
+				return acc
+			}, {})
+		)
+	}
+
+	const handleShowAll = () => {
+		setPriceRange([0, 1000])
+		setSortOption('')
+		setSearchTerm('')
+		resetCaategory()
+		setSelectedCategories({})
+	}
+
 	return (
 		<Paper sx={{ p: 2 }}>
 			<Button variant='contained' onClick={handleShowAll} fullWidth>
 				All Products
 			</Button>
+
 			<Box sx={{ p: 2 }}>
 				<Typography variant='h6'>Filter by Price</Typography>
 				<Slider
@@ -27,6 +121,7 @@ export default function ProductMenu({
 					Price Range: ${priceRange[0]} - ${priceRange[1]}
 				</Typography>
 			</Box>
+
 			<Box sx={{ p: 2 }}>
 				<Typography variant='h6'>Sort Options</Typography>
 				<Select
@@ -45,21 +140,27 @@ export default function ProductMenu({
 					<MenuItem value='z-to-a'>Name: Z-A</MenuItem>
 				</Select>
 			</Box>
+
 			<Box sx={{ p: 2 }}>
 				<Typography variant='h6'>Category</Typography>
-				<Select
-					variant='outlined'
-					sx={{ borderRadius: '15px', width: '100%' }}
-					value={filterOption}
-					onChange={(e) => setFilterOption(e.target.value)}
-					displayEmpty
-				>
-					<MenuItem value=''>Filter by</MenuItem>
-					<MenuItem value='drink'>Category: Drink</MenuItem>
-					<MenuItem value='dessert'>Category: Dessert</MenuItem>
-					<MenuItem value='food'>Category: Food</MenuItem>
-					<MenuItem value='snack'>Category: Snack</MenuItem>
-				</Select>
+				{Object.keys(categories).map((category) => (
+					<div key={category}>
+						<FormControlLabel
+							control={
+								<Checkbox
+									checked={checkedCategories[category].every(Boolean)}
+									indeterminate={
+										checkedCategories[category].some(Boolean) &&
+										!checkedCategories[category].every(Boolean)
+									}
+									onChange={handleParentCategoryChange(category)}
+								/>
+							}
+							label={category.charAt(0).toUpperCase() + category.slice(1)}
+						/>
+						{renderSubCategories(category, categories[category])}
+					</div>
+				))}
 			</Box>
 		</Paper>
 	)

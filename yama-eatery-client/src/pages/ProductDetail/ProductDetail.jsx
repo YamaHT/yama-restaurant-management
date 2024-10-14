@@ -261,14 +261,16 @@ export default function ProductDetail() {
 						</Grid2>
 					</Grid2>
 				))}
-				<Button
-					variant='outlined'
-					sx={{ mt: 4, width: '100%' }}
-					size='large'
-					onClick={() => setShowAllReviews(!showAllReviews)}
-				>
-					{showAllReviews ? 'Show less reviews' : 'Read all reviews'}
-				</Button>
+				{totalReviews > 3 && (
+					<Button
+						variant='outlined'
+						sx={{ mt: 4, width: '100%' }}
+						size='large'
+						onClick={() => setShowAllReviews(!showAllReviews)}
+					>
+						{showAllReviews ? 'Show less reviews' : 'Read all reviews'}
+					</Button>
+				)}
 				<Box mt={4}>
 					<Typography variant='h6' fontWeight='bold' color='textPrimary'>
 						Leave a Rating and Review

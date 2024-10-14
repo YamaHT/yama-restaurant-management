@@ -1,26 +1,10 @@
 import ProductDrawer from '@/components/ProductMenu/ProductMenu'
-import {
-	Avatar,
-	Box,
-	Chip,
-	Divider,
-	Grid2,
-	Pagination,
-	Rating,
-	Stack,
-	Typography,
-} from '@mui/material'
+import ProductSearch from '@/components/ProductSearch/ProductSearch'
+import { Dining, StarBorderRounded, StarRounded } from '@mui/icons-material'
+import { Box, Chip, Divider, Grid2, Pagination, Rating, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { products } from '../ProductMockData/ProductMockData'
-import {
-	Dining,
-	DiningSharp,
-	FoodBank,
-	ForkLeft,
-	StarBorderRounded,
-	StarRounded,
-} from '@mui/icons-material'
 
 const drawerWidth = 240
 
@@ -34,22 +18,14 @@ export function calculateAverageRating(reviews) {
 export default function ProductList(props) {
 	const [priceRange, setPriceRange] = useState([0, 1000])
 	const [filteredProducts, setFilteredProducts] = useState([])
-	const [filterOption, setFilterOption] = useState('')
 	const [sortOption, setSortOption] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
 	const [hoveredProductId, setHoveredProductId] = useState(null)
 	const [hoverTimeout, setHoverTimeout] = useState(null)
 	const [searchTerm, setSearchTerm] = useState('')
+	const [selectedCategories, setSelectedCategories] = useState({})
 
 	const productsPerPage = 8
-
-	// Reset filters and sorting
-	const handleShowAll = () => {
-		setFilterOption('')
-		setPriceRange([0, 1000])
-		setSortOption('')
-		setSearchTerm('')
-	}
 
 	useEffect(() => {
 		let filtered = products.filter(
@@ -57,8 +33,21 @@ export default function ProductList(props) {
 		)
 
 		// Filter by category
-		if (filterOption) {
-			filtered = filtered.filter((product) => product.category === filterOption)
+		if (
+			Object.keys(selectedCategories).length > 0 &&
+			Object.values(selectedCategories).some((subs) => subs.length > 0)
+		) {
+			filtered = filtered.filter((product) => {
+				const productCategory = product.category
+				const productSubcategory = product.subcategory
+
+				// Check if the product category is selected
+				if (selectedCategories[productCategory]) {
+					// Check if the product's subcategory is also selected
+					return selectedCategories[productCategory].includes(productSubcategory)
+				}
+				return false // Exclude product if category is not selected
+			})
 		}
 
 		// Filter by search term
@@ -97,7 +86,7 @@ export default function ProductList(props) {
 		}
 
 		setFilteredProducts(filtered)
-	}, [priceRange, filterOption, sortOption, searchTerm])
+	}, [priceRange, selectedCategories, sortOption, searchTerm])
 
 	// Pagination logic
 	const indexOfLastProduct = currentPage * productsPerPage
@@ -132,17 +121,21 @@ export default function ProductList(props) {
 		<Grid2 container spacing={2}>
 			<Grid2 size={3}>
 				<ProductDrawer
-					handleShowAll={handleShowAll}
-					filterOption={filterOption}
+					products={products}
 					priceRange={priceRange}
 					sortOption={sortOption}
-					setFilterOption={setFilterOption}
+					setSearchTerm={setSearchTerm}
 					setPriceRange={setPriceRange}
 					setSortOption={setSortOption}
+					setSelectedCategories={setSelectedCategories}
 				/>
 			</Grid2>
 			<Grid2 size={9}>
 				<Box>
+					<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+						<ProductSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+					</Box>
+
 					{filteredProducts.length === 0 ? (
 						<Typography variant='h6' align='center' sx={{ mt: 10 }}>
 							No products found matching the selected filters or price range.
@@ -199,7 +192,7 @@ export default function ProductList(props) {
 														fontFamily: 'cursive',
 														width: '100%',
 													}}
-												></Chip>
+												/>
 												<Stack
 													sx={{ my: 1 }}
 													direction={'row'}
