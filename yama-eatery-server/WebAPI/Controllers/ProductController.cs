@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         [HttpGet("Detail/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
-            string[] includes = { "SubCategory", "SubCategory.Category", "Feedbacks" };
+            string[] includes = { "SubCategory", "SubCategory.Category", "Feedbacks", "Feedbacks.User"};
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(id, includes);
 
             if (product == null)

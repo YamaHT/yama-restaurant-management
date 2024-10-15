@@ -24,36 +24,41 @@ export default function ProductMenu({
 }) {
 	const [categories, setCategories] = useState([])
 
-	const [checkedCategories, setCheckedCategories] = useState(
-		Object.keys(categories).reduce((acc, category) => {
-			acc[category] = Array(categories[category].length).fill(false)
-			return acc
-		}, {})
-	)
+	const [checkedCategories, setCheckedCategories] = useState({})
 
-	useEffect(
-		() => async () => {
-			const data = await EnumService.getAllCategory()
+	useEffect(() => {
+		const fetchCategories = async () => {
+			const data = await EnumService.GET_ALL_CATEGORY()
 			if (data) {
 				setCategories(data)
-				console.log(data)
+
+				const initialCheckedCategories = data.reduce((acc, category) => {
+					acc[category.name] = category.subCategories.map(() => false)
+					return acc
+				}, {})
+				setCheckedCategories(initialCheckedCategories)
 			}
-		},
-		[]
-	)
+		}
+
+		fetchCategories()
+	}, [])
 
 	useEffect(() => {
 		const selectedCategories = {}
+	
 		Object.keys(checkedCategories).forEach((category) => {
-			const subcategories = categories[category].filter(
-				(_, index) => checkedCategories[category][index]
-			)
-			if (subcategories.length > 0) {
-				selectedCategories[category] = subcategories
+			const subcategories = categories
+				.find((cat) => cat.name === category)
+				?.subCategories.filter((_, index) => checkedCategories[category][index])
+	
+			if (subcategories?.length > 0) {
+				selectedCategories[category] = subcategories.map((sub) => sub.name) 
 			}
 		})
+	
 		setSelectedCategories(selectedCategories)
-	}, [checkedCategories])
+	}, [checkedCategories, categories])
+	
 
 	const handleCategoryChange = (category, index) => (event) => {
 		const newChecked = [...checkedCategories[category]]
@@ -70,33 +75,32 @@ export default function ProductMenu({
 		<FormGroup sx={{ ml: 3 }}>
 			{subcategories.map((sub, idx) => (
 				<FormControlLabel
-					key={idx}
+					key={sub.id} 
 					control={
 						<Checkbox
-							checked={checkedCategories[category][idx]}
+							checked={checkedCategories[category]?.[idx] || false} 
 							onChange={handleCategoryChange(category, idx)}
 						/>
 					}
-					label={sub}
+					label={sub.name} 
 				/>
 			))}
 		</FormGroup>
 	)
 
-	const resetCaategory = () => {
-		setCheckedCategories(
-			Object.keys(categories).reduce((acc, category) => {
-				acc[category] = Array(categories[category].length).fill(false)
-				return acc
-			}, {})
-		)
+	const resetCategory = () => {
+		const resetCheckedCategories = categories.reduce((acc, category) => {
+			acc[category.name] = category.subCategories.map(() => false)
+			return acc
+		}, {})
+		setCheckedCategories(resetCheckedCategories)
 	}
 
 	const handleShowAll = () => {
 		setPriceRange([0, 1000])
 		setSortOption('')
 		setSearchTerm('')
-		resetCaategory()
+		resetCategory()
 		setSelectedCategories({})
 	}
 
@@ -141,22 +145,22 @@ export default function ProductMenu({
 
 			<Box sx={{ p: 2 }}>
 				<Typography variant='h6'>Category</Typography>
-				{Object.keys(categories).map((category) => (
-					<Box ml={2} key={category}>
+				{categories.map((category) => (
+					<Box ml={2} key={category.id}>
 						<FormControlLabel
 							control={
 								<Checkbox
-									checked={checkedCategories[category].every(Boolean)}
+									checked={checkedCategories[category.name]?.every(Boolean) || false}
 									indeterminate={
-										checkedCategories[category].some(Boolean) &&
-										!checkedCategories[category].every(Boolean)
+										checkedCategories[category.name]?.some(Boolean) &&
+										!checkedCategories[category.name]?.every(Boolean)
 									}
-									onChange={handleParentCategoryChange(category)}
+									onChange={handleParentCategoryChange(category.name)}
 								/>
 							}
-							label={category.charAt(0).toUpperCase() + category.slice(1)}
+							label={category.name.charAt(0).toUpperCase() + category.name.slice(1)}
 						/>
-						{renderSubCategories(category, categories[category])}
+						{renderSubCategories(category.name, category.subCategories)}
 					</Box>
 				))}
 			</Box>

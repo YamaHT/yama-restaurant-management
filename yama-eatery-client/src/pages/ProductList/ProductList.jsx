@@ -1,10 +1,11 @@
-import ProductDrawer from '@/components/ProductMenu/ProductMenu'
-import ProductSearch from '@/components/ProductSearch/ProductSearch'
+import ProductDrawer from '@/components/Product/ProductMenu'
+import ProductSearch from '@/components/Product/ProductSearch'
 import { Dining, StarBorderRounded, StarRounded } from '@mui/icons-material'
 import { Box, Chip, Divider, Grid2, Pagination, Rating, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ProductService } from '@/services/ProductService'
+import { AssetImages } from '@/utilities/AssetImages'
 
 export function calculateAverageRating(reviews) {
 	if (!reviews || reviews.length === 0) return 0
@@ -12,7 +13,7 @@ export function calculateAverageRating(reviews) {
 	return totalRating / reviews.length
 }
 
-export default function ProductList(props) {
+export default function ProductList() {
 	const [products, setProducts] = useState([])
 	const [filteredProducts, setFilteredProducts] = useState([])
 	const [priceRange, setPriceRange] = useState([0, 1000])
@@ -29,15 +30,16 @@ export default function ProductList(props) {
 	const indexOfFirstProduct = indexOfLastProduct - productsPerPage
 	const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
 
-	useEffect(
-		() => async () => {
-			const data = await ProductService.getAll()
+	useEffect(() => {
+		async function fetchProducts() {
+			const data = await ProductService.GET_ALL()
 			if (data) {
 				setProducts(data)
 			}
-		},
-		[]
-	)
+		}
+		fetchProducts()
+	}, [])
+	
 
 	useEffect(() => {
 		let filtered = products.filter(
@@ -49,8 +51,8 @@ export default function ProductList(props) {
 			Object.values(selectedCategories).some((subs) => subs.length > 0)
 		) {
 			filtered = filtered.filter((product) => {
-				const productCategory = product.category
-				const productSubcategory = product.subcategory
+				const productCategory = product.subCategory.category.name
+				const productSubcategory = product.subCategory.name
 
 				if (selectedCategories[productCategory]) {
 					return selectedCategories[productCategory].includes(productSubcategory)
@@ -80,12 +82,12 @@ export default function ProductList(props) {
 				break
 			case 'rating-high-to-low':
 				filtered = filtered.sort(
-					(a, b) => calculateAverageRating(b.reviews) - calculateAverageRating(a.reviews)
+					(a, b) => calculateAverageRating(b.feedbacks) - calculateAverageRating(a.feedbacks)
 				)
 				break
 			case 'rating-low-to-high':
 				filtered = filtered.sort(
-					(a, b) => calculateAverageRating(a.reviews) - calculateAverageRating(b.reviews)
+					(a, b) => calculateAverageRating(a.feedbacks) - calculateAverageRating(b.feedbacks)
 				)
 				break
 			default:
@@ -93,14 +95,14 @@ export default function ProductList(props) {
 		}
 
 		setFilteredProducts(filtered)
-	}, [priceRange, selectedCategories, sortOption, searchTerm])
+	}, [priceRange, selectedCategories, sortOption, searchTerm, products])
 
 	const handlePageChange = (event, value) => {
 		setCurrentPage(value)
 	}
 
 	const handleClick = (id) => {
-		navigate(`/Product/Detail/${id}`)
+		navigate(`/product/detail/${id}`)
 	}
 
 	const handleMouseEnter = (id) => {
@@ -118,7 +120,7 @@ export default function ProductList(props) {
 
 	return (
 		<Grid2 container p={'5%'} spacing={2}>
-			<Grid2 size={3}>
+			<Grid2 size={{ xs: 12, md: 3 }}>
 				<ProductDrawer
 					products={products}
 					priceRange={priceRange}
@@ -129,7 +131,7 @@ export default function ProductList(props) {
 					setSelectedCategories={setSelectedCategories}
 				/>
 			</Grid2>
-			<Grid2 size={9}>
+			<Grid2 size={{ xs: 12, md: 9 }}>
 				<Box>
 					<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
 						<ProductSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -143,7 +145,7 @@ export default function ProductList(props) {
 						<>
 							<Grid2 container spacing={2}>
 								{currentProducts.map((product) => {
-									const averageRating = calculateAverageRating(product.reviews)
+									const averageRating = calculateAverageRating(product.feedbacks)
 									return (
 										<Grid2
 											size={{ xs: 12, sm: 4, md: 3 }}
@@ -170,7 +172,9 @@ export default function ProductList(props) {
 											>
 												<img
 													src={
-														hoveredProductId === product.id ? product.image[1] : product.image[0]
+														hoveredProductId === product.id
+															? AssetImages.ProductImage(product.image[1])
+															: AssetImages.ProductImage(product.image[0])
 													}
 													alt={product.name}
 													style={{
@@ -182,12 +186,22 @@ export default function ProductList(props) {
 												/>
 											</Box>
 											<Box sx={{ p: 3, backgroundColor: 'white' }}>
-												<Typography variant='h5' fontWeight='bold' color='gray.800'>
+												<Typography
+													variant='h5'
+													fontWeight='bold'
+													color='gray.800'
+													sx={{
+														WebkitLineClamp: 1,
+														textWrap: 'nowrap',
+														textOverflow: 'ellipsis',
+														overflow: 'hidden',
+													}}
+												>
 													{product.name}
 												</Typography>
 												<Chip
 													variant='outlined'
-													label={product.category}
+													label={`${product.subCategory.category.name} / ${product.subCategory.name}`}
 													icon={<Dining />}
 													sx={{
 														fontFamily: 'cursive',
@@ -205,9 +219,9 @@ export default function ProductList(props) {
 													</Typography>
 													<Typography
 														variant='overline'
-														color={product.quantity > 0 ? 'success' : 'error'}
+														color={product.stockQuantity > 0 ? 'success' : 'error'}
 													>
-														{product.quantity > 0 ? 'In stock' : 'Out of stock'}
+														{product.stockQuantity > 0 ? 'In stock' : 'Out of stock'}
 													</Typography>
 												</Stack>
 												<Rating
@@ -222,7 +236,6 @@ export default function ProductList(props) {
 									)
 								})}
 							</Grid2>
-							<Divider />
 							<Pagination
 								size='large'
 								count={Math.ceil(filteredProducts.length / productsPerPage)}
@@ -230,7 +243,6 @@ export default function ProductList(props) {
 								onChange={handlePageChange}
 								color='primary'
 								sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
-								disabled={filteredProducts.length <= productsPerPage}
 							/>
 						</>
 					)}
