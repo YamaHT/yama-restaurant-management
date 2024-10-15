@@ -34,6 +34,7 @@ export default function CrudUpdate({ open, handleClose, currentProduct, onUpdate
 
 	const handleImageChange = (e) => {
 		const files = Array.from(e.target.files)
+
 		if (files.length + values.images.length > 5) {
 			alert('You can only upload a maximum of 5 images.')
 			return
@@ -42,7 +43,7 @@ export default function CrudUpdate({ open, handleClose, currentProduct, onUpdate
 		files.forEach((file) => {
 			const reader = new FileReader()
 			reader.onload = () => {
-				setImageBase64((prev) => [...prev, reader.result])
+				setImageBase64((prev) => [...prev, reader.result]) // Cập nhật hình ảnh đã tải lên
 				setValues((prev) => ({
 					...prev,
 					images: [...prev.images, file.name],
@@ -76,6 +77,7 @@ export default function CrudUpdate({ open, handleClose, currentProduct, onUpdate
 				<Stack spacing={2}>
 					{imageBase64.length > 0 ? (
 						<Stack direction='row' spacing={1} flexWrap='wrap'>
+							{' '}
 							{imageBase64.map((image, index) => (
 								<Stack key={index} spacing={1} alignItems='center'>
 									<img
@@ -99,6 +101,13 @@ export default function CrudUpdate({ open, handleClose, currentProduct, onUpdate
 						<Skeleton animation={false} height={200} variant='rounded' />
 					)}
 
+					<TextField
+						label='Table ID'
+						name='tableId'
+						variant='filled'
+						value={values.tableId}
+						InputProps={{ readOnly: true }}
+					/>
 					<TextField
 						label='Type'
 						name='type'

@@ -9,9 +9,18 @@ export const AuthService = {
 	},
 	sendMailOTP: async ({ email, otp }) => {
 		const formData = { email: email, otp: otp }
-		console.log(formData)
 		return await axiosConfig
 			.post(API_REQUEST.AuthRequest.SEND_MAIL_OTP, formData)
+			.then((response) => response.data)
+	},
+	forgotPassword: async ({ email }) => {
+		return await axiosConfig
+			.post(API_REQUEST.AuthRequest.FORGOT_PASSWORD, email)
+			.then((response) => response.data)
+	},
+	checkEmailExist: async ({ email }) => {
+		return await axiosConfig
+			.get(API_REQUEST.AuthRequest.CHECK_EMAIL_EXIST + `?email=${email}`)
 			.then((response) => response.data)
 	},
 }
