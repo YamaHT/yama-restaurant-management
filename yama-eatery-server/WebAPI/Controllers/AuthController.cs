@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
             return Ok(new { success = "Send OTP successfully" });
         }
         [HttpPost]
-        public async Task<IActionResult> SendMailPassword([FromBody] string email)
+        public async Task<IActionResult> SendMailPassword([FromBody]  string email)
         {
             var user = await _unitOfWork.UserRepository.GetUserByEmail(email);
             if (user == null)
@@ -58,6 +58,7 @@ namespace WebAPI.Controllers
             await SendMailUtil.SendMailPasswordAsync(_configuration, email, password);
 
             user.Password = CryptoUtils.EncryptPassword(password);
+             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
             return Ok(new { success = "Reset Password successfully" });
         }

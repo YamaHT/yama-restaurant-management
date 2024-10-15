@@ -16,6 +16,7 @@ namespace WebAPI.Controllers
                 throw new InvalidDataException("Oldpassword is not corrected");
             }
             user.Password = CryptoUtils.EncryptPassword(userChangePasswordDTO.NewPassword);
+            _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync(); ;
             return Ok(new { success = "Change Password successfully" });
         }

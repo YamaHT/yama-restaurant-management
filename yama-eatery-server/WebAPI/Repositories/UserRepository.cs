@@ -28,12 +28,6 @@ namespace WebAPI.Repositories
         {
             return await _dbContext.User.AnyAsync(x => x.Email == email);
         }
-        //public async Task<User?> GetPasswordFromUser( string password)
-        //{
-        //    var user = await _dbContext.User
-        //        .FirstOrDefaultAsync(x => x.Email == email);
-
-        //    return CryptoUtils.IsPasswordCorrect(password, user?.Password) ? user : null;
-        //}
+       
     }
 }
