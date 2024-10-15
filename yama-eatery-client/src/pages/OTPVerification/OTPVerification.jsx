@@ -1,11 +1,40 @@
+import { AuthService } from '@/services/AuthService'
+import axiosConfig from '@/utilities/axiosConfig'
 import { VerifiedUser } from '@mui/icons-material'
 import { Alert, Box, Button, Link, Paper, Snackbar, TextField, Typography } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import secureLocalStorage from 'react-secure-storage'
 
 const OTPVerification = () => {
 	const [otp, setOtp] = useState(['', '', '', '', '', ''])
 	const [isButtonActive, setIsButtonActive] = useState(false)
 	const [countdown, setCountdown] = useState(0)
+	const [requestData, setRequestData] = useState({
+		URL: null,
+		formData: null,
+		email: null,
+		otp: null,
+		expirationTime: null,
+	})
+
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		if (!secureLocalStorage.getItem('requestData')) {
+			navigate('/auth/login')
+		}
+
+		setRequestData(JSON.parse(secureLocalStorage.getItem('requestData')))
+	}, [])
+
+	useEffect(() => {
+		if (countdown > 0) {
+			const timerId = setTimeout(() => setCountdown(countdown - 1), 1000)
+			return () => clearTimeout(timerId)
+		}
+	}, [countdown])
 
 	const handleOtpChange = (value, index) => {
 		if (!/^\d*$/.test(value)) {
@@ -31,10 +60,22 @@ const OTPVerification = () => {
 		}
 	}
 
-	const handleResendOtp = (event) => {
+	const handleResendOtp = async (event) => {
 		event.preventDefault()
-		createOtp()
+
+		const otp = Math.floor(100000 + Math.random() * 900000).toString()
+		const expirationTime = Date.now() + 1000 * 60 * 5
 		setCountdown(60)
+		setRequestData((prev) => ({
+			...prev,
+			otp: otp,
+			expirationTime: expirationTime,
+		}))
+
+		const data = await AuthService.sendMailOTP({ email: requestData.email, otp: otp })
+		if (data?.success) {
+			enqueueSnackbar(data.success, { variant: 'success' })
+		}
 	}
 
 	const handlePaste = (event) => {
@@ -45,6 +86,7 @@ const OTPVerification = () => {
 		}
 
 		const newOtp = [...otp]
+
 		for (let i = 0; i < pasteData.length; i++) {
 			newOtp[i] = pasteData[i]
 		}
@@ -53,21 +95,48 @@ const OTPVerification = () => {
 		setIsButtonActive(newOtp.every((val) => val !== ''))
 	}
 
-	const createOtp = () => {
-		const otp = Math.floor(100000 + Math.random() * 900000)
-	}
-
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault()
-		// const otpFromUser = otp.join('')
-	}
 
-	useEffect(() => {
-		if (countdown > 0) {
-			const timerId = setTimeout(() => setCountdown(countdown - 1), 1000)
-			return () => clearTimeout(timerId)
+		if (
+			Object.values(requestData).some((value) => !value) ||
+			requestData.expirationTime < Date.now()
+		) {
+			enqueueSnackbar('OTP is invalid or expired', {
+				variant: 'error',
+				autoHideDuration: 1000,
+			})
+
+			secureLocalStorage.removeItem('requestData')
+
+			setTimeout(() => {
+				navigate('/auth/login')
+			}, 1000)
+
+			return
 		}
-	}, [countdown])
+
+		const otpSubmit = otp.join('')
+
+		if (otpSubmit !== requestData.otp) {
+			enqueueSnackbar('OTP is incorrect. Please try again', { variant: 'error' })
+			return
+		}
+
+		const data = await axiosConfig
+			.post(requestData.URL, requestData.formData)
+			.then((response) => response.data)
+
+		if (data?.success) {
+			secureLocalStorage.removeItem('requestData')
+
+			enqueueSnackbar(data.success, { variant: 'success', autoHideDuration: 1000 })
+
+			setTimeout(() => {
+				navigate('/auth/login')
+			}, 1000)
+		}
+	}
 
 	return (
 		<Box

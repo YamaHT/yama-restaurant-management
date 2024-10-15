@@ -2,12 +2,16 @@ import LoginBackground from '@/assets/img/general/LoginBackground.jpg'
 import PasswordTextField from '@/components/CustomTextField/PasswordTextField'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import LayoutLogin from '@/components/LayoutLogin/LoginLayout'
+import { AuthService } from '@/services/AuthService'
+import { API_REQUEST } from '@/utilities/apiRequest'
 import { Box, Button, Stack, Typography } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import secureLocalStorage from 'react-secure-storage'
 
 const Register = () => {
-	const [value, setValue] = useState({
+	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
 		phone: '',
@@ -21,24 +25,44 @@ const Register = () => {
 
 	const handleChange = (e) => {
 		const { name, value } = e.target
-		setValue((prevValue) => ({ ...prevValue, [name]: value }))
+		setFormData((prevValue) => ({ ...prevValue, [name]: value }))
 	}
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault()
 
 		let isValid = true
 
-		Object.keys(fieldsRef.current).map((key) => {
+		Object.keys(fieldsRef.current).forEach((key) => {
 			if (!fieldsRef.current[key]?.validate()) {
 				isValid = false
 			}
 		})
 
-		if (isValid) {
-			console.log('Form submitted:', value)
-		} else {
-			console.log('Please fill in valid fields.')
+		if (!isValid) {
+			return
+		}
+
+		const otp = Math.floor(100000 + Math.random() * 900000).toString()
+		const expirationTime = Date.now() + 1000 * 60 * 5
+
+		const requestData = {
+			URL: API_REQUEST.AuthRequest.REGISTER,
+			formData: formData,
+			email: formData.email,
+			otp: otp,
+			expirationTime: expirationTime,
+		}
+
+		const data = await AuthService.sendMailOTP({ email: formData.email, otp: otp })
+		console.log(data)
+		if (data?.success) {
+			enqueueSnackbar(data.success, { variant: 'success', autoHideDuration: 1000 })
+			secureLocalStorage.setItem('requestData', JSON.stringify(requestData))
+
+			setTimeout(() => {
+				navigate('/auth/otp-verification')
+			}, 1000)
 		}
 	}
 
@@ -62,7 +86,7 @@ const Register = () => {
 							type='text'
 							label='First Name'
 							name='firstName'
-							value={value.firstName}
+							value={formData.firstName}
 							onChange={handleChange}
 						/>
 						<ValidationTextField
@@ -70,7 +94,7 @@ const Register = () => {
 							type='text'
 							label='Last Name'
 							name='lastName'
-							value={value.lastName}
+							value={formData.lastName}
 							onChange={handleChange}
 						/>
 					</Stack>
@@ -81,7 +105,7 @@ const Register = () => {
 						name='phone'
 						regex='\d{10}'
 						regexErrorText='Phone must be 10 digits'
-						value={value.phone}
+						value={formData.phone}
 						onChange={handleChange}
 					/>
 					<ValidationTextField
@@ -89,14 +113,14 @@ const Register = () => {
 						type='email'
 						label='Email'
 						name='email'
-						value={value.email}
+						value={formData.email}
 						onChange={handleChange}
 					/>
 					<PasswordTextField
 						ref={(el) => (fieldsRef.current['password'] = el)}
 						label='Password'
 						name='password'
-						value={value.password}
+						value={formData.password}
 						onChange={handleChange}
 					/>
 				</Stack>
