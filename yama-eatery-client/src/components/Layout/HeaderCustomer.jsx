@@ -138,7 +138,7 @@ const HeaderCustomer = () => {
 					<Stack direction={'row'} spacing={2}>
 						<Button
 							variant='outlined'
-							onClick={() => navigate('/user/profile')}
+							onClick={() => navigate('/user')}
 							sx={{
 								borderWidth: 2,
 								textTransform: 'none',

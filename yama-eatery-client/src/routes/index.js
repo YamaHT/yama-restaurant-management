@@ -4,7 +4,7 @@ import ContactManagement from '@/pages/ContactManagement/ContactManagement'
 import ContactUs from '@/pages/ContactUs/ContactUs'
 import ForgotPassword from '@/pages/ForgotPassword/ForgotPassword'
 import HistoryBooking from '@/pages/HistoryBooking/HistoryBooking'
-import FeedbackHistory from '@/pages/HistoryFeedback/HistoryFeedback'
+import HistoryFeedback from '@/pages/HistoryFeedback/HistoryFeedback'
 import Home from '@/pages/Home/Home'
 import Login from '@/pages/Login/Login'
 import Membership from '@/pages/Membership/Membership'
@@ -13,7 +13,7 @@ import OtpVerification from '@/pages/OTPVerification/OTPVerification'
 import ProductDetail from '@/pages/ProductDetail/ProductDetail'
 import ProductList from '@/pages/ProductList/ProductList'
 import ProductManagement from '@/pages/ProductManagement/ProductManagement'
-import Profile from '@/pages/Profile/Profile'
+import Profile from '@/pages/MyAccount/Profile/Profile'
 import Register from '@/pages/Register/Register'
 import TableDetail from '@/pages/TableDetail/TableDetail'
 import TableList from '@/pages/TableList/TableList'
@@ -21,6 +21,7 @@ import TableManagement from '@/pages/TableManagement/TableManagemen'
 import UserManagement from '@/pages/UserManagement/UserManagement'
 import VoucherList from '@/pages/VoucherList/VoucherList'
 import VoucherManagement from '@/pages/VoucherManagement/VoucherManagement'
+import MyAccount from '@/pages/MyAccount/MyAccount'
 
 const publicRoutes = [
 	{ path: '/', component: Home },
@@ -31,13 +32,7 @@ const publicRoutes = [
 	{ path: '/voucher', component: VoucherList },
 	{ path: '/about', component: AboutUs },
 	{ path: '/contact', component: ContactUs },
-
-	{ path: '/user/profile', component: Profile },
-	{ path: '/user/history-feedback', component: FeedbackHistory },
-	{ path: '/user/history-booking', component: HistoryBooking },
-	{ path: '/user/change-password', component: ChangePassword },
-	{ path: '/user/membership', component: Membership },
-	{ path: '/user/my-voucher', component: MyVoucher },
+	{ path: '/user', component: MyAccount },
 
 	{ path: '/auth/forgot-password', component: ForgotPassword },
 	{ path: '/auth/otp-verification', component: OtpVerification },

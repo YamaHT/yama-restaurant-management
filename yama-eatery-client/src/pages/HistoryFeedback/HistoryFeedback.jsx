@@ -1,5 +1,23 @@
 import * as React from 'react'
-import { Box, Container, Typography, Divider, Rating, MenuItem, Pagination, Stack, createTheme, TableContainer, Table, TableBody, TableCell, IconButton, Select, TableHead, TableRow } from '@mui/material'
+import {
+	Box,
+	Container,
+	Typography,
+	Divider,
+	Rating,
+	MenuItem,
+	Pagination,
+	Stack,
+	createTheme,
+	TableContainer,
+	Table,
+	TableBody,
+	TableCell,
+	IconButton,
+	Select,
+	TableHead,
+	TableRow,
+} from '@mui/material'
 import { styled } from '@mui/material/styles'
 import LaunchIcon from '@mui/icons-material/Launch'
 
@@ -36,7 +54,7 @@ const ReviewItem = ({ rating }) => (
 	</Box>
 )
 
-const FeedbackHistory = () => {
+const HistoryFeedback = () => {
 	const [reviewType, setReviewType] = React.useState('All reviews')
 	const [currentPage, setCurrentPage] = React.useState(1)
 	const reviewsPerPage = 7
@@ -55,70 +73,82 @@ const FeedbackHistory = () => {
 			UserId: 1,
 			ProductId: 101,
 			product: 'Apple ',
-			message: 'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
+			message:
+				'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
 			rating: 5,
 		},
 		{
-			UserId: 2,product: 'Apple ',
+			UserId: 2,
+			product: 'Apple ',
 			ProductId: 102,
 			product: 'Apple ',
-			message: 'Elegant look, exceptional keyboard, and well-matched accessories. Lightning-quick speed.',
+			message:
+				'Elegant look, exceptional keyboard, and well-matched accessories. Lightning-quick speed.',
 			rating: 4,
 		},
 		{
 			UserId: 3,
 			ProductId: 103,
-      product: 'Apple ',
-			message: 'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
+			product: 'Apple ',
+			message:
+				'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
 			rating: 3,
 		},
 		{
 			UserId: 4,
 			ProductId: 104,
-			 product: 'Apple ',
-			message: 'The DualSense controller enhances gameplay with immersive feedback, making it a must-have.',
+			product: 'Apple ',
+			message:
+				'The DualSense controller enhances gameplay with immersive feedback, making it a must-have.',
 			rating: 5,
 		},
 		{
 			UserId: 5,
 			ProductId: 105,
-			 product: 'Apple ',
-			message: 'Elegant and refined, with well-chosen accessories. Quick response, durable battery.',
+			product: 'Apple ',
+			message:
+				'Elegant and refined, with well-chosen accessories. Quick response, durable battery.',
 			rating: 2,
 		},
-    {
+		{
 			UserId: 1,
 			ProductId: 101,
 			product: 'Apple ',
-			message: 'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
+			message:
+				'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
 			rating: 5,
 		},
 		{
-			UserId: 2,product: 'Apple ',
+			UserId: 2,
+			product: 'Apple ',
 			ProductId: 102,
 			product: 'Apple ',
-			message: 'Elegant look, exceptional keyboard, and well-matched accessories. Lightning-quick speed.',
+			message:
+				'Elegant look, exceptional keyboard, and well-matched accessories. Lightning-quick speed.',
 			rating: 4,
 		},
 		{
 			UserId: 3,
 			ProductId: 103,
-      product: 'Apple ',
-			message: 'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
+			product: 'Apple ',
+			message:
+				'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
 			rating: 3,
 		},
 		{
 			UserId: 4,
 			ProductId: 104,
-			 product: 'Apple ',
-			message: 'The DualSense controller enhances gameplay with immersive feedback, making it a must-have.',
+			product: 'Apple ',
+			message:
+				'The DualSense controller enhances gameplay with immersive feedback, making it a must-have.',
 			rating: 5,
 		},
 		{
 			UserId: 5,
 			ProductId: 105,
-			 product: 'Apple ',
-			message: 'Elegant and refined, with well-chosen accessories. Quick response, durable battery.',
+			product: 'Apple ',
+			message:
+				'Elegant and refined, with well-chosen accessories. Quick response, durable battery.',
 			rating: 2,
 		},
 	]
@@ -128,16 +158,29 @@ const FeedbackHistory = () => {
 		return review.rating === parseInt(reviewType.charAt(0))
 	})
 
-
 	const indexOfLastReview = currentPage * reviewsPerPage
 	const indexOfFirstReview = indexOfLastReview - reviewsPerPage
 	const currentReviews = filteredReviews.slice(indexOfFirstReview, indexOfLastReview)
 	const pageCount = Math.ceil(filteredReviews.length / reviewsPerPage)
 
 	return (
-		<Box sx={{ padding: 4, backgroundColor: '#ffffff', width: '100%', boxShadow: 3, borderRadius: '8px' }} >
+		<Box
+			sx={{
+				padding: 4,
+				backgroundColor: '#ffffff',
+				width: '100%',
+				boxShadow: 3,
+				borderRadius: '8px',
+			}}
+		>
 			<Container maxWidth='lg'>
-				<Stack direction='row' spacing={2} alignItems='center' justifyContent='space-between' sx={{ marginBottom: 3 }}>
+				<Stack
+					direction='row'
+					spacing={2}
+					alignItems='center'
+					justifyContent='space-between'
+					sx={{ marginBottom: 3 }}
+				>
 					<Typography variant='h4' fontFamily={'monospace'} textTransform={'uppercase'}>
 						Feedback
 					</Typography>
@@ -155,11 +198,26 @@ const FeedbackHistory = () => {
 					<TableContainer>
 						<Table>
 							<TableHead>
-								<TableRow >
-									<TableCell component={'th'} sx={{ width: '20%' , textAlign:'center', fontSize:'1.25rem'}}>Name</TableCell>
-									<TableCell  component={'th'} sx={{ width: '60%' , textAlign:'center', fontSize:'1.25rem'}}>Description</TableCell>
-									<TableCell  component={'th'} sx={{ width: '15%' , textAlign:'center', fontSize:'1.25rem'}}>Rating</TableCell>
-									<TableCell  component={'th'} sx={{ width: '5%' }} />
+								<TableRow>
+									<TableCell
+										component={'th'}
+										sx={{ width: '20%', textAlign: 'center', fontSize: '1.25rem' }}
+									>
+										Name
+									</TableCell>
+									<TableCell
+										component={'th'}
+										sx={{ width: '60%', textAlign: 'center', fontSize: '1.25rem' }}
+									>
+										Description
+									</TableCell>
+									<TableCell
+										component={'th'}
+										sx={{ width: '15%', textAlign: 'center', fontSize: '1.25rem' }}
+									>
+										Rating
+									</TableCell>
+									<TableCell component={'th'} sx={{ width: '5%' }} />
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -190,10 +248,16 @@ const FeedbackHistory = () => {
 							</TableBody>
 						</Table>
 					</TableContainer>
-					<Pagination count={pageCount} page={currentPage} onChange={handlePageChange} color='primary' sx={{ marginTop: 2, display: 'flex', justifyContent: 'center' }} />
+					<Pagination
+						count={pageCount}
+						page={currentPage}
+						onChange={handlePageChange}
+						color='primary'
+						sx={{ marginTop: 2, display: 'flex', justifyContent: 'center' }}
+					/>
 				</Box>
 			</Container>
 		</Box>
 	)
 }
-export default FeedbackHistory
+export default HistoryFeedback
