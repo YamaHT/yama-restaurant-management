@@ -21,4 +21,4 @@ export const ProductService = {
 				return response.data
 			})
 	},
-}
+} 
