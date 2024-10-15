@@ -1,5 +1,6 @@
 import { AuthRequest } from '@/requests/AuthRequest'
 import { EnumRequest } from '@/requests/EnumRequest'
+import { FeedbackRequest } from '@/requests/FeedbackRequest'
 import { ProductRequest } from '@/requests/ProductRequest'
 import { UserRequest } from '@/requests/UserRequest'
 
@@ -9,4 +10,5 @@ export const API_REQUEST = {
 	EnumRequest,
 	ProductRequest,
 	UserRequest,
+	FeedbackRequest,
 }

@@ -24,6 +24,7 @@ import { calculateAverageRating } from '../ProductList/ProductList'
 import { ProductService } from '@/services/ProductService'
 import { AssetImages } from '@/utilities/AssetImages'
 import ReviewProgressBar from '@/components/Product/ReviewProgressBar'
+import { FeedbackRequest } from '@/requests/FeedbackRequest'
 
 export default function ProductDetail() {
 	const { id } = useParams()
@@ -31,6 +32,7 @@ export default function ProductDetail() {
 
 	const [product, setProduct] = useState(null)
 	const [recommendedProducts, setRecommendedProducts] = useState([])
+	const [feedback, setFeedbackProduct] = useState()
 
 	const [selectedImage, setSelectedImage] = useState('')
 	const [showAllReviews, setShowAllReviews] = useState(false)
@@ -61,11 +63,11 @@ export default function ProductDetail() {
 					setRecommendedProducts(data)
 				}
 			}
-
 			fetchSimilarProduct()
 			setSelectedImage(AssetImages.ProductImage(product?.image[0]))
 		}
 	}, [product])
+
 
 	useEffect(() => {
 		const initializeSwiperNavigation = () => {
@@ -195,7 +197,7 @@ export default function ProductDetail() {
 						</Typography>
 					</Box>
 					<Stack direction='row' spacing={1} my={2}>
-						<Chip label={product.subCategory.category.name} variant='outlined'/>
+						<Chip label={product.subCategory.category.name} variant='outlined' />
 						<Chip label={product.subCategory.name} variant='outlined' />
 					</Stack>
 					<Rating value={averageRating} precision={0.1} readOnly />
@@ -260,6 +262,29 @@ export default function ProductDetail() {
 					<Typography variant='h6' fontWeight='bold' color='textPrimary'>
 						Leave a Rating and Review
 					</Typography>
+
+					<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
+						<Grid2 size={0.5}>
+							<Avatar src={feedback.Avatar} alt={feedback.Avatar} />
+						</Grid2>
+						<Grid2 size={11.5}>
+							<Stack direction='row' alignItems='center' justifyContent='space-between'>
+								<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
+									{feedback.message}
+								</Typography>
+
+								<Typography variant='caption' color='textSecondary'>
+									{new Date(feedback.creationDate).toLocaleDateString()}
+								</Typography>
+							</Stack>
+							<Rating value={feedback.rating} readOnly size='small' sx={{ mt: 0.5 }} />
+
+							<Typography variant='body2' color='textSecondary' mt={1}>
+								{feedback.message}
+							</Typography>
+						</Grid2>
+					</Grid2>
+
 					<Rating
 						name='user-rating'
 						value={userRating}
