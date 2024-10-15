@@ -38,8 +38,7 @@ const Login = () => {
 				localStorage.setItem('token', data.token)
 				secureLocalStorage.setItem('role', data.role)
 
-				const event = new Event('roleChange')
-				window.dispatchEvent(event)
+				window.dispatchEvent(new Event('roleChange'))
 
 				setTimeout(() => {
 					navigate('/')
