@@ -12,7 +12,7 @@ export function calculateAverageRating(reviews) {
 	return totalRating / reviews.length
 }
 
-export default function ProductList(props) {
+export default function ProductList() {
 	const [products, setProducts] = useState([])
 	const [filteredProducts, setFilteredProducts] = useState([])
 	const [priceRange, setPriceRange] = useState([0, 1000])
@@ -29,36 +29,36 @@ export default function ProductList(props) {
 	const indexOfFirstProduct = indexOfLastProduct - productsPerPage
 	const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
 
-	useEffect(
-		() => async () => {
+	useEffect(() => {
+		async function fetchProducts() {
 			const data = await ProductService.getAll()
 			if (data) {
 				setProducts(data)
 			}
-		},
-		[]
-	)
+		}
+		fetchProducts()
+	}, [])
 
 	useEffect(() => {
 		let filtered = products.filter(
 			(product) => product.price >= priceRange[0] && product.price <= priceRange[1]
 		)
-
+	
 		if (
 			Object.keys(selectedCategories).length > 0 &&
 			Object.values(selectedCategories).some((subs) => subs.length > 0)
 		) {
 			filtered = filtered.filter((product) => {
-				const productCategory = product.category
-				const productSubcategory = product.subcategory
-
+				const productCategory = product.subCategory.category.name
+				const productSubcategory = product.subCategory.name
+	
 				if (selectedCategories[productCategory]) {
 					return selectedCategories[productCategory].includes(productSubcategory)
 				}
 				return false
 			})
 		}
-
+	
 		if (searchTerm) {
 			filtered = filtered.filter((product) =>
 				product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -93,14 +93,14 @@ export default function ProductList(props) {
 		}
 
 		setFilteredProducts(filtered)
-	}, [priceRange, selectedCategories, sortOption, searchTerm])
+	}, [priceRange, selectedCategories, sortOption, searchTerm, products])
 
 	const handlePageChange = (event, value) => {
 		setCurrentPage(value)
 	}
 
 	const handleClick = (id) => {
-		navigate(`/Product/Detail/${id}`)
+		navigate(`/product/detail/${id}`)
 	}
 
 	const handleMouseEnter = (id) => {
@@ -187,7 +187,7 @@ export default function ProductList(props) {
 												</Typography>
 												<Chip
 													variant='outlined'
-													label={product.category}
+													label={`${product.subCategory.category.name} / ${product.subCategory.name}`}
 													icon={<Dining />}
 													sx={{
 														fontFamily: 'cursive',
@@ -205,9 +205,9 @@ export default function ProductList(props) {
 													</Typography>
 													<Typography
 														variant='overline'
-														color={product.quantity > 0 ? 'success' : 'error'}
+														color={product.stockQuantity > 0 ? 'success' : 'error'}
 													>
-														{product.quantity > 0 ? 'In stock' : 'Out of stock'}
+														{product.stockQuantity > 0 ? 'In stock' : 'Out of stock'}
 													</Typography>
 												</Stack>
 												<Rating
@@ -230,7 +230,6 @@ export default function ProductList(props) {
 								onChange={handlePageChange}
 								color='primary'
 								sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
-								disabled={filteredProducts.length <= productsPerPage}
 							/>
 						</>
 					)}
