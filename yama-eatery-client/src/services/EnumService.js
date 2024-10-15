@@ -2,9 +2,9 @@ import { API_REQUEST } from '@/utilities/ApiRequest'
 import axiosConfig from '@/utilities/axiosConfig'
 
 export const EnumService = {
-	getAllCategory: async () => {
+	GET_ALL_CATEGORY: async () => {
 		return await axiosConfig
-			.get(API_REQUEST.EnumRequest.getAllCategory)
+			.get(API_REQUEST.EnumRequest.GET_ALL_CATEGORY)
 			.then((response) => {
 				return response.data
 			})

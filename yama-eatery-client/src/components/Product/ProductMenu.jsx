@@ -28,7 +28,7 @@ export default function ProductMenu({
 
 	useEffect(() => {
 		const fetchCategories = async () => {
-			const data = await EnumService.getAllCategory()
+			const data = await EnumService.GET_ALL_CATEGORY()
 			if (data) {
 				setCategories(data)
 

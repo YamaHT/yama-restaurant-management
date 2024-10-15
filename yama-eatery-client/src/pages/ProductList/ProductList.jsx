@@ -1,10 +1,11 @@
-import ProductDrawer from '@/components/ProductMenu/ProductMenu'
-import ProductSearch from '@/components/ProductSearch/ProductSearch'
+import ProductDrawer from '@/components/Product/ProductMenu'
+import ProductSearch from '@/components/Product/ProductSearch'
 import { Dining, StarBorderRounded, StarRounded } from '@mui/icons-material'
 import { Box, Chip, Divider, Grid2, Pagination, Rating, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ProductService } from '@/services/ProductService'
+import { AssetImages } from '@/utilities/AssetImages'
 
 export function calculateAverageRating(reviews) {
 	if (!reviews || reviews.length === 0) return 0
@@ -31,19 +32,20 @@ export default function ProductList() {
 
 	useEffect(() => {
 		async function fetchProducts() {
-			const data = await ProductService.getAll()
+			const data = await ProductService.GET_ALL()
 			if (data) {
 				setProducts(data)
 			}
 		}
 		fetchProducts()
 	}, [])
+	
 
 	useEffect(() => {
 		let filtered = products.filter(
 			(product) => product.price >= priceRange[0] && product.price <= priceRange[1]
 		)
-	
+
 		if (
 			Object.keys(selectedCategories).length > 0 &&
 			Object.values(selectedCategories).some((subs) => subs.length > 0)
@@ -51,14 +53,14 @@ export default function ProductList() {
 			filtered = filtered.filter((product) => {
 				const productCategory = product.subCategory.category.name
 				const productSubcategory = product.subCategory.name
-	
+
 				if (selectedCategories[productCategory]) {
 					return selectedCategories[productCategory].includes(productSubcategory)
 				}
 				return false
 			})
 		}
-	
+
 		if (searchTerm) {
 			filtered = filtered.filter((product) =>
 				product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -80,12 +82,12 @@ export default function ProductList() {
 				break
 			case 'rating-high-to-low':
 				filtered = filtered.sort(
-					(a, b) => calculateAverageRating(b.reviews) - calculateAverageRating(a.reviews)
+					(a, b) => calculateAverageRating(b.feedbacks) - calculateAverageRating(a.feedbacks)
 				)
 				break
 			case 'rating-low-to-high':
 				filtered = filtered.sort(
-					(a, b) => calculateAverageRating(a.reviews) - calculateAverageRating(b.reviews)
+					(a, b) => calculateAverageRating(a.feedbacks) - calculateAverageRating(b.feedbacks)
 				)
 				break
 			default:
@@ -118,7 +120,7 @@ export default function ProductList() {
 
 	return (
 		<Grid2 container p={'5%'} spacing={2}>
-			<Grid2 size={3}>
+			<Grid2 size={{ xs: 12, md: 3 }}>
 				<ProductDrawer
 					products={products}
 					priceRange={priceRange}
@@ -129,7 +131,7 @@ export default function ProductList() {
 					setSelectedCategories={setSelectedCategories}
 				/>
 			</Grid2>
-			<Grid2 size={9}>
+			<Grid2 size={{ xs: 12, md: 9 }}>
 				<Box>
 					<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
 						<ProductSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -143,7 +145,7 @@ export default function ProductList() {
 						<>
 							<Grid2 container spacing={2}>
 								{currentProducts.map((product) => {
-									const averageRating = calculateAverageRating(product.reviews)
+									const averageRating = calculateAverageRating(product.feedbacks)
 									return (
 										<Grid2
 											size={{ xs: 12, sm: 4, md: 3 }}
@@ -170,7 +172,9 @@ export default function ProductList() {
 											>
 												<img
 													src={
-														hoveredProductId === product.id ? product.image[1] : product.image[0]
+														hoveredProductId === product.id
+															? AssetImages.ProductImage(product.image[1])
+															: AssetImages.ProductImage(product.image[0])
 													}
 													alt={product.name}
 													style={{
@@ -182,7 +186,17 @@ export default function ProductList() {
 												/>
 											</Box>
 											<Box sx={{ p: 3, backgroundColor: 'white' }}>
-												<Typography variant='h5' fontWeight='bold' color='gray.800'>
+												<Typography
+													variant='h5'
+													fontWeight='bold'
+													color='gray.800'
+													sx={{
+														WebkitLineClamp: 1,
+														textWrap: 'nowrap',
+														textOverflow: 'ellipsis',
+														overflow: 'hidden',
+													}}
+												>
 													{product.name}
 												</Typography>
 												<Chip
@@ -222,7 +236,6 @@ export default function ProductList() {
 									)
 								})}
 							</Grid2>
-							<Divider />
 							<Pagination
 								size='large'
 								count={Math.ceil(filteredProducts.length / productsPerPage)}
