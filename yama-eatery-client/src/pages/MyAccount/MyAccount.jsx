@@ -61,11 +61,30 @@ const MyAccount = () => {
 	return (
 		<Grid2 container p={'2% 5%'} spacing={3}>
 			<Grid2 size={3}>
-				<Paper sx={{ p: '5%', mt: '10%' }}>
+				<Paper sx={{ p: '5% 0', mt: '10%' }}>
 					<List subheader={<ListSubheader>Account Setting</ListSubheader>}>
 						{accountPages.map((accountPage) => (
-							<ListItemButton key={accountPage} onClick={() => setSelectPage(accountPage)}>
-								<ListItemIcon>{accountPage.icon}</ListItemIcon>
+							<ListItemButton
+								key={accountPage}
+								sx={
+									accountPage === selectPage
+										? {
+												borderLeft: '5px solid royalblue',
+												bgcolor: '#9cf4',
+												color: 'royalblue',
+												':hover': {},
+										  }
+										: { borderLeft: '5px solid transparent', bgcolor: 'transparent' }
+								}
+								onClick={() => setSelectPage(accountPage)}
+							>
+								<ListItemIcon
+									sx={{
+										color: accountPage === selectPage ? 'royalblue' : 'inherit',
+									}}
+								>
+									{accountPage.icon}
+								</ListItemIcon>
 								<ListItemText primary={accountPage.label} />
 							</ListItemButton>
 						))}
