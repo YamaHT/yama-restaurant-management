@@ -13,7 +13,7 @@ namespace WebAPI.Controllers
 
             if (!CryptoUtils.IsPasswordCorrect(userChangePasswordDTO.Password, user.Password))
             {
-                throw new InvalidDataException("Oldpassword is not corrected");
+                throw new InvalidDataException("Oldpassword is not correct");
             }
             user.Password = CryptoUtils.EncryptPassword(userChangePasswordDTO.NewPassword);
             _unitOfWork.UserRepository.Update(user);
