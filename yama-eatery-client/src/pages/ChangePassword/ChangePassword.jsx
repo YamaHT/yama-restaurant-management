@@ -100,11 +100,9 @@ export default function ChangePassword() {
 	return (
 		<Box
 			component={Paper}
-			elevation={15}
+			elevation={5}
 			fullWidth
 			sx={{
-				maxWidth: '400px',
-				margin: '100px auto',
 				padding: '20px',
 				textAlign: 'center',
 				borderRadius: '10px',
@@ -119,11 +117,6 @@ export default function ChangePassword() {
 					margin='normal'
 					error={Boolean(oldPasswordError)}
 					helperText={oldPasswordError}
-					InputLabelProps={{
-						style: {
-							fontWeight: 'bold',
-						},
-					}}
 					value={oldPassword}
 					onChange={(e) => setOldPassword(e.target.value)}
 					onBlur={() => validateOldPassword()}
@@ -145,11 +138,6 @@ export default function ChangePassword() {
 					margin='normal'
 					error={Boolean(newPasswordError)}
 					helperText={newPasswordError}
-					InputLabelProps={{
-						style: {
-							fontWeight: 'bold',
-						},
-					}}
 					value={newPassword}
 					onChange={(e) => setNewPassword(e.target.value)}
 					onBlur={() => validateNewPassword()}
@@ -171,11 +159,6 @@ export default function ChangePassword() {
 					margin='normal'
 					error={Boolean(confirmPasswordError)}
 					helperText={confirmPasswordError}
-					InputLabelProps={{
-						style: {
-							fontWeight: 'bold',
-						},
-					}}
 					value={confirmPassword}
 					onChange={(e) => setConfirmPassword(e.target.value)}
 					onBlur={() => validateConfirmPassword()}

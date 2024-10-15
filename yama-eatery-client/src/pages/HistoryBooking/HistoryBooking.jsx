@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Typography } from '@mui/material'
+import { Box, Button, Divider, Paper, Typography } from '@mui/material'
 import React from 'react'
 const formatDate = (dateStr) => {
 	const date = new Date(dateStr)
@@ -56,30 +56,21 @@ const HistoryBooking = () => {
 		},
 	]
 	return (
-		<Box>
+		<>
 			{BookingList.map((booking) => (
-				<Box
+				<Paper
 					key={booking.id}
-					maxWidth={'50%'}
-					p={'1%'}
-					border={1}
-					borderRadius={0}
-					margin={'1% auto'}
-					component={Paper}
+					sx={{ background: '#f0f2f5', boxShadow: '0 2px 5px #000a', p: '2%', m: '2%' }}
 				>
 					<Box display={'flex'} justifyContent={'space-between'}>
-						<Typography variant='body2' color={'GrayText'}>
-							Id: {booking.id} | Booking Date: {booking.dayPart} {formatDate(booking.bookingDate)}
+						<Typography variant='body2' fontSize={15}>
+							ID: {booking.id} | Booking Date: {booking.dayPart} {formatDate(booking.bookingDate)}
 						</Typography>
 						<Typography
 							variant='body1'
 							fontWeight='bold'
 							color={
-								booking.isBooking
-									? booking.bookingDetail.isPaid
-										? 'inherit'
-										: 'darkslategray'
-									: 'tomato'
+								booking.isBooking ? (booking.bookingDetail.isPaid ? 'primary' : 'error') : 'success'
 							}
 						>
 							{booking.isBooking
@@ -89,6 +80,7 @@ const HistoryBooking = () => {
 								: 'Booked'}
 						</Typography>
 					</Box>
+					<Divider sx={{ my: 1, borderBottomWidth: 3 }} />
 					<Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
 						<Box width={'25%'}>
 							<img
@@ -99,8 +91,10 @@ const HistoryBooking = () => {
 						</Box>
 						<Box width={'75%'} pl={'2%'}>
 							<Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
-								<Typography variant='body1'>Table Number: {booking.table.id}</Typography>
-								<Typography variant='body1' color={'GrayText'} textAlign={'right'}>
+								<Typography variant='h6' fontWeight={'bold'}>
+									Table Number: {booking.table.id}
+								</Typography>
+								<Typography variant='h6' fontWeight={'bold'} textAlign={'right'}>
 									Total Payment: ${booking.totalPayment}
 								</Typography>
 							</Box>
@@ -109,17 +103,16 @@ const HistoryBooking = () => {
 								flexDirection={'row'}
 								justifyContent={'space-between'}
 								alignItems={'center'}
-								paddingLeft={'3%'}
 							>
 								<Box>
-									<Typography variant='body2' color={'GrayText'}>
+									<Typography variant='body1' fontWeight={'bold'}>
 										Type: {booking.table.type}
 									</Typography>
-									<Typography variant='body2' color={'GrayText'}>
+									<Typography variant='body1' fontWeight={'bold'}>
 										Floor: {booking.table.floor}
 									</Typography>
 								</Box>
-								<Typography variant='body1' color={'GrayText'} textAlign={'right'}>
+								<Typography variant='h6' textAlign={'right'} fontWeight={'bold'}>
 									Total Dishes: {booking.totalAmount}
 								</Typography>
 							</Box>
@@ -133,8 +126,7 @@ const HistoryBooking = () => {
 								mt={'1%'}
 							>
 								<Typography
-									variant='caption'
-									color='GrayText'
+									variant='body2'
 									sx={{
 										display: '-webkit-box',
 										WebkitLineClamp: 2,
@@ -146,20 +138,37 @@ const HistoryBooking = () => {
 									Note: {booking.note}
 								</Typography>
 								{!booking.bookingDetail.isPaid && booking.isBooking && (
-									<Button
-										fullWidth
-										variant='contained'
-										style={{ background: 'tomato', textTransform: 'capitalize' }}
-									>
-										Cancel Booking
-									</Button>
+									<Box display='flex' flexDirection='column' width='100%'>
+										<Button
+											fullWidth
+											variant='contained'
+											style={{
+												background: '#d50000',
+												textTransform: 'capitalize',
+												marginTop: '20px',
+											}}
+										>
+											Cancel Booking
+										</Button>
+										<Button
+											fullWidth
+											variant='contained'
+											style={{
+												background: 'green',
+												textTransform: 'capitalize',
+												marginTop: '10px',
+											}}
+										>
+											Payment
+										</Button>
+									</Box>
 								)}
 							</Box>
 						</Box>
 					</Box>
-				</Box>
+				</Paper>
 			))}
-		</Box>
+		</>
 	)
 }
 

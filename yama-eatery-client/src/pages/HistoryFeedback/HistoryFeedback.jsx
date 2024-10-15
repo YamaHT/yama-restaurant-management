@@ -181,7 +181,7 @@ const HistoryFeedback = () => {
 					justifyContent='space-between'
 					sx={{ marginBottom: 3 }}
 				>
-					<Typography variant='h4' fontFamily={'monospace'} textTransform={'uppercase'}>
+					<Typography variant='h4' fontFamily={'sans-serif'} textTransform={'uppercase'}>
 						Feedback
 					</Typography>
 					<Select value={reviewType} onChange={handleReviewTypeChange}>
@@ -201,19 +201,34 @@ const HistoryFeedback = () => {
 								<TableRow>
 									<TableCell
 										component={'th'}
-										sx={{ width: '20%', textAlign: 'center', fontSize: '1.25rem' }}
+										sx={{
+											width: '20%',
+											textAlign: 'left',
+											fontSize: '1.25rem',
+											fontWeight: 'bold',
+										}}
 									>
 										Name
 									</TableCell>
 									<TableCell
 										component={'th'}
-										sx={{ width: '60%', textAlign: 'center', fontSize: '1.25rem' }}
+										sx={{
+											width: '60%',
+											textAlign: 'left',
+											fontSize: '1.25rem',
+											fontWeight: 'bold',
+										}}
 									>
-										Description
+										Message
 									</TableCell>
 									<TableCell
 										component={'th'}
-										sx={{ width: '15%', textAlign: 'center', fontSize: '1.25rem' }}
+										sx={{
+											width: '15%',
+											textAlign: 'left',
+											fontSize: '1.25rem',
+											fontWeight: 'bold',
+										}}
 									>
 										Rating
 									</TableCell>
