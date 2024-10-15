@@ -7,5 +7,7 @@ namespace WebAPI.Repositories.IRepositories
         Task<User?> GetUserByEmailAndPassword(string email, string password);
 
         Task<bool> CheckEmailExisted(string email);
+        Task<User?> GetUserByEmail(string email);
+
     }
 }
