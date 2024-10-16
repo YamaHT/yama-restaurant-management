@@ -83,7 +83,7 @@ export default function ReviewList() {
 	}
 
 	return (
-		<Grid2 container p={'5%'} spacing={2}>
+		<Grid2 container p={'5% 0'} spacing={2}>
 			<Grid2 xs={12}>
 				<Stack
 					direction='row'

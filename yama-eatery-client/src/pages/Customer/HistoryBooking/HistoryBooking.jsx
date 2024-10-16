@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Paper, Typography } from '@mui/material'
+import { Avatar, Box, Button, Divider, Paper, Typography } from '@mui/material'
 import React from 'react'
 const formatDate = (dateStr) => {
 	const date = new Date(dateStr)
@@ -17,7 +17,7 @@ const HistoryBooking = () => {
 			totalAmount: 10,
 			table: {
 				id: 1,
-				img: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_0.jpg',
+				img: '',
 				floor: 1,
 				type: 'small',
 			},
@@ -33,7 +33,7 @@ const HistoryBooking = () => {
 			totalAmount: 10,
 			table: {
 				id: 1,
-				img: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_0.jpg',
+				img: '',
 				floor: 2,
 				type: 'large',
 			},
@@ -49,18 +49,18 @@ const HistoryBooking = () => {
 			totalAmount: 100,
 			table: {
 				id: 1,
-				img: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_0.jpg',
+				img: '',
 				floor: 3,
 				type: 'medium',
 			},
 		},
 	]
 	return (
-		<>
+		<Box>
 			{BookingList.map((booking) => (
 				<Paper
 					key={booking.id}
-					sx={{ background: '#f0f2f5', boxShadow: '0 2px 5px #000a', p: '2%', m: '2%' }}
+					sx={{ background: '#f0f2f5', boxShadow: '0 2px 5px #000a', p: '2%', m: '2% 0' }}
 				>
 					<Box display={'flex'} justifyContent={'space-between'}>
 						<Typography variant='body2' fontSize={15}>
@@ -83,10 +83,11 @@ const HistoryBooking = () => {
 					<Divider sx={{ my: 1, borderBottomWidth: 3 }} />
 					<Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
 						<Box width={'25%'}>
-							<img
+							<Avatar
 								src={booking.table.img}
+								variant='square'
 								alt={`Table ${booking.table.type}`}
-								style={{ width: '100%', aspectRatio: 7 / 6, objectFit: 'cover' }}
+								style={{ width: '100%', height: '100%', aspectRatio: 7 / 6, objectFit: 'cover' }}
 							/>
 						</Box>
 						<Box width={'75%'} pl={'2%'}>
@@ -168,7 +169,7 @@ const HistoryBooking = () => {
 					</Box>
 				</Paper>
 			))}
-		</>
+		</Box>
 	)
 }
 

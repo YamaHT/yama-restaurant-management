@@ -22,6 +22,7 @@ namespace WebAPI.Controllers
                 Membership = user.Membership,
                 Name = user.Name,
                 Phone = user.Phone,
+                CreationDate = user.CreationDate
             };
             return Ok(userProfileDTO);
         }

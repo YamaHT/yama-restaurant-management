@@ -1,3 +1,4 @@
+import { UserService } from '@/services/UserService'
 import { AssetImages } from '@/utilities/AssetImages'
 import { Edit, PhotoCamera } from '@mui/icons-material'
 import {
@@ -32,7 +33,7 @@ const Profile = () => {
 		image: 'hmm.jpg',
 		birthday: '2004-10-30',
 		phone: '0123123123',
-		gender: '0',
+		gender: 'Male',
 		membership: {
 			membershipStatus: 'active',
 			rank: 'Silver',
@@ -49,6 +50,16 @@ const Profile = () => {
 	const [imagePresentation, setImagePresentation] = useState(null)
 
 	useEffect(() => {
+		const fetchUserProfile = async () => {
+			const data = await UserService.GET_PROFILE()
+			if (data) {
+				setProfile(data)
+			}
+		}
+		fetchUserProfile()
+	}, [])
+
+	useEffect(() => {
 		const formattedDate = new Date(profile.creationDate).toLocaleDateString('en-GB', {
 			day: '2-digit',
 			month: 'short',
@@ -57,13 +68,11 @@ const Profile = () => {
 
 		setProfilePresentation([
 			`Enrolled on: ${formattedDate}`,
-			`Membership: ${profile.membership.rank}`,
+			`Membership: ${profile.membership?.rank}`,
 			`Name: ${profile.name}`,
 			`Birthday: ${profile.birthday}`,
 			`Phone: ${profile.phone}`,
-			`Gender: ${
-				profile.gender === '1' ? 'Female' : profile.gender === '0' ? 'Male' : 'Not Specified'
-			}`,
+			`Gender: ${profile.gender ? profile.gender : 'Not Specified'}`,
 		])
 	}, [profile])
 
@@ -99,15 +108,21 @@ const Profile = () => {
 							p: 0,
 							transition: 'transform 0.3s ease-in-out',
 						}}
-						onClick={handleAvatarClick}
+						onClick={isEditting ? handleAvatarClick : null}
 						onMouseEnter={() => setIsHovered(true)}
 						onMouseLeave={() => setIsHovered(false)}
 					>
 						<Avatar
-							src={imagePresentation || profile.image}
+							src={
+								imagePresentation
+									? imagePresentation
+									: profile.image
+									? AssetImages.UserImage(profile.image)
+									: ''
+							}
 							sx={{ width: '100%', height: '100%', aspectRatio: 1, objectFit: 'cover' }}
 						/>
-						{isHovered && (
+						{isHovered && isEditting && (
 							<Box
 								sx={{
 									position: 'absolute',
@@ -204,8 +219,8 @@ const Profile = () => {
 						value={profile.gender}
 						onChange={handleChange}
 					>
-						<FormControlLabel value={0} control={<Radio />} label='Male' />
-						<FormControlLabel value={1} control={<Radio />} label='Female' />
+						<FormControlLabel value={'Male'} control={<Radio />} label='Male' />
+						<FormControlLabel value={'Female'} control={<Radio />} label='Female' />
 					</RadioGroup>
 				</FormControl>
 				<Stack direction={'row'} spacing={5}>
