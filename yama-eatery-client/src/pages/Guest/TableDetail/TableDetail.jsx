@@ -16,21 +16,26 @@ import { useParams } from 'react-router-dom'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 import { TableService } from '@/services/TableService'
+import { AssetImages } from '@/utilities/AssetImages'
 
 export default function TableDetail() {
 	const { id } = useParams()
 	const [table, setTable] = useState()
 
-	useEffect(() => {
-		async function fetchProductDetail() {
-			const data = await TableService.DETAIL(id)
-			if (data) {
-				setTable(data)
+	useEffect(
+		() => {
+			async function fetchProductDetail() {
+				const data = await TableService.DETAIL(id)
+				if (data) {
+					setTable(data)
+					console.log(data)
+				}
 			}
-		}
-		fetchProductDetail()
-
-	}, [id], [table])
+			fetchProductDetail()
+		},
+		[id],
+		[table]
+	)
 
 	const [formData, setFormData] = useState({
 		firstName: '',
@@ -86,7 +91,7 @@ export default function TableDetail() {
 					position: 'relative',
 				}}
 			>
-				<Typography variant='h4'>{table.tableType} Table</Typography>
+				<Typography variant='h4'>{table.type} Table</Typography>
 
 				<Typography
 					variant='h5'
@@ -130,7 +135,8 @@ export default function TableDetail() {
 								<Box height={500} key={index}>
 									<img
 										style={{ width: '100%', aspectRatio: 2 / 1, objectFit: 'fill' }}
-										src={slide}
+										src={AssetImages.TableImage(slide)}
+										alt={`Thumbnail ${index + 1}`}
 									/>
 								</Box>
 							)
@@ -140,11 +146,11 @@ export default function TableDetail() {
 			</Card>
 
 			<Stack direction='row' justifyContent='center' mt={1}>
-				{table.img.map((img, index) => (
+				{table.image.map((image, index) => (
 					<Box
 						key={index}
 						component='img'
-						src={img}
+						src={AssetImages.TableImage(image)}
 						alt={`Thumbnail ${index + 1}`}
 						sx={{
 							width: '80px',
@@ -152,10 +158,6 @@ export default function TableDetail() {
 							marginRight: '10px',
 							cursor: 'pointer',
 							objectFit: 'cover',
-						}}
-						onError={(e) => {
-							e.target.onerror = null
-							e.target.src = 'path/to/placeholder-image.jpg'
 						}}
 						onClick={() => handleThumbnailClick(index)}
 					/>
