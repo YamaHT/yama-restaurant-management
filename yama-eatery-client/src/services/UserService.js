@@ -38,4 +38,24 @@ export const UserService = {
 			.get(ApiRequest.UserRequest.APRROVE_MEMBERSHIP)
 			.then((response) => response.data)
 	},
+	MY_VOUCHER: async () => {
+		return await axiosConfig
+			.post(ApiRequest.UserRequest.MY_VOUCHERS)
+			.then((respond) => respond.data)
+	},
+	HISTORY_FEEDBACK: async () => {
+		return await axiosConfig
+			.get(ApiRequest.UserRequest.HISTORY_FEEDBACK)
+			.then((respond) => respond.data)
+	},
+	HISTORY_BOOKING: async () => {
+		return await axiosConfig
+			.post(ApiRequest.UserRequest.HISTORY_BOOKING)
+			.then((respond) => respond.data)
+	},
+	CANCEL_BOOKING: async (ID) => {
+		return await axiosConfig
+			.post(ApiRequest.UserRequest.CANCEL_BOOKING, ID)
+			.then((respond) => respond.data)
+	},
 }

@@ -11,15 +11,27 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
-import { useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
+import { TableService } from '@/services/TableService'
 
 export default function TableDetail() {
 	const { id } = useParams()
-	const table = null
-	const navigate = useNavigate()
+
+	const [table, setTable] = useState()
+
+	useEffect(() => {
+		async function fetchProductDetail() {
+			const data = await TableService.DETAIL(id)
+			if (data) {
+				setTable(data)
+			}
+		}
+		fetchProductDetail()
+
+	}, [id], [table])
 
 	const [formData, setFormData] = useState({
 		firstName: '',
@@ -114,7 +126,7 @@ export default function TableDetail() {
 						duration={5000}
 						ref={slideRef}
 					>
-						{table.img.map((slide, index) => {
+						{table.image?.map((slide, index) => {
 							return (
 								<Box height={500} key={index}>
 									<img

@@ -1,4 +1,5 @@
 import TableMenu from '@/components/TableMenu/TableMenu'
+import { TableRequest } from '@/requests/TableRequest'
 import {
 	Box,
 	CssBaseline,
@@ -11,6 +12,9 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { TableService } from '@/services/TableService'
+import { AssetImages } from '@/utilities/AssetImages'
+
 
 export default function TableList() {
 	const [filteredTables, setFilteredTables] = useState([])
@@ -19,14 +23,20 @@ export default function TableList() {
 	const [currentPage, setCurrentPage] = useState(1)
 	const [tablesPerPage] = useState(8)
 
-	const tables = []
+	const [tables, setTables] = useState([])
 
 	const navigate = useNavigate()
 
-	const handleShowAll = () => {
-		setFilterOption('')
-		setSortOption('')
-	}
+	useEffect(() => {
+		async function fetchTables() {
+			const data = await TableService.GET_ALL()
+			if (data) {
+				setTables(data)
+				console.log(data)
+			}
+		}
+		fetchTables()
+	}, [])
 
 	useEffect(() => {
 		let filtered = tables
@@ -43,16 +53,21 @@ export default function TableList() {
 			default:
 				break
 		}
-
+	
 		setFilteredTables(filtered)
-	}, [filterOption, sortOption])
+	}, [filterOption, sortOption, tables])
+	
 
 	const indexOfLastTable = currentPage * tablesPerPage
 	const indexOfFirstTable = indexOfLastTable - tablesPerPage
 	const currentTables = filteredTables.slice(indexOfFirstTable, indexOfLastTable)
+	const handleShowAll = () => {
+		setFilterOption('')
+		setSortOption('')
+	}
 
 	const handlePageChange = (event, value) => {
-		setCurrentPage(value)
+		setCurrentPage(value)	
 	}
 
 	const handleClick = (id) => {
@@ -107,12 +122,11 @@ export default function TableList() {
 											display: 'flex',
 											justifyContent: 'center',
 											height: 260,
-
 											backgroundColor: 'gray.100',
 										}}
 									>
 										<img
-											src={table.img[0]}
+											src={AssetImages.TableImage(table.image[0])}
 											alt={table.tableType}
 											style={{
 												objectFit: 'fill',
