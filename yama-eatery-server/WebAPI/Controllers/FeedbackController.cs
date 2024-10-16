@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
 {
     public class FeedbackController(IUnitOfWork _unitOfWork) : ApiController
     {
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<IActionResult> AddFeedback([FromBody] ModifyFeedbackProductDTO addProductDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
@@ -28,15 +28,15 @@ namespace WebAPI.Controllers
             return Ok(feedback);
         }
 
-        [HttpGet("Feedback/{productId}")]
-        public async Task<IActionResult> ViewFeedback(int productId)
+        [HttpGet("get/{productId}")]
+        public async Task<IActionResult> GetUserFeedbackOnProduct(int productId)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
             var feedback = await _unitOfWork.FeedbackProductRepository.GetByUserIdAndProductId(user.Id, productId);
             return Ok(feedback);
         }
 
-        [HttpPost]
+        [HttpPost("update")]
         public async Task<IActionResult> UpdateFeedback([FromBody] ModifyFeedbackProductDTO modifyFeedbackProductDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
@@ -55,8 +55,8 @@ namespace WebAPI.Controllers
             return Ok(feedback);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> DeleteFeedback(int productId)
+        [HttpPost("delete")]
+        public async Task<IActionResult> DeleteFeedback([FromBody] int productId)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
 

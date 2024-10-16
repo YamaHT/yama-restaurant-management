@@ -13,7 +13,7 @@ namespace WebAPI.Controllers
 {
     public class AuthController(IUnitOfWork _unitOfWork, IConfiguration _configuration) : ApiController
     {
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
         {
             var user = await _unitOfWork.UserRepository.GetUserByEmailAndPassword(userLoginDTO.Email, userLoginDTO.Password);
@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
                 : throw new DataNotFoundException("Invalid email or password");
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegisterDTO)
         {
             if (await _unitOfWork.UserRepository.CheckEmailExisted(userRegisterDTO.Email))
@@ -51,14 +51,15 @@ namespace WebAPI.Controllers
             return Ok(new { success = "Register successfully" });
         }
 
-        [HttpPost]
+        [HttpPost("send-mail-otp")]
         public async Task<IActionResult> SendMailOTP([FromBody] UserSendOtpDTO userSendOtpDTO)
         {
             await SendMailUtil.SendMailOtpAsync(_configuration, userSendOtpDTO.Email, userSendOtpDTO.OTP);
             return Ok(new { success = "Send OTP successfully" });
         }
-        [HttpPost]
-        public async Task<IActionResult> ForgotPassword([FromBody]  string email)
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] string email)
         {
             var user = await _unitOfWork.UserRepository.GetUserByEmail(email);
            
@@ -72,7 +73,7 @@ namespace WebAPI.Controllers
             return Ok(new { success = "Reset Password successfully" });
         }
 
-        [HttpGet]
+        [HttpGet("check-mail")]
         public async Task<IActionResult> CheckEmailExisted(string email)
         {
             return Ok(await _unitOfWork.UserRepository.CheckEmailExisted(email));

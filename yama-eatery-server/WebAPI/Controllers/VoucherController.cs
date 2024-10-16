@@ -7,7 +7,7 @@ namespace WebAPI.Controllers
     public class VoucherController(IUnitOfWork _unitOfWork) : ApiController
     {
         [HttpGet]
-        public async Task<IActionResult> GetAllVouchers()
+        public async Task<IActionResult> GetAll()
         {
             var vouchers = await _unitOfWork.VoucherRepository.GetAllAsync();
             var validVouchers = vouchers
