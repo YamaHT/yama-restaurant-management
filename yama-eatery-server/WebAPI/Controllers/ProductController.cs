@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         [HttpGet("Detail/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
-            string[] includes = { "SubCategory", "SubCategory.Category", "Feedbacks" };
+            string[] includes = { "SubCategory", "SubCategory.Category", "Feedbacks", "Feedbacks.User" };
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(id, includes);
 
             if (product == null)
@@ -33,7 +33,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetSimilar(string categoryName)
         {
             var similarProduct = await _unitOfWork.ProductRepository.GetRandom10ProductsByCategoryName(categoryName);
-                  return Ok(similarProduct);
+            return Ok(similarProduct);
         }
     }
 }

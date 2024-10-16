@@ -84,7 +84,7 @@ function MyVoucher() {
 
 	return (
 		<Box width={'100%'} p={'2% 5%'}>
-			<Tabs value={tabValue} onChange={handleTabChange} centered>
+			<Tabs value={tabValue} onChange={handleTabChange} centered variant='fullWidth'>
 				<Tab label='All' />
 				<Tab label='Expired' />
 				<Tab label='Valid' />
@@ -93,7 +93,6 @@ function MyVoucher() {
 				<Grid2 size={{ xs: 12, md: 3 }}>
 					<TextField
 						label='Search by Name'
-						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.target.value)}
 						fullWidth
 					/>

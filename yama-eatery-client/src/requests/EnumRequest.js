@@ -1,3 +1,3 @@
 export const EnumRequest = {
-	getAllCategory: '/enum/category',
+	GET_ALL_CATEGORY : '/enum/category',
 }

@@ -74,12 +74,12 @@ const HeaderCustomer = () => {
 					alignItems={'center'}
 					justifyContent={'space-between'}
 					direction={'row'}
-					p={'5px 5%'}
+					p={'0 5%'}
 				>
 					<Avatar
 						src={AssetImages.SYSTEM_LOGO}
 						onClick={() => navigate('/')}
-						sx={{ cursor: 'pointer', width: 60, height: 60 }}
+						sx={{ cursor: 'pointer', width: 100, height: 100 }}
 					/>
 					<Stack direction={'row'} spacing={5} alignItems={'center'}>
 						{menuItems.map((item) => (
@@ -138,7 +138,7 @@ const HeaderCustomer = () => {
 					<Stack direction={'row'} spacing={2}>
 						<Button
 							variant='outlined'
-							onClick={() => navigate('/user/profile')}
+							onClick={() => navigate('/user')}
 							sx={{
 								borderWidth: 2,
 								textTransform: 'none',

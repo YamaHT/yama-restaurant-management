@@ -21,23 +21,53 @@ import 'swiper/css/navigation'
 import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { calculateAverageRating } from '../ProductList/ProductList'
-import { products } from '../ProductMockData/ProductMockData'
+import { ProductService } from '@/services/ProductService'
+import { AssetImages } from '@/utilities/AssetImages'
+import ReviewProgressBar from '@/components/Product/ReviewProgressBar'
+import { FeedbackRequest } from '@/requests/FeedbackRequest'
 
 export default function ProductDetail() {
 	const { id } = useParams()
 	const navigate = useNavigate()
+
 	const [product, setProduct] = useState(null)
+	const [recommendedProducts, setRecommendedProducts] = useState([])
+	const [feedback, setFeedbackProduct] = useState()
+
 	const [selectedImage, setSelectedImage] = useState('')
 	const [showAllReviews, setShowAllReviews] = useState(false)
 	const [userRating, setUserRating] = useState(0)
 	const [userReview, setUserReview] = useState('')
-	const [recommendedProducts, setRecommendedProducts] = useState([])
 	const [isBeginning, setIsBeginning] = useState(true)
 	const [isEnd, setIsEnd] = useState(false)
-
 	const prevRef = useRef(null)
 	const nextRef = useRef(null)
 	const swiperRef = useRef(null)
+
+	useEffect(() => {
+		async function fetchProductDetail() {
+			const data = await ProductService.GET_PRODUCT_DETAIL(id)
+			if (data) {
+				setProduct(data)
+			}
+		}
+
+		fetchProductDetail()
+	}, [id])
+
+	useEffect(() => {
+		if (product) {
+			async function fetchSimilarProduct() {
+				const data = await ProductService.GET_ALL_SIMILAR(product.subCategory.category.name)
+				if (data) {
+					setRecommendedProducts(data)
+				}
+			}
+			fetchSimilarProduct()
+			setSelectedImage(AssetImages.ProductImage(product?.image[0]))
+		}
+	}, [product])
+
 
 	useEffect(() => {
 		const initializeSwiperNavigation = () => {
@@ -58,32 +88,12 @@ export default function ProductDetail() {
 		}
 	}, [recommendedProducts])
 
-	useEffect(() => {
-		const productDetail = products.find((item) => item.id === parseInt(id))
-		setProduct(productDetail)
-
-		if (productDetail) {
-			const recommendations = products.filter(
-				(item) => item.category === productDetail.category && item.id !== productDetail.id
-			)
-			setRecommendedProducts(recommendations.slice(0, 10))
-		}
-	}, [id])
-
 	const handleSlideChange = () => {
 		if (swiperRef.current) {
 			setIsBeginning(swiperRef.current.isBeginning)
 			setIsEnd(swiperRef.current.isEnd)
 		}
 	}
-	useEffect(() => {
-		const productDetail = products.find((item) => item.id === parseInt(id))
-		setProduct(productDetail)
-
-		if (productDetail) {
-			setSelectedImage(productDetail.img[0])
-		}
-	}, [id])
 
 	if (!product) {
 		return (
@@ -95,7 +105,7 @@ export default function ProductDetail() {
 		)
 	}
 
-	const averageRating = calculateAverageRating(product.reviews)
+	const averageRating = calculateAverageRating(product.feedbacks)
 
 	const ratingCount = {
 		1: 0,
@@ -105,11 +115,11 @@ export default function ProductDetail() {
 		5: 0,
 	}
 
-	product.reviews.forEach((review) => {
+	product.feedbacks.forEach((review) => {
 		ratingCount[review.rating]++
 	})
 
-	const totalReviews = product.reviews.length
+	const totalReviews = product.feedbacks.length
 
 	const ratingPercentage = {
 		1: totalReviews > 0 ? (ratingCount[1] / totalReviews) * 100 : 0,
@@ -119,7 +129,7 @@ export default function ProductDetail() {
 		5: totalReviews > 0 ? (ratingCount[5] / totalReviews) * 100 : 0,
 	}
 
-	const reviewsToShow = showAllReviews ? product.reviews : product.reviews.slice(0, 3)
+	const reviewsToShow = showAllReviews ? product.feedbacks : product.feedbacks.slice(0, 3)
 
 	const handleRatingChange = (newValue) => {
 		setUserRating(newValue)
@@ -130,8 +140,6 @@ export default function ProductDetail() {
 	}
 
 	const handleSubmit = () => {
-		console.log('User rating submitted:', userRating)
-		console.log('User review submitted:', userReview)
 		setUserRating(0)
 		setUserReview('')
 	}
@@ -145,7 +153,7 @@ export default function ProductDetail() {
 	return (
 		<Box sx={{ p: 4, maxWidth: '1200px', mx: 'auto' }}>
 			<Grid2 container spacing={3}>
-				<Grid2 item xs={12} lg={7}>
+				<Grid2 size={{ xs: 12, lg: 7 }}>
 					<Card
 						sx={{
 							minHeight: 500,
@@ -161,25 +169,25 @@ export default function ProductDetail() {
 							component='img'
 							src={selectedImage}
 							alt={product.name}
-							sx={{ width: '40%', objectFit: 'cover', borderRadius: 1, mb: 4 }}
+							sx={{ height: 500, objectFit: 'cover', borderRadius: 1, mb: 4 }}
 						/>
 						<Divider sx={{ width: '100%', my: 4 }} />
 						<Grid2 container spacing={2} justifyContent='center'>
-							{product.img?.map((img, index) => (
+							{product.image?.map((img, index) => (
 								<Grid2 item key={index}>
 									<CardMedia
 										component='img'
-										src={img}
+										src={AssetImages.ProductImage(img)}
 										alt={`Product thumbnail ${index + 1}`}
 										sx={{ width: 80, height: 80, borderRadius: 2, cursor: 'pointer' }}
-										onClick={() => setSelectedImage(img)}
+										onClick={() => setSelectedImage(AssetImages.ProductImage(img))}
 									/>
 								</Grid2>
 							))}
 						</Grid2>
 					</Card>
 				</Grid2>
-				<Grid2 item xs={12} lg={5}>
+				<Grid2 size={{ xs: 12, lg: 5 }} sx={{ maxHeight: 800, overflow: 'auto' }}>
 					<Typography variant='h4' fontWeight='bold' color='textPrimary'>
 						{product.name}
 					</Typography>
@@ -189,9 +197,8 @@ export default function ProductDetail() {
 						</Typography>
 					</Box>
 					<Stack direction='row' spacing={1} my={2}>
-						<Chip label='Bét Choi' variant='outlined' />
-						<Chip label='Giga Chát' variant='outlined' />
-						<Chip label={product.category} variant='outlined' />
+						<Chip label={product.subCategory.category.name} variant='outlined' />
+						<Chip label={product.subCategory.name} variant='outlined' />
 					</Stack>
 					<Rating value={averageRating} precision={0.1} readOnly />
 					<Typography variant='h6' fontWeight='bold' color='textPrimary' mt={3}>
@@ -207,56 +214,36 @@ export default function ProductDetail() {
 					Reviews ({totalReviews})
 				</Typography>
 				{[5, 4, 3, 2, 1].map((star) => (
-					<Box key={star} display='flex' alignItems='center' mt={1}>
-						<Typography variant='body2' fontWeight='bold' sx={{ mr: 1, minWidth: '50px' }}>
+					<Stack key={star} direction={'row'} spacing={1} alignItems='center' mt={1}>
+						<Typography variant='body2' fontWeight='bold' width={'4%'}>
 							{star} stars
 						</Typography>
-						<Rating value={star} readOnly size='small' />
-						<Box sx={{ flexGrow: 1, mx: 2 }}>
-							<Box
-								sx={{
-									backgroundColor: 'gray',
-									borderRadius: 1,
-									height: 8,
-									width: '100%',
-									position: 'relative',
-								}}
-							>
-								<Box
-									sx={{
-										width: `${ratingPercentage[star]}%`,
-										backgroundColor: 'orange',
-										borderRadius: 1,
-										height: '100%',
-									}}
-								/>
-							</Box>
+						<Rating value={star} readOnly size='medium' sx={{ width: '16%' }} />
+						<Box width={'80%'}>
+							<ReviewProgressBar value={ratingPercentage[star]} />
 						</Box>
-						<Typography variant='body2' fontWeight='bold'>
-							{`${ratingPercentage[star].toFixed(1)}%`}
-						</Typography>
-					</Box>
+					</Stack>
 				))}
 
-				{reviewsToShow.map((review, index) => (
+				{reviewsToShow.map((feedbacks, index) => (
 					<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4} key={index}>
 						<Grid2 size={0.5}>
-							<Avatar src={review.avatar} alt={review.reviewer} />
+							<Avatar src={feedbacks.avatar} alt={feedbacks.reviewer} />
 						</Grid2>
 						<Grid2 size={11.5}>
 							<Stack direction='row' alignItems='center' justifyContent='space-between'>
 								<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
-									{review.reviewer}
+									{feedbacks.user.name}
 								</Typography>
 
 								<Typography variant='caption' color='textSecondary'>
-									{new Date(review.date).toLocaleDateString()}
+									{new Date(feedbacks.creationDate).toLocaleDateString()}
 								</Typography>
 							</Stack>
-							<Rating value={review.rating} readOnly size='small' sx={{ mt: 0.5 }} />
+							<Rating value={feedbacks.rating} readOnly size='small' sx={{ mt: 0.5 }} />
 
 							<Typography variant='body2' color='textSecondary' mt={1}>
-								{review.comment}
+								{feedbacks.message}
 							</Typography>
 						</Grid2>
 					</Grid2>
@@ -275,6 +262,29 @@ export default function ProductDetail() {
 					<Typography variant='h6' fontWeight='bold' color='textPrimary'>
 						Leave a Rating and Review
 					</Typography>
+
+					<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
+						<Grid2 size={0.5}>
+							<Avatar src={feedback.Avatar} alt={feedback.Avatar} />
+						</Grid2>
+						<Grid2 size={11.5}>
+							<Stack direction='row' alignItems='center' justifyContent='space-between'>
+								<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
+									{feedback.message}
+								</Typography>
+
+								<Typography variant='caption' color='textSecondary'>
+									{new Date(feedback.creationDate).toLocaleDateString()}
+								</Typography>
+							</Stack>
+							<Rating value={feedback.rating} readOnly size='small' sx={{ mt: 0.5 }} />
+
+							<Typography variant='body2' color='textSecondary' mt={1}>
+								{feedback.message}
+							</Typography>
+						</Grid2>
+					</Grid2>
+
 					<Rating
 						name='user-rating'
 						value={userRating}
@@ -340,7 +350,7 @@ export default function ProductDetail() {
 										>
 											<CardMedia
 												component='img'
-												image={recommendedProduct.img[0]}
+												src={AssetImages.ProductImage(recommendedProduct.image[0])}
 												alt={recommendedProduct.name}
 												sx={{ height: 200, objectFit: 'cover' }}
 											/>
@@ -378,7 +388,7 @@ export default function ProductDetail() {
 								color: 'white',
 								'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
 								display: isBeginning || recommendedProducts.length <= 4 ? 'none' : 'flex',
-								borderRadius: '0 50% 50% 0', // Semi-circle on the left
+								borderRadius: '0 50% 50% 0',
 								width: '40px',
 								height: '80px',
 							}}
@@ -398,7 +408,7 @@ export default function ProductDetail() {
 								color: 'white',
 								'&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
 								display: isEnd || recommendedProducts.length <= 4 ? 'none' : 'flex',
-								borderRadius: '50% 0 0 50%', // Semi-circle on the right
+								borderRadius: '50% 0 0 50%',
 								width: '40px',
 								height: '80px',
 							}}

@@ -26,10 +26,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(apiPolicy);
+
 app.UseMiddleware<JWTAuthenticationMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-app.UseCors(apiPolicy);
 
 app.UseHttpsRedirection();
 
