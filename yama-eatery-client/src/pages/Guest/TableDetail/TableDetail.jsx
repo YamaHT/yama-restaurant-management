@@ -19,6 +19,7 @@ import { TableService } from '@/services/TableService'
 
 export default function TableDetail() {
 	const { id } = useParams()
+
 	const [table, setTable] = useState()
 
 	useEffect(() => {

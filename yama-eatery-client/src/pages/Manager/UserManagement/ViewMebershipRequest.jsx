@@ -1,4 +1,5 @@
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
+import { UserService } from '@/services/UserService'
 import { Search } from '@mui/icons-material'
 import {
 	Autocomplete,
@@ -85,6 +86,21 @@ export default function ViewMembershipRequest() {
 	const [page, setPage] = useState(0)
 	const [searchPhone, setSearchPhone] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
+	const [membershipStatus, setMembershipStatus] = useState('')
+
+	const handleCancelMembership = async () => {
+		const data = await UserService.CANCEL_MEMBERSHIP()
+		console.log(data)
+		setMembershipStatus(data.membershipStatus)
+		setMembershipStatus('Inactive')
+	}
+
+	const handleMembershipRegister = async () => {
+		const data = await UserService.MEMBERSHIP_REGISTER()
+		console.log(data)
+		setMembershipStatus(data.membershipStatus)
+		setMembershipStatus('Requesting')
+	}
 
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === 'asc'
@@ -164,10 +180,14 @@ export default function ViewMembershipRequest() {
 									<TableCell>{row.phone}</TableCell>
 									<TableCell>
 										<Stack direction='row' spacing={1}>
-											<Button variant='contained' color='error'>
+											<Button variant='contained' color='error' onClick={handleCancelMembership}>
 												Deny
 											</Button>
-											<Button variant='contained' color='success'>
+											<Button
+												variant='contained'
+												color='success'
+												onClick={handleMembershipRegister}
+											>
 												Approve
 											</Button>
 										</Stack>

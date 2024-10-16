@@ -1,7 +1,9 @@
 import contactBanner from '@/assets/img/general/ContactBanner.jpg'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
+import { UserService } from '@/services/UserService'
 import { Language, Mail, Phone } from '@mui/icons-material'
 import { Avatar, Box, Button, FormLabel, Stack, Typography } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
 
 const ContactCard = ({ icon, title, description, link }) => {
@@ -67,7 +69,7 @@ const ContactUs = () => {
 	})
 	const fieldsRef = useRef([])
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		let isValid = true
 
 		Object.keys(fieldsRef.current).map((key) => {
@@ -78,6 +80,15 @@ const ContactUs = () => {
 
 		if (!isValid) {
 			return
+		}
+		const data = await UserService.CONTACT({
+			name: value.name,
+			title: value.title,
+			message: value.message,
+		})
+		console.log(data)
+		if (data?.success) {
+			enqueueSnackbar(data.success, { variant: 'success', autoHideDuration: 1000 })
 		}
 	}
 
