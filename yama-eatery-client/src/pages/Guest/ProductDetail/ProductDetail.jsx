@@ -51,7 +51,6 @@ export default function ProductDetail() {
 				setProduct(data)
 			}
 		}
-
 		fetchProductDetail()
 	}, [id])
 
