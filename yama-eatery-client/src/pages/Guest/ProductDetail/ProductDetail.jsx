@@ -135,8 +135,9 @@ export default function ProductDetail() {
 		}
 	}
 
-	const handleRemoveFeedback = async (id) => {
-		const data = await FeedbackService.DELETE_FEEDBACK(id)
+	const handleRemoveFeedback = async () => {
+		const ProductId= id
+		const data = await FeedbackService.DELETE_FEEDBACK(ProductId)
 		if (data) {
 			setFeedbackProduct(null)
 			setHaveUpdated(!haveUpdated)
