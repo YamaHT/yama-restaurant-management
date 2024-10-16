@@ -1,5 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Paper, Typography, Select, MenuItem, FormControl, InputLabel, Pagination, TextField, Grid2, Stack, Chip, Tabs, Tab } from '@mui/material'
+import {
+	Box,
+	Paper,
+	Typography,
+	Select,
+	MenuItem,
+	FormControl,
+	InputLabel,
+	Pagination,
+	TextField,
+	Grid2,
+	Stack,
+	Chip,
+	Tabs,
+	Tab,
+} from '@mui/material'
 import { VoucherService } from '@/services/VoucherService' // Import vouchers service
 
 const VOUCHERS_PER_PAGE = 4
@@ -38,9 +53,15 @@ function MyVoucher() {
 		const filtered = vouchers.filter((voucher) => {
 			const voucherDate = new Date(voucher.expiredDate)
 			const isExpired = voucherDate < today
-			const passesTabFilter = tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
+			const passesTabFilter =
+				tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
 
-			return voucher.reducedPercent >= (filter ? parseInt(filter) : 0) && (!filteredDate || voucherDate <= filteredDate) && voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) && passesTabFilter
+			return (
+				voucher.reducedPercent >= (filter ? parseInt(filter) : 0) &&
+				(!filteredDate || voucherDate <= filteredDate) &&
+				voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+				passesTabFilter
+			)
 		})
 		setFilteredVouchers(filtered)
 	}
@@ -51,7 +72,10 @@ function MyVoucher() {
 	}, [filter, searchTerm, dateFilter, tabValue])
 
 	const totalPages = Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE)
-	const displayedVouchers = filteredVouchers.slice((page - 1) * VOUCHERS_PER_PAGE, page * VOUCHERS_PER_PAGE)
+	const displayedVouchers = filteredVouchers.slice(
+		(page - 1) * VOUCHERS_PER_PAGE,
+		page * VOUCHERS_PER_PAGE
+	)
 
 	const handlePageChange = (event, value) => {
 		setPage(value)
@@ -67,12 +91,21 @@ function MyVoucher() {
 			</Tabs>
 			<Grid2 container spacing={2} justifyContent='center' mt={2}>
 				<Grid2 size={{ xs: 12, md: 3 }}>
-					<TextField label='Search by Name' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} fullWidth />
+					<TextField
+						label='Search by Name'
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+						fullWidth
+					/>
 				</Grid2>
 				<Grid2 size={{ xs: 12, md: 3 }}>
 					<FormControl fullWidth>
 						<InputLabel>Filter by Discount (%)</InputLabel>
-						<Select value={filter} label='Filter by Discount (%)' onChange={(e) => setFilter(e.target.value)}>
+						<Select
+							value={filter}
+							label='Filter by Discount (%)'
+							onChange={(e) => setFilter(e.target.value)}
+						>
 							{[10, 20, 30, 40, 50].map((percent) => (
 								<MenuItem key={percent} value={percent}>
 									{percent}%
@@ -82,7 +115,14 @@ function MyVoucher() {
 					</FormControl>
 				</Grid2>
 				<Grid2 size={{ xs: 12, md: 3 }}>
-					<TextField label='Use By (Before)' type='date' value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} fullWidth InputLabelProps={{ shrink: true }} />
+					<TextField
+						label='Use By (Before)'
+						type='date'
+						value={dateFilter}
+						onChange={(e) => setDateFilter(e.target.value)}
+						fullWidth
+						InputLabelProps={{ shrink: true }}
+					/>
 				</Grid2>
 			</Grid2>
 			<Grid2 container spacing={2} mt={4}>
@@ -150,7 +190,11 @@ function MyVoucher() {
 										</Typography>
 										<Typography variant='subtitle2'>Remaining: {voucher.quantity}</Typography>
 									</Stack>
-									<Chip label={new Date(voucher.expiredDate) < today ? 'Expired' : 'Valid'} color={new Date(voucher.expiredDate) < today ? 'secondary' : 'primary'} sx={{ mt: 1 }} />
+									<Chip
+										label={new Date(voucher.expiredDate) < today ? 'Expired' : 'Valid'}
+										color={new Date(voucher.expiredDate) < today ? 'secondary' : 'primary'}
+										sx={{ mt: 1 }}
+									/>
 								</Stack>
 							</Paper>
 						</Grid2>
