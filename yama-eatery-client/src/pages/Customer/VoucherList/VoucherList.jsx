@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Box, Paper, Typography, Button, Pagination, Grid2, Stack, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { VoucherService } from '@/services/VoucherService' // Import vouchers service
+import { VoucherRequest } from '@/requests/VoucherRequest'
 
 const VOUCHERS_PER_PAGE = 4
 
@@ -21,14 +22,13 @@ function VoucherList() {
 			try {
 				const data = await VoucherService.VIEW_ALL_VOUCHER()
 				setVouchers(data)
-				setFilteredVouchers(data) // Initialize filtered vouchers
+				setFilteredVouchers(data) 
 			} catch (error) {
 				console.error('Error fetching vouchers: ', error)
 			}
 		}
 		fetchVouchers()
 	}, [])
-
 	useEffect(() => {
 		const startIndex = (page - 1) * VOUCHERS_PER_PAGE
 		const endIndex = startIndex + VOUCHERS_PER_PAGE // Ensure endIndex is calculated correctly

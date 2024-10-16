@@ -4,6 +4,7 @@ import { FeedbackRequest } from '@/requests/FeedbackRequest'
 import { ProductRequest } from '@/requests/ProductRequest'
 import { TableRequest } from '@/requests/TableRequest'
 import { UserRequest } from '@/requests/UserRequest'
+import { VoucherRequest } from '@/requests/VoucherRequest'
 
 export const BASE_URL = 'https://localhost:7219/api/v1'
 export const ApiRequest = {
@@ -13,4 +14,5 @@ export const ApiRequest = {
 	UserRequest,
 	FeedbackRequest,
 	TableRequest,
+	VoucherRequest,
 }
