@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	Box,
 	Paper,
@@ -15,57 +15,13 @@ import {
 	Tabs,
 	Tab,
 } from '@mui/material'
-
-const vouchers = [
-	{
-		id: 1,
-		image:
-			'https://th.bing.com/th/id/OIP.nERqFvU2EjT69-juJkgQzAHaKX?pid=ImgDet&w=184&h=258&c=7&dpr=1.3',
-		name: 'Voucher Black Friday',
-		description: 'Giảm giá Black Friday lên đến 50%',
-		expiredDate: '2024-11-25',
-		reducedPercent: 50,
-		maxReducing: 200,
-		quantity: 100,
-	},
-	{
-		id: 2,
-		image:
-			'https://th.bing.com/th/id/OIP.nERqFvU2EjT69-juJkgQzAHaKX?pid=ImgDet&w=184&h=258&c=7&dpr=1.3',
-		name: 'Voucher Cyber Monday',
-		description: 'Ưu đãi Cyber Monday ',
-		expiredDate: '2024-12-02',
-		reducedPercent: 30,
-		maxReducing: 150,
-		quantity: 200,
-	},
-	{
-		id: 3,
-		image:
-			'https://th.bing.com/th/id/OIP.nERqFvU2EjT69-juJkgQzAHaKX?pid=ImgDet&w=184&h=258&c=7&dpr=1.3',
-		name: 'Voucher Giáng Sinh',
-		description: 'Giảm giá đặc biệt cho mùa lễ Giáng Sinh',
-		expiredDate: '2024-12-25',
-		reducedPercent: 40,
-		maxReducing: 300,
-		quantity: 50,
-	},
-	{
-		id: 4,
-		image:
-			'https://th.bing.com/th/id/OIP.nERqFvU2EjT69-juJkgQzAHaKX?pid=ImgDet&w=184&h=258&c=7&dpr=1.3',
-		name: 'Voucher Mùa Xuân',
-		description: 'Chương trình khuyến mãi mùa xuân',
-		expiredDate: '2024-04-10',
-		reducedPercent: 20,
-		maxReducing: 100,
-		quantity: 150,
-	},
-]
+import { VoucherService } from '@/services/VoucherService' // Import vouchers service
 
 const VOUCHERS_PER_PAGE = 4
 
 function MyVoucher() {
+	const [vouchers, setVouchers] = useState([]) // Voucher data from API
+	const [filteredVouchers, setFilteredVouchers] = useState([])
 	const [filter, setFilter] = useState('')
 	const [page, setPage] = useState(1)
 	const [dateFilter, setDateFilter] = useState('')
@@ -74,25 +30,46 @@ function MyVoucher() {
 
 	const today = new Date()
 
+	useEffect(() => {
+		const fetchVouchers = async () => {
+			try {
+				const data = await VoucherService.VIEW_ALL_VOUCHER()
+				setVouchers(data)
+				setFilteredVouchers(data) // Initialize filtered vouchers
+			} catch (error) {
+				console.error('Error fetching vouchers: ', error)
+			}
+		}
+		fetchVouchers()
+	}, [])
+
 	const filteredDate = dateFilter ? new Date(dateFilter) : null
 
 	const handleTabChange = (event, newValue) => {
 		setTabValue(newValue)
 	}
 
-	const filteredVouchers = vouchers.filter((voucher) => {
-		const voucherDate = new Date(voucher.expiredDate)
-		const isExpired = voucherDate < today
-		const passesTabFilter =
-			tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
+	const applyFilters = () => {
+		const filtered = vouchers.filter((voucher) => {
+			const voucherDate = new Date(voucher.expiredDate)
+			const isExpired = voucherDate < today
+			const passesTabFilter =
+				tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
 
-		return (
-			voucher.reducedPercent >= (filter ? parseInt(filter) : 0) &&
-			(!filteredDate || voucherDate <= filteredDate) &&
-			voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-			passesTabFilter
-		)
-	})
+			return (
+				voucher.reducedPercent >= (filter ? parseInt(filter) : 0) &&
+				(!filteredDate || voucherDate <= filteredDate) &&
+				voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+				passesTabFilter
+			)
+		})
+		setFilteredVouchers(filtered)
+	}
+
+	useEffect(() => {
+		applyFilters()
+		setPage(1) // Reset to page 1 when filters change
+	}, [filter, searchTerm, dateFilter, tabValue])
 
 	const totalPages = Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE)
 	const displayedVouchers = filteredVouchers.slice(
@@ -102,6 +79,7 @@ function MyVoucher() {
 
 	const handlePageChange = (event, value) => {
 		setPage(value)
+		window.scrollTo(0, 0) // Scroll to top when changing page
 	}
 
 	return (
@@ -127,15 +105,15 @@ function MyVoucher() {
 							label='Filter by Discount (%)'
 							onChange={(e) => setFilter(e.target.value)}
 						>
-							{[1, 2, 3, 4, 5].map((percent) => (
+							{[10, 20, 30, 40, 50].map((percent) => (
 								<MenuItem key={percent} value={percent}>
-									{percent * 10}%
+									{percent}%
 								</MenuItem>
 							))}
 						</Select>
 					</FormControl>
 				</Grid2>
-				<Grid2 size={{ xs: 12, md: 3 }} xs={12} md={3}>
+				<Grid2 size={{ xs: 12, md: 3 }}>
 					<TextField
 						label='Use By (Before)'
 						type='date'

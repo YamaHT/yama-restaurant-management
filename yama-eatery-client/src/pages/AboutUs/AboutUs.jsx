@@ -14,7 +14,7 @@ const AboutUs = () => {
 	return (
 		<Container>
 			<Box my={4} textAlign='center'>
-				<Typography variant='h3' gutterBottom>
+				<Typography variant='h3' gutterBottom fontFamily={'Poppins, sans-serif'} color='textSecondary'>
 					Yama Restaurant
 				</Typography>
 			</Box>
@@ -23,22 +23,17 @@ const AboutUs = () => {
 					<Typography variant='body1' color='textSecondary' fontWeight={'bold'} fontFamily={'Poppins, sans-serif'}>
 						It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum. In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire.
 					</Typography>
-					<Box
-						component='img'
-						alt='Team 6'
-						src='https://th.bing.com/th/id/OIP.haSIo4BY9SLJLINLxzquqAHaEK?rs=1&pid=ImgDetMain'
-						sx={{ width: '50%', height: 300, mx: 2, borderRadius: '10px' }}
-					/>
+					<Box component='img' alt='Team 6' src='https://th.bing.com/th/id/OIP.haSIo4BY9SLJLINLxzquqAHaEK?rs=1&pid=ImgDetMain' sx={{ width: '50%', height: 300, mx: 2, borderRadius: '10px' }} />
 				</Grid2>
 			</Grid2>
 			<Box my={4}>
-				<Typography variant='h4' gutterBottom>
+				<Typography variant='h4' fontWeight='bold' color='textSecondary' gutterBottom>
 					Our Story
 				</Typography>
 				<Grid2 container spacing={4} alignItems='stretch'>
 					<Grid2 item xs={12} md={6}>
-						<Box height='100%' display='flex' flexDirection='row' justifyContent='left'>
-							<Typography variant='body1' padding={'2% 2% 2% 2%'}>
+						<Box height='100%' display='flex' color='textSecondary' fontWeight='bold' flexDirection='row' justifyContent='left'>
+							<Typography variant='body1' color='textSecondary' fontWeight='bold'>
 								It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum. In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire.
 							</Typography>
 						</Box>
