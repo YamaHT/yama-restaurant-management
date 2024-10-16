@@ -23,7 +23,6 @@ const Membership = () => {
 				minHeight: '80vh',
 				borderRadius: 4,
 				padding: '2%',
-				boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
 			}}
 		>
 			<Typography variant='h4' fontWeight='bold' gutterBottom>

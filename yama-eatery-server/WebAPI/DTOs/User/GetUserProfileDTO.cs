@@ -10,5 +10,6 @@ namespace WebAPI.DTOs.User
         public string? Phone { get; set; }
         public string? Gender { get; set; }
         public Membership? Membership { get; set; }
+        public DateTime CreationDate { get; set; }
     }
 }

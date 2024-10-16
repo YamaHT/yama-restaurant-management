@@ -40,7 +40,12 @@ namespace WebAPI.Controllers
                 Email = userRegisterDTO.Email,
                 Password = userRegisterDTO.Password,
                 Name = $"{userRegisterDTO.LastName} {userRegisterDTO.FirstName}".Trim(),
-                Phone = userRegisterDTO.Phone
+                Phone = userRegisterDTO.Phone,
+                Membership = new()
+                {
+                    MembershipStatus = MembershipStatusEnum.Inactive.ToString(),
+                    Rank = RankEnum.Member.ToString()
+                }
             };
             user.TryValidate();
 
