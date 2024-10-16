@@ -36,6 +36,7 @@ export default function ProductDetail() {
 	const [recommendedProducts, setRecommendedProducts] = useState([])
 	const [feedbackProduct, setFeedbackProduct] = useState()
 	const [isEdittingFeedback, setIsEdittingFeedback] = useState(false)
+	const [haveUpdated, setHaveUpdated] = useState(false)
 
 	const [selectedImage, setSelectedImage] = useState('')
 	const [showAllReviews, setShowAllReviews] = useState(false)
@@ -54,8 +55,24 @@ export default function ProductDetail() {
 				setProduct(data)
 			}
 		}
+
+		async function fetchGetFeedbackProduct() {
+			const data = await FeedbackService.GET_FEEDBACK(id)
+			if (data) {
+				setFeedbackProduct(data)
+				setUserRating(data.rating)
+				setUserReview(data.message)
+			}
+		}
+
+		fetchGetFeedbackProduct()
 		fetchProductDetail()
-	}, [id])
+	}, [id, haveUpdated])
+
+	useEffect(() => {
+		setUserRating(feedbackProduct?.rating || 0)
+		setUserReview(feedbackProduct?.message || '')
+	}, [isEdittingFeedback])
 
 	useEffect(() => {
 		if (product) {
@@ -69,17 +86,6 @@ export default function ProductDetail() {
 			setSelectedImage(AssetImages.ProductImage(product?.image[0]))
 		}
 	}, [product])
-
-	useEffect(() => {
-		async function fetchGetFeedbackProduct() {
-			const data = await FeedbackService.GET_FEEDBACK(id)
-			if (data) {
-				setFeedbackProduct(data)
-				console.log(data)
-			}
-		}
-		fetchGetFeedbackProduct()
-	}, [id])
 
 	useEffect(() => {
 		const initializeSwiperNavigation = () => {
@@ -107,42 +113,33 @@ export default function ProductDetail() {
 			message: userReview,
 		}
 
-		try {
-			const data = await FeedbackService.ADD_FEEDBACK(feedbackData)
-			if (data) {
-				setFeedbackProduct(data)
-			}
-		} catch (error) {
-			console.error('Error submitting feedback:', error)
+		const data = await FeedbackService.ADD_FEEDBACK(feedbackData)
+		if (data) {
+			setFeedbackProduct(data)
+			setHaveUpdated(!haveUpdated)
 		}
 	}
-	const handleUpdateFeedback = async (id) => {
+
+	const handleUpdateFeedback = async () => {
 		const updatedFeedbackData = {
 			productId: id,
 			rating: userRating,
 			message: userReview,
 		}
-		try {
-			const data = await FeedbackService.UPDATE_FEEDBACK(updatedFeedbackData)
 
-			if (data) {
-				setFeedbackProduct(data)
-				console.log('Feedback updated successfully')
-			}
-		} catch (error) {
-			console.error('Error updating feedback:', error)
+		const data = await FeedbackService.UPDATE_FEEDBACK(updatedFeedbackData)
+		if (data) {
+			setFeedbackProduct(data)
+			setHaveUpdated(!haveUpdated)
+			setIsEdittingFeedback(false)
 		}
 	}
 
 	const handleRemoveFeedback = async (id) => {
-		try {
-			const data = await FeedbackService.DELETE_FEEDBACK(id)
-			if (data) {
-				setFeedbackProduct(null)
-				console.log('Feedback removed successfully')
-			}
-		} catch (error) {
-			console.error('Error deleting feedback:', error)
+		const data = await FeedbackService.DELETE_FEEDBACK(id)
+		if (data) {
+			setFeedbackProduct(null)
+			setHaveUpdated(!haveUpdated)
 		}
 	}
 
@@ -189,18 +186,11 @@ export default function ProductDetail() {
 
 	const reviewsToShow = showAllReviews ? product.feedbacks : product.feedbacks.slice(0, 3)
 
-	const handleRatingChange = (newValue) => {
-		setUserRating(newValue)
-	}
-
-	const handleReviewChange = (event) => {
-		setUserReview(event.target.value)
-	}
-
 	const handleClick = (id) => {
 		window.scrollTo({ top: 0, behavior: 'smooth' })
 
-		navigate(`/Product/Detail/${id}`)
+		navigate(`/product/detail/${id}`)
+		window.location.reload()
 	}
 
 	return (
@@ -331,30 +321,62 @@ export default function ProductDetail() {
 									</Stack>
 									<CrudMenuOptions>
 										<MenuItem>
-											<Button
-												startIcon={<Edit />}
-												onClick={() => {
-													handleUpdateFeedback(feedbackProduct.id)
-													setIsEdittingFeedback(true)
-												}}
-											>
+											<Button startIcon={<Edit />} onClick={() => setIsEdittingFeedback(true)}>
 												Edit
 											</Button>
 										</MenuItem>
 										<MenuItem>
-											<Button
-												startIcon={<Delete />}
-												onClick={() => handleRemoveFeedback(feedbackProduct.id)}
-											>
+											<Button startIcon={<Delete />} onClick={() => handleRemoveFeedback(id)}>
 												Delete
 											</Button>
 										</MenuItem>
 									</CrudMenuOptions>
 								</Stack>
-								<Rating value={feedbackProduct.rating} readOnly size='small' sx={{ mt: 0.5 }} />
-								<Typography variant='body2' color='textSecondary' mt={1}>
-									{feedbackProduct.message}
-								</Typography>
+
+								{isEdittingFeedback ? (
+									<>
+										<Rating
+											name='user-rating'
+											value={userRating}
+											onChange={(e, newValue) => setUserRating(newValue)}
+											size='large'
+											sx={{ mt: 2 }}
+										/>
+										<TextField
+											fullWidth
+											label='Your Review'
+											multiline
+											rows={4}
+											value={userReview}
+											onChange={(e) => setUserReview(e.target.value)}
+											sx={{ mt: 2 }}
+										/>
+
+										<Button
+											variant='contained'
+											color='primary'
+											sx={{ mt: 2 }}
+											onClick={handleUpdateFeedback}
+										>
+											Submit
+										</Button>
+										<Button
+											variant='contained'
+											color='inherit'
+											sx={{ mt: 2, ml: 2 }}
+											onClick={() => setIsEdittingFeedback(false)}
+										>
+											Cancel
+										</Button>
+									</>
+								) : (
+									<>
+										<Rating value={feedbackProduct.rating} readOnly size='small' sx={{ mt: 0.5 }} />
+										<Typography variant='body2' color='textSecondary' mt={1}>
+											{feedbackProduct.message}
+										</Typography>
+									</>
+								)}
 							</Grid2>
 						</Grid2>
 					</>
@@ -367,7 +389,7 @@ export default function ProductDetail() {
 						<Rating
 							name='user-rating'
 							value={userRating}
-							onChange={(event, newValue) => handleRatingChange(newValue)}
+							onChange={(e, newValue) => setUserRating(newValue)}
 							size='large'
 							sx={{ mt: 2 }}
 						/>
@@ -377,7 +399,7 @@ export default function ProductDetail() {
 							multiline
 							rows={4}
 							value={userReview}
-							onChange={handleReviewChange}
+							onChange={(e) => setUserReview(e.target.value)}
 							sx={{ mt: 2 }}
 						/>
 						<Button variant='contained' color='primary' sx={{ mt: 2 }} onClick={handleAddFeedback}>
