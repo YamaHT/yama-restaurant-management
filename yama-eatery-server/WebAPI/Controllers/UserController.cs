@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 using WebAPI.DTOs.User;
+using WebAPI.Models;
 using WebAPI.Models.Enums;
 using WebAPI.Utils;
 using WebAPI.Utils.Exceptions;
@@ -28,6 +30,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileDTO updateUserProfileDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
+
             user.Birthday = updateUserProfileDTO.Birthday;
             user.Gender = updateUserProfileDTO.Gender;
             user.Image = updateUserProfileDTO.Image;
@@ -46,9 +49,12 @@ namespace WebAPI.Controllers
             {
                 throw new InvalidDataException("Oldpassword is not correct");
             }
+
             user.Password = CryptoUtils.EncryptPassword(userChangePasswordDTO.NewPassword);
+
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
+
             return Ok(new { success = "Change Password successfully" });
         }
 
@@ -92,6 +98,76 @@ namespace WebAPI.Controllers
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers"]);
             return Ok(user?.UserVouchers);
+        }
+
+        [HttpPost("contact")]
+        public async Task<IActionResult> Contact([FromBody] UserContactDTO userContactDTO)
+        {
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
+
+            var contact = new Contact
+            {
+                FullName = userContactDTO.Name,
+                Title = userContactDTO.Title,
+                Message = userContactDTO.Message,
+                User = user
+            };
+
+            contact.TryValidate();
+
+            await _unitOfWork.ContactRepository.AddAsync(contact);
+            await _unitOfWork.SaveChangeAsync();
+
+            return Ok(new { success = "Contact send sucessfully" });
+        }
+
+        [HttpPost("membership-register")]
+        public async Task<IActionResult> MembershipRegister()
+        {
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
+            
+            user.Membership.MembershipStatus = MembershipStatusEnum.Requesting.ToString();
+
+            _unitOfWork.UserRepository.Update(user);
+
+            await _unitOfWork.SaveChangeAsync();
+
+            return Ok(new { success = "Membership registration successful.", UserId = user.Id, user.Membership });
+        }
+
+
+        [HttpGet("user-membership")]
+        public async Task<IActionResult> UserMembership()
+        {
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
+            return Ok(user.Membership);
+        }
+
+        [HttpGet("cancel-membership")]
+        public async Task<IActionResult> CancelMembership()
+        {
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
+
+            user.Membership.MembershipStatus = MembershipStatusEnum.Inactive.ToString();
+           
+            _unitOfWork.UserRepository.Update(user);
+
+            await _unitOfWork.SaveChangeAsync();
+
+            return Ok(new { success = "Membership Cancel successful.", user.Membership });
+        }
+        [HttpGet("approve-membership")]
+        public async Task<IActionResult> ApproveMembership()
+        {
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
+
+            user.Membership.MembershipStatus = MembershipStatusEnum.Active.ToString();
+
+            _unitOfWork.UserRepository.Update(user);
+
+            await _unitOfWork.SaveChangeAsync();
+
+            return Ok(new { success = "Aprrove successful.", UserId = user.Id, user.Membership });
         }
     }
 }

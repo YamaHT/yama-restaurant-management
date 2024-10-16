@@ -18,7 +18,7 @@ import 'react-slideshow-image/dist/styles.css'
 
 export default function TableDetail() {
 	const { id } = useParams()
-	const table = tables.find((t) => t.id === parseInt(id))
+	const table = null
 	const navigate = useNavigate()
 
 	const [formData, setFormData] = useState({
