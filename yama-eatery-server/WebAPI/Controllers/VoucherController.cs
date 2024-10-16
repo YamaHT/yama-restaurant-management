@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllVouchers()
         {
-            var vouchers = await _unitOfWork.VoucherRepository.GetAllAsync();
+            var vouchers = await _unitOfWork.VoucherRepository.GetAllWithDeletedAsync();
             var validVouchers = vouchers
                 .Where(v => v.Quantity > 0 && v.ExpiredDate > DateOnly.FromDateTime(DateTime.Now)).ToList();
 
