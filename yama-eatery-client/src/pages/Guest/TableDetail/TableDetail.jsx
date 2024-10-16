@@ -5,7 +5,6 @@ import {
 	Box,
 	Button,
 	Card,
-	FormControl,
 	IconButton,
 	MenuItem,
 	Stack,
@@ -16,7 +15,6 @@ import { useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
-import { tables } from '../TableMockData/TableMockData'
 
 export default function TableDetail() {
 	const { id } = useParams()

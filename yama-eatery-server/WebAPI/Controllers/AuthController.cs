@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByEmailAndPassword(userLoginDTO.Email, userLoginDTO.Password);
+            var user = await _unitOfWork.UserRepository.GetByEmailAndPassword(userLoginDTO.Email, userLoginDTO.Password);
             var jwt = user?.GenerateJWT(_configuration["JWT:SecretKey"]);
             return !string.IsNullOrEmpty(jwt)
                 ? Ok(new
@@ -54,26 +54,25 @@ namespace WebAPI.Controllers
         [HttpPost("send-mail-otp")]
         public async Task<IActionResult> SendMailOTP([FromBody] UserSendOtpDTO userSendOtpDTO)
         {
-            await SendMailUtil.SendMailOtpAsync(_configuration, userSendOtpDTO.Email, userSendOtpDTO.OTP);
+            _ = Task.Run(() => SendMailUtil.SendMailOtpAsync(_configuration, userSendOtpDTO.Email, userSendOtpDTO.OTP));
             return Ok(new { success = "Send OTP successfully" });
         }
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] string email)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByEmail(email);
-           
+            var user = await _unitOfWork.UserRepository.GetByEmail(email);
 
             string password = StringUtil.GenerateRandomPassword();
-            await SendMailUtil.SendMailPasswordAsync(_configuration, email, password);
+            _ = Task.Run(() => SendMailUtil.SendMailPasswordAsync(_configuration, email, password));
 
             user.Password = CryptoUtils.EncryptPassword(password);
-             _unitOfWork.UserRepository.Update(user);
+            _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
             return Ok(new { success = "Reset Password successfully" });
         }
 
-        [HttpGet("check-mail")]
+        [HttpGet("check-email")]
         public async Task<IActionResult> CheckEmailExisted(string email)
         {
             return Ok(await _unitOfWork.UserRepository.CheckEmailExisted(email));

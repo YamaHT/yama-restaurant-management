@@ -52,20 +52,20 @@ namespace WebAPI.Controllers
             return Ok(new { success = "Change Password successfully" });
         }
 
-        [HttpGet("cancel-booking/{bookingID}")]
-        public async Task<IActionResult> CancelBooking(int bookingID)
+        [HttpGet("cancel-booking/{bookingId}")]
+        public async Task<IActionResult> CancelBooking(int bookingId)
         {
-            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingID);
+            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
             if (booking == null)
             {
-                throw new DataNotFoundException($"Booking with ID {bookingID} not found.");
+                throw new DataNotFoundException($"Booking with ID {bookingId} not found.");
             }
 
             if (Enum.TryParse(booking.BookingStatus.ToString(), out BookingStatusEnum status) && (status == BookingStatusEnum.Undeposited || status == BookingStatusEnum.Booking))
             {
                 _unitOfWork.BookingRepository.Remove(booking);
                 await _unitOfWork.SaveChangeAsync();
-                return Ok($"Booking with ID {bookingID} has been canceled successfully.");
+                return Ok($"Booking with ID {bookingId} has been canceled successfully.");
             }
             else
             {

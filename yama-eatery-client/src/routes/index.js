@@ -1,27 +1,21 @@
-import AboutUs from '@/pages/AboutUs/AboutUs'
-import ChangePassword from '@/pages/ChangePassword/ChangePassword'
-import ContactManagement from '@/pages/ContactManagement/ContactManagement'
-import ContactUs from '@/pages/ContactUs/ContactUs'
-import ForgotPassword from '@/pages/ForgotPassword/ForgotPassword'
-import HistoryBooking from '@/pages/HistoryBooking/HistoryBooking'
-import HistoryFeedback from '@/pages/HistoryFeedback/HistoryFeedback'
-import Home from '@/pages/Home/Home'
-import Login from '@/pages/Login/Login'
-import Membership from '@/pages/Membership/Membership'
-import MyVoucher from '@/pages/MyVoucher/MyVoucher'
-import OtpVerification from '@/pages/OTPVerification/OTPVerification'
-import ProductDetail from '@/pages/ProductDetail/ProductDetail'
-import ProductList from '@/pages/ProductList/ProductList'
-import ProductManagement from '@/pages/ProductManagement/ProductManagement'
-import Profile from '@/pages/MyAccount/Profile/Profile'
-import Register from '@/pages/Register/Register'
-import TableDetail from '@/pages/TableDetail/TableDetail'
-import TableList from '@/pages/TableList/TableList'
-import TableManagement from '@/pages/TableManagement/TableManagemen'
-import UserManagement from '@/pages/UserManagement/UserManagement'
-import VoucherList from '@/pages/VoucherList/VoucherList'
-import VoucherManagement from '@/pages/VoucherManagement/VoucherManagement'
-import MyAccount from '@/pages/MyAccount/MyAccount'
+import ForgotPassword from '@/pages/Auth/ForgotPassword/ForgotPassword'
+import Login from '@/pages/Auth/Login/Login'
+import OTPVerification from '@/pages/Auth/OTPVerification/OTPVerification'
+import Register from '@/pages/Auth/Register/Register'
+import MyAccount from '@/pages/Customer/MyAccount/MyAccount'
+import VoucherList from '@/pages/Customer/VoucherList/VoucherList'
+import AboutUs from '@/pages/Guest/AboutUs/AboutUs'
+import ContactUs from '@/pages/Guest/ContactUs/ContactUs'
+import Home from '@/pages/Guest/Home/Home'
+import ProductDetail from '@/pages/Guest/ProductDetail/ProductDetail'
+import ProductList from '@/pages/Guest/ProductList/ProductList'
+import TableDetail from '@/pages/Guest/TableDetail/TableDetail'
+import TableList from '@/pages/Guest/TableList/TableList'
+import ContactManagement from '@/pages/Manager/ContactManagement/ContactManagement'
+import ProductManagement from '@/pages/Manager/ProductManagement/ProductManagement'
+import TableManagement from '@/pages/Manager/TableManagement/TableManagemen'
+import UserManagement from '@/pages/Manager/UserManagement/UserManagement'
+import VoucherManagement from '@/pages/Manager/VoucherManagement/VoucherManagement'
 
 const publicRoutes = [
 	{ path: '/', component: Home },
@@ -35,7 +29,7 @@ const publicRoutes = [
 	{ path: '/user', component: MyAccount },
 
 	{ path: '/auth/forgot-password', component: ForgotPassword },
-	{ path: '/auth/otp-verification', component: OtpVerification },
+	{ path: '/auth/otp-verification', component: OTPVerification },
 	{ path: '/auth/login', component: Login, layout: null },
 	{ path: '/auth/register', component: Register, layout: null },
 

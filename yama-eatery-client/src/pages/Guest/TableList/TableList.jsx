@@ -11,7 +11,6 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { tables } from '../TableMockData/TableMockData'
 
 export default function TableList() {
 	const [filteredTables, setFilteredTables] = useState([])
@@ -19,6 +18,8 @@ export default function TableList() {
 	const [sortOption, setSortOption] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
 	const [tablesPerPage] = useState(8)
+
+	const tables = []
 
 	const navigate = useNavigate()
 
@@ -59,7 +60,7 @@ export default function TableList() {
 	}
 
 	return (
-		<Grid2 container spacing={2}>
+		<Grid2 container spacing={2} p={'5%'}>
 			<Grid2 size={3}>
 				<TableMenu
 					handleShowAll={handleShowAll}
