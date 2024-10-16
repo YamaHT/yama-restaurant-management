@@ -1,16 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebAPI.Models;
 using WebAPI.Utils.Exceptions;
 
 namespace WebAPI.Utils
 {
     public static class ObjectValidation
     {
-        public static void TryValidate(this object obj)
+        public static void TryValidate(this BaseEntity entity)
         {
-            var validationContext = new ValidationContext(obj);
+            var validationContext = new ValidationContext(entity);
             var validationResults = new List<ValidationResult>();
 
-            bool isValid = Validator.TryValidateObject(obj, validationContext, validationResults, true);
+            bool isValid = Validator.TryValidateObject(entity, validationContext, validationResults, true);
 
             if (!isValid)
             {

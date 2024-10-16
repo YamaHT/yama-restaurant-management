@@ -26,13 +26,13 @@ namespace WebAPI.Utils
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public static async Task<User?> GetUserFromHttpContextAsync(this IUnitOfWork unitOfWork, HttpContext context)
+        public static async Task<User?> GetUserFromHttpContextAsync(this IUnitOfWork unitOfWork, HttpContext context, string[]? includes = null)
         {
             var userIdClaims = int.TryParse(context.User.Claims
                                             .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
                                             out var userId) ? userId : 0;
 
-            return await unitOfWork.UserRepository.GetByIdAsync(userId);
+            return await unitOfWork.UserRepository.GetByIdAsync(userId, includes);
         }
     }
 }

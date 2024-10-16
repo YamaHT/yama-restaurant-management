@@ -5,6 +5,8 @@ import {
 	Avatar,
 	Button,
 	Collapse,
+	IconButton,
+	Link,
 	List,
 	ListItem,
 	ListItemButton,
@@ -13,7 +15,6 @@ import {
 	Stack,
 	Toolbar,
 	Typography,
-	IconButton,
 } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -112,24 +113,21 @@ const HeaderCustomer = () => {
 								<Typography key={item.value} variant='h6' fontWeight={'600'}>
 									{item.value}
 									{item.childrens && (
-										<>
-											{}
-											<Collapse
-												sx={{ position: 'absolute', width: 'max-content', top: '100%' }}
-												unmountOnExit
-												in={openMore}
-											>
-												<List component={Paper} disablePadding>
-													{item.childrens.map((child) => (
-														<ListItem sx={{ p: 0, ':hover': { color: 'primary.light' } }}>
-															<ListItemButton component={'a'} href={child.link}>
-																<ListItemText primary={child.value} />
-															</ListItemButton>
-														</ListItem>
-													))}
-												</List>
-											</Collapse>
-										</>
+										<Collapse
+											sx={{ position: 'absolute', width: 'max-content', top: '100%' }}
+											unmountOnExit
+											in={openMore}
+										>
+											<List component={Paper} disablePadding>
+												{item.childrens.map((child, index) => (
+													<ListItem key={index} sx={{ p: 0, ':hover': { color: 'primary.light' } }}>
+														<ListItemButton component={Link} href={child.link}>
+															<ListItemText primary={child.value} />
+														</ListItemButton>
+													</ListItem>
+												))}
+											</List>
+										</Collapse>
 									)}
 								</Typography>
 							</Button>

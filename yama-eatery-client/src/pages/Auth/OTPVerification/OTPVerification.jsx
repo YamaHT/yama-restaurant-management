@@ -72,7 +72,7 @@ const OTPVerification = () => {
 			expirationTime: expirationTime,
 		}))
 
-		const data = await AuthService.sendMailOTP({ email: requestData.email, otp: otp })
+		const data = await AuthService.SEND_MAIL_OTP({ email: requestData.email, otp: otp })
 		if (data?.success) {
 			enqueueSnackbar(data.success, { variant: 'success' })
 		}

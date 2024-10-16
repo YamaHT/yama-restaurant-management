@@ -13,10 +13,10 @@ namespace WebAPI.Controllers
 {
     public class AuthController(IUnitOfWork _unitOfWork, IConfiguration _configuration) : ApiController
     {
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByEmailAndPassword(userLoginDTO.Email, userLoginDTO.Password);
+            var user = await _unitOfWork.UserRepository.GetByEmailAndPassword(userLoginDTO.Email, userLoginDTO.Password);
             var jwt = user?.GenerateJWT(_configuration["JWT:SecretKey"]);
             return !string.IsNullOrEmpty(jwt)
                 ? Ok(new
@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
                 : throw new DataNotFoundException("Invalid email or password");
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegisterDTO)
         {
             if (await _unitOfWork.UserRepository.CheckEmailExisted(userRegisterDTO.Email))
@@ -51,28 +51,28 @@ namespace WebAPI.Controllers
             return Ok(new { success = "Register successfully" });
         }
 
-        [HttpPost]
+        [HttpPost("send-mail-otp")]
         public async Task<IActionResult> SendMailOTP([FromBody] UserSendOtpDTO userSendOtpDTO)
         {
-            await SendMailUtil.SendMailOtpAsync(_configuration, userSendOtpDTO.Email, userSendOtpDTO.OTP);
+            _ = Task.Run(() => SendMailUtil.SendMailOtpAsync(_configuration, userSendOtpDTO.Email, userSendOtpDTO.OTP));
             return Ok(new { success = "Send OTP successfully" });
         }
-        [HttpPost]
-        public async Task<IActionResult> ForgotPassword([FromBody]  string email)
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] string email)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByEmail(email);
-           
+            var user = await _unitOfWork.UserRepository.GetByEmail(email);
 
             string password = StringUtil.GenerateRandomPassword();
-            await SendMailUtil.SendMailPasswordAsync(_configuration, email, password);
+            _ = Task.Run(() => SendMailUtil.SendMailPasswordAsync(_configuration, email, password));
 
             user.Password = CryptoUtils.EncryptPassword(password);
-             _unitOfWork.UserRepository.Update(user);
+            _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
             return Ok(new { success = "Reset Password successfully" });
         }
 
-        [HttpGet]
+        [HttpGet("check-email")]
         public async Task<IActionResult> CheckEmailExisted(string email)
         {
             return Ok(await _unitOfWork.UserRepository.CheckEmailExisted(email));

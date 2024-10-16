@@ -1,5 +1,5 @@
 import { AuthService } from '@/services/AuthService'
-import { API_REQUEST } from '@/utilities/apiRequest'
+import { ApiRequest } from '@/utilities/apiRequest'
 import { Box, Button, Paper, TextField, Typography } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 import { useState } from 'react'
@@ -31,7 +31,7 @@ export default function ForgotPassword() {
 		if (!validateEmail()) {
 			return
 		}
-		const isExisted = await AuthService.checkEmailExist({ email })
+		const isExisted = await AuthService.CHECK_EMAIL_EXISTED({ email })
 
 		if (isExisted) {
 			const otp = Math.floor(100000 + Math.random() * 900000).toString()
@@ -40,7 +40,7 @@ export default function ForgotPassword() {
 			secureLocalStorage.setItem(
 				'requestData',
 				JSON.stringify({
-					URL: API_REQUEST.AuthRequest.FORGOT_PASSWORD,
+					URL: ApiRequest.AuthRequest.FORGOT_PASSWORD,
 					formData: email,
 					email: email,
 					otp: otp,
@@ -48,7 +48,7 @@ export default function ForgotPassword() {
 				})
 			)
 
-			await AuthService.sendMailOTP({ email: email, otp: otp })
+			await AuthService.SEND_MAIL_OTP({ email: email, otp: otp })
 
 			enqueueSnackbar('OTP will be sent to your email', {
 				variant: 'success',

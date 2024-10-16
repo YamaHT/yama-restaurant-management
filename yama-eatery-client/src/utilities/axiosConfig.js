@@ -31,7 +31,7 @@ axiosConfig.interceptors.response.use(
 	},
 	(error) => {
 		const status = error.response?.status
-		const errorMessage = error.response?.data?.error
+		const errorMessage = error.response?.data?.error || 'Internal Server Error'
 		const role = secureLocalStorage.getItem('role')
 
 		switch (status) {

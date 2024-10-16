@@ -8,7 +8,37 @@ namespace WebAPI.Controllers
 {
     public class UserController(IUnitOfWork _unitOfWork, IConfiguration _configuration) : ApiController
     {
-        [HttpPost]
+        [HttpGet("profile")]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
+            GetUserProfileDTO userProfileDTO = new()
+            {
+                Birthday = user.Birthday,
+                Gender = user.Gender,
+                Image = user.Image,
+                Membership = user.Membership,
+                Name = user.Name,
+                Phone = user.Phone,
+            };
+            return Ok(userProfileDTO);
+        }
+
+        [HttpPost("profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileDTO updateUserProfileDTO)
+        {
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
+            user.Birthday = updateUserProfileDTO.Birthday;
+            user.Gender = updateUserProfileDTO.Gender;
+            user.Image = updateUserProfileDTO.Image;
+            user.Name = updateUserProfileDTO.Name;
+            user.Phone = updateUserProfileDTO.Phone;
+            user.TryValidate();
+
+            return Ok(new { success = "Update profile successfully" });
+        }
+
+        [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordDTO userChangePasswordDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
@@ -21,42 +51,47 @@ namespace WebAPI.Controllers
             await _unitOfWork.SaveChangeAsync();
             return Ok(new { success = "Change Password successfully" });
         }
-        [HttpGet]
-        public async Task<IActionResult> CancelBooking(int bookingID)
+
+        [HttpGet("cancel-booking/{bookingId}")]
+        public async Task<IActionResult> CancelBooking(int bookingId)
         {
-            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingID);
+            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
             if (booking == null)
             {
-                throw new DataNotFoundException($"Booking with ID {bookingID} not found.");
+                throw new DataNotFoundException($"Booking with ID {bookingId} not found.");
             }
+
             if (Enum.TryParse(booking.BookingStatus.ToString(), out BookingStatusEnum status) && (status == BookingStatusEnum.Undeposited || status == BookingStatusEnum.Booking))
             {
                 _unitOfWork.BookingRepository.Remove(booking);
                 await _unitOfWork.SaveChangeAsync();
-                return Ok($"Booking with ID {bookingID} has been canceled successfully.");
+                return Ok($"Booking with ID {bookingId} has been canceled successfully.");
             }
             else
             {
                 throw new DataNotFoundException($"Cannot cancel booking. Current status is: {booking.BookingStatus}.");
             }
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAllFeedbacks(int? productId = null, int? rating = null)
+
+        [HttpGet("history-feedback")]
+        public async Task<IActionResult> HistoryFeedbacks()
         {
-            var feedbacks = await _unitOfWork.FeedbackProductRepository.GetAllAsync();
-            return Ok(feedbacks);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Feedbacks"]);
+            return Ok(user?.Feedbacks);
         }
-        [HttpGet]
-        public async Task<IActionResult> GetHistoryBooking(int userId)
+
+        [HttpGet("history-booking")]
+        public async Task<IActionResult> GetHistoryBooking()
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId, ["Bookings"]);
-            return Ok(user);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings"]);
+            return Ok(user?.Bookings);
         }
-        [HttpGet]
-        public async Task<IActionResult> GetMyVouchers(int userIds)
+
+        [HttpGet("my-vouchers")]
+        public async Task<IActionResult> GetMyVouchers()
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(userIds, ["UserVouchers"]);
-            return Ok(user);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers"]);
+            return Ok(user?.UserVouchers);
         }
     }
 }

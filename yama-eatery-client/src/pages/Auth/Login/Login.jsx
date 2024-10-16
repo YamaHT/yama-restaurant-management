@@ -30,7 +30,7 @@ const Login = () => {
 		})
 
 		if (isValid) {
-			const data = await AuthService.login({ email, password })
+			const data = await AuthService.LOGIN({ email, password })
 
 			if (data) {
 				enqueueSnackbar('Login succesfully', { variant: 'success', autoHideDuration: 1000 })

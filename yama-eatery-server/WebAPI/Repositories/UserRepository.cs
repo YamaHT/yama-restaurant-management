@@ -9,14 +9,14 @@ namespace WebAPI.Repositories
     public class UserRepository(ApplicationDbContext _dbContext)
         : GenericRepository<User>(_dbContext), IUserRepository
     {
-        public async Task<User?> GetUserByEmailAndPassword(string email, string password)
+        public async Task<User?> GetByEmailAndPassword(string email, string password)
         {
             var user = await _dbContext.User
                 .FirstOrDefaultAsync(x => x.Email == email);
 
             return CryptoUtils.IsPasswordCorrect(password, user?.Password) ? user : null;
         }
-        public async Task<User?> GetUserByEmail(string email)
+        public async Task<User?> GetByEmail(string email)
         {
             var user = await _dbContext.User
                 .FirstOrDefaultAsync(x => x.Email == email);

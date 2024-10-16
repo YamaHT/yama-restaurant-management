@@ -1,9 +1,5 @@
-import { AssetImages } from '@/utilities/AssetImages'
-import { icon } from '@fortawesome/fontawesome-svg-core'
 import { Bookmarks, Event, Forum, LocalOffer, LockReset, Person } from '@mui/icons-material'
 import {
-	Avatar,
-	Divider,
 	Grid2,
 	List,
 	ListItemButton,
@@ -11,15 +7,14 @@ import {
 	ListItemText,
 	ListSubheader,
 	Paper,
-	Typography,
 } from '@mui/material'
 import { useState } from 'react'
-import HistoryFeedback from '../HistoryFeedback/HistoryFeedback'
 import HistoryBooking from '../HistoryBooking/HistoryBooking'
+import HistoryFeedback from '../HistoryFeedback/HistoryFeedback'
 import Membership from '../Membership/Membership'
 import MyVoucher from '../MyVoucher/MyVoucher'
+import Profile from '../Profile/Profile'
 import ChangePassword from '../ChangePassword/ChangePassword'
-import Profile from './Profile/Profile'
 
 const accountPages = [
 	{

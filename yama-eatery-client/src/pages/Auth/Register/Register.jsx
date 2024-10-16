@@ -3,7 +3,7 @@ import PasswordTextField from '@/components/CustomTextField/PasswordTextField'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import LayoutLogin from '@/components/LayoutLogin/LoginLayout'
 import { AuthService } from '@/services/AuthService'
-import { API_REQUEST } from '@/utilities/apiRequest'
+import { ApiRequest } from '@/utilities/apiRequest'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
@@ -43,18 +43,24 @@ const Register = () => {
 			return
 		}
 
+		const isExisted = await AuthService.CHECK_EMAIL_EXISTED({ email: formData.email })
+		if (isExisted) {
+			enqueueSnackbar('Email is existed', { variant: 'error' })
+			return
+		}
+
 		const otp = Math.floor(100000 + Math.random() * 900000).toString()
 		const expirationTime = Date.now() + 1000 * 60 * 5
 
 		const requestData = {
-			URL: API_REQUEST.AuthRequest.REGISTER,
+			URL: ApiRequest.AuthRequest.REGISTER,
 			formData: formData,
 			email: formData.email,
 			otp: otp,
 			expirationTime: expirationTime,
 		}
 
-		const data = await AuthService.sendMailOTP({ email: formData.email, otp: otp })
+		const data = await AuthService.SEND_MAIL_OTP({ email: formData.email, otp: otp })
 		console.log(data)
 		if (data?.success) {
 			enqueueSnackbar(data.success, { variant: 'success', autoHideDuration: 1000 })
