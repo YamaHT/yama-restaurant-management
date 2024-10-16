@@ -1,45 +1,106 @@
 import React from 'react'
-import { Container, Typography, Box, ImageList, ImageListItem, Grid2 } from '@mui/material'
+import { Container, Typography, Box, ImageList, ImageListItem, Grid2, Paper } from '@mui/material'
 
 const AboutUs = () => {
 	const images = [
-		'https://tonywedding.vn/wp-content/uploads/2022/12/291610733_5402986359724076_4717512138686002181_n.jpg?x52927',
-		'https://th.bing.com/th/id/R.d9f11f93d281de9719dc80c8b9173625?rik=wdD38wA0Oj7b7A&pid=ImgRaw&r=0',
-		'https://th.bing.com/th/id/OIP.huskSP6E2BSNvlAOTbuJ7AHaEH?rs=1&pid=ImgDetMain',
-		'https://th.bing.com/th/id/OIP.TkRFjiScAdz-x1_DYfOwywHaHa?w=1200&h=1200&rs=1&pid=ImgDetMain',
-		'https://th.bing.com/th/id/R.f4b621b29b88d8faf1453dc7998d0770?rik=5qmJvr4mnGVOsg&pid=ImgRaw&r=0',
-		'https://th.bing.com/th/id/R.437baaa909bc56e1311f56bf452e2d38?rik=Tu1%2fZtE4S%2byG%2fQ&riu=http%3a%2f%2fnhadepdonga.vn%2fUploads%2fthiet-ke-noi-that-nh-2015111911064522.jpg&ehk=NlG68fNFfQ%2bYlg%2bujavyKYcg1M%2baWrdTZFRxGHOM%2bHY%3d&risl=&pid=ImgRaw&r=0',
+		'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=600',
+		'https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg?auto=compress&cs=tinysrgb&w=600',
+		'https://images.pexels.com/photos/1310777/pexels-photo-1310777.jpeg?auto=compress&cs=tinysrgb&w=600',
+		'https://images.pexels.com/photos/2788792/pexels-photo-2788792.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+		'https://images.pexels.com/photos/3252051/pexels-photo-3252051.jpeg?auto=compress&cs=tinysrgb&w=600',
 	]
 
 	return (
-		<Container>
-			<Box my={4} textAlign='center'>
-				<Typography variant='h3' gutterBottom>
+		<Paper
+			sx={{
+				backgroundColor: 'white',
+			}}
+		>
+			<Box textAlign='center'>
+				<Typography
+					variant='h3'
+					gutterBottom
+					pt={'1%'}
+					sx={{
+						textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+					}}
+				>
 					Yama Restaurant
 				</Typography>
 			</Box>
 			<Grid2 container justifyContent='center' alignItems='center'>
-				<Grid2 item xs={12} md={8} display='flex' justifyContent='center' alignItems='center'>
-					<Typography variant='body1' color='textSecondary' fontWeight={'bold'} fontFamily={'Poppins, sans-serif'}>
-						It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum. In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire.
-					</Typography>
+				<Grid2 display='flex' justifyContent='center' alignItems='center'>
 					<Box
 						component='img'
 						alt='Team 6'
-						src='https://th.bing.com/th/id/OIP.haSIo4BY9SLJLINLxzquqAHaEK?rs=1&pid=ImgDetMain'
-						sx={{ width: '50%', height: 300, mx: 2, borderRadius: '10px' }}
+						src='https://images.pexels.com/photos/1058277/pexels-photo-1058277.jpeg'
+						sx={{ width: '100%', height: '30%', mx: 2, borderRadius: '10px' }}
 					/>
 				</Grid2>
+				<Container>
+					<Typography
+						variant='body1'
+						fontWeight={'bold'}
+						fontFamily={'Poppins, sans-serif'}
+						align='center'
+						py={'1.5%'}
+					>
+						At Yama Restaurant, we blend culinary expertise with a passion for fine dining to create
+						an unforgettable experience for our guests. Situated in the heart of the city, our
+						restaurant offers a unique fusion of traditional and contemporary cuisine. Our menu
+						features fresh, locally-sourced ingredients crafted into exquisite dishes by our
+						talented chefs. The elegant yet cozy ambiance, combined with attentive service, makes
+						Yama the perfect destination for any occasion, from romantic dinners to family
+						gatherings. We are committed to sustainability and supporting local communities,
+						ensuring a dining experience that is both delightful and responsible.
+					</Typography>
+				</Container>
 			</Grid2>
-			<Box my={4}>
-				<Typography variant='h4' gutterBottom>
-					Our Story
-				</Typography>
+
+			<Box sx={{ mx: '2%', py: '1%' }}>
+				<Box textAlign='center'>
+					<Typography
+						variant='h2'
+						sx={{
+							display: 'inline-block',
+							position: 'relative',
+							fontWeight: 'bold',
+							fontSize: '2rem',
+							textTransform: 'uppercase',
+							color: '#444',
+							'&::after': {
+								content: '""',
+								position: 'absolute',
+								width: '70%',
+								height: '4px',
+								left: 0,
+								right: 0,
+								bottom: '-8px',
+								margin: 'auto',
+								backgroundColor: '#EC4899',
+								borderRadius: 2,
+							},
+						}}
+					>
+						OUR STORY
+					</Typography>
+				</Box>
 				<Grid2 container spacing={4} alignItems='stretch'>
 					<Grid2 item xs={12} md={6}>
 						<Box height='100%' display='flex' flexDirection='row' justifyContent='left'>
-							<Typography variant='body1' padding={'2% 2% 2% 2%'}>
-								It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum. In the first place we have granted to God, and by this our present charter confirmed for us and our heirs forever that the English Church shall be free, and shall have her rights entire.
+							<Typography
+								variant='body1'
+								fontWeight={'bold'}
+								fontFamily={'Poppins, sans-serif'}
+								align='center'
+								py={'2%'}
+							>
+								Founded with a vision to bring the best of culinary arts to our community, Yama
+								Restaurant has grown into a beloved dining spot for locals and visitors alike. Our
+								journey began with a simple idea: to offer exceptional food in a welcoming and
+								elegant setting. Over the years, we have stayed true to this mission, continually
+								evolving and refining our offerings to meet the highest standards of quality and
+								taste.
 							</Typography>
 						</Box>
 					</Grid2>
@@ -49,12 +110,17 @@ const AboutUs = () => {
 				<ImageList variant='masonry' cols={3} gap={8}>
 					{images.map((image, index) => (
 						<ImageListItem key={index}>
-							<img src={image} alt={`Image ${index + 1}`} loading='lazy' style={{ borderRadius: '15px' }} />
+							<img
+								src={image}
+								alt={`Image ${index + 1}`}
+								loading='lazy'
+								style={{ borderRadius: '15px' }}
+							/>
 						</ImageListItem>
 					))}
 				</ImageList>
 			</Box>
-		</Container>
+		</Paper>
 	)
 }
 

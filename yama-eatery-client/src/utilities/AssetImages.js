@@ -5,6 +5,7 @@ export const AssetImages = {
 		LOGIN: require('../assets/img/general/LoginBackground.jpg'),
 	},
 	HomeCategory: (index) => require(`../assets/img/general/HomeCategory${index}.jpg`),
+	AboutUsImage: (index) => require(`../assets/img/general/AboutUs${index}.jpg`),
 	HomeStandard: (index) => require(`../assets/img/general/HomeStandard${index}.jpg`),
 	ProductImage: (imageName) => require(`../assets/img/product/${imageName}`),
 }
