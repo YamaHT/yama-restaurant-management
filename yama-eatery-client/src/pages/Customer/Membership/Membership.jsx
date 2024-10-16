@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -9,9 +10,36 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material'
+import { UserService } from '@/services/UserService'
 
 const Membership = () => {
 	const progress = 50
+	const [membershipStatus, setMembershipStatus] = useState('')
+	useEffect(() => {
+		const fectchMembershipStatus = async () => {
+			try {
+				const data = await UserService.USER_MEMBERSHIP()
+				setMembershipStatus(data.membershipStatus)
+			} catch (error) {
+				console.error('Error fetching membership ', error)
+			}
+		}
+		fectchMembershipStatus()
+	}, [])
+	const handleCancelMembership = async () => {
+		const data = await UserService.CANCEL_MEMBERSHIP()
+		console.log(data)
+		setMembershipStatus(data.membershipStatus)
+		setMembershipStatus('Inactive')
+	}
+
+	const handleMembershipRegister = async () => {
+		const data = await UserService.MEMBERSHIP_REGISTER()
+		console.log(data)
+		setMembershipStatus(data.membershipStatus)
+		setMembershipStatus('Requesting')
+	}
+
 	return (
 		<Paper
 			width={'100%'}
@@ -64,7 +92,8 @@ const Membership = () => {
 							sx={{
 								p: 3,
 								pt: 5,
-								height: '270px',
+								height: '300px',
+								width: '270px',
 								backgroundImage:
 									'url(https://th.bing.com/th?id=OIP.0USMIJfUmVmCPt98Te3rkAHaJ5&w=216&h=289&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2)',
 							}}
@@ -73,10 +102,10 @@ const Membership = () => {
 								Silver
 							</Typography>
 							<ul style={{ textAlign: 'left', padding: '10px' }}>
-								<li>Feature text goes here</li>
-								<li>Feature text goes here</li>
-								<li>Feature text goes here</li>
-								<li>and more</li>
+								<li>Access to exclusive discounts on select products</li>
+								<li>Monthly newsletters with special offers and updates</li>
+								<li>Priority customer support</li>
+								<li>Access to members-only events and promotions</li>
 							</ul>
 							<Button
 								variant='contained'
@@ -108,7 +137,8 @@ const Membership = () => {
 							sx={{
 								p: 3,
 								pt: 5,
-								height: '270px',
+								height: '300px',
+								width: '270px',
 								backgroundImage: 'url(https://www.backgroundsy.com/file/gold-background.jpg)',
 							}}
 						>
@@ -116,10 +146,10 @@ const Membership = () => {
 								Gold
 							</Typography>
 							<ul style={{ textAlign: 'left', padding: '10px' }}>
-								<li>Feature text goes here</li>
-								<li>Feature text goes here</li>
-								<li>Feature text goes here</li>
-								<li>and more</li>
+								<li>All Silver tier benefits</li>
+								<li>Higher discount rates on a wider range of products</li>
+								<li>Early access to new product launches</li>
+								<li>Personalized shopping assistance</li>
 							</ul>
 							<Button
 								variant='contained'
@@ -151,7 +181,8 @@ const Membership = () => {
 							sx={{
 								p: 3,
 								pt: 5,
-								height: '270px',
+								height: '300px',
+								width: '270px',
 								backgroundImage:
 									'url(https://t4.ftcdn.net/jpg/03/78/38/01/360_F_378380115_CHfN9nXkCa2Hnmzu6HhPbIAr6mb3U12W.jpg)',
 							}}
@@ -160,10 +191,10 @@ const Membership = () => {
 								Platinum
 							</Typography>
 							<ul style={{ textAlign: 'left', padding: '10px', color: 'white ' }}>
-								<li>Feature text goes here</li>
-								<li>Feature text goes here</li>
-								<li>Feature text goes here</li>
-								<li>and more</li>
+								<li>All Gold tier benefits</li>
+								<li>Free shipping on all orders</li>
+								<li>Exclusive invitations to VIP events and experiences</li>
+								<li>Complimentary gift wrapping and special occasions discounts</li>
 							</ul>
 							<Button
 								variant='contained'
@@ -180,9 +211,34 @@ const Membership = () => {
 					</Card>
 				</Grid2>
 			</Grid2>
-			<Button variant='contained' color='error' sx={{ marginTop: 3 }}>
-				Cancel membership registration
-			</Button>
+
+			{membershipStatus === 'Inactive' ? (
+				<Button
+					fullWidth
+					variant='contained'
+					style={{
+						background: 'green',
+						textTransform: 'capitalize',
+						marginTop: '20px',
+					}}
+					onClick={handleMembershipRegister}
+				>
+					Membership Register
+				</Button>
+			) : membershipStatus === 'Active' || membershipStatus === 'Requesting' ? (
+				<Button
+					fullWidth
+					variant='contained'
+					style={{
+						background: '#d50000',
+						textTransform: 'capitalize',
+						marginTop: '10px',
+					}}
+					onClick={handleCancelMembership}
+				>
+					Cancel Membership Register
+				</Button>
+			) : null}
 		</Paper>
 	)
 }

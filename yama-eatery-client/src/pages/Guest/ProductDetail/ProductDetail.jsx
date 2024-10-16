@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from '@mui/icons-material'
+import { ChevronLeft, ChevronRight, Delete, Edit } from '@mui/icons-material'
 import {
 	Avatar,
 	Box,
@@ -9,6 +9,7 @@ import {
 	Divider,
 	Grid2,
 	IconButton,
+	MenuItem,
 	Rating,
 	Stack,
 	TextField,
@@ -24,7 +25,8 @@ import { calculateAverageRating } from '../ProductList/ProductList'
 import { ProductService } from '@/services/ProductService'
 import { AssetImages } from '@/utilities/AssetImages'
 import ReviewProgressBar from '@/components/Product/ReviewProgressBar'
-import { FeedbackRequest } from '@/requests/FeedbackRequest'
+import { FeedbackService } from '@/services/FeedbackService'
+import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
 
 export default function ProductDetail() {
 	const { id } = useParams()
@@ -32,7 +34,9 @@ export default function ProductDetail() {
 
 	const [product, setProduct] = useState(null)
 	const [recommendedProducts, setRecommendedProducts] = useState([])
-	const [feedback, setFeedbackProduct] = useState()
+	const [feedbackProduct, setFeedbackProduct] = useState()
+	const [isEdittingFeedback, setIsEdittingFeedback] = useState(false)
+	const [haveUpdated, setHaveUpdated] = useState(false)
 
 	const [selectedImage, setSelectedImage] = useState('')
 	const [showAllReviews, setShowAllReviews] = useState(false)
@@ -51,8 +55,24 @@ export default function ProductDetail() {
 				setProduct(data)
 			}
 		}
+
+		async function fetchGetFeedbackProduct() {
+			const data = await FeedbackService.GET_FEEDBACK(id)
+			if (data) {
+				setFeedbackProduct(data)
+				setUserRating(data.rating)
+				setUserReview(data.message)
+			}
+		}
+
+		fetchGetFeedbackProduct()
 		fetchProductDetail()
-	}, [id])
+	}, [id, haveUpdated])
+
+	useEffect(() => {
+		setUserRating(feedbackProduct?.rating || 0)
+		setUserReview(feedbackProduct?.message || '')
+	}, [isEdittingFeedback])
 
 	useEffect(() => {
 		if (product) {
@@ -66,7 +86,6 @@ export default function ProductDetail() {
 			setSelectedImage(AssetImages.ProductImage(product?.image[0]))
 		}
 	}, [product])
-
 
 	useEffect(() => {
 		const initializeSwiperNavigation = () => {
@@ -86,6 +105,44 @@ export default function ProductDetail() {
 			}
 		}
 	}, [recommendedProducts])
+
+	const handleAddFeedback = async () => {
+		const feedbackData = {
+			productId: id,
+			rating: userRating,
+			message: userReview,
+		}
+
+		const data = await FeedbackService.ADD_FEEDBACK(feedbackData)
+		if (data) {
+			setFeedbackProduct(data)
+			setHaveUpdated(!haveUpdated)
+		}
+	}
+
+	const handleUpdateFeedback = async () => {
+		const updatedFeedbackData = {
+			productId: id,
+			rating: userRating,
+			message: userReview,
+		}
+
+		const data = await FeedbackService.UPDATE_FEEDBACK(updatedFeedbackData)
+		if (data) {
+			setFeedbackProduct(data)
+			setHaveUpdated(!haveUpdated)
+			setIsEdittingFeedback(false)
+		}
+	}
+
+	const handleRemoveFeedback = async () => {
+		const ProductId= id
+		const data = await FeedbackService.DELETE_FEEDBACK(ProductId)
+		if (data) {
+			setFeedbackProduct(null)
+			setHaveUpdated(!haveUpdated)
+		}
+	}
 
 	const handleSlideChange = () => {
 		if (swiperRef.current) {
@@ -130,23 +187,11 @@ export default function ProductDetail() {
 
 	const reviewsToShow = showAllReviews ? product.feedbacks : product.feedbacks.slice(0, 3)
 
-	const handleRatingChange = (newValue) => {
-		setUserRating(newValue)
-	}
-
-	const handleReviewChange = (event) => {
-		setUserReview(event.target.value)
-	}
-
-	const handleSubmit = () => {
-		setUserRating(0)
-		setUserReview('')
-	}
-
 	const handleClick = (id) => {
 		window.scrollTo({ top: 0, behavior: 'smooth' })
 
-		navigate(`/Product/Detail/${id}`)
+		navigate(`/product/detail/${id}`)
+		window.location.reload()
 	}
 
 	return (
@@ -225,22 +270,22 @@ export default function ProductDetail() {
 				))}
 
 				{reviewsToShow.map((feedbacks, index) => (
-					<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4} key={index}>
+					<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
 						<Grid2 size={0.5}>
-							<Avatar src={feedbacks.avatar} alt={feedbacks.reviewer} />
+							<Avatar src={feedbacks.user.image} alt={feedbacks.user.name} />
 						</Grid2>
 						<Grid2 size={11.5}>
 							<Stack direction='row' alignItems='center' justifyContent='space-between'>
-								<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
-									{feedbacks.user.name}
-								</Typography>
-
-								<Typography variant='caption' color='textSecondary'>
-									{new Date(feedbacks.creationDate).toLocaleDateString()}
-								</Typography>
+								<Stack direction='row' alignItems='center'>
+									<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
+										{feedbacks.user.name}
+									</Typography>
+									<Typography variant='caption' color='textSecondary'>
+										{new Date(feedbacks.creationDate).toLocaleDateString()}
+									</Typography>
+								</Stack>
 							</Stack>
 							<Rating value={feedbacks.rating} readOnly size='small' sx={{ mt: 0.5 }} />
-
 							<Typography variant='body2' color='textSecondary' mt={1}>
 								{feedbacks.message}
 							</Typography>
@@ -257,53 +302,112 @@ export default function ProductDetail() {
 						{showAllReviews ? 'Show less reviews' : 'Read all reviews'}
 					</Button>
 				)}
-				<Box mt={4}>
-					<Typography variant='h6' fontWeight='bold' color='textPrimary'>
-						Leave a Rating and Review
-					</Typography>
 
-					<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
-						<Grid2 size={0.5}>
-							<Avatar src={feedback.Avatar} alt={feedback.Avatar} />
+				{feedbackProduct ? (
+					<>
+						<Divider sx={{ my: 2 }}>Your Feedbacks</Divider>
+						<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
+							<Grid2 size={0.5}>
+								<Avatar src={feedbackProduct.user.image} alt={feedbackProduct.user.name} />
+							</Grid2>
+							<Grid2 size={11.5}>
+								<Stack direction='row' alignItems='center' justifyContent='space-between'>
+									<Stack direction='row' alignItems='center'>
+										<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
+											{feedbackProduct.user.name}
+										</Typography>
+										<Typography variant='caption' color='textSecondary'>
+											{new Date(feedbackProduct.creationDate).toLocaleDateString()}
+										</Typography>
+									</Stack>
+									<CrudMenuOptions>
+										<MenuItem>
+											<Button startIcon={<Edit />} onClick={() => setIsEdittingFeedback(true)}>
+												Edit
+											</Button>
+										</MenuItem>
+										<MenuItem>
+											<Button startIcon={<Delete />} onClick={() => handleRemoveFeedback(id)}>
+												Delete
+											</Button>
+										</MenuItem>
+									</CrudMenuOptions>
+								</Stack>
+
+								{isEdittingFeedback ? (
+									<>
+										<Rating
+											name='user-rating'
+											value={userRating}
+											onChange={(e, newValue) => setUserRating(newValue)}
+											size='large'
+											sx={{ mt: 2 }}
+										/>
+										<TextField
+											fullWidth
+											label='Your Review'
+											multiline
+											rows={4}
+											value={userReview}
+											onChange={(e) => setUserReview(e.target.value)}
+											sx={{ mt: 2 }}
+										/>
+
+										<Button
+											variant='contained'
+											color='primary'
+											sx={{ mt: 2 }}
+											onClick={handleUpdateFeedback}
+										>
+											Submit
+										</Button>
+										<Button
+											variant='contained'
+											color='inherit'
+											sx={{ mt: 2, ml: 2 }}
+											onClick={() => setIsEdittingFeedback(false)}
+										>
+											Cancel
+										</Button>
+									</>
+								) : (
+									<>
+										<Rating value={feedbackProduct.rating} readOnly size='small' sx={{ mt: 0.5 }} />
+										<Typography variant='body2' color='textSecondary' mt={1}>
+											{feedbackProduct.message}
+										</Typography>
+									</>
+								)}
+							</Grid2>
 						</Grid2>
-						<Grid2 size={11.5}>
-							<Stack direction='row' alignItems='center' justifyContent='space-between'>
-								<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
-									{feedback.message}
-								</Typography>
+					</>
+				) : (
+					<Box mt={4}>
+						<Typography variant='h6' fontWeight='bold' color='textPrimary'>
+							Leave a Rating and Review
+						</Typography>
 
-								<Typography variant='caption' color='textSecondary'>
-									{new Date(feedback.creationDate).toLocaleDateString()}
-								</Typography>
-							</Stack>
-							<Rating value={feedback.rating} readOnly size='small' sx={{ mt: 0.5 }} />
-
-							<Typography variant='body2' color='textSecondary' mt={1}>
-								{feedback.message}
-							</Typography>
-						</Grid2>
-					</Grid2>
-
-					<Rating
-						name='user-rating'
-						value={userRating}
-						onChange={(event, newValue) => handleRatingChange(newValue)}
-						size='large'
-						sx={{ mt: 2 }}
-					/>
-					<TextField
-						fullWidth
-						label='Your Review'
-						multiline
-						rows={4}
-						value={userReview}
-						onChange={handleReviewChange}
-						sx={{ mt: 2 }}
-					/>
-					<Button variant='contained' color='primary' sx={{ mt: 2 }} onClick={handleSubmit}>
-						Submit
-					</Button>
-				</Box>
+						<Rating
+							name='user-rating'
+							value={userRating}
+							onChange={(e, newValue) => setUserRating(newValue)}
+							size='large'
+							sx={{ mt: 2 }}
+						/>
+						<TextField
+							fullWidth
+							label='Your Review'
+							multiline
+							rows={4}
+							value={userReview}
+							onChange={(e) => setUserReview(e.target.value)}
+							sx={{ mt: 2 }}
+						/>
+						<Button variant='contained' color='primary' sx={{ mt: 2 }} onClick={handleAddFeedback}>
+							Submit
+						</Button>
+					</Box>
+				)}
 			</Box>
 			{recommendedProducts.length > 0 && (
 				<Box mt={4}>
