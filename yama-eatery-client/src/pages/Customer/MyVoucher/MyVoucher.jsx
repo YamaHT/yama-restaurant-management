@@ -16,6 +16,7 @@ import {
 	Tab,
 } from '@mui/material'
 import { VoucherService } from '@/services/VoucherService' // Import vouchers service
+import { UserRequest } from '@/requests/UserRequest'
 
 const VOUCHERS_PER_PAGE = 4
 
@@ -33,9 +34,9 @@ function MyVoucher() {
 	useEffect(() => {
 		const fetchVouchers = async () => {
 			try {
-				const data = await VoucherService.VIEW_ALL_VOUCHER()
+				const data = await UserRequest.MY_VOUCHERS()
 				setVouchers(data)
-				setFilteredVouchers(data) // Initialize filtered vouchers
+				setFilteredVouchers(data) 
 			} catch (error) {
 				console.error('Error fetching vouchers: ', error)
 			}

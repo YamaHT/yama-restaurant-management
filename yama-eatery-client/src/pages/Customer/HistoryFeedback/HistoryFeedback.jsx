@@ -1,179 +1,90 @@
-import * as React from 'react'
 import {
 	Box,
-	Container,
-	Typography,
 	Divider,
-	Rating,
-	MenuItem,
+	Grid2,
 	Pagination,
 	Stack,
-	createTheme,
-	TableContainer,
+	Typography,
 	Table,
 	TableBody,
 	TableCell,
-	IconButton,
-	Select,
+	TableContainer,
 	TableHead,
 	TableRow,
+	IconButton,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem,
 } from '@mui/material'
-import { styled } from '@mui/material/styles'
 import LaunchIcon from '@mui/icons-material/Launch'
+import { useEffect, useState } from 'react'
+import { UserService } from '@/services/UserService'
 
-const theme = createTheme({
-	palette: {
-		background: {
-			default: 'default',
-			paper: 'default',
-		},
-		text: {
-			primary: '#FFFFFF',
-			secondary: '#B0BEC5',
-		},
-		warning: {
-			main: '#FF9800',
-		},
-	},
-})
+const REVIEWS_PER_PAGE = 7 // For pagination logic
+export function calculateAverageRating(reviews) {
+	if (!reviews || reviews.length === 0) return 0
+	const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
+	return totalRating / reviews.length
+}
 
-const StyledDivider = styled(Divider)(({ theme }) => ({
-	margin: '2% 0',
-	backgroundColor: theme.palette.divider,
-}))
+export default function ReviewList() {
+	const [reviews, setReviews] = useState([])
+	const [filteredReviews, setFilteredReviews] = useState([])
+	const [selectedRating, setSelectedRating] = useState('All reviews')
+	const [page, setPage] = useState(1)
+	const [totalPages, setTotalPages] = useState(0)
+	const REVIEWS_PER_PAGE = 5 // Adjust the number as needed
 
-const StyledRating = styled(Rating)(({ theme }) => ({
-	'& .MuiRating-iconFilled': {
-		color: theme.palette.warning.main,
-	},
-}))
+	useEffect(() => {
+		const fetchFeedback = async () => {
+			try {
+				const data = await UserService.HISTORY_FEEDBACK()
+				setReviews(data)
+				console.log(data)
+				// setFilteredReviews(data)
+			} catch (error) {
+				console.error('Error fetching feedback:', error)
+			}
+		}
+		fetchFeedback()
+	}, [])
 
-const ReviewItem = ({ rating }) => (
-	<Box sx={{ padding: 0 }}>
-		<StyledRating value={rating} readOnly />
-	</Box>
-)
+	useEffect(() => {
+		const startIndex = (page - 1) * REVIEWS_PER_PAGE
+		const endIndex = startIndex + REVIEWS_PER_PAGE
+		const paginatedReviews = filteredReviews.slice(startIndex, endIndex)
+		setTotalPages(Math.ceil(filteredReviews.length / REVIEWS_PER_PAGE))
+		setFilteredReviews(paginatedReviews)
+	}, [filteredReviews, page])
 
-const HistoryFeedback = () => {
-	const [reviewType, setReviewType] = React.useState('All reviews')
-	const [currentPage, setCurrentPage] = React.useState(1)
-	const reviewsPerPage = 7
+	// Handle rating filter change
+	const handleRatingChange = (event) => {
+		const value = event.target.value
+		setSelectedRating(value)
+		setPage(1) // Reset to page 1
+		applyFilters(value) // Apply filters
+	}
 
-	const handleReviewTypeChange = (event) => {
-		setReviewType(event.target.value)
-		setCurrentPage(1)
+	// Apply filters for reviews
+	const applyFilters = (rating) => {
+		let filteredReview = reviews
+		if (rating && rating !== 'All reviews') {
+			filteredReview = filteredReview.filter(
+				(review) => review.rating === parseInt(rating.charAt(0), 10)
+			)
+		}
+		setFilteredReviews(filteredReview)
 	}
 
 	const handlePageChange = (event, value) => {
-		setCurrentPage(value)
+		setPage(value)
+		window.scrollTo(0, 0)
 	}
 
-	const reviews = [
-		{
-			UserId: 1,
-			ProductId: 101,
-			product: 'Apple ',
-			message:
-				'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
-			rating: 5,
-		},
-		{
-			UserId: 2,
-			product: 'Apple ',
-			ProductId: 102,
-			product: 'Apple ',
-			message:
-				'Elegant look, exceptional keyboard, and well-matched accessories. Lightning-quick speed.',
-			rating: 4,
-		},
-		{
-			UserId: 3,
-			ProductId: 103,
-			product: 'Apple ',
-			message:
-				'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
-			rating: 3,
-		},
-		{
-			UserId: 4,
-			ProductId: 104,
-			product: 'Apple ',
-			message:
-				'The DualSense controller enhances gameplay with immersive feedback, making it a must-have.',
-			rating: 5,
-		},
-		{
-			UserId: 5,
-			ProductId: 105,
-			product: 'Apple ',
-			message:
-				'Elegant and refined, with well-chosen accessories. Quick response, durable battery.',
-			rating: 2,
-		},
-		{
-			UserId: 1,
-			ProductId: 101,
-			product: 'Apple ',
-			message:
-				'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
-			rating: 5,
-		},
-		{
-			UserId: 2,
-			product: 'Apple ',
-			ProductId: 102,
-			product: 'Apple ',
-			message:
-				'Elegant look, exceptional keyboard, and well-matched accessories. Lightning-quick speed.',
-			rating: 4,
-		},
-		{
-			UserId: 3,
-			ProductId: 103,
-			product: 'Apple ',
-			message:
-				'It’s fancy, amazing keyboard, matching accessories. Super fast, batteries last more than usual.',
-			rating: 3,
-		},
-		{
-			UserId: 4,
-			ProductId: 104,
-			product: 'Apple ',
-			message:
-				'The DualSense controller enhances gameplay with immersive feedback, making it a must-have.',
-			rating: 5,
-		},
-		{
-			UserId: 5,
-			ProductId: 105,
-			product: 'Apple ',
-			message:
-				'Elegant and refined, with well-chosen accessories. Quick response, durable battery.',
-			rating: 2,
-		},
-	]
-
-	const filteredReviews = reviews.filter((review) => {
-		if (reviewType === 'All reviews') return true
-		return review.rating === parseInt(reviewType.charAt(0))
-	})
-
-	const indexOfLastReview = currentPage * reviewsPerPage
-	const indexOfFirstReview = indexOfLastReview - reviewsPerPage
-	const currentReviews = filteredReviews.slice(indexOfFirstReview, indexOfLastReview)
-	const pageCount = Math.ceil(filteredReviews.length / reviewsPerPage)
-
 	return (
-		<Box
-			sx={{
-				padding: 4,
-				backgroundColor: '#ffffff',
-				width: '100%',
-				boxShadow: 3,
-				borderRadius: '8px',
-			}}
-		>
-			<Container maxWidth='lg'>
+		<Grid2 container p={'5%'} spacing={2}>
+			<Grid2 xs={12}>
 				<Stack
 					direction='row'
 					spacing={2}
@@ -184,95 +95,69 @@ const HistoryFeedback = () => {
 					<Typography variant='h4' fontFamily={'sans-serif'} textTransform={'uppercase'}>
 						Feedback
 					</Typography>
-					<Select value={reviewType} onChange={handleReviewTypeChange}>
-						<MenuItem value='All reviews'>All Reviews</MenuItem>
-						<MenuItem value='5 Stars'>5 Stars</MenuItem>
-						<MenuItem value='4 Stars'>4 Stars</MenuItem>
-						<MenuItem value='3 Stars'>3 Stars</MenuItem>
-						<MenuItem value='2 Stars'>2 Stars</MenuItem>
-						<MenuItem value='1 Stars'>1 Star</MenuItem>
-					</Select>
+					<FormControl>
+						<InputLabel>Filter by Rating</InputLabel>
+						<Select value={selectedRating} label='Filter by Rating' onChange={handleRatingChange}>
+							<MenuItem value='All reviews'>All Reviews</MenuItem>
+							<MenuItem value='5 Stars'>5 Stars</MenuItem>
+							<MenuItem value='4 Stars'>4 Stars</MenuItem>
+							<MenuItem value='3 Stars'>3 Stars</MenuItem>
+							<MenuItem value='2 Stars'>2 Stars</MenuItem>
+							<MenuItem value='1 Star'>1 Star</MenuItem>
+						</Select>
+					</FormControl>
 				</Stack>
-				<StyledDivider />
-				<Box>
-					<TableContainer>
-						<Table>
-							<TableHead>
-								<TableRow>
-									<TableCell
-										component={'th'}
-										sx={{
-											width: '20%',
-											textAlign: 'left',
-											fontSize: '1.25rem',
-											fontWeight: 'bold',
-										}}
-									>
-										Name
-									</TableCell>
-									<TableCell
-										component={'th'}
-										sx={{
-											width: '60%',
-											textAlign: 'left',
-											fontSize: '1.25rem',
-											fontWeight: 'bold',
-										}}
-									>
-										Message
-									</TableCell>
-									<TableCell
-										component={'th'}
-										sx={{
-											width: '15%',
-											textAlign: 'left',
-											fontSize: '1.25rem',
-											fontWeight: 'bold',
-										}}
-									>
-										Rating
-									</TableCell>
-									<TableCell component={'th'} sx={{ width: '5%' }} />
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{currentReviews.length > 0 ? (
-									currentReviews.map((review, index) => (
-										<TableRow key={index}>
-											<TableCell>{review.product}</TableCell>
-											<TableCell>{review.message}</TableCell>
-											<TableCell>
-												<ReviewItem rating={review.rating} />
-											</TableCell>
-											<TableCell>
-												<IconButton>
-													<LaunchIcon sx={{ color: 'black' }} />
-												</IconButton>
-											</TableCell>
-										</TableRow>
-									))
-								) : (
-									<TableRow>
-										<TableCell colSpan={4}>
-											<Typography variant='body2' color='text.secondary' align='center'>
-												No reviews found.
-											</Typography>
+				<Divider />
+			</Grid2>
+
+			<Grid2 xs={12}>
+				<TableContainer>
+					<Table>
+						<TableHead>
+							<TableRow>
+								<TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+								<TableCell sx={{ fontWeight: 'bold' }}>Message</TableCell>
+								<TableCell sx={{ fontWeight: 'bold' }}>Rating</TableCell>
+								<TableCell />
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{filteredReviews || filteredReviews.length > 0 ? (
+								filteredReviews.map((review, index) => (
+									<TableRow key={index}>
+										<TableCell>{review.product}</TableCell>
+										<TableCell>{review.message}</TableCell>
+										<TableCell>{review.rating}</TableCell>
+										<TableCell>
+											<IconButton>
+												<LaunchIcon />
+											</IconButton>
 										</TableCell>
 									</TableRow>
-								)}
-							</TableBody>
-						</Table>
-					</TableContainer>
+								))
+							) : (
+								<TableRow>
+									<TableCell colSpan={4}>
+										<Typography variant='body2' color='text.secondary' align='center'>
+											No reviews found for the selected filters.
+										</Typography>
+									</TableCell>
+								</TableRow>
+							)}
+						</TableBody>
+					</Table>
+				</TableContainer>
+
+				{/* Pagination control */}
+				<Box mt={4} display='flex' justifyContent='center'>
 					<Pagination
-						count={pageCount}
-						page={currentPage}
+						count={totalPages || 1}
+						page={page}
 						onChange={handlePageChange}
 						color='primary'
-						sx={{ marginTop: 2, display: 'flex', justifyContent: 'center' }}
 					/>
 				</Box>
-			</Container>
-		</Box>
+			</Grid2>
+		</Grid2>
 	)
 }
-export default HistoryFeedback
