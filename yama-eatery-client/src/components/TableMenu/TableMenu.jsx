@@ -56,7 +56,7 @@ export default function TableMenu({
 					</Select>
 				</FormControl>
 				<Button variant='outlined' color='primary' fullWidth onClick={handleShowAll}>
-					Reset Filters
+					Clear Filters
 				</Button>
 			</Stack>
 		</Paper>

@@ -13,6 +13,8 @@ import {
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TableService } from '@/services/TableService'
+import { AssetImages } from '@/utilities/AssetImages'
+
 
 export default function TableList() {
 	const [filteredTables, setFilteredTables] = useState([])
@@ -51,9 +53,10 @@ export default function TableList() {
 			default:
 				break
 		}
-
+	
 		setFilteredTables(filtered)
-	}, [filterOption, sortOption])
+	}, [filterOption, sortOption, tables])
+	
 
 	const indexOfLastTable = currentPage * tablesPerPage
 	const indexOfFirstTable = indexOfLastTable - tablesPerPage
@@ -64,7 +67,7 @@ export default function TableList() {
 	}
 
 	const handlePageChange = (event, value) => {
-		setCurrentPage(value)
+		setCurrentPage(value)	
 	}
 
 	const handleClick = (id) => {
@@ -119,12 +122,11 @@ export default function TableList() {
 											display: 'flex',
 											justifyContent: 'center',
 											height: 260,
-
 											backgroundColor: 'gray.100',
 										}}
 									>
 										<img
-											src={table.img[0]}
+											src={AssetImages.TableImage(table.image[0])}
 											alt={table.tableType}
 											style={{
 												objectFit: 'fill',
