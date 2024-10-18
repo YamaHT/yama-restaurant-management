@@ -17,11 +17,24 @@ import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 import { TableService } from '@/services/TableService'
 import { AssetImages } from '@/utilities/AssetImages'
+import DialogChoosingProduct from '@/components/DialogChoosingProduct/DialogChoosingProduct'
 
 export default function TableDetail() {
 	const { id } = useParams()
 
 	const [table, setTable] = useState()
+	const [open, setOpen] = useState(false)
+	const [formData, setFormData] = useState({
+		productId: [],
+		firstName: '',
+		lastName: '',
+		phone: '',
+		date: '',
+		dayPart: '',
+		note: '',
+	})
+	const slideRef = useRef(null)
+	const fieldsRef = useRef([])
 
 	useEffect(
 		() => {
@@ -34,26 +47,27 @@ export default function TableDetail() {
 			}
 			fetchProductDetail()
 		},
-		[id],
-		[table]
+		[id, table],
 	)
 
-	const [formData, setFormData] = useState({
-		firstName: '',
-		lastName: '',
-		phone: '',
-		date: '',
-		dayPart: '',
-		note: '',
-	})
-	const slideRef = useRef(null)
-	const fieldsRef = useRef([])
+	const handleClose = () => {
+		setOpen(false)
+	}
 
 	const handleFormChange = (e) => {
 		const { name, value } = e.target
 		setFormData((prev) => ({ ...prev, [name]: value }))
 	}
 
+	const handleAddBookingDetail = (newProductId) => {
+		console.log(newProductId)
+		setFormData((prevState) => ({
+			...prevState,
+			productId: [...prevState.productId, newProductId],
+		}))
+	}
+
+	
 	const handleSubmit = (e) => {
 		e.preventDefault()
 
@@ -137,6 +151,7 @@ export default function TableDetail() {
 									<img
 										style={{ width: '100%', aspectRatio: 2 / 1, objectFit: 'fill' }}
 										src={AssetImages.TableImage(slide)}
+										draggable={false}
 										alt={`Thumbnail ${index + 1}`}
 									/>
 								</Box>
@@ -173,6 +188,7 @@ export default function TableDetail() {
 				}}
 			>
 				<Typography variant='h6'>Booking Information</Typography>
+				
 				<IconButton
 					sx={{
 						width: 160,
@@ -183,9 +199,15 @@ export default function TableDetail() {
 						border: '1px dashed gray',
 						borderRadius: '10px',
 					}}
+					onClick={() => setOpen(true)}
 				>
 					<Add sx={{ fontSize: 50 }} />
 				</IconButton>
+				<DialogChoosingProduct
+					open={open}
+					handleClose={() => setOpen(false)}
+					handleAddProduct={handleAddBookingDetail}
+				/>
 				<Box width={'100%'}>
 					<Stack direction='row' spacing={2} my={2}>
 						<ValidationTextField
@@ -254,8 +276,8 @@ export default function TableDetail() {
 					/>
 					<Stack direction='row' justifyContent='space-between' my={1}>
 						<Box>
-							<Typography>Total Reserve: ${table.price || 1000}</Typography>
-							<Typography>Deposit: ${table.deposit || 100}</Typography>
+							<Typography>Total Reserve: 1000</Typography>
+							<Typography>Deposit: 100</Typography>
 						</Box>
 						<Box mt={1}>
 							<Button onClick={handleSubmit} fullWidth variant='contained' primary>
