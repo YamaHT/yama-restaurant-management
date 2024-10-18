@@ -13,7 +13,7 @@ import {
 import { UserService } from '@/services/UserService'
 
 const Membership = () => {
-	const progress = 50
+	const progress = 25
 	const [membershipStatus, setMembershipStatus] = useState('')
 	useEffect(() => {
 		const fectchMembershipStatus = async () => {
@@ -232,7 +232,7 @@ const Membership = () => {
 					style={{
 						background: '#d50000',
 						textTransform: 'capitalize',
-						marginTop: '10px',
+						marginTop: '20px',
 					}}
 					onClick={handleCancelMembership}
 				>

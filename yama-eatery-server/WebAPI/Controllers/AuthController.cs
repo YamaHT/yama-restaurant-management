@@ -35,22 +35,25 @@ namespace WebAPI.Controllers
                 throw new DataConflictException("Email existed");
             }
 
+            var membership = new Membership()
+            {
+                MembershipStatus = MembershipStatusEnum.Inactive.ToString(),
+                Rank = RankEnum.Member.ToString()
+            };
+
             var user = new User
             {
                 Email = userRegisterDTO.Email,
                 Password = userRegisterDTO.Password,
                 Name = $"{userRegisterDTO.LastName} {userRegisterDTO.FirstName}".Trim(),
                 Phone = userRegisterDTO.Phone,
-                Membership = new()
-                {
-                    MembershipStatus = MembershipStatusEnum.Inactive.ToString(),
-                    Rank = RankEnum.Member.ToString()
-                }
+                Membership = membership
             };
             user.TryValidate();
 
             user.Password = CryptoUtils.EncryptPassword(user.Password);
 
+            //await _unitOfWork.
             await _unitOfWork.UserRepository.AddAsync(user);
             await _unitOfWork.SaveChangeAsync();
             return Ok(new { success = "Register successfully" });
