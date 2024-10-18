@@ -20,10 +20,9 @@ import {
 	Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { UserService } from '@/services/UserService'
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom'
 
-const REVIEWS_PER_PAGE = 5 
+const REVIEWS_PER_PAGE = 5
 
 function HistoryFeedback() {
 	const [reviews, setReviews] = useState([])
@@ -31,9 +30,9 @@ function HistoryFeedback() {
 	const [selectedRating, setSelectedRating] = useState('All reviews')
 	const [page, setPage] = useState(1)
 	const [totalPages, setTotalPages] = useState(0)
-	const navigate = useNavigate() 
+	const navigate = useNavigate()
 	const handleIconClick = (productId) => {
-		navigate(`/product/detail/:${productId}`) 
+		navigate(`/product/detail/:${productId}`)
 	}
 
 	useEffect(() => {
@@ -42,16 +41,16 @@ function HistoryFeedback() {
 				const data = await UserService.HISTORY_FEEDBACK()
 				console.log(data)
 				setReviews(data)
-				applyFilters(selectedRating, data) 
+				applyFilters(selectedRating, data)
 			} catch (error) {
 				console.error('Error fetching feedback:', error)
 			}
 		}
 		fetchFeedback()
-	}, []) 
+	}, [])
 
 	useEffect(() => {
-		applyFilters(selectedRating, reviews) 
+		applyFilters(selectedRating, reviews)
 	}, [reviews, selectedRating])
 
 	useEffect(() => {
@@ -65,11 +64,11 @@ function HistoryFeedback() {
 	const handleRatingChange = (event) => {
 		const value = event.target.value
 		setSelectedRating(value)
-		setPage(1) 
+		setPage(1)
 	}
 
 	const applyFilters = (rating, reviewsToFilter) => {
-		let filteredReview = reviewsToFilter || reviews 
+		let filteredReview = reviewsToFilter || reviews
 		if (rating && rating !== 'All reviews') {
 			filteredReview = filteredReview.filter(
 				(review) => review.rating === parseInt(rating.charAt(0), 10)
@@ -84,11 +83,11 @@ function HistoryFeedback() {
 
 	const handlePageChange = (event, value) => {
 		setPage(value)
-		window.scrollTo(0, 0) 
+		window.scrollTo(0, 0)
 	}
 
 	return (
-		<Grid2 size ={{p:'5% 0' }}>
+		<Grid2 size={{ p: '5% 0' }}>
 			<Grid2 xs={12}>
 				<Stack
 					direction='row'
@@ -114,7 +113,7 @@ function HistoryFeedback() {
 				</Stack>
 				<Divider />
 			</Grid2>
-			<Grid2 size={{xs:12}}>
+			<Grid2 size={{ xs: 12 }}>
 				<TableContainer>
 					<Table>
 						<TableHead>
@@ -152,7 +151,7 @@ function HistoryFeedback() {
 					</Table>
 				</TableContainer>
 			</Grid2>
-			<Grid2 size={{xs:12}} >
+			<Grid2 size={{ xs: 12 }}>
 				<Box mt={4} display='flex' justifyContent='center'>
 					<Pagination
 						count={totalPages || 1}
