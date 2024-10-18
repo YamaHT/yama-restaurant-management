@@ -54,10 +54,6 @@ export default function TableDetail() {
 		fetchProductDetail()
 	}, [id])
 
-	const handleClose = () => {
-		setOpen(false)
-	}
-
 	const handleFormChange = (e) => {
 		const { name, value } = e.target
 		setFormData((prev) => ({ ...prev, [name]: value }))

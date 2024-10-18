@@ -37,13 +37,13 @@ export default function ProductDetail() {
 	const [feedbackProduct, setFeedbackProduct] = useState()
 	const [isEdittingFeedback, setIsEdittingFeedback] = useState(false)
 	const [haveUpdated, setHaveUpdated] = useState(false)
-
 	const [selectedImage, setSelectedImage] = useState('')
 	const [showAllReviews, setShowAllReviews] = useState(false)
 	const [userRating, setUserRating] = useState(0)
 	const [userReview, setUserReview] = useState('')
 	const [isBeginning, setIsBeginning] = useState(true)
 	const [isEnd, setIsEnd] = useState(false)
+
 	const prevRef = useRef(null)
 	const nextRef = useRef(null)
 	const swiperRef = useRef(null)

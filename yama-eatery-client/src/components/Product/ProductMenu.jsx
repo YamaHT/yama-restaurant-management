@@ -22,7 +22,6 @@ export default function ProductMenu({
 	setSelectedCategories,
 }) {
 	const [categories, setCategories] = useState([])
-
 	const [checkedCategories, setCheckedCategories] = useState({})
 
 	useEffect(() => {

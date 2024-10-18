@@ -9,7 +9,6 @@ export default function ProductSearch({ searchTerm, setSearchTerm }) {
         variant="outlined"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-
         size="small"
         InputProps={{
           endAdornment: (

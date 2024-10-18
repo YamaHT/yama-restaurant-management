@@ -1,11 +1,11 @@
 import ProductDrawer from '@/components/Product/ProductMenu'
 import ProductSearch from '@/components/Product/ProductSearch'
-import { Dining, StarBorderRounded, StarRounded } from '@mui/icons-material'
-import { Box, Chip, Divider, Grid2, Pagination, Rating, Stack, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { ProductService } from '@/services/ProductService'
 import { AssetImages } from '@/utilities/AssetImages'
+import { Dining, StarBorderRounded, StarRounded } from '@mui/icons-material'
+import { Box, Chip, Grid2, Pagination, Rating, Stack, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export function calculateAverageRating(reviews) {
 	if (!reviews || reviews.length === 0) return 0
@@ -14,6 +14,8 @@ export function calculateAverageRating(reviews) {
 }
 
 export default function ProductList() {
+	const navigate = useNavigate()
+	
 	const [products, setProducts] = useState([])
 	const [filteredProducts, setFilteredProducts] = useState([])
 	const [priceRange, setPriceRange] = useState([0, 1000])
@@ -23,7 +25,8 @@ export default function ProductList() {
 	const [hoverTimeout, setHoverTimeout] = useState(null)
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selectedCategories, setSelectedCategories] = useState({})
-	const navigate = useNavigate()
+
+	
 
 	const productsPerPage = 8
 	const indexOfLastProduct = currentPage * productsPerPage
@@ -92,7 +95,7 @@ export default function ProductList() {
 			default:
 				break
 		}
-setCurrentPage(1)
+		setCurrentPage(1)
 		setFilteredProducts(filtered)
 	}, [priceRange, selectedCategories, sortOption, searchTerm, products])
 

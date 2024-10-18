@@ -6,15 +6,18 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function TableList() {
+	const navigate = useNavigate()
+
 	const [filteredTables, setFilteredTables] = useState([])
 	const [filterOption, setFilterOption] = useState('')
 	const [sortOption, setSortOption] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
 	const [tablesPerPage] = useState(8)
-
 	const [tables, setTables] = useState([])
 
-	const navigate = useNavigate()
+	const indexOfLastTable = currentPage * tablesPerPage
+	const indexOfFirstTable = indexOfLastTable - tablesPerPage
+	const currentTables = filteredTables.slice(indexOfFirstTable, indexOfLastTable)
 
 	useEffect(() => {
 		async function fetchTables() {
@@ -46,9 +49,6 @@ export default function TableList() {
 		setFilteredTables(filtered)
 	}, [filterOption, sortOption, tables])
 
-	const indexOfLastTable = currentPage * tablesPerPage
-	const indexOfFirstTable = indexOfLastTable - tablesPerPage
-	const currentTables = filteredTables.slice(indexOfFirstTable, indexOfLastTable)
 	const handleShowAll = () => {
 		setFilterOption('')
 		setSortOption('')
