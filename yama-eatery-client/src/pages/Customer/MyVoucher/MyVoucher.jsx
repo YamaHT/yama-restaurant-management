@@ -16,17 +16,17 @@ import {
 	Tab,
 } from '@mui/material'
 import { UserService } from '@/services/UserService'
-
+import { AssetImages } from '@/utilities/AssetImages'
 const VOUCHERS_PER_PAGE = 4
 
 function MyVoucher() {
 	const [voucherData, setVoucherData] = useState([])
-	const [filteredVoucherData, setFilteredVoucherData] = useState([]) 
-	const [filterValue, setFilterValue] = useState('') 
-	const [selectedDiscount, setSelectedDiscount] = useState('') 
+	const [filteredVoucherData, setFilteredVoucherData] = useState([])
+	const [filterValue, setFilterValue] = useState('')
+	const [selectedDiscount, setSelectedDiscount] = useState('')
 	const [page, setPage] = useState(1)
-	const [searchTerm, setSearchTerm] = useState('') 
-	const [tabValue, setTabValue] = useState(0) 
+	const [searchTerm, setSearchTerm] = useState('')
+	const [tabValue, setTabValue] = useState(0)
 	const today = new Date()
 
 	useEffect(() => {
@@ -37,7 +37,7 @@ function MyVoucher() {
 				setVoucherData(data)
 				setFilteredVoucherData(data)
 			} catch (error) {
-				console.error('Lỗi khi lấy dữ liệu voucher: ', error)
+				console.error('Error fetching vouchers ', error)
 			}
 		}
 		fetchVoucherData()
@@ -47,7 +47,7 @@ function MyVoucher() {
 		setTabValue(newValue)
 		if (newValue === 0) {
 			setFilterValue('')
-			setSearchTerm('') 
+			setSearchTerm('')
 		}
 	}
 
@@ -58,17 +58,13 @@ function MyVoucher() {
 			const passesTabFilter =
 				tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
 
-			const voucherName = voucher.voucher.name ? voucher.voucher.name.toLowerCase() : '' 
+			const voucherName = voucher.voucher.name ? voucher.voucher.name.toLowerCase() : ''
 
 			const isDiscountValid = selectedDiscount
 				? voucher.voucher.reducedPercent >= parseInt(selectedDiscount)
 				: true
 
-			return (
-				isDiscountValid && 
-				voucherName.includes(searchTerm.toLowerCase()) && 
-				passesTabFilter 
-			)
+			return isDiscountValid && voucherName.includes(searchTerm.toLowerCase()) && passesTabFilter
 		})
 		setFilteredVoucherData(filtered)
 	}
@@ -76,7 +72,7 @@ function MyVoucher() {
 	useEffect(() => {
 		applyFilters()
 		setPage(1)
-	}, [filterValue, searchTerm, selectedDiscount, tabValue]) 
+	}, [filterValue, searchTerm, selectedDiscount, tabValue])
 
 	const totalPages = Math.ceil(filteredVoucherData.length / VOUCHERS_PER_PAGE)
 	const displayedVoucherData = filteredVoucherData.slice(
@@ -112,7 +108,7 @@ function MyVoucher() {
 							label='Filter by Discount (%)'
 							onChange={(e) => setSelectedDiscount(e.target.value)}
 						>
-							<MenuItem value=''>All</MenuItem> 
+							<MenuItem value=''>All</MenuItem>
 							{[10, 20, 30, 40, 50].map((percent) => (
 								<MenuItem key={percent} value={percent}>
 									{percent}%
@@ -125,7 +121,7 @@ function MyVoucher() {
 			<Grid2 container spacing={2} mt={4}>
 				{displayedVoucherData.length > 0 ? (
 					displayedVoucherData.map((voucher) => (
-						<Grid2 item size={{ xs: 12, sm: 6 }} justifyContent={'center'} key={voucher.id}>
+						<Grid2 size={{ xs: 12, sm: 6 }} justifyContent={'center'} key={voucher.id}>
 							<Paper
 								elevation={3}
 								sx={{
@@ -136,16 +132,7 @@ function MyVoucher() {
 									borderRadius: '8px',
 								}}
 							>
-								<Box
-									sx={{
-										color: 'black',
-										p: 3,
-										width: '30%',
-										display: 'flex',
-										flexDirection: 'column',
-										justifyContent: 'center',
-									}}
-								/>
+								<img src={AssetImages.VoucherImage(voucher.voucher.image)} alt='' width={'30%'}/>
 								<Stack
 									width={'70%'}
 									justifyContent={'center'}

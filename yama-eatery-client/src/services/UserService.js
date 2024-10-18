@@ -54,7 +54,7 @@ export const UserService = {
 	},
 	CANCEL_BOOKING: async (id) => {
 		return await axiosConfig
-			.get(ApiRequest.UserRequest.CANCEL_BOOKING, id)
+			.post(ApiRequest.UserRequest.CANCEL_BOOKING, id)
 			.then((response) => response.data)
 	},
 	GET_PROFILE: async () => {

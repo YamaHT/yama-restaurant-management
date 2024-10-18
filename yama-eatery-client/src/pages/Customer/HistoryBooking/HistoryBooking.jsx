@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Divider, Paper, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import axios from 'axios' 
-import { UserService } from '@/services/UserService' 
+import { UserService } from '@/services/UserService'
+
 const formatDate = (dateStr) => {
 	const date = new Date(dateStr)
 	return date.toLocaleDateString('en-GB')
@@ -9,18 +9,17 @@ const formatDate = (dateStr) => {
 
 const HistoryBooking = () => {
 	const [bookingList, setBookingList] = useState([])
-
 	useEffect(() => {
 		const fetchBookings = async () => {
 			try {
-				const data = await UserService.HISTORY_BOOKING() 
+				const data = await UserService.HISTORY_BOOKING()
+				setBookingList(data)
 			} catch (error) {
 				console.error('Error fetching bookings:', error)
 			}
 		}
 		fetchBookings()
-	}, []) 
-
+	}, [])
 	return (
 		<Box>
 			{bookingList.map((booking) => (
@@ -79,9 +78,6 @@ const HistoryBooking = () => {
 										Floor: {booking.table.floor}
 									</Typography>
 								</Box>
-								{/* <Typography variant='h6' textAlign={'right'} fontWeight={'bold'}>
-									Total Dishes: {booking.totalAmount}
-								</Typography> */}
 							</Box>
 							<Box
 								display={'flex'}

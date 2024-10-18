@@ -87,8 +87,7 @@ function HistoryFeedback() {
 	}
 
 	return (
-		<Grid2 p={'5% 0'} spacing={2}>
-
+		<Grid2 size ={{p:'5% 0' }}>
 			<Grid2 xs={12}>
 				<Stack
 					direction='row'
@@ -114,7 +113,7 @@ function HistoryFeedback() {
 				</Stack>
 				<Divider />
 			</Grid2>
-			<Grid2 xs={12}>
+			<Grid2 size={{xs:12}}>
 				<TableContainer>
 					<Table>
 						<TableHead>
@@ -152,9 +151,7 @@ function HistoryFeedback() {
 					</Table>
 				</TableContainer>
 			</Grid2>
-
-			{/* Section 3: Pagination */}
-			<Grid2 xs={12}>
+			<Grid2 size={{xs:12}} >
 				<Box mt={4} display='flex' justifyContent='center'>
 					<Pagination
 						count={totalPages || 1}

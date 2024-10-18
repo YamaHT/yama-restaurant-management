@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Box, Paper, Typography, Button, Pagination, Grid2, Stack, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { VoucherService } from '@/services/VoucherService' 
-import { VoucherRequest } from '@/requests/VoucherRequest'
+import { AssetImages } from '@/utilities/AssetImages'
 
 const VOUCHERS_PER_PAGE = 4
 
@@ -72,7 +72,7 @@ function VoucherList() {
 		<Grid2 container justifyContent='center'>
 			<Box width={'100%'} p={'2% 5%'}>
 				<Box display='flex' justifyContent='center' mb={3} gap={2}>
-					<Grid2 xs={12} md={6} display='flex' justifyContent='center'>
+					<Grid2 size={{xs:12, md:6}}  display='flex' justifyContent='center'>
 						<TextField
 							label='Search by Name'
 							variant='outlined'
@@ -100,7 +100,6 @@ function VoucherList() {
 						</FormControl>
 					</Grid2>
 				</Box>
-
 				<Grid2 container spacing={2} mt={4} justifyContent='center'>
 					{displayedVouchers.length > 0 ? (
 						displayedVouchers.map((voucher) => (
@@ -115,20 +114,7 @@ function VoucherList() {
 										borderRadius: '8px',
 									}}
 								>
-									<Box
-										sx={{
-											color: 'black',
-											p: 3,
-											width: '30%',
-											display: 'flex',
-											flexDirection: 'column',
-											justifyContent: 'center',
-											backgroundPosition: 'center',
-											backgroundSize: 'cover',
-											backgroundRepeat: 'no-repeat',
-										}}
-										style={{ backgroundImage: `url(${voucher.image})` }}
-									/>
+									<img src={AssetImages.VoucherImage(voucher.image)} alt="" />
 									<Stack
 										width={'70%'}
 										justifyContent={'center'}
