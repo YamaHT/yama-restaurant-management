@@ -39,7 +39,7 @@ export const UserService = {
 	},
 	MY_VOUCHER: async () => {
 		return await axiosConfig
-			.post(ApiRequest.UserRequest.MY_VOUCHERS)
+			.get(ApiRequest.UserRequest.MY_VOUCHERS)
 			.then((response) => response.data)
 	},
 	HISTORY_FEEDBACK: async () => {
@@ -49,12 +49,12 @@ export const UserService = {
 	},
 	HISTORY_BOOKING: async () => {
 		return await axiosConfig
-			.post(ApiRequest.UserRequest.HISTORY_BOOKING)
+			.get(ApiRequest.UserRequest.HISTORY_BOOKING)
 			.then((response) => response.data)
 	},
 	CANCEL_BOOKING: async (id) => {
 		return await axiosConfig
-			.post(ApiRequest.UserRequest.CANCEL_BOOKING, id)
+			.get(ApiRequest.UserRequest.CANCEL_BOOKING, id)
 			.then((response) => response.data)
 	},
 	GET_PROFILE: async () => {
