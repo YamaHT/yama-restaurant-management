@@ -1,7 +1,7 @@
 import { Search } from '@mui/icons-material'
 import { Autocomplete, InputAdornment, TextField } from '@mui/material'
 
-const CrudSearchBar = ({ listItem, widthPercent, value, handleChange }) => {
+const CrudSearchBar = ({ listItem, widthPercent, value, handleChange, placeholder }) => {
 	return (
 		<Autocomplete
 			size='small'
@@ -24,7 +24,7 @@ const CrudSearchBar = ({ listItem, widthPercent, value, handleChange }) => {
 								),
 							},
 						}}
-						placeholder='Search...'
+						placeholder={placeholder || 'Search...'}
 					/>
 				</>
 			)}

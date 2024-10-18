@@ -10,7 +10,9 @@ namespace WebAPI.Repositories
     {
         public async Task<List<Product>> GetRandom10ProductsByCategoryName(string categoryName)
         {
-            return await _dbContext.Product.Include(x => x.SubCategory).ThenInclude(x => x.Category)
+            return await _dbContext.Product
+                .Include(x => x.SubCategory).ThenInclude(x => x.Category)
+                .Include(x => x.Feedbacks)
                 .Where(x => x.SubCategory.Category.Name.Equals(categoryName))
                 .OrderBy(x => Guid.NewGuid())
                 .Take(10)

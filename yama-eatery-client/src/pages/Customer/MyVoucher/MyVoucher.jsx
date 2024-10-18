@@ -16,70 +16,73 @@ import {
 	Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-
+import { UserService } from '@/services/UserService'
+import { AssetImages } from '@/utilities/AssetImages'
 const VOUCHERS_PER_PAGE = 4
 
 function MyVoucher() {
-	const [vouchers, setVouchers] = useState([]) // Voucher data from API
-	const [filteredVouchers, setFilteredVouchers] = useState([])
-	const [filter, setFilter] = useState('')
+	const [voucherData, setVoucherData] = useState([])
+	const [filteredVoucherData, setFilteredVoucherData] = useState([])
+	const [filterValue, setFilterValue] = useState('')
+	const [selectedDiscount, setSelectedDiscount] = useState('')
 	const [page, setPage] = useState(1)
-	const [dateFilter, setDateFilter] = useState('')
 	const [searchTerm, setSearchTerm] = useState('')
 	const [tabValue, setTabValue] = useState(0)
-
 	const today = new Date()
 
 	useEffect(() => {
-		const fetchVouchers = async () => {
+		const fetchVoucherData = async () => {
 			try {
 				const data = await UserRequest.MY_VOUCHERS()
 				setVouchers(data)
 				setFilteredVouchers(data)
 			} catch (error) {
-				console.error('Error fetching vouchers: ', error)
+				console.error('Error fetching vouchers ', error)
 			}
 		}
-		fetchVouchers()
+		fetchVoucherData()
 	}, [])
-
-	const filteredDate = dateFilter ? new Date(dateFilter) : null
 
 	const handleTabChange = (event, newValue) => {
 		setTabValue(newValue)
+		if (newValue === 0) {
+			setFilterValue('')
+			setSearchTerm('')
+		}
 	}
 
 	const applyFilters = () => {
-		const filtered = vouchers.filter((voucher) => {
+		const filtered = voucherData.filter((voucher) => {
 			const voucherDate = new Date(voucher.expiredDate)
 			const isExpired = voucherDate < today
 			const passesTabFilter =
 				tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
 
-			return (
-				voucher.reducedPercent >= (filter ? parseInt(filter) : 0) &&
-				(!filteredDate || voucherDate <= filteredDate) &&
-				voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-				passesTabFilter
-			)
+			const voucherName = voucher.voucher.name ? voucher.voucher.name.toLowerCase() : ''
+
+			const isDiscountValid = selectedDiscount
+				? voucher.voucher.reducedPercent >= parseInt(selectedDiscount)
+				: true
+
+			return isDiscountValid && voucherName.includes(searchTerm.toLowerCase()) && passesTabFilter
 		})
-		setFilteredVouchers(filtered)
+		setFilteredVoucherData(filtered)
 	}
 
 	useEffect(() => {
 		applyFilters()
-		setPage(1) // Reset to page 1 when filters change
-	}, [filter, searchTerm, dateFilter, tabValue])
+		setPage(1)
+	}, [filterValue, searchTerm, selectedDiscount, tabValue])
 
-	const totalPages = Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE)
-	const displayedVouchers = filteredVouchers.slice(
+	const totalPages = Math.ceil(filteredVoucherData.length / VOUCHERS_PER_PAGE)
+	const displayedVoucherData = filteredVoucherData.slice(
 		(page - 1) * VOUCHERS_PER_PAGE,
 		page * VOUCHERS_PER_PAGE
 	)
 
 	const handlePageChange = (event, value) => {
 		setPage(value)
-		window.scrollTo(0, 0) // Scroll to top when changing page
+		window.scrollTo(0, 0)
 	}
 
 	return (
@@ -101,10 +104,11 @@ function MyVoucher() {
 					<FormControl fullWidth>
 						<InputLabel>Filter by Discount (%)</InputLabel>
 						<Select
-							value={filter}
+							value={selectedDiscount}
 							label='Filter by Discount (%)'
-							onChange={(e) => setFilter(e.target.value)}
+							onChange={(e) => setSelectedDiscount(e.target.value)}
 						>
+							<MenuItem value=''>All</MenuItem>
 							{[10, 20, 30, 40, 50].map((percent) => (
 								<MenuItem key={percent} value={percent}>
 									{percent}%
@@ -113,21 +117,11 @@ function MyVoucher() {
 						</Select>
 					</FormControl>
 				</Grid2>
-				<Grid2 size={{ xs: 12, md: 3 }}>
-					<TextField
-						label='Use By (Before)'
-						type='date'
-						value={dateFilter}
-						onChange={(e) => setDateFilter(e.target.value)}
-						fullWidth
-						InputLabelProps={{ shrink: true }}
-					/>
-				</Grid2>
 			</Grid2>
 			<Grid2 container spacing={2} mt={4}>
-				{displayedVouchers.length > 0 ? (
-					displayedVouchers.map((voucher) => (
-						<Grid2 item size={{ xs: 12, sm: 6 }} justifyContent={'center'} key={voucher.id}>
+				{displayedVoucherData.length > 0 ? (
+					displayedVoucherData.map((voucher) => (
+						<Grid2 size={{ xs: 12, sm: 6 }} justifyContent={'center'} key={voucher.id}>
 							<Paper
 								elevation={3}
 								sx={{
@@ -138,20 +132,7 @@ function MyVoucher() {
 									borderRadius: '8px',
 								}}
 							>
-								<Box
-									sx={{
-										color: 'black',
-										p: 3,
-										width: '30%',
-										display: 'flex',
-										flexDirection: 'column',
-										justifyContent: 'center',
-										backgroundImage: `url(${voucher.image})`,
-										backgroundPosition: 'center',
-										backgroundSize: 'cover',
-										backgroundRepeat: 'no-repeat',
-									}}
-								/>
+								<img src={AssetImages.VoucherImage(voucher.voucher.image)} alt='' width={'30%'}/>
 								<Stack
 									width={'70%'}
 									justifyContent={'center'}
@@ -163,11 +144,11 @@ function MyVoucher() {
 									}}
 								>
 									<Typography variant='h5' fontWeight='bold'>
-										{voucher.name}
+										{voucher.voucher.name}
 									</Typography>
 									<Stack direction='row' justifyContent='space-between'>
-										<Typography variant='h6'>{voucher.reducedPercent}% OFF</Typography>
-										<Typography variant='h6'>Max Reduce: {voucher.maxReducing}$</Typography>
+										<Typography variant='h6'>{voucher.voucher.reducedPercent}% OFF</Typography>
+										<Typography variant='h6'>Max Reduce: {voucher.voucher.maxReducing}$</Typography>
 									</Stack>
 									<Typography
 										variant='body1'
@@ -181,17 +162,19 @@ function MyVoucher() {
 											width: '100%',
 										}}
 									>
-										{voucher.description}
+										{voucher.voucher.description}
 									</Typography>
 									<Stack direction='row' justifyContent='space-between'>
 										<Typography variant='subtitle2' fontWeight='bold'>
-											Expired Date: {voucher.expiredDate}
+											Expired Date: {voucher.voucher.expiredDate}
 										</Typography>
-										<Typography variant='subtitle2'>Remaining: {voucher.quantity}</Typography>
+										<Typography variant='subtitle2'>
+											Remaining: {voucher.voucher.quantity}
+										</Typography>
 									</Stack>
 									<Chip
-										label={new Date(voucher.expiredDate) < today ? 'Expired' : 'Valid'}
-										color={new Date(voucher.expiredDate) < today ? 'secondary' : 'primary'}
+										label={new Date(voucher.voucher.expiredDate) < today ? 'Expired' : 'Valid'}
+										color={new Date(voucher.voucher.expiredDate) < today ? 'secondary' : 'primary'}
 										sx={{ mt: 1 }}
 									/>
 								</Stack>

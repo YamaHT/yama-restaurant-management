@@ -1,28 +1,16 @@
-import { VoucherService } from '@/services/VoucherService' // Import vouchers service
-import {
-	Box,
-	Button,
-	FormControl,
-	Grid2,
-	InputLabel,
-	MenuItem,
-	Pagination,
-	Paper,
-	Select,
-	Stack,
-	TextField,
-	Typography,
-} from '@mui/material'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Box, Paper, Typography, Button, Pagination, Grid2, Stack, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { VoucherService } from '@/services/VoucherService' 
+import { AssetImages } from '@/utilities/AssetImages'
 
 const VOUCHERS_PER_PAGE = 4
 
 function VoucherList() {
 	const [vouchers, setVouchers] = useState([])
-	const [filteredVouchers, setFilteredVouchers] = useState([]) // State to store filtered vouchers
-	const [filterValue, setFilterValue] = useState('') // State for the search input
-	const [selectedDiscount, setSelectedDiscount] = useState('') // State for the selected discount
+	const [filteredVouchers, setFilteredVouchers] = useState([]) 
+	const [filterValue, setFilterValue] = useState('') 
+	const [selectedDiscount, setSelectedDiscount] = useState('') 
 	const [page, setPage] = useState(1)
 	const [totalPages, setTotalPages] = useState(0)
 	const [displayedVouchers, setDisplayedVouchers] = useState([])
@@ -43,7 +31,7 @@ function VoucherList() {
 	}, [])
 	useEffect(() => {
 		const startIndex = (page - 1) * VOUCHERS_PER_PAGE
-		const endIndex = startIndex + VOUCHERS_PER_PAGE // Ensure endIndex is calculated correctly
+		const endIndex = startIndex + VOUCHERS_PER_PAGE 
 
 		setTotalPages(
 			filteredVouchers.length > 0 ? Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE) : 1
@@ -54,53 +42,47 @@ function VoucherList() {
 	const handleSearchChange = (e) => {
 		const value = e.target.value
 		setFilterValue(value)
-		applyFilters(value, selectedDiscount) // Apply filters whenever search input changes
-		setPage(1) // Reset page to 1 when searching
+		applyFilters(value, selectedDiscount) 
+		setPage(1)
 	}
 
 	const handleDiscountChange = (e) => {
 		const value = e.target.value
 		setSelectedDiscount(value)
-		applyFilters(filterValue, value) // Apply filters whenever discount selection changes
-		setPage(1) // Reset page to 1 when filtering
+		applyFilters(filterValue, value) 
+		setPage(1) 
 	}
 
 	const applyFilters = (nameSearch, discount) => {
 		let filtered = vouchers
-
-		// Filter by discount percentage if selected (>= condition)
 		if (discount) {
 			const numericDiscount = parseInt(discount, 10)
 			filtered = filtered.filter((voucher) => voucher.reducedPercent >= numericDiscount)
 		}
-
-		// Filter by name search
 		if (nameSearch) {
 			filtered = filtered.filter((voucher) =>
 				voucher.name.toLowerCase().includes(nameSearch.toLowerCase())
 			)
 		}
-
 		setFilteredVouchers(filtered)
 	}
 
 	const handlePageChange = (event, value) => {
-		setPage(value) // Update current page
-		window.scrollTo(0, 0) // Scroll to the top when changing page
+		setPage(value) 
+		window.scrollTo(0, 0) 
 	}
 
 	return (
 		<Grid2 container justifyContent='center'>
 			<Box width={'100%'} p={'2% 5%'}>
-				{/* Search and Filter Inputs */}
 				<Box display='flex' justifyContent='center' mb={3} gap={2}>
-					<Grid2 xs={12} md={6} display='flex' justifyContent='center'>
+					<Grid2 size={{xs:12, md:6}}  display='flex' justifyContent='center'>
 						<TextField
 							label='Search by Name'
 							variant='outlined'
 							value={filterValue}
 							onChange={handleSearchChange}
-							fullWidth // Chiếm toàn bộ chiều rộng
+							fullWidth 
 						/>
 					</Grid2>
 					<Grid2 xs={12} md={6} display='flex' justifyContent='center'>
@@ -111,7 +93,7 @@ function VoucherList() {
 								value={selectedDiscount}
 								onChange={handleDiscountChange}
 								label='Filter by Discount (%)'
-								sx={{ minWidth: 250 }} // Điều chỉnh chiều rộng tối thiểu nếu cần
+								sx={{ minWidth: 250 }} 
 							>
 								{[10, 20, 30, 40, 50].map((percent) => (
 									<MenuItem key={percent} value={percent}>
@@ -122,7 +104,6 @@ function VoucherList() {
 						</FormControl>
 					</Grid2>
 				</Box>
-
 				<Grid2 container spacing={2} mt={4} justifyContent='center'>
 					{displayedVouchers.length > 0 ? (
 						displayedVouchers.map((voucher) => (
@@ -137,20 +118,7 @@ function VoucherList() {
 										borderRadius: '8px',
 									}}
 								>
-									<Box
-										sx={{
-											color: 'black',
-											p: 3,
-											width: '30%',
-											display: 'flex',
-											flexDirection: 'column',
-											justifyContent: 'center',
-											backgroundPosition: 'center',
-											backgroundSize: 'cover',
-											backgroundRepeat: 'no-repeat',
-										}}
-										style={{ backgroundImage: `url(${voucher.image})` }}
-									/>
+									<img src={AssetImages.VoucherImage(voucher.image)} alt="" />
 									<Stack
 										width={'70%'}
 										justifyContent={'center'}

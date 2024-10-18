@@ -209,16 +209,16 @@ export default function ProductDetail() {
 							alignItems: 'center',
 							justifyContent: 'center',
 							background: 'linear-gradient(to top right, #F8C794, #FFE0B5, #FFF2D7)',
-							p: 4,
+							p: 2,
 						}}
 					>
 						<CardMedia
 							component='img'
 							src={selectedImage}
 							alt={product.name}
-							sx={{ height: 500, objectFit: 'cover', borderRadius: 1, mb: 4 }}
+							sx={{ height: 500, objectFit: 'cover', borderRadius: 1, mb: 1 }}
 						/>
-						<Divider sx={{ width: '100%', my: 4 }} />
+						<Divider sx={{ width: '100%', mb: 1 }} />
 						<Grid2 container spacing={2} justifyContent='center'>
 							{product.image?.map((img, index) => (
 								<Grid2 item key={index}>
@@ -234,7 +234,7 @@ export default function ProductDetail() {
 						</Grid2>
 					</Card>
 				</Grid2>
-				<Grid2 size={{ xs: 12, lg: 5 }} sx={{ maxHeight: 800, overflow: 'auto' }}>
+				<Grid2 size={{ xs: 12, lg: 5 }} sx={{ maxHeight: 600, overflow: 'auto' }}>
 					<Typography variant='h4' fontWeight='bold' color='textPrimary'>
 						{product.name}
 					</Typography>
@@ -464,13 +464,18 @@ export default function ProductDetail() {
 												<Typography variant='subtitle1' fontWeight='bold'>
 													{recommendedProduct.name}
 												</Typography>
-												<Typography variant='body2' color='textSecondary'>
+												<Typography mb={1} variant='body2' color='textSecondary'>
 													${recommendedProduct.price}
 												</Typography>
+
+												<Stack direction='row' spacing={1} my={2}>
+													<Chip label={recommendedProduct.subCategory.category.name} variant='outlined' />
+													<Chip label={recommendedProduct.subCategory.name} variant='outlined' />
+												</Stack>
 											</Box>
 											<Box sx={{ p: 2 }}>
 												<Rating
-													value={calculateAverageRating(recommendedProduct.reviews)}
+													value={calculateAverageRating(recommendedProduct.feedbacks)}
 													precision={0.1}
 													readOnly
 													size='small'

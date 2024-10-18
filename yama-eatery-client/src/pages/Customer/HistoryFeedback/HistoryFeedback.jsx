@@ -20,35 +20,39 @@ import {
 	Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
+import { UserService } from '@/services/UserService'
+import { useNavigate } from 'react-router-dom'; 
 
-const REVIEWS_PER_PAGE = 7 // For pagination logic
-export function calculateAverageRating(reviews) {
-	if (!reviews || reviews.length === 0) return 0
-	const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
-	return totalRating / reviews.length
-}
+const REVIEWS_PER_PAGE = 5 
 
-export default function ReviewList() {
+function HistoryFeedback() {
 	const [reviews, setReviews] = useState([])
 	const [filteredReviews, setFilteredReviews] = useState([])
 	const [selectedRating, setSelectedRating] = useState('All reviews')
 	const [page, setPage] = useState(1)
 	const [totalPages, setTotalPages] = useState(0)
-	const REVIEWS_PER_PAGE = 5 // Adjust the number as needed
+	const navigate = useNavigate() 
+	const handleIconClick = (productId) => {
+		navigate(`/product/detail/:${productId}`) 
+	}
 
 	useEffect(() => {
 		const fetchFeedback = async () => {
 			try {
 				const data = await UserService.HISTORY_FEEDBACK()
-				setReviews(data)
 				console.log(data)
-				// setFilteredReviews(data)
+				setReviews(data)
+				applyFilters(selectedRating, data) 
 			} catch (error) {
 				console.error('Error fetching feedback:', error)
 			}
 		}
 		fetchFeedback()
-	}, [])
+	}, []) 
+
+	useEffect(() => {
+		applyFilters(selectedRating, reviews) 
+	}, [reviews, selectedRating])
 
 	useEffect(() => {
 		const startIndex = (page - 1) * REVIEWS_PER_PAGE
@@ -58,32 +62,33 @@ export default function ReviewList() {
 		setFilteredReviews(paginatedReviews)
 	}, [filteredReviews, page])
 
-	// Handle rating filter change
 	const handleRatingChange = (event) => {
 		const value = event.target.value
 		setSelectedRating(value)
-		setPage(1) // Reset to page 1
-		applyFilters(value) // Apply filters
+		setPage(1) 
 	}
 
-	// Apply filters for reviews
-	const applyFilters = (rating) => {
-		let filteredReview = reviews
+	const applyFilters = (rating, reviewsToFilter) => {
+		let filteredReview = reviewsToFilter || reviews 
 		if (rating && rating !== 'All reviews') {
 			filteredReview = filteredReview.filter(
 				(review) => review.rating === parseInt(rating.charAt(0), 10)
 			)
 		}
-		setFilteredReviews(filteredReview)
+		const startIndex = (page - 1) * REVIEWS_PER_PAGE
+		const endIndex = startIndex + REVIEWS_PER_PAGE
+		const paginatedReviews = filteredReview.slice(startIndex, endIndex)
+		setFilteredReviews(paginatedReviews)
+		setTotalPages(Math.ceil(filteredReview.length / REVIEWS_PER_PAGE))
 	}
 
 	const handlePageChange = (event, value) => {
 		setPage(value)
-		window.scrollTo(0, 0)
+		window.scrollTo(0, 0) 
 	}
 
 	return (
-		<Grid2 container p={'5% 0'} spacing={2}>
+		<Grid2 size ={{p:'5% 0' }}>
 			<Grid2 xs={12}>
 				<Stack
 					direction='row'
@@ -109,8 +114,7 @@ export default function ReviewList() {
 				</Stack>
 				<Divider />
 			</Grid2>
-
-			<Grid2 xs={12}>
+			<Grid2 size={{xs:12}}>
 				<TableContainer>
 					<Table>
 						<TableHead>
@@ -122,14 +126,14 @@ export default function ReviewList() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{filteredReviews || filteredReviews.length > 0 ? (
+							{filteredReviews.length > 0 ? (
 								filteredReviews.map((review, index) => (
 									<TableRow key={index}>
-										<TableCell>{review.product}</TableCell>
+										<TableCell>{review.product.name}</TableCell>
 										<TableCell>{review.message}</TableCell>
 										<TableCell>{review.rating}</TableCell>
 										<TableCell>
-											<IconButton>
+											<IconButton onClick={() => handleIconClick(review.product.id)}>
 												<LaunchIcon />
 											</IconButton>
 										</TableCell>
@@ -147,8 +151,8 @@ export default function ReviewList() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-
-				{/* Pagination control */}
+			</Grid2>
+			<Grid2 size={{xs:12}} >
 				<Box mt={4} display='flex' justifyContent='center'>
 					<Pagination
 						count={totalPages || 1}
@@ -161,3 +165,5 @@ export default function ReviewList() {
 		</Grid2>
 	)
 }
+
+export default HistoryFeedback
