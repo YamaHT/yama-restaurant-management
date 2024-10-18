@@ -11,11 +11,7 @@ import ProductDetail from '@/pages/Guest/ProductDetail/ProductDetail'
 import ProductList from '@/pages/Guest/ProductList/ProductList'
 import TableDetail from '@/pages/Guest/TableDetail/TableDetail'
 import TableList from '@/pages/Guest/TableList/TableList'
-import ContactManagement from '@/pages/Manager/ContactManagement/ContactManagement'
-import ProductManagement from '@/pages/Manager/ProductManagement/ProductManagement'
-import TableManagement from '@/pages/Manager/TableManagement/TableManagemen'
-import UserManagement from '@/pages/Manager/UserManagement/UserManagement'
-import VoucherManagement from '@/pages/Manager/VoucherManagement/VoucherManagement'
+import DashboardManger from '@/pages/Manager/DashboardManger'
 
 const publicRoutes = [
 	{ path: '/', component: Home },
@@ -33,11 +29,7 @@ const publicRoutes = [
 	{ path: '/auth/login', component: Login, layout: null },
 	{ path: '/auth/register', component: Register, layout: null },
 
-	{ path: '/manager/product', component: ProductManagement },
-	{ path: '/manager/table', component: TableManagement },
-	{ path: '/manager/contact', component: ContactManagement },
-	{ path: '/manager/user', component: UserManagement },
-	{ path: '/manager/voucher', component: VoucherManagement },
+	{ path: '/manager', component: DashboardManger, layout: null },
 ]
 
 export { publicRoutes }

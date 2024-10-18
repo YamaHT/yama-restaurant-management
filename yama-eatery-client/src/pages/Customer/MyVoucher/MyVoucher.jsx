@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import { UserRequest } from '@/requests/UserRequest'
 import {
 	Box,
-	Paper,
-	Typography,
-	Select,
-	MenuItem,
-	FormControl,
-	InputLabel,
-	Pagination,
-	TextField,
-	Grid2,
-	Stack,
 	Chip,
-	Tabs,
+	FormControl,
+	Grid2,
+	InputLabel,
+	MenuItem,
+	Pagination,
+	Paper,
+	Select,
+	Stack,
 	Tab,
+	Tabs,
+	TextField,
+	Typography,
 } from '@mui/material'
+import { useEffect, useState } from 'react'
 import { UserService } from '@/services/UserService'
 import { AssetImages } from '@/utilities/AssetImages'
 const VOUCHERS_PER_PAGE = 4
@@ -32,10 +33,9 @@ function MyVoucher() {
 	useEffect(() => {
 		const fetchVoucherData = async () => {
 			try {
-				const data = await UserService.MY_VOUCHER()
-				console.log(data)
-				setVoucherData(data)
-				setFilteredVoucherData(data)
+				const data = await UserRequest.MY_VOUCHERS()
+				setVouchers(data)
+				setFilteredVouchers(data)
 			} catch (error) {
 				console.error('Error fetching vouchers ', error)
 			}

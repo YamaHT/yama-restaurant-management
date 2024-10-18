@@ -1,5 +1,4 @@
-import React from 'react'
-import { Container, Typography, Box, ImageList, ImageListItem, Grid2, Paper } from '@mui/material'
+import { Box, Container, Grid2, ImageList, ImageListItem, Paper, Typography } from '@mui/material'
 
 const AboutUs = () => {
 	const images = [

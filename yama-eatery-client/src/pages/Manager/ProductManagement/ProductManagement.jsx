@@ -16,6 +16,7 @@ import {
 } from '@mui/icons-material'
 import {
 	Avatar,
+	Box,
 	Button,
 	Chip,
 	MenuItem,
@@ -30,9 +31,9 @@ import {
 	Typography,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import UpdateProduct from './UpdateProduct'
 import AddProduct from './AddProduct'
 import RestockProduct from './RestockProduct'
+import UpdateProduct from './UpdateProduct'
 
 const headCells = [
 	{
@@ -235,11 +236,7 @@ const ProductManagement = () => {
 	}
 
 	return (
-		<Paper
-			sx={{
-				p: 6,
-			}}
-		>
+		<Box>
 			<Stack marginBottom={1} spacing={2}>
 				<Typography variant='h5' fontWeight={'bold'}>
 					Product Management
@@ -380,7 +377,7 @@ const ProductManagement = () => {
 				onRowsPerPageChange={handleChangeRowsPerPage}
 				rowsPerPageOptions={[5, 10, 25]}
 			/>
-		</Paper>
+		</Box>
 	)
 }
 

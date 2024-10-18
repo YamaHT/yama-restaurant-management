@@ -1,7 +1,7 @@
 import { AuthService } from '@/services/AuthService'
 import axiosConfig from '@/utilities/axiosConfig'
 import { VerifiedUser } from '@mui/icons-material'
-import { Alert, Box, Button, Link, Paper, Snackbar, TextField, Typography } from '@mui/material'
+import { Box, Button, Paper, TextField, Typography } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -27,6 +27,8 @@ const OTPVerification = () => {
 		}
 
 		setRequestData(JSON.parse(secureLocalStorage.getItem('requestData')))
+
+		return () => secureLocalStorage.removeItem('requestData')
 	}, [])
 
 	useEffect(() => {

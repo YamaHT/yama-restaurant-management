@@ -28,7 +28,6 @@ import {
 import { Guid } from 'js-guid'
 import { enqueueSnackbar } from 'notistack'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const Profile = () => {
 	const [profile, setProfile] = useState({

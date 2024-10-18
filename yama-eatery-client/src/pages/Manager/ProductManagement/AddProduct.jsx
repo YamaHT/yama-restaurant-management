@@ -3,7 +3,6 @@ import ValidationTextField from '@/components/CustomTextField/ValidationTextFiel
 import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
 import { Add, Close } from '@mui/icons-material'
 import {
-	Box,
 	Button,
 	Dialog,
 	DialogActions,
@@ -90,7 +89,7 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 				values.name,
 				generatorOption
 			)
-			if (descriptionGenerated != 404) {
+			if (descriptionGenerated.toString() !== '404') {
 				setValues((prev) => ({
 					...prev,
 					description: descriptionGenerated.trim(),

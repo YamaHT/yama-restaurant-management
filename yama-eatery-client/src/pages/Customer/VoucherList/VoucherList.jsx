@@ -22,7 +22,7 @@ function VoucherList() {
 			try {
 				const data = await VoucherService.VIEW_ALL_VOUCHER()
 				setVouchers(data)
-				setFilteredVouchers(data) 
+				setFilteredVouchers(data)
 			} catch (error) {
 				console.error('Error fetching vouchers: ', error)
 			}
@@ -33,7 +33,9 @@ function VoucherList() {
 		const startIndex = (page - 1) * VOUCHERS_PER_PAGE
 		const endIndex = startIndex + VOUCHERS_PER_PAGE 
 
-		setTotalPages(filteredVouchers.length > 0 ? Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE) : 1)
+		setTotalPages(
+			filteredVouchers.length > 0 ? Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE) : 1
+		)
 		setDisplayedVouchers(filteredVouchers.slice(startIndex, endIndex))
 	}, [filteredVouchers, page])
 
@@ -58,7 +60,9 @@ function VoucherList() {
 			filtered = filtered.filter((voucher) => voucher.reducedPercent >= numericDiscount)
 		}
 		if (nameSearch) {
-			filtered = filtered.filter((voucher) => voucher.name.toLowerCase().includes(nameSearch.toLowerCase()))
+			filtered = filtered.filter((voucher) =>
+				voucher.name.toLowerCase().includes(nameSearch.toLowerCase())
+			)
 		}
 		setFilteredVouchers(filtered)
 	}

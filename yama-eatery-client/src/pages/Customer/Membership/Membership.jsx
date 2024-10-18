@@ -17,27 +17,24 @@ const Membership = () => {
 	const [membershipStatus, setMembershipStatus] = useState('')
 	useEffect(() => {
 		const fectchMembershipStatus = async () => {
-			try {
-				const data = await UserService.USER_MEMBERSHIP()
-				setMembershipStatus(data.membershipStatus)
-			} catch (error) {
-				console.error('Error fetching membership ', error)
-			}
+			const data = await UserService.USER_MEMBERSHIP()
+			setMembershipStatus(data.membershipStatus)
 		}
 		fectchMembershipStatus()
 	}, [])
+
 	const handleCancelMembership = async () => {
 		const data = await UserService.CANCEL_MEMBERSHIP()
-		console.log(data)
 		setMembershipStatus(data.membershipStatus)
 		setMembershipStatus('Inactive')
 	}
 
 	const handleMembershipRegister = async () => {
 		const data = await UserService.MEMBERSHIP_REGISTER()
-		console.log(data)
-		setMembershipStatus(data.membershipStatus)
-		setMembershipStatus('Requesting')
+		if (data) {
+			setMembershipStatus(data.membershipStatus)
+			setMembershipStatus('Requesting')
+		}
 	}
 
 	return (

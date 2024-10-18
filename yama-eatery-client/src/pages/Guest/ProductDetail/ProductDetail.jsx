@@ -1,3 +1,8 @@
+import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
+import ReviewProgressBar from '@/components/Product/ReviewProgressBar'
+import { FeedbackService } from '@/services/FeedbackService'
+import { ProductService } from '@/services/ProductService'
+import { AssetImages } from '@/utilities/AssetImages'
 import { ChevronLeft, ChevronRight, Delete, Edit } from '@mui/icons-material'
 import {
 	Avatar,
@@ -22,11 +27,6 @@ import 'swiper/css/navigation'
 import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { calculateAverageRating } from '../ProductList/ProductList'
-import { ProductService } from '@/services/ProductService'
-import { AssetImages } from '@/utilities/AssetImages'
-import ReviewProgressBar from '@/components/Product/ReviewProgressBar'
-import { FeedbackService } from '@/services/FeedbackService'
-import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
 
 export default function ProductDetail() {
 	const { id } = useParams()

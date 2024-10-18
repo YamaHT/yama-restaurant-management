@@ -103,7 +103,7 @@ export default function TableDetail() {
 
 		let isValid = true
 
-		Object.keys(fieldsRef.current).map((key) => {
+		Object.keys(fieldsRef.current).forEach((key) => {
 			if (!fieldsRef.current[key]?.validate()) {
 				isValid = false
 			}
