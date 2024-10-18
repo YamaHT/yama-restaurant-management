@@ -1,8 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Paper, Typography, Button, Pagination, Grid2, Stack, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
 import { VoucherService } from '@/services/VoucherService' // Import vouchers service
-import { VoucherRequest } from '@/requests/VoucherRequest'
+import {
+	Box,
+	Button,
+	FormControl,
+	Grid2,
+	InputLabel,
+	MenuItem,
+	Pagination,
+	Paper,
+	Select,
+	Stack,
+	TextField,
+	Typography,
+} from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const VOUCHERS_PER_PAGE = 4
 
@@ -22,7 +34,7 @@ function VoucherList() {
 			try {
 				const data = await VoucherService.VIEW_ALL_VOUCHER()
 				setVouchers(data)
-				setFilteredVouchers(data) 
+				setFilteredVouchers(data)
 			} catch (error) {
 				console.error('Error fetching vouchers: ', error)
 			}
@@ -33,7 +45,9 @@ function VoucherList() {
 		const startIndex = (page - 1) * VOUCHERS_PER_PAGE
 		const endIndex = startIndex + VOUCHERS_PER_PAGE // Ensure endIndex is calculated correctly
 
-		setTotalPages(filteredVouchers.length > 0 ? Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE) : 1)
+		setTotalPages(
+			filteredVouchers.length > 0 ? Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE) : 1
+		)
 		setDisplayedVouchers(filteredVouchers.slice(startIndex, endIndex))
 	}, [filteredVouchers, page])
 
@@ -62,7 +76,9 @@ function VoucherList() {
 
 		// Filter by name search
 		if (nameSearch) {
-			filtered = filtered.filter((voucher) => voucher.name.toLowerCase().includes(nameSearch.toLowerCase()))
+			filtered = filtered.filter((voucher) =>
+				voucher.name.toLowerCase().includes(nameSearch.toLowerCase())
+			)
 		}
 
 		setFilteredVouchers(filtered)

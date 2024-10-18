@@ -1,6 +1,11 @@
+import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
+import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
+import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
+import CrudTableHead from '@/components/Crud Components/CrudTableHead'
+import CrudTabs from '@/components/Crud Components/CrudTabs'
 import { Add, Delete, Edit, Menu } from '@mui/icons-material'
 import {
-	Avatar,
+	Box,
 	Button,
 	Chip,
 	MenuItem,
@@ -14,14 +19,9 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import VoucherAdd from './VoucherAdd'
 import VoucherUpdate from './VoucherUpdate'
-import CrudTableHead from '@/components/Crud Components/CrudTableHead'
-import CrudTabs from '@/components/Crud Components/CrudTabs'
-import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
-import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
-import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
 
 const headCells = [
 	{ name: 'Voucher Name', orderData: 'name', numeric: false, widthPercent: 20 },
@@ -106,7 +106,7 @@ const VoucherManagement = () => {
 	const handleDelete = (rowId) => alert(`Deleted voucher with ID: ${rowId}`)
 
 	return (
-		<Paper sx={{ width: '1200px', padding: '1%', bgcolor: '#f0f2f5', zIndex: -1 }}>
+		<Box>
 			<Stack marginBottom={1} spacing={2}>
 				<Typography variant='h5' fontWeight='bold'>
 					Voucher Management
@@ -211,7 +211,7 @@ const VoucherManagement = () => {
 					selectedRow={selectedRow}
 				/>
 			)}
-		</Paper>
+		</Box>
 	)
 }
 

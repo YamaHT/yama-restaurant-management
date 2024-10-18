@@ -1,4 +1,4 @@
-import { StarBorderOutlined, StarRounded, Translate } from '@mui/icons-material'
+import { StarBorderOutlined, StarRounded } from '@mui/icons-material'
 import {
 	Box,
 	Card,
@@ -10,7 +10,6 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material'
-import React from 'react'
 
 const products = [
 	{

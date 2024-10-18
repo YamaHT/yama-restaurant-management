@@ -1,25 +1,25 @@
+import { UserService } from '@/services/UserService'
+import LaunchIcon from '@mui/icons-material/Launch'
 import {
 	Box,
 	Divider,
+	FormControl,
 	Grid2,
+	IconButton,
+	InputLabel,
+	MenuItem,
 	Pagination,
+	Select,
 	Stack,
-	Typography,
 	Table,
 	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
-	IconButton,
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
+	Typography,
 } from '@mui/material'
-import LaunchIcon from '@mui/icons-material/Launch'
 import { useEffect, useState } from 'react'
-import { UserService } from '@/services/UserService'
 
 const REVIEWS_PER_PAGE = 7 // For pagination logic
 export function calculateAverageRating(reviews) {

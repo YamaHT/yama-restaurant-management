@@ -61,7 +61,6 @@ const Register = () => {
 		}
 
 		const data = await AuthService.SEND_MAIL_OTP({ email: formData.email, otp: otp })
-		console.log(data)
 		if (data?.success) {
 			enqueueSnackbar(data.success, { variant: 'success', autoHideDuration: 1000 })
 			secureLocalStorage.setItem('requestData', JSON.stringify(requestData))

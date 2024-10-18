@@ -43,20 +43,19 @@ export default function ProductMenu({
 
 	useEffect(() => {
 		const selectedCategories = {}
-	
+
 		Object.keys(checkedCategories).forEach((category) => {
 			const subcategories = categories
 				.find((cat) => cat.name === category)
 				?.subCategories.filter((_, index) => checkedCategories[category][index])
-	
+
 			if (subcategories?.length > 0) {
-				selectedCategories[category] = subcategories.map((sub) => sub.name) 
+				selectedCategories[category] = subcategories.map((sub) => sub.name)
 			}
 		})
-	
+
 		setSelectedCategories(selectedCategories)
 	}, [checkedCategories, categories])
-	
 
 	const handleCategoryChange = (category, index) => (event) => {
 		const newChecked = [...checkedCategories[category]]
@@ -73,14 +72,14 @@ export default function ProductMenu({
 		<FormGroup sx={{ ml: 3 }}>
 			{subcategories.map((sub, idx) => (
 				<FormControlLabel
-					key={sub.id} 
+					key={sub.id}
 					control={
 						<Checkbox
-							checked={checkedCategories[category]?.[idx] || false} 
+							checked={checkedCategories[category]?.[idx] || false}
 							onChange={handleCategoryChange(category, idx)}
 						/>
 					}
-					label={sub.name} 
+					label={sub.name}
 				/>
 			))}
 		</FormGroup>

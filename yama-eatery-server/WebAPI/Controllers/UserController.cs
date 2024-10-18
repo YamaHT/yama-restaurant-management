@@ -125,6 +125,13 @@ namespace WebAPI.Controllers
             return Ok(new { success = "Contact send sucessfully" });
         }
 
+        [HttpGet("user-membership")]
+        public async Task<IActionResult> UserMembership()
+        {
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
+            return Ok(user.Membership);
+        }
+
         [HttpPost("membership-register")]
         public async Task<IActionResult> MembershipRegister()
         {
@@ -139,14 +146,6 @@ namespace WebAPI.Controllers
             return Ok(new { success = "Membership registration successful.", UserId = user.Id, user.Membership });
         }
 
-
-        [HttpGet("user-membership")]
-        public async Task<IActionResult> UserMembership()
-        {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
-            return Ok(user.Membership);
-        }
-
         [HttpGet("cancel-membership")]
         public async Task<IActionResult> CancelMembership()
         {
@@ -159,19 +158,6 @@ namespace WebAPI.Controllers
             await _unitOfWork.SaveChangeAsync();
 
             return Ok(new { success = "Membership Cancel successful.", user.Membership });
-        }
-        [HttpGet("approve-membership")]
-        public async Task<IActionResult> ApproveMembership()
-        {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
-
-            user.Membership.MembershipStatus = MembershipStatusEnum.Active.ToString();
-
-            _unitOfWork.UserRepository.Update(user);
-
-            await _unitOfWork.SaveChangeAsync();
-
-            return Ok(new { success = "Aprrove successful.", UserId = user.Id, user.Membership });
         }
     }
 }
