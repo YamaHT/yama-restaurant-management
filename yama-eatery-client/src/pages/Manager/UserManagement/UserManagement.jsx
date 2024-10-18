@@ -2,6 +2,7 @@ import CrudTableHead from '@/components/Crud Components/CrudTableHead'
 import {
 	Autocomplete,
 	Avatar,
+	Box,
 	Button,
 	Chip,
 	Dialog,
@@ -25,7 +26,7 @@ import ViewMembershipRequest from './ViewMebershipRequest'
 
 const headCells = [
 	{
-		name: 'User_ID',
+		name: 'Id',
 		orderData: 'id',
 		numeric: true,
 		widthPercent: 10,
@@ -344,100 +345,91 @@ export default function UserManagement() {
 	)
 
 	return (
-		<>
-			<Paper
-				sx={{
-					width: '100%',
-					padding: '1%',
-					bgcolor: '#f0f2f5',
-					zIndex: -1,
-				}}
-			>
-				<Stack marginBottom={1} spacing={2}>
-					<Typography variant='h5' fontWeight={'bold'}>
-						User Management
-					</Typography>
+		<Box>
+			<Stack marginBottom={1} spacing={2}>
+				<Typography variant='h5' fontWeight={'bold'}>
+					User Management
+				</Typography>
 
-					<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
-						<Autocomplete
-							size='small'
-							options={[]}
-							value={searchPhone}
-							onChange={(event, newValue) => setSearchPhone(newValue)}
-							freeSolo
-							sx={{ width: '50%' }}
-							renderInput={(params) => (
-								<TextField
-									{...params}
-									InputProps={{
-										...params.InputProps,
-										startAdornment: (
-											<InputAdornment position='start'>
-												<Search />
-											</InputAdornment>
-										),
-									}}
-									placeholder='Search by phone...'
-								/>
-							)}
-						/>
-
-						<Button variant='contained' onClick={handleOpenMembershipDialog}>
-							View Membership Request
-						</Button>
-					</Stack>
-				</Stack>
-
-				<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
-					<Table stickyHeader sx={{ minWidth: '750px' }}>
-						<CrudTableHead
-							order={order}
-							orderBy={orderBy}
-							headCells={headCells}
-							onRequestSort={handleRequestSort}
-						/>
-						<TableBody>
-							{visibleRows.map((row, index) => {
-								return (
-									<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
-										<TableCell align='center'>{row.id}</TableCell>
-										<TableCell>
-											<Stack direction='row' spacing={2} alignItems='center'>
-												<Avatar alt={row.name} src={row.image} />
-												<Typography>{row.name}</Typography>
-											</Stack>
-										</TableCell>
-										<TableCell>{row.email}</TableCell>
-										<TableCell>{row.phone}</TableCell>
-										<TableCell>{row.gender}</TableCell>
-										<TableCell>{row.birthday}</TableCell>
-										<TableCell>
-											{row.isMembership ? (
-												<Chip label='Membership' color='success' />
-											) : (
-												<Chip label='Not membership' color='error' />
-											)}
-										</TableCell>
-									</TableRow>
-								)
-							})}
-							{emptyRows > 0 && (
-								<TableRow style={{ height: 53 * emptyRows }}>
-									<TableCell colSpan={6} />
-								</TableRow>
-							)}
-						</TableBody>
-					</Table>
-					<TablePagination
-						rowsPerPageOptions={[5, 10, 25]}
-						component='div'
-						count={rows.length}
-						rowsPerPage={rowsPerPage}
-						page={page}
-						onPageChange={handleChangePage}
-						onRowsPerPageChange={handleChangeRowsPerPage}
+				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
+					<Autocomplete
+						size='small'
+						options={[]}
+						value={searchPhone}
+						onChange={(event, newValue) => setSearchPhone(newValue)}
+						freeSolo
+						sx={{ width: '50%' }}
+						renderInput={(params) => (
+							<TextField
+								{...params}
+								InputProps={{
+									...params.InputProps,
+									startAdornment: (
+										<InputAdornment position='start'>
+											<Search />
+										</InputAdornment>
+									),
+								}}
+								placeholder='Search by phone...'
+							/>
+						)}
 					/>
-				</Paper>
+
+					<Button variant='contained' onClick={handleOpenMembershipDialog}>
+						View Membership Request
+					</Button>
+				</Stack>
+			</Stack>
+
+			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
+				<Table stickyHeader sx={{ minWidth: '750px' }}>
+					<CrudTableHead
+						order={order}
+						orderBy={orderBy}
+						headCells={headCells}
+						onRequestSort={handleRequestSort}
+					/>
+					<TableBody>
+						{visibleRows.map((row, index) => {
+							return (
+								<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
+									<TableCell align='right'>{row.id}</TableCell>
+									<TableCell>
+										<Stack direction='row' spacing={2} alignItems='center'>
+											<Avatar alt={row.name} src={row.image} />
+											<Typography>{row.name}</Typography>
+										</Stack>
+									</TableCell>
+									<TableCell>{row.email}</TableCell>
+									<TableCell>{row.phone}</TableCell>
+									<TableCell>{row.gender}</TableCell>
+									<TableCell>{row.birthday}</TableCell>
+									<TableCell>
+										{row.isMembership ? (
+											<Chip label='Membership' color='success' />
+										) : (
+											<Chip label='Not membership' color='error' />
+										)}
+									</TableCell>
+								</TableRow>
+							)
+						})}
+						{emptyRows > 0 && (
+							<TableRow style={{ height: 53 * emptyRows }}>
+								<TableCell colSpan={6} />
+							</TableRow>
+						)}
+					</TableBody>
+				</Table>
+				<TablePagination
+					rowsPerPageOptions={[5, 10, 25]}
+					component='div'
+					count={rows.length}
+					rowsPerPage={rowsPerPage}
+					page={page}
+					onPageChange={handleChangePage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
 			</Paper>
 			<Dialog
 				open={openMembershipDialog}
@@ -452,6 +444,6 @@ export default function UserManagement() {
 					<Button onClick={handleCloseMembershipDialog}>Cancel</Button>
 				</DialogActions>
 			</Dialog>
-		</>
+		</Box>
 	)
 }

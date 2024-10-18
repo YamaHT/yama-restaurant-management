@@ -15,6 +15,7 @@ import {
 import {
 	Avatar,
 	AvatarGroup,
+	Box,
 	Button,
 	Chip,
 	MenuItem,
@@ -34,7 +35,7 @@ import UpdateTable from './UpdateTable'
 
 const headCells = [
 	{
-		name: 'Table_ID',
+		name: 'Id',
 		orderData: 'id',
 		numeric: true,
 		widthPercent: 10,
@@ -64,7 +65,7 @@ const headCells = [
 		widthPercent: 30,
 	},
 	{
-		name: 'Action',
+		name: '',
 		widthPercent: 5,
 	},
 ]
@@ -131,7 +132,6 @@ const TableManagement = () => {
 	const [orderBy, setOrderBy] = useState('id')
 	const [page, setPage] = useState(0)
 	const [categoryTab, setCategoryTab] = useState(0)
-	const [searchName, setSearchName] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 
 	const [openAddPage, setOpenAddPage] = useState(false)
@@ -154,37 +154,21 @@ const TableManagement = () => {
 	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
 	const visibleRows = React.useMemo(() => {
-		const filteredRows = rows.filter((row) => {
-			return searchName ? row.type.toLowerCase().includes(searchName.toLowerCase()) : true
-		})
-
-		return filteredRows
+		return rows
 			.sort(getComparator(order, orderBy))
 			.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-	}, [order, orderBy, page, rowsPerPage, searchName])
+	}, [order, orderBy, page, rowsPerPage])
 
 	return (
-		<Paper
-			sx={{
-				width: '100%',
-				padding: '1%',
-				bgcolor: '#f0f2f5',
-				zIndex: -1,
-			}}
-		>
+		<Box>
 			<Stack marginBottom={1} spacing={2}>
 				<Typography variant='h5' fontWeight={'bold'}>
 					Table Management
 				</Typography>
 
-				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
+				<Stack direction={'row'} justifyContent={'right'} padding={'0 1%'}>
 					<React.Fragment>
-						<Button
-							variant='contained'
-							sx={{ marginLeft: '1330px' }}
-							onClick={() => setOpenAddPage(true)}
-							startIcon={<Add />}
-						>
+						<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
 							Add New
 						</Button>
 						{openAddPage && (
@@ -212,7 +196,7 @@ const TableManagement = () => {
 						{visibleRows.map((row, index) => {
 							return (
 								<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
-									<TableCell align='center'>{row.id}</TableCell>
+									<TableCell align='right'>{row.id}</TableCell>
 									<TableCell>
 										<AvatarGroup max={10}>
 											<Avatar src={row.image}></Avatar>
@@ -279,7 +263,7 @@ const TableManagement = () => {
 					onRowsPerPageChange={handleChangeRowsPerPage}
 				/>
 			</Paper>
-		</Paper>
+		</Box>
 	)
 }
 

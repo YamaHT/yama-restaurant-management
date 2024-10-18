@@ -18,7 +18,11 @@ const DashboardManger = () => {
 
 	return (
 		<Stack direction={'row'}>
-			<DrawerManager openDrawer={openDrawer} handleSelectPage={handleSelectPage} />
+			<DrawerManager
+				openDrawer={openDrawer}
+				selectedPage={selectedPage}
+				handleSelectPage={handleSelectPage}
+			/>
 			<Box width={'100%'}>
 				<HeaderManager handleOpenDrawer={handleOpenDrawer} />
 				<Box p={3}>{selectedPage}</Box>

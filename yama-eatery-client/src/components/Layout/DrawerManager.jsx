@@ -1,7 +1,7 @@
 import ContactManagement from '@/pages/Manager/ContactManagement/ContactManagement'
 import Statistics from '@/pages/Manager/Statistics/Statistics'
 import ProductManagement from '@/pages/Manager/ProductManagement/ProductManagement'
-import TableManagement from '@/pages/Manager/TableManagement/TableManagemen'
+import TableManagement from '@/pages/Manager/TableManagement/TableManagement'
 import UserManagement from '@/pages/Manager/UserManagement/UserManagement'
 import VoucherManagement from '@/pages/Manager/VoucherManagement/VoucherManagement'
 import { AssetImages } from '@/utilities/AssetImages'
@@ -97,9 +97,13 @@ const navigations = [
 	},
 ]
 
-const DrawerManager = ({ openDrawer, handleSelectPage }) => {
+const DrawerManager = ({ openDrawer, selectedPage, handleSelectPage }) => {
 	return (
-		<Drawer variant='permanent' sx={{ width: openDrawer ? 250 : 0 }}>
+		<Drawer
+			variant='persistent'
+			open={openDrawer}
+			sx={{ width: openDrawer ? 250 : 0, transition: '0.3s linear' }}
+		>
 			<Stack direction={'row'} alignItems={'center'} justifyContent={'center'} spacing={1}>
 				<Avatar src={AssetImages.SYSTEM_LOGO} sx={{ width: 70, height: 70 }} />
 				<Typography variant='h5' fontWeight={'bold'}>
@@ -119,8 +123,34 @@ const DrawerManager = ({ openDrawer, handleSelectPage }) => {
 					subheader={<ListSubheader sx={{ lineHeight: 3 }}>{nav.title}</ListSubheader>}
 				>
 					{nav.items.map((item) => (
-						<ListItemButton onClick={() => handleSelectPage(item.page)}>
-							<ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+						<ListItemButton
+							selected={selectedPage.type === item.page.type}
+							defaultChecked={<Statistics />}
+							onClick={() => handleSelectPage(item.page)}
+							sx={{
+								'&:hover': {
+									bgcolor: '#9cf4',
+								},
+								'&.Mui-selected': {
+									bgcolor: '#9cf4',
+									borderRight: `2px solid transparent`,
+									borderColor: 'primary.light',
+									color: 'primary.main',
+									'&:hover': {
+										color: 'primary.main',
+										bgcolor: '#9cf4',
+									},
+								},
+							}}
+						>
+							<ListItemIcon
+								sx={{
+									minWidth: 40,
+									color: item.page == selectedPage ? 'primary.main' : 'inherit',
+								}}
+							>
+								{item.icon}
+							</ListItemIcon>
 							<ListItemText primary={item.label} />
 						</ListItemButton>
 					))}
