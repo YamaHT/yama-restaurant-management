@@ -1,63 +1,28 @@
 import { Avatar, Box, Button, Divider, Paper, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { UserService } from '@/services/UserService'
+
 const formatDate = (dateStr) => {
 	const date = new Date(dateStr)
 	return date.toLocaleDateString('en-GB')
 }
+
 const HistoryBooking = () => {
-	const BookingList = [
-		{
-			id: 1945,
-			bookingDate: '1945-04-30',
-			dayPart: 'Morning',
-			isBooking: true,
-			note: ' This is the node This is the nodeThis is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node',
-			bookingDetail: { id: 1945, isPaid: true },
-			totalPayment: 50,
-			totalAmount: 10,
-			table: {
-				id: 1,
-				img: '',
-				floor: 1,
-				type: 'small',
-			},
-		},
-		{
-			id: 1945,
-			bookingDate: '1945-04-30',
-			dayPart: 'Evening',
-			isBooking: true,
-			note: ' This is the node This is the nodeThis is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node',
-			bookingDetail: { id: 1945, isPaid: false },
-			totalPayment: 50,
-			totalAmount: 10,
-			table: {
-				id: 1,
-				img: '',
-				floor: 2,
-				type: 'large',
-			},
-		},
-		{
-			id: 1945,
-			bookingDate: '1945-04-30',
-			dayPart: 'Night',
-			isBooking: false,
-			note: ' This is the node This is the nodeThis is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node This is the node',
-			bookingDetail: { id: 1945, isPaid: true },
-			totalPayment: 500,
-			totalAmount: 100,
-			table: {
-				id: 1,
-				img: '',
-				floor: 3,
-				type: 'medium',
-			},
-		},
-	]
+	const [bookingList, setBookingList] = useState([])
+	useEffect(() => {
+		const fetchBookings = async () => {
+			try {
+				const data = await UserService.HISTORY_BOOKING()
+				setBookingList(data)
+			} catch (error) {
+				console.error('Error fetching bookings:', error)
+			}
+		}
+		fetchBookings()
+	}, [])
 	return (
 		<Box>
-			{BookingList.map((booking) => (
+			{bookingList.map((booking) => (
 				<Paper
 					key={booking.id}
 					sx={{ background: '#f0f2f5', boxShadow: '0 2px 5px #000a', p: '2%', m: '2% 0' }}
@@ -70,11 +35,11 @@ const HistoryBooking = () => {
 							variant='body1'
 							fontWeight='bold'
 							color={
-								booking.isBooking ? (booking.bookingDetail.isPaid ? 'primary' : 'error') : 'success'
+								booking.isBooking ? (booking.bookingStatus.isPaid ? 'primary' : 'error') : 'success'
 							}
 						>
 							{booking.isBooking
-								? booking.bookingDetail.isPaid
+								? booking.bookingStatus.isPaid
 									? 'Deposited'
 									: 'Undeposited'
 								: 'Booked'}
@@ -113,9 +78,6 @@ const HistoryBooking = () => {
 										Floor: {booking.table.floor}
 									</Typography>
 								</Box>
-								<Typography variant='h6' textAlign={'right'} fontWeight={'bold'}>
-									Total Dishes: {booking.totalAmount}
-								</Typography>
 							</Box>
 							<Box
 								display={'flex'}
@@ -138,7 +100,7 @@ const HistoryBooking = () => {
 								>
 									Note: {booking.note}
 								</Typography>
-								{!booking.bookingDetail.isPaid && booking.isBooking && (
+								{!booking.bookingStatus.isPaid && (
 									<Box display='flex' flexDirection='column' width='100%'>
 										<Button
 											fullWidth
