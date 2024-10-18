@@ -21,6 +21,7 @@ namespace WebAPI
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IFeedbackProductRepository, FeedbackProductRepository>();
+            services.AddScoped<IMembershipRepository, MembershipRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
             services.AddScoped<IUserRepository, UserRepository>();

@@ -11,6 +11,7 @@ namespace WebAPI
         ICategoryRepository categoryRepository,
         IContactRepository contactRepository,
         IFeedbackProductRepository feedbackProductRepository,
+        IMembershipRepository membershipRepository,
         IProductRepository productRepository,
         ITableRepository tableRepository,
         IUserRepository userRepository,
@@ -25,6 +26,7 @@ namespace WebAPI
         public ICategoryRepository CategoryRepository => categoryRepository;
         public IContactRepository ContactRepository => contactRepository;
         public IFeedbackProductRepository FeedbackProductRepository => feedbackProductRepository;
+        public IMembershipRepository MembershipRepository => membershipRepository;
         public IUserVoucherRepository UserVoucherRepository => userVoucherRepository;
         public IVoucherRepository VoucherRepository => voucherRepository;
 
