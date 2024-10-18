@@ -28,16 +28,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("profile")]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileDTO updateUserProfileDTO)
+        public async Task<IActionResult> UpdateProfile([FromForm] UpdateUserProfileDTO updateUserProfileDTO)
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
 
             user.Birthday = updateUserProfileDTO.Birthday;
             user.Gender = updateUserProfileDTO.Gender;
-            user.Image = updateUserProfileDTO.Image;
+            user.Image = await ImageUtil.SaveImageAsync(nameof(User), user.Image, updateUserProfileDTO.ImageFile);
             user.Name = updateUserProfileDTO.Name;
             user.Phone = updateUserProfileDTO.Phone;
             user.TryValidate();
+
+            _unitOfWork.UserRepository.Update(user);
+            await _unitOfWork.SaveChangeAsync();
 
             return Ok(new { success = "Update profile successfully" });
         }
@@ -126,7 +129,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> MembershipRegister()
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
-            
+
             user.Membership.MembershipStatus = MembershipStatusEnum.Requesting.ToString();
 
             _unitOfWork.UserRepository.Update(user);
@@ -150,7 +153,7 @@ namespace WebAPI.Controllers
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
 
             user.Membership.MembershipStatus = MembershipStatusEnum.Inactive.ToString();
-           
+
             _unitOfWork.UserRepository.Update(user);
 
             await _unitOfWork.SaveChangeAsync();

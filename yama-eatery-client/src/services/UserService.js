@@ -1,5 +1,6 @@
 import { ApiRequest } from '@/utilities/apiRequest'
 import axiosConfig from '@/utilities/axiosConfig'
+import axiosFormData from '@/utilities/axiosFormData'
 
 export const UserService = {
 	CHANGE_PASSWORD: async ({ password, newPassword }) => {
@@ -59,5 +60,10 @@ export const UserService = {
 	},
 	GET_PROFILE: async () => {
 		return await axiosConfig.get(ApiRequest.UserRequest.PROFILE).then((response) => response.data)
+	},
+	UPDATE_PROFILE: async (formData) => {
+		return await axiosFormData
+			.post(ApiRequest.UserRequest.PROFILE, formData)
+			.then((response) => response.data)
 	},
 }

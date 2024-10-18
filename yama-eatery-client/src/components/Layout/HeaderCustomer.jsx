@@ -1,3 +1,4 @@
+import { UserService } from '@/services/UserService'
 import { AssetImages } from '@/utilities/AssetImages'
 import { ArrowDropDown, ArrowDropUp, Logout } from '@mui/icons-material'
 import {
@@ -16,7 +17,7 @@ import {
 	Toolbar,
 	Typography,
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import secureLocalStorage from 'react-secure-storage'
 
@@ -54,8 +55,21 @@ const menuItems = [
 
 const HeaderCustomer = () => {
 	const [openMore, setOpenMore] = useState(false)
+	const [userImage, setUserImage] = useState(null)
+	const [userName, setUserName] = useState(null)
 
 	const navigate = useNavigate()
+
+	useEffect(() => {
+		const fetchUserProfile = async () => {
+			const data = await UserService.GET_PROFILE()
+			if (data) {
+				setUserImage(data.image)
+				setUserName(data.name)
+			}
+		}
+		fetchUserProfile()
+	}, [])
 
 	const handleLogout = () => {
 		localStorage.removeItem('token')
@@ -146,7 +160,10 @@ const HeaderCustomer = () => {
 								alignItems: 'center',
 							}}
 						>
-							<Avatar sx={{ width: 30, height: 30 }}>D</Avatar>
+							<Avatar
+								src={userImage ? AssetImages.UserImage(userImage) : null}
+								sx={{ width: 30, height: 30 }}
+							/>
 							<Typography
 								fontWeight={700}
 								variant='body1'
@@ -156,7 +173,7 @@ const HeaderCustomer = () => {
 									textWrap: 'nowrap',
 								}}
 							>
-								Le Phuoc Duy
+								{userName}
 							</Typography>
 						</Button>
 						<IconButton color='primary' onClick={handleLogout}>
