@@ -14,7 +14,6 @@ import {
 import { useEffect, useState } from 'react'
 
 export default function ProductMenu({
-	products,
 	priceRange,
 	setPriceRange,
 	sortOption,

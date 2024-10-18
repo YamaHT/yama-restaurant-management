@@ -6,7 +6,7 @@ namespace WebAPI.Utils
 {
     public static class ObjectValidation
     {
-        public static void TryValidate(this BaseEntity entity)
+        public static void TryValidate(this object entity)
         {
             var validationContext = new ValidationContext(entity);
             var validationResults = new List<ValidationResult>();
