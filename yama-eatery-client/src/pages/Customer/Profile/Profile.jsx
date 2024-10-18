@@ -25,29 +25,33 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
+import { Guid } from 'js-guid'
+import { enqueueSnackbar } from 'notistack'
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Profile = () => {
 	const [profile, setProfile] = useState({
-		name: 'Le Phuoc Duy',
-		image: 'hmm.jpg',
-		birthday: '2004-10-30',
-		phone: '0123123123',
-		gender: 'Male',
+		name: null,
+		image: null,
+		birthday: null,
+		phone: null,
+		gender: null,
 		membership: {
-			membershipStatus: 'active',
-			rank: 'Silver',
-			memberScore: 5,
+			membershipStatus: null,
+			rank: null,
+			memberScore: 0,
 		},
-		creationDate: '2024-10-14T21:34:13',
+		creationDate: null,
 	})
+	const [imageData, setImageData] = useState(null)
 
 	const [profilePresentation, setProfilePresentation] = useState([])
+	const [imagePresentation, setImagePresentation] = useState(null)
 	const [isEditting, setIsEditting] = useState(false)
 	const [isHovered, setIsHovered] = useState(false)
-	const imageRef = useRef(null)
 
-	const [imagePresentation, setImagePresentation] = useState(null)
+	const imageRef = useRef(null)
 
 	useEffect(() => {
 		const fetchUserProfile = async () => {
@@ -81,21 +85,41 @@ const Profile = () => {
 		setProfile((prev) => ({ ...prev, [name]: value }))
 	}
 
-	const handleSubmit = (e) => {
-		console.log('helloworld')
-	}
-
 	const handleImageChange = (e) => {
-		const file = e.target.files[0]
-		if (file) {
-			const imageUrl = URL.createObjectURL(file)
-			setImagePresentation(imageUrl)
-			setProfile((prev) => ({ ...prev, image: file.name }))
+		const originFile = e.target.files[0]
+		if (originFile) {
+			const file = new File([originFile], Guid.newGuid().toString().concat('-', originFile.name), {
+				type: originFile.type,
+			})
+			const reader = new FileReader()
+			reader.onload = () => {
+				setImagePresentation(reader.result)
+			}
+			setImageData(file)
+			reader.readAsDataURL(file)
 		}
 	}
 
 	const handleAvatarClick = () => {
 		imageRef.current.click()
+	}
+
+	const handleSubmit = async (e) => {
+		const formData = new FormData()
+		formData.append('name', profile.name)
+		formData.append('birthday', profile.birthday)
+		formData.append('phone', profile.phone)
+		formData.append('gender', profile.gender === 'null' ? null : profile.gender)
+		formData.append('imageFile', imageData)
+
+		const data = await UserService.UPDATE_PROFILE(formData)
+		if (data) {
+			setIsEditting(false)
+			enqueueSnackbar(data.success, { variant: 'success' })
+			setTimeout(() => {
+				window.location.reload()
+			}, 1000)
+		}
 	}
 
 	return (
@@ -161,8 +185,10 @@ const Profile = () => {
 					{profilePresentation.map((presentation, index) => (
 						<TimelineItem>
 							<TimelineSeparator>
-								<TimelineDot />
-								{index !== profilePresentation.length - 1 ? <TimelineConnector /> : null}
+								<TimelineDot color='primary' />
+								{index !== profilePresentation.length - 1 ? (
+									<TimelineConnector sx={{ bgcolor: 'primary.main' }} />
+								) : null}
 							</TimelineSeparator>
 							<TimelineContent>{presentation}</TimelineContent>
 						</TimelineItem>
@@ -190,6 +216,7 @@ const Profile = () => {
 					value={profile.name}
 					onChange={handleChange}
 					disabled={!isEditting}
+					slotProps={{ inputLabel: { shrink: true } }}
 				/>
 				<TextField
 					type='date'
@@ -209,6 +236,7 @@ const Profile = () => {
 					value={profile.phone}
 					onChange={handleChange}
 					disabled={!isEditting}
+					slotProps={{ inputLabel: { shrink: true } }}
 				/>
 				<FormControl disabled={!isEditting}>
 					<FormLabel id='gender'>Gender</FormLabel>
@@ -217,10 +245,11 @@ const Profile = () => {
 						aria-labelledby='gender'
 						name='gender'
 						value={profile.gender}
+						defaultValue={'Male'}
 						onChange={handleChange}
 					>
-						<FormControlLabel value={'Male'} control={<Radio />} label='Male' />
-						<FormControlLabel value={'Female'} control={<Radio />} label='Female' />
+						<FormControlLabel control={<Radio value={'Female'} />} label='Female' />
+						<FormControlLabel control={<Radio value={'Male'} />} label='Male' />
 					</RadioGroup>
 				</FormControl>
 				<Stack direction={'row'} spacing={5}>

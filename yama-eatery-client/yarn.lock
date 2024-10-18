@@ -6728,6 +6728,11 @@ jiti@^1.21.0:
   resolved "https://registry.npmjs.org/jiti/-/jiti-1.21.6.tgz"
   integrity sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==
 
+js-guid@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/js-guid/-/js-guid-1.0.2.tgz#93eab7501befadf901ecd4b39df7e818e43959de"
+  integrity sha512-KoNZaQlt+A0TsREG+uv0SqPoday/Jnv2wT0bd5MAI2ySv2vZLtZQzj5FP2ZmuQKicFsOgZYsXqzla8ESdk2P5w==
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz"
