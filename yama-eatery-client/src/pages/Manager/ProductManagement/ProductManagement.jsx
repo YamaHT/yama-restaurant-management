@@ -237,10 +237,7 @@ const ProductManagement = () => {
 	return (
 		<Paper
 			sx={{
-				width: 1200,
-				padding: '1%',
-				bgcolor: '#f0f2f5',
-				zIndex: -1,
+				p: 6,
 			}}
 		>
 			<Stack marginBottom={1} spacing={2}>
