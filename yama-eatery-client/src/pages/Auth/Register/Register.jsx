@@ -109,7 +109,7 @@ const Register = () => {
 						type='tel'
 						label='Phone'
 						name='phone'
-						regex='\d{10}'
+						regex='^\d{10}$'
 						regexErrorText='Phone must be 10 digits'
 						value={formData.phone}
 						onChange={handleChange}
