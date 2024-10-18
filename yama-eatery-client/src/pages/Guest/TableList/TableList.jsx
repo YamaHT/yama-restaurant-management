@@ -1,17 +1,9 @@
 import TableMenu from '@/components/Table/TableMenu'
 import { TableService } from '@/services/TableService'
 import { AssetImages } from '@/utilities/AssetImages'
-import {
-	Box,
-	Divider,
-	Grid2,
-	Pagination,
-	Stack,
-	Typography
-} from '@mui/material'
+import { Box, Divider, Grid2, Pagination, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
 
 export default function TableList() {
 	const [filteredTables, setFilteredTables] = useState([])
@@ -50,10 +42,9 @@ export default function TableList() {
 			default:
 				break
 		}
-	
+		setCurrentPage(1)
 		setFilteredTables(filtered)
 	}, [filterOption, sortOption, tables])
-	
 
 	const indexOfLastTable = currentPage * tablesPerPage
 	const indexOfFirstTable = indexOfLastTable - tablesPerPage
@@ -64,7 +55,7 @@ export default function TableList() {
 	}
 
 	const handlePageChange = (event, value) => {
-		setCurrentPage(value)	
+		setCurrentPage(value)
 	}
 
 	const handleClick = (id) => {
@@ -139,7 +130,7 @@ export default function TableList() {
 												{`Floor ${table.floor}`}
 											</Typography>
 											<Typography variant='body1' fontWeight='bold' color='gray.800'>
-												{table.tableType} Table
+												{table.type} Table
 											</Typography>
 										</Stack>
 									</Box>

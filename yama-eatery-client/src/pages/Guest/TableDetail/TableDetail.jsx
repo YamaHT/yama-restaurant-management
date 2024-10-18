@@ -1,10 +1,15 @@
 import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import { Add, ArrowBackIos, ArrowForwardIos } from '@mui/icons-material'
+import DialogChoosingProduct from '@/components/DialogChoosingProduct/DialogChoosingProduct'
+import { TableService } from '@/services/TableService'
+import { AssetImages } from '@/utilities/AssetImages'
+import { Add, ArrowBackIos, ArrowForwardIos, Cancel } from '@mui/icons-material'
 import {
+	Avatar,
 	Box,
 	Button,
 	Card,
+	Grid2,
 	IconButton,
 	MenuItem,
 	Stack,
@@ -15,17 +20,13 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
-import { TableService } from '@/services/TableService'
-import { AssetImages } from '@/utilities/AssetImages'
-import DialogChoosingProduct from '@/components/DialogChoosingProduct/DialogChoosingProduct'
 
 export default function TableDetail() {
 	const { id } = useParams()
-
 	const [table, setTable] = useState()
 	const [open, setOpen] = useState(false)
 	const [formData, setFormData] = useState({
-		productId: [],
+		product: [],
 		firstName: '',
 		lastName: '',
 		phone: '',
@@ -33,22 +34,25 @@ export default function TableDetail() {
 		dayPart: '',
 		note: '',
 	})
+
 	const slideRef = useRef(null)
 	const fieldsRef = useRef([])
 
-	useEffect(
-		() => {
-			async function fetchProductDetail() {
-				const data = await TableService.DETAIL(id)
-				if (data) {
-					setTable(data)
-					console.log(data)
-				}
+	const totalReserve = formData.product
+		.reduce((acc, product) => acc + product.price * product.quantity, 0)
+		.toFixed(2)
+
+	const deposit = (totalReserve * 0.1).toFixed(2)
+
+	useEffect(() => {
+		async function fetchProductDetail() {
+			const data = await TableService.DETAIL(id)
+			if (data) {
+				setTable(data)
 			}
-			fetchProductDetail()
-		},
-		[id, table],
-	)
+		}
+		fetchProductDetail()
+	}, [id])
 
 	const handleClose = () => {
 		setOpen(false)
@@ -59,15 +63,45 @@ export default function TableDetail() {
 		setFormData((prev) => ({ ...prev, [name]: value }))
 	}
 
-	const handleAddBookingDetail = (newProductId) => {
-		console.log(newProductId)
+	const handleAddBookingDetail = (newProduct) => {
+		console.log(newProduct)
+
+		setFormData((prevState) => {
+			const existingProductIndex = prevState.product.findIndex(
+				(product) => product.id === newProduct.id
+			)
+
+			if (existingProductIndex !== -1) {
+				const updatedProducts = prevState.product.map((product, index) =>
+					index === existingProductIndex ? { ...product, quantity: product.quantity + 1 } : product
+				)
+				return {
+					...prevState,
+					product: updatedProducts,
+				}
+			}
+
+			const newProductEntry = {
+				id: newProduct.id,
+				image: newProduct.image[0],
+				quantity: 1,
+				price: newProduct.price,
+			}
+
+			return {
+				...prevState,
+				product: [...prevState.product, newProductEntry],
+			}
+		})
+	}
+
+	const handleRemoveProduct = (index) => {
 		setFormData((prevState) => ({
 			...prevState,
-			productId: [...prevState.productId, newProductId],
+			product: prevState.product.filter((_, i) => i !== index),
 		}))
 	}
 
-	
 	const handleSubmit = (e) => {
 		e.preventDefault()
 
@@ -188,21 +222,67 @@ export default function TableDetail() {
 				}}
 			>
 				<Typography variant='h6'>Booking Information</Typography>
-				
-				<IconButton
-					sx={{
-						width: 160,
-						height: 130,
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						border: '1px dashed gray',
-						borderRadius: '10px',
-					}}
-					onClick={() => setOpen(true)}
-				>
-					<Add sx={{ fontSize: 50 }} />
-				</IconButton>
+				<Grid2 container spacing={2}>
+					{formData.product?.map((selectedProduct, index) => (
+						<Grid2
+							size={{ xs: 12, sm: 2, md: 2 }}
+							position={'relative'}
+							key={selectedProduct.id || index}
+						>
+							<Avatar
+								variant='rounded'
+								sx={{ height: 130, width: '100%' }}
+								src={AssetImages.ProductImage(selectedProduct.image)}
+							></Avatar>
+							<Stack
+								sx={{ my: 1 }}
+								direction={'row'}
+								alignItems={'center'}
+								justifyContent={'space-between'}
+							>
+								<Typography
+									sx={{ bottom: 0, textShadow: '0 0 5px #fff' }}
+									variant='body2'
+									color='black'
+								>
+									Price: {selectedProduct.price * selectedProduct.quantity}
+								</Typography>
+								<Typography
+									sx={{ bottom: 0, textShadow: '0 0 5px #fff' }}
+									variant='body2'
+									color='black'
+								>
+									Quantity: {selectedProduct.quantity}
+								</Typography>
+							</Stack>
+							<IconButton
+								onClick={() => handleRemoveProduct(index)}
+								sx={{ position: 'absolute', top: 5, right: 5, zIndex: 10 }}
+								size='small'
+								variant='contained'
+								color='warning'
+							>
+								<Cancel />
+							</IconButton>
+						</Grid2>
+					))}
+					<Grid2 size={{ xs: 12, sm: 2, md: 2 }}>
+						<IconButton
+							sx={{
+								width: '100%',
+								height: 130,
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+								border: '1px dashed gray',
+								borderRadius: '10px',
+							}}
+							onClick={() => setOpen(true)}
+						>
+							<Add sx={{ fontSize: 50 }} />
+						</IconButton>
+					</Grid2>
+				</Grid2>
 				<DialogChoosingProduct
 					open={open}
 					handleClose={() => setOpen(false)}
@@ -276,8 +356,8 @@ export default function TableDetail() {
 					/>
 					<Stack direction='row' justifyContent='space-between' my={1}>
 						<Box>
-							<Typography>Total Reserve: 1000</Typography>
-							<Typography>Deposit: 100</Typography>
+							<Typography>Total Reserve: ${totalReserve}</Typography>
+							<Typography>Deposit: ${deposit}</Typography>
 						</Box>
 						<Box mt={1}>
 							<Button onClick={handleSubmit} fullWidth variant='contained' primary>

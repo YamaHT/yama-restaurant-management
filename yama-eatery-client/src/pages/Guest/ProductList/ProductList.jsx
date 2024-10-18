@@ -92,7 +92,7 @@ export default function ProductList() {
 			default:
 				break
 		}
-
+setCurrentPage(1)
 		setFilteredProducts(filtered)
 	}, [priceRange, selectedCategories, sortOption, searchTerm, products])
 

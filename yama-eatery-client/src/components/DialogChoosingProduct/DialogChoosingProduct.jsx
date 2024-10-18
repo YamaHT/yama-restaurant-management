@@ -1,19 +1,15 @@
-import {
-	Avatar,
-	Box,
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Grid2,
-	Stack,
-	Typography,
-} from '@mui/material'
-import React, { useEffect, useState } from 'react'
 import { ProductService } from '@/services/ProductService'
 import { AssetImages } from '@/utilities/AssetImages'
-import { CenterFocusStrong } from '@mui/icons-material'
+import {
+    Avatar,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid2
+} from '@mui/material'
+import { useEffect, useState } from 'react'
 
 const DialogChoosingProduct = ({ open, handleClose, handleAddProduct }) => {
 	const [products, setProducts] = useState([])
@@ -29,7 +25,7 @@ const DialogChoosingProduct = ({ open, handleClose, handleAddProduct }) => {
 	}, [])
 
 	const handleProductClick = (product) => {
-		handleAddProduct(product.id)
+		handleAddProduct(product)
 		handleClose()
 	}
 
