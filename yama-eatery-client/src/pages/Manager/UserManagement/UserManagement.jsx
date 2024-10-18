@@ -361,11 +361,11 @@ export default function UserManagement() {
 					<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
 						<Autocomplete
 							size='small'
-							options={[]} // Định nghĩa danh sách tìm kiếm
+							options={[]}
 							value={searchPhone}
 							onChange={(event, newValue) => setSearchPhone(newValue)}
 							freeSolo
-							sx={{ width: '50%' }} // Đặt chiều rộng
+							sx={{ width: '50%' }}
 							renderInput={(params) => (
 								<TextField
 									{...params}
