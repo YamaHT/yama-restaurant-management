@@ -1,28 +1,23 @@
 import TableMenu from '@/components/Table/TableMenu'
 import { TableService } from '@/services/TableService'
 import { AssetImages } from '@/utilities/AssetImages'
-import {
-	Box,
-	Divider,
-	Grid2,
-	Pagination,
-	Stack,
-	Typography
-} from '@mui/material'
+import { Box, Divider, Grid2, Pagination, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-
 export default function TableList() {
+	const navigate = useNavigate()
+
 	const [filteredTables, setFilteredTables] = useState([])
 	const [filterOption, setFilterOption] = useState('')
 	const [sortOption, setSortOption] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
 	const [tablesPerPage] = useState(8)
-
 	const [tables, setTables] = useState([])
 
-	const navigate = useNavigate()
+	const indexOfLastTable = currentPage * tablesPerPage
+	const indexOfFirstTable = indexOfLastTable - tablesPerPage
+	const currentTables = filteredTables.slice(indexOfFirstTable, indexOfLastTable)
 
 	useEffect(() => {
 		async function fetchTables() {
@@ -50,21 +45,17 @@ export default function TableList() {
 			default:
 				break
 		}
-	
+		setCurrentPage(1)
 		setFilteredTables(filtered)
 	}, [filterOption, sortOption, tables])
-	
 
-	const indexOfLastTable = currentPage * tablesPerPage
-	const indexOfFirstTable = indexOfLastTable - tablesPerPage
-	const currentTables = filteredTables.slice(indexOfFirstTable, indexOfLastTable)
 	const handleShowAll = () => {
 		setFilterOption('')
 		setSortOption('')
 	}
 
 	const handlePageChange = (event, value) => {
-		setCurrentPage(value)	
+		setCurrentPage(value)
 	}
 
 	const handleClick = (id) => {
@@ -139,7 +130,7 @@ export default function TableList() {
 												{`Floor ${table.floor}`}
 											</Typography>
 											<Typography variant='body1' fontWeight='bold' color='gray.800'>
-												{table.tableType} Table
+												{table.type} Table
 											</Typography>
 										</Stack>
 									</Box>
