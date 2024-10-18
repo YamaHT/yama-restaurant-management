@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
 
             user.Password = CryptoUtils.EncryptPassword(user.Password);
 
-            //await _unitOfWork.
+            await _unitOfWork.MembershipRepository.AddAsync(membership);
             await _unitOfWork.UserRepository.AddAsync(user);
             await _unitOfWork.SaveChangeAsync();
             return Ok(new { success = "Register successfully" });
