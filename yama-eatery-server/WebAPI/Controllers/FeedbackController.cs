@@ -22,6 +22,8 @@ namespace WebAPI.Controllers
                 Rating = addProductDTO.Rating,
                 CreationDate = DateTime.Now
             };
+            feedback.TryValidate();
+
             await _unitOfWork.FeedbackProductRepository.AddAsync(feedback);
             await _unitOfWork.SaveChangeAsync();
 
@@ -47,6 +49,8 @@ namespace WebAPI.Controllers
             feedback.Message = modifyFeedbackProductDTO.Message;
             feedback.Rating = modifyFeedbackProductDTO.Rating;
             feedback.ModificationDate = DateTime.Now;
+
+            feedback.TryValidate();
 
             _unitOfWork.FeedbackProductRepository.Update(feedback);
 

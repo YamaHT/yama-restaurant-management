@@ -62,6 +62,9 @@ export default function ProductDetail() {
 				setFeedbackProduct(data)
 				setUserRating(data.rating)
 				setUserReview(data.message)
+			} else {
+				setUserRating(0)
+				setUserReview('')
 			}
 		}
 
@@ -136,7 +139,7 @@ export default function ProductDetail() {
 	}
 
 	const handleRemoveFeedback = async () => {
-		const ProductId= id
+		const ProductId = id
 		const data = await FeedbackService.DELETE_FEEDBACK(ProductId)
 		if (data) {
 			setFeedbackProduct(null)

@@ -1,5 +1,6 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, Stack } from '@mui/material'
-
+import { EnumService } from '@/services/EnumService'
+import { Button, FormControl, InputLabel, MenuItem, Paper, Select, Stack } from '@mui/material'
+import { useEffect, useState } from 'react'
 export default function TableMenu({
 	filterOption,
 	setFilterOption,
@@ -7,18 +8,22 @@ export default function TableMenu({
 	setSortOption,
 	handleShowAll,
 }) {
-	// Table type filter options
-	const tableTypes = [
-		{ label: 'Small', value: 'Small' },
-		{ label: 'Large', value: 'Large' },
-		{ label: 'Round', value: 'Round' },
-		{ label: 'Private', value: 'Private' },
-	]
+	const [tableTypes, setTableTypes] = useState([])
 
 	const sortOptions = [
 		{ label: 'Floor: Low to High', value: 'low-to-high' },
 		{ label: 'Floor: High to Low', value: 'high-to-low' },
 	]
+	useEffect(() => {
+		const fetchTableTypes = async () => {
+			const data = await EnumService.GET_ALL_TABLE_TYPE()
+			console.log(data)
+			if (data) {
+				setTableTypes(data)
+			}
+		}
+		fetchTableTypes()
+	}, [])
 
 	return (
 		<Paper sx={{ py: 4, px: 2 }}>
@@ -33,8 +38,8 @@ export default function TableMenu({
 						onChange={(e) => setFilterOption(e.target.value)}
 					>
 						{tableTypes.map((type) => (
-							<MenuItem key={type.value} value={type.value}>
-								{type.label}
+							<MenuItem key={type} value={type}>
+								{type}
 							</MenuItem>
 						))}
 					</Select>
