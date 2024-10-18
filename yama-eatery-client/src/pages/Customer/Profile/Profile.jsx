@@ -245,7 +245,6 @@ const Profile = () => {
 						aria-labelledby='gender'
 						name='gender'
 						value={profile.gender}
-						defaultValue={'Male'}
 						onChange={handleChange}
 					>
 						<FormControlLabel control={<Radio value={'Female'} />} label='Female' />
