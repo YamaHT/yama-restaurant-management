@@ -1,29 +1,15 @@
 import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
 import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
-import CrudTabs from '@/components/Crud Components/CrudTabs'
-import {
-	Add,
-	BackupTable,
-	Delete,
-	Icecream,
-	Menu,
-	Search,
-	TableBar,
-	TableRestaurant,
-	Update,
-} from '@mui/icons-material'
+import { Add, Delete, Search, Update } from '@mui/icons-material'
 import {
 	Autocomplete,
 	Avatar,
-	AvatarGroup,
 	Button,
-	Chip,
 	InputAdornment,
 	MenuItem,
 	Paper,
 	Stack,
-	Tab,
 	Table,
 	TableBody,
 	TableCell,
@@ -33,87 +19,104 @@ import {
 	Typography,
 } from '@mui/material'
 import React, { useState } from 'react'
-import AddTable from './AddTable'
-import UpdateTable from './UpdateTable'
+import AddStaff from './AddStaff'
+import UpdateStaff from './UpdateStaff'
 
 const headCells = [
-	{
-		name: 'Table_ID',
-		orderData: 'id',
-		numeric: true,
-		widthPercent: 10,
-	},
-	{
-		name: 'Image',
-		orderData: 'image',
-		numeric: true,
-		widthPercent: 25,
-	},
-	{
-		name: 'Floor',
-		orderData: 'floor',
-		numeric: true,
-		widthPercent: 10,
-	},
-	{
-		name: 'Type',
-		orderData: 'type',
-		numeric: false,
-		widthPercent: 10,
-	},
-	{
-		name: 'Status',
-		orderData: 'isDeleted',
-		numeric: false,
-		widthPercent: 30,
-	},
-	{
-		name: 'Action',
-		widthPercent: 5,
-	},
+	{ name: 'ID', orderData: 'id', numeric: true, widthPercent: 5 },
+	{ name: 'Image', orderData: 'image', numeric: false, widthPercent: 20 },
+	{ name: 'Email', orderData: 'email', numeric: false, widthPercent: 25 },
+	{ name: 'Phone', orderData: 'phone', numeric: true, widthPercent: 20 },
+	{ name: 'Gender', orderData: 'gender', numeric: false, widthPercent: 10 },
+	{ name: 'Action', widthPercent: 10 },
 ]
 
-function createData(id, image, floor, type, isDeleted) {
-	return {
-		id,
-		image,
-		floor,
-		type,
-		isDeleted,
-	}
+export function createData(id, image, email, phone, gender, name) {
+	return { id, image, email, phone, gender, name }
 }
 
 const rows = [
-	createData(1, 'https://via.placeholder.com/100', 1, 'Food', false),
-	createData(2, 'https://via.placeholder.com/100', 2, 'Food', true),
-	createData(3, 'https://via.placeholder.com/100', 3, 'Food'),
-	createData(4, 'https://via.placeholder.com/100', 1, 'Drink'),
-	createData(5, 'https://via.placeholder.com/100', 2, 'Food'),
-	createData(6, 'https://via.placeholder.com/100', 3, 'Food'),
-	createData(7, 'https://via.placeholder.com/100', 1, 'Drink'),
-	createData(8, 'https://via.placeholder.com/100', 2, 'Food'),
-	createData(9, 'https://via.placeholder.com/100', 3, 'Food'),
-	createData(10, 'https://via.placeholder.com/100', 1, 'Drink'),
-	createData(11, 'https://via.placeholder.com/100', 2, 'Food'),
-	createData(12, 'https://via.placeholder.com/100', 3, 'Drink'),
-	createData(13, 'https://via.placeholder.com/100', 1, 'Food'),
-	createData(14, 'https://via.placeholder.com/100', 2, 'Drink'),
-	createData(15, 'https://via.placeholder.com/100', 3, 'Food'),
-	createData(16, 'https://via.placeholder.com/100', 1, 'Food'),
-	createData(17, 'https://via.placeholder.com/100', 2, 'Drink'),
-	createData(18, 'https://via.placeholder.com/100', 3, 'Food'),
-	createData(19, 'https://via.placeholder.com/100', 1, 'Drink'),
-	createData(20, 'https://via.placeholder.com/100', 2, 'Food'),
+	createData(
+		1,
+		'https://via.placeholder.com/100',
+		'user1@example.com',
+		'0123456789',
+		'Male',
+		'John Doe'
+	),
+	createData(
+		2,
+		'https://via.placeholder.com/100',
+		'user2@example.com',
+		'0987654321',
+		'Female',
+		'Jane Smith'
+	),
+	createData(
+		3,
+		'https://via.placeholder.com/100',
+		'user3@example.com',
+		'0192837465',
+		'Male',
+		'Michael Johnson'
+	),
+	createData(
+		4,
+		'https://via.placeholder.com/100',
+		'user4@example.com',
+		'0246813579',
+		'Female',
+		'Emily Davis'
+	),
+	createData(
+		5,
+		'https://via.placeholder.com/100',
+		'user5@example.com',
+		'0357911135',
+		'Male',
+		'David Brown'
+	),
+	createData(
+		6,
+		'https://via.placeholder.com/100',
+		'user6@example.com',
+		'0468201357',
+		'Female',
+		'Linda Wilson'
+	),
+	createData(
+		7,
+		'https://via.placeholder.com/100',
+		'user7@example.com',
+		'0579313579',
+		'Male',
+		'James Miller'
+	),
+	createData(
+		8,
+		'https://via.placeholder.com/100',
+		'user8@example.com',
+		'0689425791',
+		'Female',
+		'Sophia Garcia'
+	),
+	createData(
+		9,
+		'https://via.placeholder.com/100',
+		'user9@example.com',
+		'0791535791',
+		'Male',
+		'William Martinez'
+	),
+	createData(
+		10,
+		'https://via.placeholder.com/100',
+		'user10@example.com',
+		'0813579135',
+		'Female',
+		'Olivia Rodriguez'
+	),
 ]
-
-const categoryNavigation = [
-	{ icon: <Menu />, name: 'All' },
-	{ icon: <BackupTable />, name: 'Small' },
-	{ icon: <TableRestaurant />, name: 'Big' },
-	{ icon: <TableBar />, name: 'Round' },
-	{ icon: <Icecream />, name: 'Private' },
-]
-
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
 		return -1
@@ -130,11 +133,10 @@ function getComparator(order, orderBy) {
 		: (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-const TableManagement = () => {
+const StaffInformationManagement = () => {
 	const [order, setOrder] = useState('asc')
 	const [orderBy, setOrderBy] = useState('id')
 	const [page, setPage] = useState(0)
-	const [categoryTab, setCategoryTab] = useState(0)
 	const [searchName, setSearchName] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 
@@ -159,7 +161,7 @@ const TableManagement = () => {
 
 	const visibleRows = React.useMemo(() => {
 		const filteredRows = rows.filter((row) => {
-			return searchName ? row.type.toLowerCase().includes(searchName.toLowerCase()) : true
+			return searchName ? row.name.toLowerCase().includes(searchName.toLowerCase()) : true
 		})
 
 		return filteredRows
@@ -178,30 +180,43 @@ const TableManagement = () => {
 		>
 			<Stack marginBottom={1} spacing={2}>
 				<Typography variant='h5' fontWeight={'bold'}>
-					Table Management
+					Staff Management
 				</Typography>
+				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
+					<Autocomplete
+						size='small'
+						options={[]}
+						value={searchName}
+						onChange={(event, newValue) => setSearchName(newValue)}
+						freeSolo
+						sx={{ width: '50%' }}
+						renderInput={(params) => (
+							<TextField
+								{...params}
+								InputProps={{
+									...params.InputProps,
+									startAdornment: (
+										<InputAdornment position='start'>
+											<Search />
+										</InputAdornment>
+									),
+								}}
+								placeholder='Search by name...'
+							/>
+						)}
+					/>
+				</Stack>
 
 				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
 					<React.Fragment>
-						<Button
-							variant='contained'
-							sx={{ marginLeft: '1330px' }}
-							onClick={() => setOpenAddPage(true)}
-							startIcon={<Add />}
-						>
-							Add New
+						<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
+							Add Staff
 						</Button>
 						{openAddPage && (
-							<AddTable open={openAddPage} handleClose={() => setOpenAddPage(false)} />
+							<AddStaff open={openAddPage} handleClose={() => setOpenAddPage(false)} />
 						)}
 					</React.Fragment>
 				</Stack>
-
-				<CrudTabs value={categoryTab} handleChange={setCategoryTab}>
-					{categoryNavigation.map((cate) => (
-						<Tab icon={cate.icon} iconPosition='start' label={cate.name} />
-					))}
-				</CrudTabs>
 			</Stack>
 
 			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
@@ -213,34 +228,29 @@ const TableManagement = () => {
 						onRequestSort={handleRequestSort}
 					/>
 					<TableBody>
-						{visibleRows.map((row, index) => {
+						{visibleRows.map((row) => {
 							return (
 								<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
-									<TableCell align='center'>{row.id}</TableCell>
+									<TableCell align='right'>{row.id}</TableCell>
 									<TableCell>
-										<AvatarGroup max={10}>
-											<Avatar src={row.image}></Avatar>
-										</AvatarGroup>
+										<Stack direction='row' spacing={2} alignItems='center'>
+											<Avatar alt={row.name} src={row.image} />
+											<Typography>{row.name}</Typography>
+										</Stack>
 									</TableCell>
-									<TableCell align='right'>{row.floor}</TableCell>
-									<TableCell>{row.type}</TableCell>
+									<TableCell>{row.email}</TableCell>
+									<TableCell align='right'>{row.phone}</TableCell>
+									<TableCell>{row.gender}</TableCell>
 
-									<TableCell>
-										{row.isDeleted ? (
-											<Chip label='Not Available' color='error' />
-										) : (
-											<Chip label='Available' color='success' />
-										)}
-									</TableCell>
 									<TableCell>
 										<CrudMenuOptions>
 											<MenuItem>
 												<React.Fragment>
 													<Button onClick={() => setOpenAddPage(true)} startIcon={<Update />}>
-														Update Table
+														Update Staff
 													</Button>
 													{openAddPage && (
-														<UpdateTable
+														<UpdateStaff
 															open={openAddPage}
 															handleClose={() => setOpenAddPage(false)}
 														/>
@@ -287,4 +297,4 @@ const TableManagement = () => {
 	)
 }
 
-export default TableManagement
+export default StaffInformationManagement
