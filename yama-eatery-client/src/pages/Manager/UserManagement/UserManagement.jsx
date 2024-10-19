@@ -21,8 +21,9 @@ import {
 } from '@mui/material'
 
 import { Search } from '@mui/icons-material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ViewMembershipRequest from './ViewMebershipRequest'
+import { UserManagementService } from '@/services/UserManagementService'
 
 const headCells = [
 	{
@@ -69,221 +70,6 @@ const headCells = [
 	},
 ]
 
-function createData(id, name, email, image, phone, gender, birthday, isMembership) {
-	return {
-		id,
-		name,
-		email,
-		phone,
-		gender,
-		birthday,
-		image,
-		isMembership,
-	}
-}
-const rows = [
-	createData(
-		1,
-		'User 1',
-		'user1@example.com',
-		'https://via.placeholder.com/100',
-		'0123456789',
-		'Male',
-		'1990-01-01',
-		true
-	),
-	createData(
-		2,
-		'User 2',
-		'user2@example.com',
-		'https://via.placeholder.com/100',
-		'0987654321',
-		'Female',
-		'1992-02-02',
-		true
-	),
-	createData(
-		3,
-		'User 3',
-		'user3@example.com',
-		'https://via.placeholder.com/100',
-		'0192837465',
-		'Male',
-		'1993-03-03',
-		false
-	),
-	createData(
-		4,
-		'User 4',
-		'user4@example.com',
-		'https://via.placeholder.com/100',
-		'0246813579',
-		'Female',
-		'1994-04-04',
-		false
-	),
-	createData(
-		5,
-		'User 5',
-		'user5@example.com',
-		'https://via.placeholder.com/100',
-		'0357911135',
-		'Male',
-		'1995-05-05',
-		false
-	),
-	createData(
-		6,
-		'User 6',
-		'user6@example.com',
-		'https://via.placeholder.com/100',
-		'0468201357',
-		'Female',
-		'1996-06-06',
-		false
-	),
-	createData(
-		7,
-		'User 7',
-		'user7@example.com',
-		'https://via.placeholder.com/100',
-		'0579313579',
-		'Male',
-		'1997-07-07',
-		false
-	),
-	createData(
-		8,
-		'User 8',
-		'user8@example.com',
-		'https://via.placeholder.com/100',
-		'0689425791',
-		'Female',
-		'1998-08-08',
-		false
-	),
-	createData(
-		9,
-		'User 9',
-		'user9@example.com',
-		'https://via.placeholder.com/100',
-		'0791535791',
-		'Male',
-		'1999-09-09',
-		false
-	),
-	createData(
-		10,
-		'User 10',
-		'user10@example.com',
-		'https://via.placeholder.com/100',
-		'0813579135',
-		'Female',
-		'2000-10-10',
-		false
-	),
-	createData(
-		11,
-		'User 11',
-		'user11@example.com',
-		'https://via.placeholder.com/100',
-		'0924681357',
-		'Male',
-		'2001-11-11',
-		false
-	),
-	createData(
-		12,
-		'User 12',
-		'user12@example.com',
-		'https://via.placeholder.com/100',
-		'1035791357',
-		'Female',
-		'2002-12-12',
-		false
-	),
-	createData(
-		13,
-		'User 13',
-		'user13@example.com',
-		'https://via.placeholder.com/100',
-		'1146913579',
-		'Male',
-		'1995-01-01',
-		false
-	),
-	createData(
-		14,
-		'User 14',
-		'user14@example.com',
-		'https://via.placeholder.com/100',
-		'1257035791',
-		'Female',
-		'1996-02-02',
-		false
-	),
-	createData(
-		15,
-		'User 15',
-		'user15@example.com',
-		'https://via.placeholder.com/100',
-		'1368145791',
-		'Male',
-		'1997-03-03',
-		false
-	),
-	createData(
-		16,
-		'User 16',
-		'user16@example.com',
-		'https://via.placeholder.com/100',
-		'1479257913',
-		'Female',
-		'1998-04-04',
-		false
-	),
-	createData(
-		17,
-		'User 17',
-		'user17@example.com',
-		'https://via.placeholder.com/100',
-		'1580368135',
-		'Male',
-		'1999-05-05',
-		false
-	),
-	createData(
-		18,
-		'User 18',
-		'user18@example.com',
-		'https://via.placeholder.com/100',
-		'1691479257',
-		'Female',
-		'2000-06-06',
-		false
-	),
-	createData(
-		19,
-		'User 19',
-		'user19@example.com',
-		'https://via.placeholder.com/100',
-		'1702580368',
-		'Male',
-		'2001-07-07',
-		false
-	),
-	createData(
-		20,
-		'User 20',
-		'user20@example.com',
-		'https://via.placeholder.com/100',
-		'1813691479',
-		'Female',
-		'2002-08-08',
-		false
-	),
-]
-
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
 		return -1
@@ -307,6 +93,22 @@ export default function UserManagement() {
 	const [searchPhone, setSearchPhone] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [openMembershipDialog, setOpenMembershipDialog] = useState(false)
+	const [user, setUser] = useState([])
+
+	const fetchUserList = async () => {
+		try {
+			const data = await UserManagementService.VIEW_USER_LIST()
+			if (data) {
+				setUser(data)
+				console.log(data)
+			}
+		} catch (error) {
+			console.error('Error fetching user list data')
+		}
+	}
+	useEffect(() => {
+		fetchUserList()
+	}, [])
 
 	const handleOpenMembershipDialog = () => {
 		setOpenMembershipDialog(true)
@@ -331,17 +133,17 @@ export default function UserManagement() {
 		setPage(0)
 	}
 
-	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
+	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - user.length) : 0
 
 	const visibleRows = React.useMemo(
 		() =>
-			[...rows]
+			[...user]
 				.filter(
 					(row) => !searchPhone || row.phone.toLowerCase().includes(searchPhone.toLowerCase())
 				)
 				.sort(getComparator(order, orderBy))
 				.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-		[order, orderBy, page, rowsPerPage, searchPhone]
+		[order, orderBy, page, rowsPerPage, searchPhone, user]
 	)
 
 	return (
@@ -390,8 +192,8 @@ export default function UserManagement() {
 						onRequestSort={handleRequestSort}
 					/>
 					<TableBody>
-						{visibleRows.map((row, index) => {
-							return (
+						{visibleRows.length > 0 ? (
+							visibleRows.map((row, index) => (
 								<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
 									<TableCell align='right'>{row.id}</TableCell>
 									<TableCell>
@@ -412,8 +214,15 @@ export default function UserManagement() {
 										)}
 									</TableCell>
 								</TableRow>
-							)
-						})}
+							))
+						) : (
+							<TableRow>
+								<TableCell colSpan={10} align='center'>
+									No users available.
+								</TableCell>
+							</TableRow>
+						)}
+
 						{emptyRows > 0 && (
 							<TableRow style={{ height: 53 * emptyRows }}>
 								<TableCell colSpan={6} />
@@ -424,7 +233,7 @@ export default function UserManagement() {
 				<TablePagination
 					rowsPerPageOptions={[5, 10, 25]}
 					component='div'
-					count={rows.length}
+					count={user.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onPageChange={handleChangePage}
