@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { BASE_URL } from './apiRequest'
+import { BASE_URL } from './ApiRequest'
 import secureLocalStorage from 'react-secure-storage'
 import { enqueueSnackbar } from 'notistack'
 
-const axiosConfig = axios.create({
+const axiosFormBody = axios.create({
 	baseURL: BASE_URL,
 	headers: {
 		'content-type': 'application/json',
@@ -12,7 +12,7 @@ const axiosConfig = axios.create({
 	},
 })
 
-axiosConfig.interceptors.request.use(
+axiosFormBody.interceptors.request.use(
 	(request) => {
 		const token = localStorage.getItem('token')
 		if (token) {
@@ -25,7 +25,7 @@ axiosConfig.interceptors.request.use(
 	}
 )
 
-axiosConfig.interceptors.response.use(
+axiosFormBody.interceptors.response.use(
 	(response) => {
 		return response
 	},
@@ -77,4 +77,4 @@ axiosConfig.interceptors.response.use(
 	}
 )
 
-export default axiosConfig
+export default axiosFormBody

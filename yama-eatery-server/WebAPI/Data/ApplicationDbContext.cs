@@ -2,6 +2,7 @@
 using Microsoft.OpenApi.Extensions;
 using WebAPI.Models;
 using WebAPI.Models.Enums;
+using WebAPI.Utils;
 
 namespace WebAPI.Data
 {
@@ -41,6 +42,18 @@ namespace WebAPI.Data
                         Id = (int)categoryEnum,
                         Name = categoryEnum.ToString()
                     })
+            );
+
+            modelBuilder.Entity<Position>().HasData(
+                Enum.GetValues(typeof(PositionEnum))
+                .Cast<PositionEnum>()
+                .Select(e => new Position
+                {
+                    Id = int.Parse(e.GetEnumDisplayName()),
+                    Name = e.ToString(),
+                    HourlyWage = (int)e
+                })
+                .ToArray()
             );
         }
     }

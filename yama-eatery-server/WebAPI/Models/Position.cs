@@ -10,7 +10,7 @@ namespace WebAPI.Models
         public required string Name { get; set; }
 
         [Column(TypeName = "numeric(10, 2)")]
-        public double BaseSalary { get; set; }
+        public double HourlyWage { get; set; }
 
         public virtual ICollection<Employee> Employees { get; set; } = [];
     }

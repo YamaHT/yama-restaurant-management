@@ -6,10 +6,6 @@ namespace WebAPI.Models
     public class Salary : BaseEntity
     {
         [Column(TypeName = "numeric(10, 2)")]
-        [Range(0, Double.PositiveInfinity, ErrorMessage = "Bonus can't be negative")]
-        public double Bonus { get; set; }
-
-        [Column(TypeName = "numeric(10, 2)")]
         [Range(0, Double.PositiveInfinity, ErrorMessage = "Deductions can't be negative")]
         public double Deductions { get; set; }
 
@@ -17,7 +13,7 @@ namespace WebAPI.Models
         [Range(0, Double.PositiveInfinity, ErrorMessage = "NetSalary can't be negative")]
         public double NetSalary { get; set; }
 
-        public DateOnly? SalaryDate { get; set; } = null;
+        public DateOnly? PayDay { get; set; } = null;
 
         [Required(ErrorMessage = "Employee is required")]
         public Employee? Employee { get; set; }

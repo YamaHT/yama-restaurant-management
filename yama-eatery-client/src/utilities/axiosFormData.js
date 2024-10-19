@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { BASE_URL } from './apiRequest'
+import { BASE_URL } from './ApiRequest'
 import secureLocalStorage from 'react-secure-storage'
 import { enqueueSnackbar } from 'notistack'
 

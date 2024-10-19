@@ -5,8 +5,8 @@ namespace WebAPI.Models.Enums
     public enum PositionEnum
     {
         [Display(Name = "1")]
-        Staff = 300,
+        Staff = 15,
         [Display(Name = "2")]
-        Manager = 800
+        Manager = 50
     }
 }

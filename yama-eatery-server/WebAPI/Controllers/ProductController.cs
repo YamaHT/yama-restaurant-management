@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebAPI.Models;
 using WebAPI.Utils;
 using WebAPI.Utils.Exceptions;
 

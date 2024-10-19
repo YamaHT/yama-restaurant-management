@@ -4,8 +4,11 @@ using WebAPI.Models.Enums;
 
 namespace WebAPI.Models
 {
-    public class Booking : BaseEntity
+    public class Booking
     {
+        [Key]
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "Customer Name is required")]
         [MaxLength(255, ErrorMessage = "Customer Name can't exceed 255 characters")]
         public required string CustomerName { get; set; }
@@ -49,6 +52,8 @@ namespace WebAPI.Models
         public Table? Table { get; set; }
 
         public Employee? Employee { get; set; }
+
+        public UserVoucher? UserVoucher { get; set; }
 
         public virtual ICollection<BookingDetail> BookingDetails { get; set; } = [];
     }
