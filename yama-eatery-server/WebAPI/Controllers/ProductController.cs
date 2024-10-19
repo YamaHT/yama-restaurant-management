@@ -11,13 +11,14 @@ namespace WebAPI.Controllers
         {
             string[] includes = ["SubCategory", "SubCategory.Category", "Feedbacks"];
             var products = await _unitOfWork.ProductRepository.GetAllAsync(includes);
+
             return Ok(products);
         }
 
         [HttpGet("detail/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
-            string[] includes = { "SubCategory", "SubCategory.Category", "Feedbacks", "Feedbacks.User" };
+            string[] includes = ["SubCategory", "SubCategory.Category", "Feedbacks", "Feedbacks.User"];
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(id, includes);
 
             return product != null ? Ok(product) : throw new DataNotFoundException("Product not found");
@@ -27,6 +28,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetSimilar(string categoryName)
         {
             var similarProduct = await _unitOfWork.ProductRepository.GetRandom10ProductsByCategoryName(categoryName);
+
             return Ok(similarProduct);
         }
     }

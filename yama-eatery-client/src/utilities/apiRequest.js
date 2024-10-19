@@ -10,7 +10,7 @@ export const BASE_URL = 'https://localhost:7219/api/v1'
 export const ApiRequest = {
 	AuthRequest,
 	EnumRequest,
-	ProductRequest,
+	ProductRequest,	
 	UserRequest,
 	FeedbackRequest,
 	TableRequest,

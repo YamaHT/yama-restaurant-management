@@ -32,7 +32,7 @@ export default function ProductDetail() {
 	const { id } = useParams()
 	const navigate = useNavigate()
 
-	const [product, setProduct] = useState(null)
+	const [product, setProduct] = useState()
 	const [recommendedProducts, setRecommendedProducts] = useState([])
 	const [feedbackProduct, setFeedbackProduct] = useState()
 	const [isEdittingFeedback, setIsEdittingFeedback] = useState(false)
@@ -53,6 +53,8 @@ export default function ProductDetail() {
 			const data = await ProductService.GET_PRODUCT_DETAIL(id)
 			if (data) {
 				setProduct(data)
+			} else {
+				navigate('/product')
 			}
 		}
 
@@ -155,13 +157,9 @@ export default function ProductDetail() {
 	}
 
 	if (!product) {
-		return (
-			<Box sx={{ fontFamily: 'sans-serif', p: 4, maxWidth: '1200px', mx: 'auto' }}>
-				<Typography variant='h4' textAlign='center'>
-					Product not found
-				</Typography>
-			</Box>
-		)
+		
+
+		return null
 	}
 
 	const averageRating = calculateAverageRating(product.feedbacks)
@@ -197,7 +195,7 @@ export default function ProductDetail() {
 		window.location.reload()
 	}
 
-	return (
+	return product ? (
 		<Box sx={{ p: 4, maxWidth: '1200px', mx: 'auto' }}>
 			<Grid2 container spacing={3}>
 				<Grid2 size={{ xs: 12, lg: 7 }}>
@@ -469,7 +467,10 @@ export default function ProductDetail() {
 												</Typography>
 
 												<Stack direction='row' spacing={1} my={2}>
-													<Chip label={recommendedProduct.subCategory.category.name} variant='outlined' />
+													<Chip
+														label={recommendedProduct.subCategory.category.name}
+														variant='outlined'
+													/>
 													<Chip label={recommendedProduct.subCategory.name} variant='outlined' />
 												</Stack>
 											</Box>
@@ -530,5 +531,5 @@ export default function ProductDetail() {
 				</Box>
 			)}
 		</Box>
-	)
+	) : null
 }

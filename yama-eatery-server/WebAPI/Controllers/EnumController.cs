@@ -9,8 +9,9 @@ namespace WebAPI.Controllers
         [HttpGet("category")]
         public async Task<IActionResult> Category()
         {
-            string[] include = ["SubCategories"];
-            var categories = await _unitOfWork.CategoryRepository.GetAllAsync(include);
+            string[] includes = ["SubCategories"];
+            var categories = await _unitOfWork.CategoryRepository.GetAllAsync(includes);
+
             return Ok(categories);
         }
 
@@ -18,6 +19,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> TableType()
         {
             var types = Enum.GetValues(typeof(TypeEnum)).Cast<TypeEnum>().Select(t => t.ToString());
+
             return Ok(types);
         }
     }

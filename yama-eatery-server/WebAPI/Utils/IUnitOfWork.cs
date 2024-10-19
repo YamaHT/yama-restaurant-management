@@ -14,6 +14,7 @@ namespace WebAPI.Utils
         public IMembershipRepository MembershipRepository { get; }
         public IProductRepository ProductRepository { get; }
         public ISalaryRepository SalaryRepository { get; }
+        public ISubCategoryRepository SubCategoryRepository { get; }
         public ITableRepository TableRepository { get; }
         public IUserRepository UserRepository { get; }
         public IUserVoucherRepository UserVoucherRepository { get; }

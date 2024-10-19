@@ -60,7 +60,7 @@ export default function TableMenu({
 						))}
 					</Select>
 				</FormControl>
-				<Button variant='outlined' color='primary' fullWidth onClick={handleShowAll}>
+				<Button variant='contained' color='primary' fullWidth onClick={handleShowAll}>
 					Clear Filters
 				</Button>
 			</Stack>
