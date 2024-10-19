@@ -4,4 +4,5 @@ export const AuthRequest = {
 	SEND_MAIL_OTP: '/auth/send-mail-otp',
 	FORGOT_PASSWORD: '/auth/forgot-password',
 	CHECK_EMAIL_EXIST: '/auth/check-email',
+	GET_LOGIN_PROFILE: `https://www.googleapis.com/oauth2/v1/userinfo?access_token=`,
 }

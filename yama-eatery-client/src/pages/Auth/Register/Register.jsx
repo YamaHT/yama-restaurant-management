@@ -18,6 +18,7 @@ const Register = () => {
 		email: '',
 		password: '',
 	})
+	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const navigate = useNavigate()
 
@@ -30,6 +31,8 @@ const Register = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
+
+		setIsSubmitting(true)
 
 		let isValid = true
 
@@ -69,6 +72,8 @@ const Register = () => {
 				navigate('/auth/otp-verification')
 			}, 1000)
 		}
+
+		setIsSubmitting(false)
 	}
 
 	return (
@@ -83,8 +88,8 @@ const Register = () => {
 					'The more effortless the writing looks, the more effort the writer actually put into the process.',
 			}}
 		>
-			<Box>
-				<Stack gap={3}>
+			<Box component={'form'} noValidate onSubmit={handleSubmit}>
+				<Stack spacing={2}>
 					<Stack direction={'row'} spacing={2}>
 						<ValidationTextField
 							ref={(el) => (fieldsRef.current['firstName'] = el)}
@@ -130,12 +135,12 @@ const Register = () => {
 					/>
 				</Stack>
 
-				<Box mt={4} mb={1}>
-					<Button onClick={handleSubmit} variant='contained' color='info' size='large' fullWidth>
+				<Box my={2}>
+					<Button type='submit' variant='contained' color='info' size='large' fullWidth>
 						Register
 					</Button>
 				</Box>
-				<Box mt={3} textAlign='center'>
+				<Box textAlign='center'>
 					<Typography color='text' fontWeight={500}>
 						Already have an account?{' '}
 						<Button onClick={() => navigate('/auth/login')}>

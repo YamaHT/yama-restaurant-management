@@ -3,7 +3,10 @@ import PasswordTextField from '@/components/CustomTextField/PasswordTextField'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import LayoutLogin from '@/components/LayoutLogin/LoginLayout'
 import { AuthService } from '@/services/AuthService'
+import { Google } from '@mui/icons-material'
 import { Box, Button, Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google'
+import axios from 'axios'
 import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -13,13 +16,23 @@ const Login = () => {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [rememberMe, setRememberMe] = useState(false)
+	const [isSubmitting, setIsSubmitting] = useState(false)
+
+	const [token, setToken] = useState(null)
 
 	const navigate = useNavigate()
-
 	const fieldsRef = useRef({})
+
+	const handleLoginWithGoogle = useGoogleLogin({
+		onSuccess: async (res) => {
+			const profile = await AuthService.GET_LOGIN_PROFILE(res.access_token)
+		},
+	})
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
+
+		setIsSubmitting(true)
 
 		let isValid = true
 
@@ -45,6 +58,7 @@ const Login = () => {
 				}, 1000)
 			}
 		}
+		setIsSubmitting(false)
 	}
 
 	return (
@@ -59,8 +73,8 @@ const Login = () => {
 					'The more effortless the writing looks, the more effort the writer actually put into the process.',
 			}}
 		>
-			<Box>
-				<Stack gap={3} mb={2}>
+			<Box component={'form'} noValidate onSubmit={handleSubmit}>
+				<Stack spacing={2}>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['email'] = el)}
 						type='email'
@@ -76,29 +90,36 @@ const Login = () => {
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 					/>
+					<Stack direction={'row'} justifyContent={'space-between'}>
+						<FormControlLabel
+							label='Remember me'
+							control={
+								<Checkbox
+									color='primary'
+									title='Remember me'
+									checked={rememberMe}
+									onChange={(e) => setRememberMe(e.target.checked)}
+								/>
+							}
+						/>
+						<Button onClick={() => navigate('/auth/forgot-password')}>
+							<Typography textTransform={'none'}>Forgot Password?</Typography>
+						</Button>
+					</Stack>
 				</Stack>
-				<Stack direction={'row'} justifyContent={'space-between'}>
-					<FormControlLabel
-						label='Remember me'
-						control={
-							<Checkbox
-								color='primary'
-								title='Remember me'
-								checked={rememberMe}
-								onChange={(e) => setRememberMe(e.target.checked)}
-							/>
-						}
-					/>
-					<Button onClick={() => navigate('/auth/forgot-password')}>
-						<Typography textTransform={'none'}>Forgot Password?</Typography>
-					</Button>
-				</Stack>
-				<Box mt={4} mb={1}>
-					<Button onClick={handleSubmit} variant='contained' color='info' size='large' fullWidth>
+				<Box my={2}>
+					<Button
+						disabled={isSubmitting}
+						type='submit'
+						variant='contained'
+						color='info'
+						size='large'
+						fullWidth
+					>
 						Login
 					</Button>
 				</Box>
-				<Box mt={3} textAlign='center'>
+				<Box textAlign='center'>
 					<Typography color='text' fontWeight={500}>
 						Don&apos;t have an account?
 						<Button onClick={() => navigate('/auth/register')}>
@@ -106,6 +127,17 @@ const Login = () => {
 						</Button>
 					</Typography>
 				</Box>
+
+				<Button
+					onClick={handleLoginWithGoogle}
+					variant='contained'
+					color='error'
+					size='large'
+					fullWidth
+					startIcon={<Google />}
+				>
+					Login With Google+
+				</Button>
 			</Box>
 		</LayoutLogin>
 	)
