@@ -63,7 +63,7 @@ export default function TableMenu({
 				<Button variant='contained' color='primary' fullWidth onClick={handleShowAll}>
 					Clear Filters
 				</Button>
-			</Stack>
+			</Stack>  
 		</Paper>
 	)
 }
