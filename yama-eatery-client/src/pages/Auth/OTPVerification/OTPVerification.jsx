@@ -1,5 +1,5 @@
 import { AuthService } from '@/services/AuthService'
-import axiosConfig from '@/utilities/axiosConfig'
+import axiosFormBody from '@/utilities/axiosConfig'
 import { VerifiedUser } from '@mui/icons-material'
 import { Box, Button, Paper, TextField, Typography } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
@@ -125,7 +125,7 @@ const OTPVerification = () => {
 			return
 		}
 
-		const data = await axiosConfig
+		const data = await axiosFormBody
 			.post(requestData.URL, requestData.formData)
 			.then((response) => response.data)
 

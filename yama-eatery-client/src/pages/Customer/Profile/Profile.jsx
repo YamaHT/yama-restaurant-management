@@ -115,9 +115,6 @@ const Profile = () => {
 		if (data) {
 			setIsEditting(false)
 			enqueueSnackbar(data.success, { variant: 'success' })
-			setTimeout(() => {
-				window.location.reload()
-			}, 1000)
 		}
 	}
 
