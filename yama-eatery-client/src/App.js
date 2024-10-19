@@ -15,9 +15,9 @@ function App() {
 			case 'Customer':
 				return LayoutCustomer
 			case 'Manager':
-				return LayoutCustomer
+				return null
 			case 'Staff':
-				return LayoutCustomer
+				return null
 			default:
 				return LayoutGuest
 		}

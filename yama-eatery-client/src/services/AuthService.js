@@ -1,5 +1,7 @@
 import { ApiRequest } from '@/utilities/ApiRequest'
 import axiosFormBody from '@/utilities/axiosConfig'
+import { useNavigate } from 'react-router-dom'
+import secureLocalStorage from 'react-secure-storage'
 
 export const AuthService = {
 	LOGIN: async (formData) => {
@@ -22,5 +24,14 @@ export const AuthService = {
 		return await axiosFormBody
 			.get(ApiRequest.AuthRequest.CHECK_EMAIL_EXIST + `?email=${email}`)
 			.then((response) => response.data)
+	},
+	LOGOUT: () => {
+		localStorage.removeItem('token')
+		secureLocalStorage.removeItem('role')
+
+		const event = new Event('roleChange')
+		window.dispatchEvent(event)
+
+		useNavigate()('/')
 	},
 }

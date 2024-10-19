@@ -2,6 +2,7 @@ import axios from 'axios'
 import { BASE_URL } from './ApiRequest'
 import secureLocalStorage from 'react-secure-storage'
 import { enqueueSnackbar } from 'notistack'
+import { AuthService } from '@/services/AuthService'
 
 const axiosFormBody = axios.create({
 	baseURL: BASE_URL,
@@ -32,25 +33,19 @@ axiosFormBody.interceptors.response.use(
 	(error) => {
 		const status = error.response?.status
 		const errorMessage = error.response?.data?.error || 'Internal Server Error'
-		const role = secureLocalStorage.getItem('role')
 
 		switch (status) {
 			case 401:
-				window.location.href = '/'
-				enqueueSnackbar('Unauthorized', { variant: 'warning' })
+				enqueueSnackbar('Unauthorized', { variant: 'warning', autoHideDuration: 1000 })
+				setTimeout(() => {
+					AuthService.LOGOUT()
+				}, 1000)
 				break
 			case 403:
-				switch (role) {
-					case 'Manager':
-						window.location.href = '/manager'
-						break
-					case 'Staff':
-						window.location.href = '/staff'
-						break
-					default:
-						window.location.href = '/'
-				}
-				enqueueSnackbar('Access Denied', { variant: 'error' })
+				enqueueSnackbar('Access Denied', { variant: 'error', autoHideDuration: 1000 })
+				setTimeout(() => {
+					AuthService.LOGOUT()
+				}, 1000)
 				break
 			case 400:
 			case 404:
