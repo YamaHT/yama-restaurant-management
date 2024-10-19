@@ -1,3 +1,4 @@
+import { AuthService } from '@/services/AuthService'
 import { UserService } from '@/services/UserService'
 import { AssetImages } from '@/utilities/AssetImages'
 import { ArrowDropDown, ArrowDropUp, Logout } from '@mui/icons-material'
@@ -70,16 +71,6 @@ const HeaderCustomer = () => {
 		}
 		fetchUserProfile()
 	}, [])
-
-	const handleLogout = () => {
-		localStorage.removeItem('token')
-		secureLocalStorage.removeItem('role')
-
-		const event = new Event('roleChange')
-		window.dispatchEvent(event)
-
-		navigate('/')
-	}
 
 	return (
 		<AppBar position='sticky' color='inherit'>
@@ -176,7 +167,7 @@ const HeaderCustomer = () => {
 								{userName}
 							</Typography>
 						</Button>
-						<IconButton color='primary' onClick={handleLogout}>
+						<IconButton color='primary' onClick={AuthService.LOGOUT}>
 							<Logout />
 						</IconButton>
 					</Stack>

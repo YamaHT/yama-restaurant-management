@@ -1,3 +1,4 @@
+import { AuthService } from '@/services/AuthService'
 import { Logout, MenuSharp } from '@mui/icons-material'
 import {
 	Avatar,
@@ -27,16 +28,6 @@ const HeaderManager = ({ handleOpenDrawer }) => {
 
 	const handleClose = () => {
 		setAnchorEl(null)
-	}
-
-	const handleLogout = () => {
-		localStorage.removeItem('token')
-		secureLocalStorage.removeItem('role')
-
-		const event = new Event('roleChange')
-		window.dispatchEvent(event)
-
-		navigate('/')
 	}
 
 	return (
@@ -86,7 +77,7 @@ const HeaderManager = ({ handleOpenDrawer }) => {
 					}}
 					MenuListProps={{ sx: { p: 0 } }}
 				>
-					<MenuItem onClick={handleLogout} sx={{ py: 2 }}>
+					<MenuItem onClick={AuthService.LOGOUT} sx={{ py: 2 }}>
 						<ListItemIcon>
 							<Logout fontSize='small' />
 						</ListItemIcon>

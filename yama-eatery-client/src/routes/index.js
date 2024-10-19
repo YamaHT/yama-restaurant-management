@@ -29,7 +29,7 @@ const publicRoutes = [
 	{ path: '/auth/login', component: Login, layout: null },
 	{ path: '/auth/register', component: Register, layout: null },
 
-	{ path: '/manager', component: DashboardManger, layout: null },
+	{ path: '/manager', component: DashboardManger },
 ]
 
 export { publicRoutes }
