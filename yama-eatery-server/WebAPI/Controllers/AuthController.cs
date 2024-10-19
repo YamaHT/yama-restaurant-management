@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs.User;
 using WebAPI.Models;
 using WebAPI.Models.Enums;
@@ -16,21 +13,36 @@ namespace WebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
         {
-            var user = await _unitOfWork.UserRepository.GetByEmailAndPassword(userLoginDTO.Email, userLoginDTO.Password);
-            var jwt = user?.GenerateJWT(_configuration["JWT:SecretKey"]);
-            return !string.IsNullOrEmpty(jwt)
-                ? Ok(new
+            var user = await _unitOfWork.UserRepository.GetByEmailAndPasswordAsync(userLoginDTO.Email, userLoginDTO.Password);
+            if (user != null)
+            {
+                var jwt = user?.GenerateJwtUser(_configuration["JWT:SecretKey"]);
+                return Ok(new
                 {
                     token = jwt,
                     role = RoleEnum.Customer.ToString()
-                })
-                : throw new DataNotFoundException("Invalid email or password");
+                });
+            }
+
+            var employee = await _unitOfWork.EmployeeRepository.GetByEmailAndPasswordAsync(userLoginDTO.Email, userLoginDTO.Password);
+            if (employee != null)
+            {
+                var jwt = employee?.GenerateJWTEmployee(_configuration["JWT:SecretKey"]);
+                return Ok(new
+                {
+                    token = jwt,
+                    role = employee?.Position?.Name ?? RoleEnum.Staff.ToString(),
+                });
+            }
+
+            throw new DataNotFoundException("Invalid email or password");
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegisterDTO)
         {
-            if (await _unitOfWork.UserRepository.CheckEmailExisted(userRegisterDTO.Email))
+            if (await _unitOfWork.UserRepository.CheckEmailExistedAsync(userRegisterDTO.Email) 
+                || await _unitOfWork.EmployeeRepository.CheckEmailExistedAsync(userRegisterDTO.Email))
             {
                 throw new DataConflictException("Email existed");
             }
@@ -69,7 +81,7 @@ namespace WebAPI.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] string email)
         {
-            var user = await _unitOfWork.UserRepository.GetByEmail(email);
+            var user = await _unitOfWork.UserRepository.GetByEmailAsync(email);
 
             string password = StringUtil.GenerateRandomPassword();
             _ = Task.Run(() => SendMailUtil.SendMailPasswordAsync(_configuration, email, password));
@@ -83,7 +95,7 @@ namespace WebAPI.Controllers
         [HttpGet("check-email")]
         public async Task<IActionResult> CheckEmailExisted(string email)
         {
-            return Ok(await _unitOfWork.UserRepository.CheckEmailExisted(email));
+            return Ok(await _unitOfWork.UserRepository.CheckEmailExistedAsync(email));
         }
 
     }

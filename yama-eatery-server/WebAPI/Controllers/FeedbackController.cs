@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs.Feedback;
 using WebAPI.Models;
+using WebAPI.Models.Enums;
 using WebAPI.Utils;
 using WebAPI.Utils.Exceptions;
 
 namespace WebAPI.Controllers
 {
+    [Authorize(Roles = nameof(RoleEnum.Customer))]
     public class FeedbackController(IUnitOfWork _unitOfWork) : ApiController
     {
         [HttpPost("add")]
@@ -45,7 +47,7 @@ namespace WebAPI.Controllers
 
             var feedback = await _unitOfWork.FeedbackProductRepository
                 .GetByUserIdAndProductId(user.Id, modifyFeedbackProductDTO.productId) ?? throw new DataNotFoundException("Feedback not found.");
-           
+
             feedback.Message = modifyFeedbackProductDTO.Message;
             feedback.Rating = modifyFeedbackProductDTO.Rating;
             feedback.ModificationDate = DateTime.Now;

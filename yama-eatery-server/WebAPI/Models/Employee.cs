@@ -29,7 +29,7 @@ namespace WebAPI.Models
         [Column(TypeName = "char(10)")]
         public string? Phone { get; set; }
 
-        [Column(TypeName = "char(6)")]
+        [MaxLength(10)]
         public string? Gender { get; set; }
 
         [Required(ErrorMessage = "Position is required")]

@@ -1,4 +1,7 @@
-﻿namespace WebAPI.Utils
+﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+
+namespace WebAPI.Utils
 {
     public static class StringUtil
     {
@@ -24,6 +27,15 @@
             }
 
             return new string(passwordChars.OrderBy(c => random.Next()).ToArray());
+        }
+
+        public static string GetEnumDisplayName(this Enum enumValue)
+        {
+            return enumValue.GetType()
+                         .GetMember(enumValue.ToString())
+                         .First()
+                         .GetCustomAttribute<DisplayAttribute>()?
+                         .GetName() ?? enumValue.ToString();
         }
     }
 }

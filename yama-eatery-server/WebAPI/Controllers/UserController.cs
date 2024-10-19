@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs.User;
 using WebAPI.Models;
 using WebAPI.Models.Enums;
@@ -8,6 +8,7 @@ using WebAPI.Utils.Exceptions;
 
 namespace WebAPI.Controllers
 {
+    [Authorize(Roles = nameof(RoleEnum.Customer))]
     public class UserController(IUnitOfWork _unitOfWork, IConfiguration _configuration) : ApiController
     {
         [HttpGet("profile")]

@@ -4,8 +4,8 @@ using WebAPI.Utils;
 
 namespace WebAPI.Controllers
 {
-    [Authorize(Roles = nameof(RoleEnum.Customer))]
-    public class BookingController(IUnitOfWork _unitOfWork) : ApiController
+    [Authorize(Roles = nameof(RoleEnum.Manager))]
+    public class UserManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
     }
 }

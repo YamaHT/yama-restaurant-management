@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Models.Enums;
 using WebAPI.Utils;
 
 namespace WebAPI.Controllers
 {
+    [Authorize(Roles = nameof(RoleEnum.Customer))]
     public class VoucherController(IUnitOfWork _unitOfWork) : ApiController
     {
         [HttpGet]

@@ -7,7 +7,7 @@ namespace WebAPI.Models
     public class BookingDetail
     {
         [Required(ErrorMessage = "Booking is required")]
-        public int BookingId { get; set; }
+        public Guid BookingId { get; set; }
         public Booking? Booking { get; set; }
 
         [Required(ErrorMessage = "Product is required")]

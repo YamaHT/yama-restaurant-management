@@ -12,7 +12,7 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241013194923_A")]
+    [Migration("20241019112442_A")]
     partial class A
     {
         /// <inheritdoc />
@@ -63,11 +63,9 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("WebAPI.Models.Booking", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("BookingDate")
                         .HasColumnType("date");
@@ -112,6 +110,9 @@ namespace WebAPI.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserVoucherId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
@@ -120,13 +121,15 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("UserVoucherId");
+
                     b.ToTable("Booking");
                 });
 
             modelBuilder.Entity("WebAPI.Models.BookingDetail", b =>
                 {
-                    b.Property<int>("BookingId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -244,7 +247,8 @@ namespace WebAPI.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Gender")
-                        .HasColumnType("char(6)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Image")
                         .HasMaxLength(255)
@@ -324,6 +328,7 @@ namespace WebAPI.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Rank")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -340,7 +345,7 @@ namespace WebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("BaseSalary")
+                    b.Property<decimal>("HourlyWage")
                         .HasColumnType("numeric(10, 2)");
 
                     b.Property<string>("Name")
@@ -351,6 +356,20 @@ namespace WebAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Position");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            HourlyWage = 15m,
+                            Name = "Staff"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            HourlyWage = 50m,
+                            Name = "Manager"
+                        });
                 });
 
             modelBuilder.Entity("WebAPI.Models.Product", b =>
@@ -411,9 +430,6 @@ namespace WebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Bonus")
-                        .HasColumnType("numeric(10, 2)");
-
                     b.Property<decimal>("Deductions")
                         .HasColumnType("numeric(10, 2)");
 
@@ -423,7 +439,7 @@ namespace WebAPI.Migrations
                     b.Property<decimal>("NetSalary")
                         .HasColumnType("numeric(10, 2)");
 
-                    b.Property<DateOnly?>("SalaryDate")
+                    b.Property<DateOnly?>("PayDay")
                         .HasColumnType("date");
 
                     b.HasKey("Id");
@@ -516,7 +532,8 @@ namespace WebAPI.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Gender")
-                        .HasColumnType("char(6)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Image")
                         .HasMaxLength(255)
@@ -656,11 +673,17 @@ namespace WebAPI.Migrations
                         .WithMany("Bookings")
                         .HasForeignKey("UserId");
 
+                    b.HasOne("WebAPI.Models.UserVoucher", "UserVoucher")
+                        .WithMany()
+                        .HasForeignKey("UserVoucherId");
+
                     b.Navigation("Employee");
 
                     b.Navigation("Table");
 
                     b.Navigation("User");
+
+                    b.Navigation("UserVoucher");
                 });
 
             modelBuilder.Entity("WebAPI.Models.BookingDetail", b =>
