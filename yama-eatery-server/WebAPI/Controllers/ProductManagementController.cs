@@ -12,7 +12,6 @@ namespace WebAPI.Controllers
     [Authorize(Roles = nameof(RoleEnum.Manager))]
     public class ProductManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
-
         [HttpPost("add")]
         public async Task<IActionResult> AddProduct(AddProductDTO addProductDTO)
         {
@@ -27,11 +26,6 @@ namespace WebAPI.Controllers
             }
 
             var subCategory = await _unitOfWork.SubCategoryRepository.GetByIdAsync(addProductDTO.SubCategoryId);
-
-            if (subCategory == null)
-            {
-                return NotFound("SubCategory not found.");
-            }
 
             var product = new Product
             {
@@ -49,7 +43,6 @@ namespace WebAPI.Controllers
             return Ok(product);
         }
 
-
         [HttpGet("product")]
         public async Task<IActionResult> GetAll()
         {
@@ -65,7 +58,6 @@ namespace WebAPI.Controllers
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
 
             _unitOfWork.ProductRepository.Remove(product);
-
             await _unitOfWork.SaveChangeAsync();
 
             return Ok("Product is removed");
@@ -84,13 +76,9 @@ namespace WebAPI.Controllers
             product.StockQuantity = stockQuantity;
 
             _unitOfWork.ProductRepository.Update(product);
-
             await _unitOfWork.SaveChangeAsync();
+
             return Ok(new { message = $"Product restocked successfully. New stock quantity: {product.StockQuantity}" });
         }
-
-
-
-
     }
 }
