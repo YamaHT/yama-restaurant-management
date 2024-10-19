@@ -16,6 +16,7 @@ namespace WebAPI
         IMembershipRepository membershipRepository,
         IProductRepository productRepository,
         ISalaryRepository salaryRepository,
+        ISubCategoryRepository subCategoryRepository,
         ITableRepository tableRepository,
         IUserRepository userRepository,
         IUserVoucherRepository userVoucherRepository,
@@ -35,6 +36,7 @@ namespace WebAPI
         public IVoucherRepository VoucherRepository => voucherRepository;
         public IEmployeeRepository EmployeeRepository => employeeRepository;
         public ISalaryRepository SalaryRepository => salaryRepository;
+        public ISubCategoryRepository SubCategoryRepository => subCategoryRepository;
 
         public async Task<int> SaveChangeAsync()
         {

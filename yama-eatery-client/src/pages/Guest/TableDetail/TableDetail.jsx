@@ -17,12 +17,14 @@ import {
 	Typography,
 } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 
 export default function TableDetail() {
 	const { id } = useParams()
+	const navigate = useNavigate()
+
 	const [table, setTable] = useState()
 	const [open, setOpen] = useState(false)
 	const [formData, setFormData] = useState({
@@ -49,6 +51,8 @@ export default function TableDetail() {
 			const data = await TableService.DETAIL(id)
 			if (data) {
 				setTable(data)
+			} else {
+				navigate('/table')
 			}
 		}
 		fetchProductDetail()
@@ -60,8 +64,6 @@ export default function TableDetail() {
 	}
 
 	const handleAddBookingDetail = (newProduct) => {
-		console.log(newProduct)
-
 		setFormData((prevState) => {
 			const existingProductIndex = prevState.product.findIndex(
 				(product) => product.id === newProduct.id
@@ -117,12 +119,8 @@ export default function TableDetail() {
 		slideRef.current.goTo(index)
 	}
 
-	if (!table) {
-		return <Box>No table found!</Box>
-	}
-
-	return (
-		<Box sx={{ maxWidth: '1200px', margin: '0 auto' }}>
+	return table ? (
+		<Box p={'2% 5%'}>
 			<Stack direction='row' justifyContent='space-between' alignItems='center' mb={2}></Stack>
 			<Card
 				sx={{
@@ -364,5 +362,5 @@ export default function TableDetail() {
 				</Box>
 			</Box>
 		</Box>
-	)
+	) : null
 }

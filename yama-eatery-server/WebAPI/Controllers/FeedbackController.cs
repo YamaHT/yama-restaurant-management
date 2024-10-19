@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿            using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs.Feedback;
 using WebAPI.Models;
@@ -19,7 +19,7 @@ namespace WebAPI.Controllers
             var feedback = new FeedbackProduct
             {
                 UserId = user.Id,
-                ProductId = addProductDTO.productId,
+                ProductId = addProductDTO.ProductId,
                 Message = addProductDTO.Message,
                 Rating = addProductDTO.Rating,
                 CreationDate = DateTime.Now
@@ -37,6 +37,7 @@ namespace WebAPI.Controllers
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
             var feedback = await _unitOfWork.FeedbackProductRepository.GetByUserIdAndProductId(user.Id, productId);
+
             return Ok(feedback);
         }
 
@@ -46,7 +47,7 @@ namespace WebAPI.Controllers
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
 
             var feedback = await _unitOfWork.FeedbackProductRepository
-                .GetByUserIdAndProductId(user.Id, modifyFeedbackProductDTO.productId) ?? throw new DataNotFoundException("Feedback not found.");
+                .GetByUserIdAndProductId(user.Id, modifyFeedbackProductDTO.ProductId) ?? throw new DataNotFoundException("Feedback not found.");
 
             feedback.Message = modifyFeedbackProductDTO.Message;
             feedback.Rating = modifyFeedbackProductDTO.Rating;
