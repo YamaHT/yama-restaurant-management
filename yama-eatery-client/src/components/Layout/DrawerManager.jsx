@@ -28,6 +28,7 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material'
+import StaffSalaryManagement from '@/pages/Manager/StaffSalaryManagement/StaffSalaryManagement'
 
 const navigations = [
 	{
@@ -76,7 +77,7 @@ const navigations = [
 			{
 				icon: <Paid />,
 				label: 'Salary',
-				page: <UserManagement />,
+				page: <StaffSalaryManagement />,
 			},
 		],
 	},
