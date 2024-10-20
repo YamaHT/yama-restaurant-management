@@ -21,5 +21,13 @@ namespace WebAPI.Repositories
 
             return await query.FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
+
+        public async Task<List<string>> GetAllBookedDayPartOfTableInDateAsync(int tableId, DateOnly date)
+        {
+            return await _dbContext.Booking
+                .Include(x => x.Table)
+                .Where(x => x.Table.Id == tableId && x.BookingDate == date)
+                .Select(x => x.DayPart).ToListAsync();  
+        }
     }
 }

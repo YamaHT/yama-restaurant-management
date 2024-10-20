@@ -1,23 +1,31 @@
 import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import DialogChoosingProduct from '@/components/DialogChoosingProduct/DialogChoosingProduct'
+import { BookingService } from '@/services/BookingService'
 import { TableService } from '@/services/TableService'
+import { UserService } from '@/services/UserService'
 import { AssetImages } from '@/utilities/AssetImages'
+import { formmatOverflowText } from '@/utilities/FormatUtil'
 import { Add, ArrowBackIos, ArrowForwardIos, Cancel } from '@mui/icons-material'
 import {
 	Avatar,
 	Box,
 	Button,
 	Card,
+	FormControl,
 	Grid2,
 	IconButton,
+	InputLabel,
 	MenuItem,
+	Paper,
+	Select,
 	Stack,
 	TextField,
 	Typography,
 } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import secureLocalStorage from 'react-secure-storage'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 
@@ -28,26 +36,55 @@ export default function TableDetail() {
 	const [table, setTable] = useState()
 	const [open, setOpen] = useState(false)
 	const [formData, setFormData] = useState({
-		product: [],
+		products: [],
 		firstName: '',
 		lastName: '',
 		phone: '',
-		date: '',
+		bookingDate: '',
 		dayPart: '',
 		note: '',
+		totalPayment: 0,
+		depositPrice: 0,
+		tableId: id,
+		userVoucherId: 0,
 	})
+	const [bookedDayPart, setBookedDayPart] = useState([])
+	const [userVoucher, setUserVoucher] = useState([])
 
 	const slideRef = useRef(null)
 	const fieldsRef = useRef([])
 
-	const totalReserve = formData.product
-		.reduce((acc, product) => acc + product.price * product.quantity, 0)
-		.toFixed(2)
+	const role = secureLocalStorage.getItem('role')
+	const dayParts = ['Morning', 'Afternoon', 'Evening']
 
-	const deposit = (totalReserve * 0.1).toFixed(2)
+	const getAvailableDayParts = () => {
+		const currentDate = new Date()
+		const selectedDate = new Date(formData.bookingDate)
+		const currentHour = currentDate.getHours()
+
+		if (selectedDate < currentDate.setHours(0, 0, 0, 0)) {
+			return []
+		}
+
+		const isToday =
+			currentDate.getFullYear() === selectedDate.getFullYear() &&
+			currentDate.getMonth() === selectedDate.getMonth() &&
+			currentDate.getDate() === selectedDate.getDate()
+
+		if (isToday) {
+			if (currentHour >= 12 && currentHour < 18) {
+				return dayParts.filter((part) => part !== 'Morning' && !bookedDayPart.includes(part))
+			}
+			if (currentHour >= 18) {
+				return dayParts.filter((part) => part === 'Evening' && !bookedDayPart.includes(part))
+			}
+		}
+
+		return dayParts.filter((part) => !bookedDayPart.includes(part))
+	}
 
 	useEffect(() => {
-		async function fetchProductDetail() {
+		async function fetchTableDetail() {
 			const data = await TableService.DETAIL(id)
 			if (data) {
 				setTable(data)
@@ -55,48 +92,77 @@ export default function TableDetail() {
 				navigate('/table')
 			}
 		}
-		fetchProductDetail()
+
+		async function fetchUserProfile() {
+			const profile = await UserService.GET_PROFILE()
+			if (profile) {
+				const nameParts = profile.name.split(' ')
+				const firstName = nameParts.pop()
+				const lastName = nameParts.join(' ')
+				setFormData((prev) => ({
+					...prev,
+					firstName: firstName,
+					lastName: lastName,
+					phone: profile.phone,
+				}))
+			}
+		}
+
+		async function fetchUserVoucher() {
+			const userVoucher = await BookingService.GET_VALID_VOUCHER()
+			if (userVoucher) {
+				setUserVoucher(userVoucher)
+			}
+		}
+
+		fetchTableDetail()
+		if (role) {
+			fetchUserProfile()
+			fetchUserVoucher()
+		}
 	}, [id])
+
+	useEffect(() => {
+		const totalPayment = formData.products
+			.reduce((acc, product) => acc + product.product.price * product.quantity, 0)
+			.toFixed(2)
+
+		const depositPrice = totalPayment !== 0 ? (totalPayment * 0.1).toFixed(2) : (5.0).toFixed(2)
+
+		setFormData((prev) => ({
+			...prev,
+			totalPayment: totalPayment,
+			depositPrice: depositPrice,
+		}))
+	}, [formData.products])
+
+	useEffect(() => {
+		async function fetchDaypart() {
+			console.log(formData)
+			const data = await BookingService.GET_BOOKED_DAYPART(id, formData.bookingDate)
+			if (data) {
+				setBookedDayPart(data)
+			}
+		}
+		if (role && formData.bookingDate) fetchDaypart()
+	}, [formData.bookingDate])
 
 	const handleFormChange = (e) => {
 		const { name, value } = e.target
 		setFormData((prev) => ({ ...prev, [name]: value }))
 	}
 
-	const handleAddBookingDetail = (newProduct) => {
-		setFormData((prevState) => {
-			const existingProductIndex = prevState.product.findIndex(
-				(product) => product.id === newProduct.id
-			)
-
-			if (existingProductIndex !== -1) {
-				const updatedProducts = prevState.product.map((product, index) =>
-					index === existingProductIndex ? { ...product, quantity: product.quantity + 1 } : product
-				)
-				return {
-					...prevState,
-					product: updatedProducts,
-				}
-			}
-
-			const newProductEntry = {
-				id: newProduct.id,
-				image: newProduct.image[0],
-				quantity: 1,
-				price: newProduct.price,
-			}
-
-			return {
-				...prevState,
-				product: [...prevState.product, newProductEntry],
-			}
-		})
+	const handleAddBookingDetail = (bookingDetails) => {
+		setFormData((prevFormData) => ({
+			...prevFormData,
+			products: [...bookingDetails],
+		}))
 	}
 
-	const handleRemoveProduct = (index) => {
+	const handleRemoveProduct = (removeProduct) => {
 		setFormData((prevState) => ({
 			...prevState,
-			product: prevState.product.filter((_, i) => i !== index),
+			products: prevState.products.filter((product) => product.product.id !== removeProduct.id),
 		}))
 	}
 
@@ -112,6 +178,7 @@ export default function TableDetail() {
 		})
 
 		if (isValid) {
+			console.log(formData)
 		}
 	}
 
@@ -207,160 +274,173 @@ export default function TableDetail() {
 					/>
 				))}
 			</Stack>
-			<Box
-				sx={{
-					marginTop: '20px',
-					padding: '20px',
-					backgroundColor: '#f9f9f9',
-					borderRadius: '10px',
-				}}
-			>
-				<Typography variant='h6'>Booking Information</Typography>
-				<Grid2 container spacing={2}>
-					{formData.product?.map((selectedProduct, index) => (
-						<Grid2
-							size={{ xs: 12, sm: 2, md: 2 }}
-							position={'relative'}
-							key={selectedProduct.id || index}
-						>
-							<Avatar
-								variant='rounded'
-								sx={{ height: 130, width: '100%' }}
-								src={AssetImages.ProductImage(selectedProduct.image)}
-							></Avatar>
-							<Stack
-								sx={{ my: 1 }}
-								direction={'row'}
-								alignItems={'center'}
-								justifyContent={'space-between'}
+
+			{role && (
+				<Paper
+					sx={{
+						mt: '2%',
+						padding: '1% 2%',
+					}}
+				>
+					<Typography variant='h6'>Booking Information</Typography>
+					<Grid2 container spacing={2}>
+						{formData.products?.map((selectedProduct) => (
+							<Grid2
+								size={{ xs: 12, sm: 2, md: 2 }}
+								position={'relative'}
+								key={selectedProduct.product.id}
 							>
-								<Typography
-									sx={{ bottom: 0, textShadow: '0 0 5px #fff' }}
-									variant='body2'
-									color='black'
-								>
-									Price: {selectedProduct.price * selectedProduct.quantity}
+								<Avatar
+									variant='rounded'
+									sx={{ height: 130, width: '100%' }}
+									src={AssetImages.ProductImage(selectedProduct.product.image[0])}
+								></Avatar>
+								<Typography variant='body1' sx={formmatOverflowText(1)}>
+									{selectedProduct.product.name}
 								</Typography>
-								<Typography
-									sx={{ bottom: 0, textShadow: '0 0 5px #fff' }}
-									variant='body2'
-									color='black'
+								<Stack
+									sx={{ my: 1 }}
+									direction={'row'}
+									alignItems={'center'}
+									justifyContent={'space-between'}
 								>
-									Quantity: {selectedProduct.quantity}
-								</Typography>
-							</Stack>
+									<Typography
+										sx={{ bottom: 0, textShadow: '0 0 5px #fff' }}
+										variant='body2'
+										color='black'
+									>
+										Price: {selectedProduct.product.price * selectedProduct.quantity}
+									</Typography>
+									<Typography
+										sx={{ bottom: 0, textShadow: '0 0 5px #fff' }}
+										variant='body2'
+										color='black'
+									>
+										Quantity: {selectedProduct.quantity}
+									</Typography>
+								</Stack>
+								<IconButton
+									onClick={() => handleRemoveProduct(selectedProduct.product)}
+									sx={{ position: 'absolute', top: 5, right: 5, zIndex: 1, color: 'white' }}
+									size='small'
+								>
+									<Cancel />
+								</IconButton>
+							</Grid2>
+						))}
+						<Grid2 size={{ xs: 12, sm: 2, md: 2 }}>
 							<IconButton
-								onClick={() => handleRemoveProduct(index)}
-								sx={{ position: 'absolute', top: 5, right: 5, zIndex: 10 }}
-								size='small'
-								variant='contained'
-								color='warning'
+								sx={{
+									width: '100%',
+									height: 130,
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									border: '1px solid gray',
+									borderRadius: '10px',
+								}}
+								onClick={() => setOpen(true)}
 							>
-								<Cancel />
+								<Add sx={{ fontSize: 50 }} />
 							</IconButton>
 						</Grid2>
-					))}
-					<Grid2 size={{ xs: 12, sm: 2, md: 2 }}>
-						<IconButton
-							sx={{
-								width: '100%',
-								height: 130,
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-								border: '1px dashed gray',
-								borderRadius: '10px',
-							}}
-							onClick={() => setOpen(true)}
-						>
-							<Add sx={{ fontSize: 50 }} />
-						</IconButton>
+						<DialogChoosingProduct
+							open={open}
+							handleClose={() => setOpen(false)}
+							handleAddProduct={handleAddBookingDetail}
+							selectedProducts={formData.products}
+						/>
 					</Grid2>
-				</Grid2>
-				<DialogChoosingProduct
-					open={open}
-					handleClose={() => setOpen(false)}
-					handleAddProduct={handleAddBookingDetail}
-				/>
-				<Box width={'100%'}>
-					<Stack direction='row' spacing={2} my={2}>
-						<ValidationTextField
-							ref={(el) => (fieldsRef.current['firstName'] = el)}
+
+					<Stack spacing={2} mt={2}>
+						<Stack direction='row' spacing={2}>
+							<ValidationTextField
+								ref={(el) => (fieldsRef.current['firstName'] = el)}
+								fullWidth
+								name='firstName'
+								label='First Name'
+								value={formData.firstName}
+								onChange={handleFormChange}
+							/>
+							<ValidationTextField
+								ref={(el) => (fieldsRef.current['lastName'] = el)}
+								fullWidth
+								name='lastName'
+								label='Last Name'
+								value={formData.lastName}
+								onChange={handleFormChange}
+							/>
+						</Stack>
+						<Stack direction='row' spacing={2}>
+							<ValidationTextField
+								ref={(el) => (fieldsRef.current['phone'] = el)}
+								fullWidth
+								name='phone'
+								label='Phone'
+								type='tel'
+								value={formData.phone}
+								onChange={handleFormChange}
+							/>
+							<ValidationTextField
+								ref={(el) => (fieldsRef.current['bookingDate'] = el)}
+								fullWidth
+								name='bookingDate'
+								label='Date'
+								type='date'
+								slotProps={{
+									inputLabel: { shrink: true },
+									input: { inputProps: { min: new Date().toISOString().split('T')[0] } },
+								}}
+								value={formData.bookingDate}
+								onChange={handleFormChange}
+							/>
+							<ValidationSelect
+								ref={(el) => (fieldsRef.current['dayPart'] = el)}
+								fullWidth
+								name='dayPart'
+								label='Day Part'
+								value={formData.dayPart}
+								onChange={handleFormChange}
+								disabled={!!!formData.bookingDate}
+							>
+								{getAvailableDayParts().map((part) => (
+									<MenuItem key={part} value={part}>
+										{part}
+									</MenuItem>
+								))}
+							</ValidationSelect>
+						</Stack>
+						<TextField
 							fullWidth
-							name='firstName'
-							label='First Name'
-							value={formData.firstName}
+							name='note'
+							label='Note'
+							multiline
+							rows={3}
+							value={formData.note}
 							onChange={handleFormChange}
 						/>
-						<ValidationTextField
-							ref={(el) => (fieldsRef.current['lastName'] = el)}
-							fullWidth
-							name='lastName'
-							label='Last Name'
-							value={formData.lastName}
-							onChange={handleFormChange}
-						/>
-					</Stack>
-					<Stack direction='row' spacing={2} mb={2}>
-						<ValidationTextField
-							ref={(el) => (fieldsRef.current['phone'] = el)}
-							fullWidth
-							name='phone'
-							label='Phone'
-							type='tel'
-							value={formData.phone}
-							onChange={handleFormChange}
-						/>
-						<ValidationTextField
-							ref={(el) => (fieldsRef.current['date'] = el)}
-							fullWidth
-							name='date'
-							label='Date'
-							type='date'
-							slotProps={{
-								inputLabel: { shrink: true },
-								input: { inputProps: { min: new Date().toISOString().split('T')[0] } },
-							}}
-							value={formData.date}
-							onChange={handleFormChange}
-						/>
-						<ValidationSelect
-							ref={(el) => (fieldsRef.current['dayPart'] = el)}
-							fullWidth
-							name='dayPart'
-							label='Day Part'
-							value={formData.dayPart}
-							onChange={handleFormChange}
-							displayEmpty
-						>
-							<MenuItem value='Morning'>Morning</MenuItem>
-							<MenuItem value='Afternoon'>Afternoon</MenuItem>
-							<MenuItem value='Evening'>Evening</MenuItem>
-						</ValidationSelect>
-					</Stack>
-					<TextField
-						fullWidth
-						name='note'
-						label='Note'
-						multiline
-						rows={3}
-						value={formData.note}
-						onChange={handleFormChange}
-						sx={{ mb: 2 }}
-					/>
-					<Stack direction='row' justifyContent='space-between' my={1}>
-						<Box>
-							<Typography>Total Reserve: ${totalReserve}</Typography>
-							<Typography>Deposit: ${deposit}</Typography>
-						</Box>
-						<Box mt={1}>
-							<Button onClick={handleSubmit} fullWidth variant='contained' primary>
+						<Stack direction='row' alignItems={'center'} justifyContent='space-between'>
+							<FormControl sx={{ width: '30%' }}>
+								<InputLabel id='userVoucher' sx={{ bgcolor: 'transparent' }}>
+									Voucher
+								</InputLabel>
+								<Select labelId='userVoucher' label='Voucher'>
+									{userVoucher.map((voucher) => (
+										<MenuItem value={voucher.voucherId}>{voucher.voucher.name}</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+							<Box>
+								<Typography>Total Reserve: ${formData.totalPayment}</Typography>
+								<Typography>Deposit: ${formData.depositPrice}</Typography>
+							</Box>
+							<Button onClick={handleSubmit} variant='contained' primary>
 								Book Now
 							</Button>
-						</Box>
+						</Stack>
 					</Stack>
-				</Box>
-			</Box>
+				</Paper>
+			)}
 		</Box>
 	) : null
 }

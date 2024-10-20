@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
         [HttpGet("history-booking")]
         public async Task<IActionResult> GetHistoryBooking()
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings","Bookings.Table"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings", "Bookings.BookingDetails","Bookings.Table"]);
             return Ok(user?.Bookings);
         }
 

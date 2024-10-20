@@ -5,4 +5,14 @@ const formatDateWithLetterMonth = (date) =>
 		year: 'numeric',
 	})
 
-export { formatDateWithLetterMonth }
+const formmatOverflowText = (line) => {
+	return {
+		display: '-webkit-box',
+		WebkitBoxOrient: 'vertical',
+		WebkitLineClamp: line,
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+	}
+}
+
+export { formatDateWithLetterMonth, formmatOverflowText }

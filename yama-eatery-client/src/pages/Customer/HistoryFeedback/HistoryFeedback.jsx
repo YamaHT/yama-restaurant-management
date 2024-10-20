@@ -9,6 +9,7 @@ import {
 	InputLabel,
 	MenuItem,
 	Pagination,
+	Rating,
 	Select,
 	Stack,
 	Table,
@@ -87,8 +88,8 @@ function HistoryFeedback() {
 	}
 
 	return (
-		<Grid2 size={{ p: '5% 0' }}>
-			<Grid2 xs={12}>
+		<Box>
+			<Box>
 				<Stack
 					direction='row'
 					spacing={2}
@@ -112,16 +113,16 @@ function HistoryFeedback() {
 					</FormControl>
 				</Stack>
 				<Divider />
-			</Grid2>
-			<Grid2 size={{ xs: 12 }}>
+			</Box>
+			<Box>
 				<TableContainer>
 					<Table>
 						<TableHead>
 							<TableRow>
-								<TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-								<TableCell sx={{ fontWeight: 'bold' }}>Message</TableCell>
-								<TableCell sx={{ fontWeight: 'bold' }}>Rating</TableCell>
-								<TableCell />
+								<TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Name</TableCell>
+								<TableCell sx={{ fontWeight: 'bold', width: '50%' }}>Message</TableCell>
+								<TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Rating</TableCell>
+								<TableCell sx={{ width: '5%' }} />
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -130,7 +131,9 @@ function HistoryFeedback() {
 									<TableRow key={index}>
 										<TableCell>{review.product.name}</TableCell>
 										<TableCell>{review.message}</TableCell>
-										<TableCell>{review.rating}</TableCell>
+										<TableCell>
+											<Rating readOnly value={review.rating} />
+										</TableCell>
 										<TableCell>
 											<IconButton onClick={() => handleIconClick(review.product.id)}>
 												<LaunchIcon />
@@ -142,7 +145,7 @@ function HistoryFeedback() {
 								<TableRow>
 									<TableCell colSpan={4}>
 										<Typography variant='body2' color='text.secondary' align='center'>
-											No reviews found for the selected filters.
+											No reviews yet.
 										</Typography>
 									</TableCell>
 								</TableRow>
@@ -150,18 +153,16 @@ function HistoryFeedback() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-			</Grid2>
-			<Grid2 size={{ xs: 12 }}>
-				<Box mt={4} display='flex' justifyContent='center'>
-					<Pagination
-						count={totalPages || 1}
-						page={page}
-						onChange={handlePageChange}
-						color='primary'
-					/>
-				</Box>
-			</Grid2>
-		</Grid2>
+			</Box>
+			<Stack alignItems={'center'} mt={2}>
+				<Pagination
+					count={totalPages || 1}
+					page={page}
+					onChange={handlePageChange}
+					color='primary'
+				/>
+			</Stack>
+		</Box>
 	)
 }
 

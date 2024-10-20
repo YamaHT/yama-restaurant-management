@@ -33,15 +33,12 @@ const ValidationSelect = forwardRef(
 
 		return (
 			<FormControl fullWidth variant={variant}>
-				<InputLabel
-					id={label}
-					error={!!error}
-					sx={{ bgcolor: variant === 'outlined' ? 'white' : 'transparent' }}
-				>
-					{label}
+				<InputLabel id={label} error={!!error}>
+					{label} *
 				</InputLabel>
 				<Select
 					labelId={label}
+					label={label}
 					value={value}
 					error={!!error}
 					onChange={onChange}
