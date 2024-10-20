@@ -33,7 +33,6 @@ function MyVoucher() {
 		const fetchVoucherData = async () => {
 			try {
 				const data = await UserService.MY_VOUCHER()
-				console.log(data)
 				setVouchers(data)
 				setFilteredVouchers(data)
 			} catch (error) {
@@ -55,12 +54,6 @@ function MyVoucher() {
 		const filtered = vouchers.filter((voucher) => {
 			const voucherDate = new Date(voucher.voucher.expiredDate)
 			const isExpired = voucherDate < today
-
-			// Debugging logs
-			console.log(
-				`Voucher: ${voucher.voucher.name}, Expired Date: ${voucher.expiredDate}, Is Expired: ${isExpired}`
-			)
-
 			const passesTabFilter =
 				tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
 

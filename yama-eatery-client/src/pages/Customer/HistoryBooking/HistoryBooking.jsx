@@ -62,12 +62,11 @@ const HistoryBooking = () => {
 					<Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
 						<Box width={'25%'}>
 							<Avatar
-								
 								variant='square'
 								alt={`Table ${booking.table.type}`}
 								style={{ width: '100%', height: '100%', aspectRatio: 7 / 6, objectFit: 'cover' }}
-							>
-								<img src={AssetImages.VoucherImage(booking.table.img)} alt='' />
+								src={AssetImages.VoucherImage(booking.table.img)}
+							>				
 							</Avatar>
 						</Box>
 						<Box width={'75%'} pl={'2%'}>
