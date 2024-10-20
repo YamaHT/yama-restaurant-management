@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
                 if (imageName != null)
                 {
                     image.Add(imageName);
-                }
+                }   
             }
 
             var subCategory = await _unitOfWork.SubCategoryRepository.GetByIdAsync(addProductDTO.SubCategoryId);
@@ -40,10 +40,10 @@ namespace WebAPI.Controllers
             await _unitOfWork.ProductRepository.AddAsync(product);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(product);
+            return RedirectToAction("GetAll");
         }
 
-        [HttpGet("product")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             string[] includes = ["SubCategory", "SubCategory.Category"];
@@ -60,25 +60,25 @@ namespace WebAPI.Controllers
             _unitOfWork.ProductRepository.Remove(product);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok("Product is removed");
+            return RedirectToAction("GetAll");
         }
 
         [HttpPost("restock")]
-        public async Task<IActionResult> RestockProduct(int productId, int stockQuantity)
+        public async Task<IActionResult> RestockProduct(RestockProductDTO restockProductDTO)
         {
-            var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(restockProductDTO.ProductId);
 
             if (product == null)
             {
                 throw new DataNotFoundException("Product is not found");
             }
 
-            product.StockQuantity = stockQuantity;
+            product.StockQuantity = restockProductDTO.StockQuantity;
 
             _unitOfWork.ProductRepository.Update(product);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(new { message = $"Product restocked successfully. New stock quantity: {product.StockQuantity}" });
+            return RedirectToAction("GetAll");
         }
     }
 }

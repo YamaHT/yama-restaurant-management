@@ -1,6 +1,7 @@
 import { AuthRequest } from '@/requests/AuthRequest'
 import { EnumRequest } from '@/requests/EnumRequest'
 import { FeedbackRequest } from '@/requests/FeedbackRequest'
+import { ProductManagementRequest } from '@/requests/ProductManagementRequest'
 import { ProductRequest } from '@/requests/ProductRequest'
 import { TableRequest } from '@/requests/TableRequest'
 import { UserRequest } from '@/requests/UserRequest'
@@ -15,4 +16,5 @@ export const ApiRequest = {
 	FeedbackRequest,
 	TableRequest,
 	VoucherRequest,
+	ProductManagementRequest
 }
