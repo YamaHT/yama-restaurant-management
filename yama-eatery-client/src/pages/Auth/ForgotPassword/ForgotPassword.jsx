@@ -1,5 +1,5 @@
 import { AuthService } from '@/services/AuthService'
-import { ApiRequest } from '@/utilities/dsa'
+import { ApiRequest } from '@/utilities/ApiRequest'
 import { Box, Button, Paper, TextField, Typography } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 import { useState } from 'react'
