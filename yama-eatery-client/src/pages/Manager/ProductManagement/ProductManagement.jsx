@@ -156,6 +156,16 @@ const ProductManagement = () => {
 	const [rows, setRows] = useState(initialRows)
 	const [filteredRows, setFilteredRows] = useState(initialRows)
 
+	// useEffect(() => {
+	// 	async function fetchProducts() {
+	// 		const data = await ProductManagement.GET_ALL()
+	// 		if (data) {
+	// 			setProducts(data)
+	// 		}
+	// 	}
+	// 	fetchProducts()
+	// }, [])
+
 	useEffect(() => {
 		const categoryFilterMap = ['All', 'Food', 'Drink', 'Dessert', 'Snack']
 
