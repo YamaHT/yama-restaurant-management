@@ -9,7 +9,7 @@ using WebAPI.Utils.Exceptions;
 namespace WebAPI.Controllers
 {
     [Authorize(Roles = nameof(RoleEnum.Customer))]
-    public class FeedbackController(IUnitOfWork _unitOfWork) : ApiController
+    public class FeedbackController(IUnitOfWork _unitOfWork) : ApiController    
     {
         [HttpPost("add")]
         public async Task<IActionResult> AddFeedback([FromBody] ModifyFeedbackProductDTO addProductDTO)

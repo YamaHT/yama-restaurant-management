@@ -11,8 +11,13 @@ namespace WebAPI.Controllers
         {
             string[] includes = ["SubCategory", "SubCategory.Category", "Feedbacks"];
             var products = await _unitOfWork.ProductRepository.GetAllAsync(includes);
-
-            return Ok(products);
+            var productGetAllDTO = new
+            {
+                products = products,
+                minPrice = products.Min(x => x.Price),
+                maxPrice = products.Max(x => x.Price),
+            };
+            return Ok(productGetAllDTO);
         }
 
         [HttpGet("detail/{id}")]
@@ -31,5 +36,7 @@ namespace WebAPI.Controllers
 
             return Ok(similarProduct);
         }
+        
+
     }
 }
