@@ -32,7 +32,7 @@ function HistoryFeedback() {
 	const [totalPages, setTotalPages] = useState(0)
 	const navigate = useNavigate()
 	const handleIconClick = (productId) => {
-		navigate(`/product/detail/:${productId}`)
+		navigate(`/product/detail/${productId}`)
 	}
 
 	useEffect(() => {

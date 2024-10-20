@@ -1,10 +1,21 @@
 import { Avatar, Box, Button, Divider, Paper, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { UserService } from '@/services/UserService'
+import { AssetImages } from '@/utilities/AssetImages'
 
 const formatDate = (dateStr) => {
 	const date = new Date(dateStr)
 	return date.toLocaleDateString('en-GB')
+}
+const getColorByStatus = (status) => {
+	switch (status) {
+		case 'Deposited':
+			return 'primary.main'
+		case 'Undeposited':
+			return 'error.main'
+		default:
+			return 'success.main'
+	}
 }
 
 const HistoryBooking = () => {
@@ -34,26 +45,30 @@ const HistoryBooking = () => {
 						<Typography
 							variant='body1'
 							fontWeight='bold'
-							color={
-								booking.isBooking ? (booking.bookingStatus.isPaid ? 'primary' : 'error') : 'success'
-							}
+							component={Box}
+							sx={{
+								border: '2px solid',
+								borderRadius: '4px',
+								padding: '8px',
+								color: 'white',
+								backgroundColor: getColorByStatus(booking.bookingStatus),
+								borderColor: getColorByStatus(booking.bookingStatus),
+							}}
 						>
-							{booking.isBooking
-								? booking.bookingStatus.isPaid
-									? 'Deposited'
-									: 'Undeposited'
-								: 'Booked'}
+							{booking.bookingStatus}
 						</Typography>
 					</Box>
 					<Divider sx={{ my: 1, borderBottomWidth: 3 }} />
 					<Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
 						<Box width={'25%'}>
 							<Avatar
-								src={booking.table.img}
+								
 								variant='square'
 								alt={`Table ${booking.table.type}`}
 								style={{ width: '100%', height: '100%', aspectRatio: 7 / 6, objectFit: 'cover' }}
-							/>
+							>
+								<img src={AssetImages.VoucherImage(booking.table.img)} alt='' />
+							</Avatar>
 						</Box>
 						<Box width={'75%'} pl={'2%'}>
 							<Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
@@ -100,7 +115,7 @@ const HistoryBooking = () => {
 								>
 									Note: {booking.note}
 								</Typography>
-								{!booking.bookingStatus.isPaid && (
+								{booking.isBooking && !booking.bookingStatus.isPaid && (
 									<Box display='flex' flexDirection='column' width='100%'>
 										<Button
 											fullWidth

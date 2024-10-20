@@ -1,4 +1,3 @@
-import { UserRequest } from '@/requests/UserRequest'
 import {
 	Box,
 	Chip,
@@ -21,19 +20,20 @@ import { AssetImages } from '@/utilities/AssetImages'
 const VOUCHERS_PER_PAGE = 4
 
 function MyVoucher() {
-	const [voucherData, setVoucherData] = useState([])
-	const [filteredVoucherData, setFilteredVoucherData] = useState([])
 	const [filterValue, setFilterValue] = useState('')
 	const [selectedDiscount, setSelectedDiscount] = useState('')
 	const [page, setPage] = useState(1)
 	const [searchTerm, setSearchTerm] = useState('')
 	const [tabValue, setTabValue] = useState(0)
+	const [vouchers, setVouchers] = useState([])
+	const [filteredVouchers, setFilteredVouchers] = useState([]) 
 	const today = new Date()
 
 	useEffect(() => {
 		const fetchVoucherData = async () => {
 			try {
-				const data = await UserRequest.MY_VOUCHERS()
+				const data = await UserService.MY_VOUCHER()
+				console.log(data)
 				setVouchers(data)
 				setFilteredVouchers(data)
 			} catch (error) {
@@ -52,30 +52,36 @@ function MyVoucher() {
 	}
 
 	const applyFilters = () => {
-		const filtered = voucherData.filter((voucher) => {
-			const voucherDate = new Date(voucher.expiredDate)
+		const filtered = vouchers.filter((voucher) => {
+			const voucherDate = new Date(voucher.voucher.expiredDate)
 			const isExpired = voucherDate < today
+
+			// Debugging logs
+			console.log(
+				`Voucher: ${voucher.voucher.name}, Expired Date: ${voucher.expiredDate}, Is Expired: ${isExpired}`
+			)
+
 			const passesTabFilter =
 				tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
 
 			const voucherName = voucher.voucher.name ? voucher.voucher.name.toLowerCase() : ''
-
 			const isDiscountValid = selectedDiscount
 				? voucher.voucher.reducedPercent >= parseInt(selectedDiscount)
 				: true
 
 			return isDiscountValid && voucherName.includes(searchTerm.toLowerCase()) && passesTabFilter
 		})
-		setFilteredVoucherData(filtered)
+		setFilteredVouchers(filtered)
 	}
+
 
 	useEffect(() => {
 		applyFilters()
 		setPage(1)
 	}, [filterValue, searchTerm, selectedDiscount, tabValue])
 
-	const totalPages = Math.ceil(filteredVoucherData.length / VOUCHERS_PER_PAGE)
-	const displayedVoucherData = filteredVoucherData.slice(
+	const totalPages = Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE)
+	const displayedVoucherData = filteredVouchers.slice(
 		(page - 1) * VOUCHERS_PER_PAGE,
 		page * VOUCHERS_PER_PAGE
 	)
