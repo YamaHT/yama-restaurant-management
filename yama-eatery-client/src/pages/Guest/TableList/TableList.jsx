@@ -1,13 +1,11 @@
+import TableCard from '@/components/Table/TableCard'
 import TableMenu from '@/components/Table/TableMenu'
 import { TableService } from '@/services/TableService'
-import { AssetImages } from '@/utilities/AssetImages'
-import { Box, Divider, Grid2, Pagination, Stack, Typography } from '@mui/material'
+import { Box, Grid2, Pagination, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function TableList() {
-	const navigate = useNavigate()
-
 	const [filteredTables, setFilteredTables] = useState([])
 	const [filterOption, setFilterOption] = useState('')
 	const [sortOption, setSortOption] = useState('')
@@ -58,13 +56,9 @@ export default function TableList() {
 		setCurrentPage(value)
 	}
 
-	const handleClick = (id) => {
-		navigate(`/table/detail/${id}`)
-	}
-
 	return (
-		<Grid2 container spacing={2} p={'5%'}>
-			<Grid2 size={3}>
+		<Grid2 container p={'5%'} spacing={2}>
+			<Grid2 size={{ xs: 12, md: 3 }}>
 				<TableMenu
 					handleShowAll={handleShowAll}
 					filterOption={filterOption}
@@ -73,82 +67,33 @@ export default function TableList() {
 					setSortOption={setSortOption}
 				/>
 			</Grid2>
-			<Grid2 size={9}>
-				{filteredTables.length === 0 ? (
-					<Typography variant='h6' align='center' sx={{ mt: 10 }}>
-						No tables found matching the selected filters.
-					</Typography>
-				) : (
-					<>
-						<Grid2
-							container
-							sx={{
-								display: 'grid',
-								gridTemplateColumns: {
-									xs: 'repeat(1, 1fr)',
-									sm: 'repeat(2, 1fr)',
-									md: 'repeat(4, 1fr)',
-								},
-								gap: 3,
-							}}
-						>
-							{currentTables.map((table) => (
-								<Box
-									key={table.id}
-									sx={{
-										backgroundColor: 'gray.50',
-										boxShadow: 2,
-										borderRadius: 2,
-										cursor: 'pointer',
-										'&:hover': { transform: 'translateY(-8px)' },
-										transition: 'all 0.3s ease-in-out',
-									}}
-									onClick={() => handleClick(table.id)}
-								>
-									<Box
-										sx={{
-											display: 'flex',
-											justifyContent: 'center',
-											height: 260,
-											backgroundColor: 'gray.100',
-										}}
-									>
-										<img
-											src={AssetImages.TableImage(table.image[0])}
-											alt={table.tableType}
-											style={{
-												objectFit: 'fill',
-												maxHeight: '100%',
-												maxWidth: '100%',
-											}}
-										/>
-									</Box>
 
-									<Box sx={{ p: 3, backgroundColor: 'white' }}>
-										<Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-											<Typography variant='body1' align='right' color='gray.800'>
-												{`Floor ${table.floor}`}
-											</Typography>
-											<Typography variant='body1' fontWeight='bold' color='gray.800'>
-												{table.type} Table
-											</Typography>
-										</Stack>
-									</Box>
-								</Box>
-							))}
-						</Grid2>
-						<Divider sx={{ mt: 2 }} />
-						<Pagination
-							size='large'
-							count={Math.ceil(filteredTables.length / tablesPerPage)}
-							page={currentPage}
-							onChange={handlePageChange}
-							color='primary'
-							sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
-							disabled={filteredTables.length <= tablesPerPage}
-						/>
-					</>
-				)}
+			<Grid2 size={{ xs: 12, md: 9 }}>
+				<Box>
+					{filteredTables.length === 0 ? (
+						<Typography variant='h6' align='center' sx={{ mt: 10 }}>
+							No tables found matching the selected filters.
+						</Typography>
+					) : (
+						<>
+							<Grid2 container spacing={2}>
+								{currentTables.map((table) => {
+									return <TableCard table={table} />
+								})}
+							</Grid2>
+
+							<Pagination
+								size='large'
+								count={Math.ceil(filteredTables.length / tablesPerPage)}
+								page={currentPage}
+								onChange={handlePageChange}
+								color='primary'
+								sx={{ display: 'flex', justifyContent: 'center', my: 3 }}
+								disabled={filteredTables.length <= tablesPerPage}
+							/>
+						</>
+					)}
+				</Box>
 			</Grid2>
 		</Grid2>
 	)
