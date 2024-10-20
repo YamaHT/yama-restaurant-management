@@ -3,6 +3,7 @@ import ReviewProgressBar from '@/components/Product/ReviewProgressBar'
 import { FeedbackService } from '@/services/FeedbackService'
 import { ProductService } from '@/services/ProductService'
 import { AssetImages } from '@/utilities/AssetImages'
+import { calculateAverageRating } from '@/utilities/Calculate'
 import { ChevronLeft, ChevronRight, Delete, Edit } from '@mui/icons-material'
 import {
 	Avatar,
@@ -26,8 +27,6 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import secureLocalStorage from 'react-secure-storage'
-import { calculateAverageRating } from '@/utilities/Calculate'
 
 export default function ProductDetail() {
 	const { id } = useParams()
@@ -61,7 +60,7 @@ export default function ProductDetail() {
 		}
 
 		async function fetchGetFeedbackProduct() {
-			if (!secureLocalStorage.getItem('token')) return
+			if (!localStorage.getItem('token')) return
 
 			setIsAuthorized(true)
 
@@ -277,7 +276,7 @@ export default function ProductDetail() {
 				{reviewsToShow.map((feedbacks, index) => (
 					<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
 						<Grid2 size={0.5}>
-							<Avatar src={feedbacks.user.image} alt={feedbacks.user.name} />
+							<Avatar src={AssetImages.UserImage(feedbacks.user.image)} alt={feedbacks.user.name} />
 						</Grid2>
 						<Grid2 size={11.5}>
 							<Stack direction='row' alignItems='center' justifyContent='space-between'>
@@ -313,7 +312,10 @@ export default function ProductDetail() {
 							<Divider sx={{ my: 2 }}>Your Feedbacks</Divider>
 							<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
 								<Grid2 size={0.5}>
-									<Avatar src={feedbackProduct.user.image} alt={feedbackProduct.user.name} />
+									<Avatar
+										src={AssetImages.UserImage(feedbackProduct.user.image)}
+										alt={feedbackProduct.user.name}
+									/>
 								</Grid2>
 								<Grid2 size={11.5}>
 									<Stack direction='row' alignItems='center' justifyContent='space-between'>
