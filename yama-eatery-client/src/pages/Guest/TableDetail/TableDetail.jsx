@@ -12,6 +12,7 @@ import {
 	Grid2,
 	IconButton,
 	MenuItem,
+	Paper,
 	Stack,
 	TextField,
 	Typography,
@@ -28,7 +29,7 @@ export default function TableDetail() {
 	const [table, setTable] = useState()
 	const [open, setOpen] = useState(false)
 	const [formData, setFormData] = useState({
-		product: [],
+		products: [],
 		firstName: '',
 		lastName: '',
 		phone: '',
@@ -40,8 +41,8 @@ export default function TableDetail() {
 	const slideRef = useRef(null)
 	const fieldsRef = useRef([])
 
-	const totalReserve = formData.product
-		.reduce((acc, product) => acc + product.price * product.quantity, 0)
+	const totalReserve = formData.products
+		.reduce((acc, product) => acc + product.product.price * product.quantity, 0)
 		.toFixed(2)
 
 	const deposit = (totalReserve * 0.1).toFixed(2)
@@ -63,40 +64,17 @@ export default function TableDetail() {
 		setFormData((prev) => ({ ...prev, [name]: value }))
 	}
 
-	const handleAddBookingDetail = (newProduct) => {
-		setFormData((prevState) => {
-			const existingProductIndex = prevState.product.findIndex(
-				(product) => product.id === newProduct.id
-			)
-
-			if (existingProductIndex !== -1) {
-				const updatedProducts = prevState.product.map((product, index) =>
-					index === existingProductIndex ? { ...product, quantity: product.quantity + 1 } : product
-				)
-				return {
-					...prevState,
-					product: updatedProducts,
-				}
-			}
-
-			const newProductEntry = {
-				id: newProduct.id,
-				image: newProduct.image[0],
-				quantity: 1,
-				price: newProduct.price,
-			}
-
-			return {
-				...prevState,
-				product: [...prevState.product, newProductEntry],
-			}
-		})
+	const handleAddBookingDetail = (bookingDetails) => {
+		setFormData((prevFormData) => ({
+			...prevFormData,
+			products: [...bookingDetails],
+		}))
 	}
 
-	const handleRemoveProduct = (index) => {
+	const handleRemoveProduct = (removeProduct) => {
 		setFormData((prevState) => ({
 			...prevState,
-			product: prevState.product.filter((_, i) => i !== index),
+			products: prevState.products.filter((product) => product.product.id !== removeProduct.id),
 		}))
 	}
 
@@ -207,26 +185,25 @@ export default function TableDetail() {
 					/>
 				))}
 			</Stack>
-			<Box
+
+			<Paper
 				sx={{
-					marginTop: '20px',
-					padding: '20px',
-					backgroundColor: '#f9f9f9',
-					borderRadius: '10px',
+					mt: '2%',
+					padding: '1% 2%',
 				}}
 			>
 				<Typography variant='h6'>Booking Information</Typography>
 				<Grid2 container spacing={2}>
-					{formData.product?.map((selectedProduct, index) => (
+					{formData.products?.map((selectedProduct) => (
 						<Grid2
 							size={{ xs: 12, sm: 2, md: 2 }}
 							position={'relative'}
-							key={selectedProduct.id || index}
+							key={selectedProduct.product.id}
 						>
 							<Avatar
 								variant='rounded'
 								sx={{ height: 130, width: '100%' }}
-								src={AssetImages.ProductImage(selectedProduct.image)}
+								src={AssetImages.ProductImage(selectedProduct.product.image[0])}
 							></Avatar>
 							<Stack
 								sx={{ my: 1 }}
@@ -239,7 +216,7 @@ export default function TableDetail() {
 									variant='body2'
 									color='black'
 								>
-									Price: {selectedProduct.price * selectedProduct.quantity}
+									Price: {selectedProduct.product.price * selectedProduct.quantity}
 								</Typography>
 								<Typography
 									sx={{ bottom: 0, textShadow: '0 0 5px #fff' }}
@@ -250,11 +227,9 @@ export default function TableDetail() {
 								</Typography>
 							</Stack>
 							<IconButton
-								onClick={() => handleRemoveProduct(index)}
-								sx={{ position: 'absolute', top: 5, right: 5, zIndex: 10 }}
+								onClick={() => handleRemoveProduct(selectedProduct.product)}
+								sx={{ position: 'absolute', top: 5, right: 5, zIndex: 1, color: 'white' }}
 								size='small'
-								variant='contained'
-								color='warning'
 							>
 								<Cancel />
 							</IconButton>
@@ -268,7 +243,7 @@ export default function TableDetail() {
 								display: 'flex',
 								justifyContent: 'center',
 								alignItems: 'center',
-								border: '1px dashed gray',
+								border: '1px solid gray',
 								borderRadius: '10px',
 							}}
 							onClick={() => setOpen(true)}
@@ -276,14 +251,16 @@ export default function TableDetail() {
 							<Add sx={{ fontSize: 50 }} />
 						</IconButton>
 					</Grid2>
+					<DialogChoosingProduct
+						open={open}
+						handleClose={() => setOpen(false)}
+						handleAddProduct={handleAddBookingDetail}
+						selectedProducts={formData.products}
+					/>
 				</Grid2>
-				<DialogChoosingProduct
-					open={open}
-					handleClose={() => setOpen(false)}
-					handleAddProduct={handleAddBookingDetail}
-				/>
-				<Box width={'100%'}>
-					<Stack direction='row' spacing={2} my={2}>
+
+				<Stack spacing={2} mt={2}>
+					<Stack direction='row' spacing={2}>
 						<ValidationTextField
 							ref={(el) => (fieldsRef.current['firstName'] = el)}
 							fullWidth
@@ -301,7 +278,7 @@ export default function TableDetail() {
 							onChange={handleFormChange}
 						/>
 					</Stack>
-					<Stack direction='row' spacing={2} mb={2}>
+					<Stack direction='row' spacing={2}>
 						<ValidationTextField
 							ref={(el) => (fieldsRef.current['phone'] = el)}
 							fullWidth
@@ -346,21 +323,20 @@ export default function TableDetail() {
 						rows={3}
 						value={formData.note}
 						onChange={handleFormChange}
-						sx={{ mb: 2 }}
 					/>
-					<Stack direction='row' justifyContent='space-between' my={1}>
+					<Stack direction='row' alignItems={'center'} justifyContent='space-between'>
 						<Box>
 							<Typography>Total Reserve: ${totalReserve}</Typography>
 							<Typography>Deposit: ${deposit}</Typography>
 						</Box>
-						<Box mt={1}>
+						<Box>
 							<Button onClick={handleSubmit} fullWidth variant='contained' primary>
 								Book Now
 							</Button>
 						</Box>
 					</Stack>
-				</Box>
-			</Box>
+				</Stack>
+			</Paper>
 		</Box>
 	) : null
 }
