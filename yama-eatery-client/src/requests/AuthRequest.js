@@ -1,5 +1,6 @@
 export const AuthRequest = {
 	LOGIN: '/auth/login',
+	LOGIN_WITH_GOOGLE: '/auth/login-google',
 	REGISTER: '/auth/register',
 	SEND_MAIL_OTP: '/auth/send-mail-otp',
 	FORGOT_PASSWORD: '/auth/forgot-password',

@@ -9,7 +9,6 @@ import LayoutCustomer from './layouts/LayoutCustomer'
 function App() {
 	const [role, setRole] = useState(secureLocalStorage.getItem('role'))
 
-	// Function to determine the correct layout based on the role
 	const getLayout = (role) => {
 		switch (role) {
 			case 'Customer':
@@ -37,7 +36,7 @@ function App() {
 	return (
 		<SnackbarProvider
 			maxSnack={3}
-			autoHideDuration={3000}
+			autoHideDuration={2000}
 			style={{ fontFamily: 'Roboto' }}
 			anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
 		>

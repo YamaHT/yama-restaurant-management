@@ -2,7 +2,6 @@ import { AuthRequest } from '@/requests/AuthRequest'
 import { ApiRequest } from '@/utilities/ApiRequest'
 import axiosFormBody from '@/utilities/axiosConfig'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
 import secureLocalStorage from 'react-secure-storage'
 
 export const AuthService = {
@@ -29,17 +28,19 @@ export const AuthService = {
 	LOGOUT: () => {
 		localStorage.removeItem('token')
 		secureLocalStorage.removeItem('role')
-
-		const event = new Event('roleChange')
-		window.dispatchEvent(event)
-
-		useNavigate()('/')
+		window.dispatchEvent(new Event('roleChange'))
+		window.location.href = '/'
 	},
 	GET_LOGIN_PROFILE: async (token) => {
 		return await axios
 			.get(AuthRequest.GET_LOGIN_PROFILE + token, {
 				headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
 			})
+			.then((response) => response.data)
+	},
+	LOGIN_WITH_GOOGLE: async (formData) => {
+		return await axiosFormBody
+			.post(AuthRequest.LOGIN_WITH_GOOGLE, formData)
 			.then((response) => response.data)
 	},
 }

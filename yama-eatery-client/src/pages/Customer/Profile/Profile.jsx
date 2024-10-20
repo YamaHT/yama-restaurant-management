@@ -1,3 +1,4 @@
+import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import { UserService } from '@/services/UserService'
 import { AssetImages } from '@/utilities/AssetImages'
 import { Edit, PhotoCamera } from '@mui/icons-material'
@@ -35,7 +36,7 @@ const Profile = () => {
 		image: null,
 		birthday: null,
 		phone: null,
-		gender: null,
+		gender: '',
 		membership: {
 			membershipStatus: null,
 			rank: null,
@@ -51,6 +52,7 @@ const Profile = () => {
 	const [isHovered, setIsHovered] = useState(false)
 
 	const imageRef = useRef(null)
+	const fieldsRef = useRef({})
 
 	useEffect(() => {
 		const fetchUserProfile = async () => {
@@ -75,7 +77,7 @@ const Profile = () => {
 			`Name: ${profile.name}`,
 			`Birthday: ${profile.birthday}`,
 			`Phone: ${profile.phone}`,
-			`Gender: ${profile.gender ? profile.gender : 'Not Specified'}`,
+			`Gender: ${profile.gender && profile.gender !== 'null' ? profile.gender : 'Not Specified'}`,
 		])
 	}, [profile])
 
@@ -104,17 +106,28 @@ const Profile = () => {
 	}
 
 	const handleSubmit = async (e) => {
+		e.preventDefault()
+
+		let isValid = true
+		Object.keys(fieldsRef.current).forEach((key) => {
+			if (!fieldsRef.current[key]?.validate()) {
+				isValid = false
+			}
+		})
+		if (!isValid) return
+
 		const formData = new FormData()
 		formData.append('name', profile.name)
 		formData.append('birthday', profile.birthday)
 		formData.append('phone', profile.phone)
-		formData.append('gender', profile.gender === 'null' ? null : profile.gender)
+		formData.append('gender', profile.gender)
 		formData.append('imageFile', imageData)
 
 		const data = await UserService.UPDATE_PROFILE(formData)
 		if (data) {
 			setIsEditting(false)
 			enqueueSnackbar(data.success, { variant: 'success' })
+			window.dispatchEvent(new Event('profileChange'))
 		}
 	}
 
@@ -192,7 +205,7 @@ const Profile = () => {
 				</Timeline>
 			</Stack>
 
-			<Stack spacing={3} width={'70%'}>
+			<Stack component={'form'} onSubmit={handleSubmit} spacing={3} width={'70%'}>
 				<Typography textAlign={'center'} variant='h4' fontWeight={'bold'}>
 					YOUR PROFILE
 				</Typography>
@@ -206,7 +219,8 @@ const Profile = () => {
 				>
 					CHANGE PROFILE INFORMATION
 				</Button>
-				<TextField
+				<ValidationTextField
+					ref={(el) => (fieldsRef.current['name'] = el)}
 					label={'Name'}
 					name='name'
 					value={profile.name}
@@ -226,11 +240,14 @@ const Profile = () => {
 						input: { inputProps: { max: new Date().toISOString().split('T')[0] } },
 					}}
 				/>
-				<TextField
+				<ValidationTextField
+					ref={(el) => (fieldsRef.current['phone'] = el)}
 					label={'Phone'}
 					name='phone'
 					value={profile.phone}
 					onChange={handleChange}
+					regex='^\d{10}$'
+					regexErrorText='Please enter valid phone with 10 digits'
 					disabled={!isEditting}
 					slotProps={{ inputLabel: { shrink: true } }}
 				/>
@@ -245,6 +262,7 @@ const Profile = () => {
 					>
 						<FormControlLabel control={<Radio value={'Female'} />} label='Female' />
 						<FormControlLabel control={<Radio value={'Male'} />} label='Male' />
+						<FormControlLabel control={<Radio value={'null'} />} label='Not Specified' />
 					</RadioGroup>
 				</FormControl>
 				<Stack direction={'row'} spacing={5}>
@@ -259,10 +277,10 @@ const Profile = () => {
 					</Button>
 					<Button
 						fullWidth
+						type='submit'
 						variant='contained'
 						color='success'
 						disabled={!isEditting}
-						onClick={handleSubmit}
 					>
 						Update
 					</Button>

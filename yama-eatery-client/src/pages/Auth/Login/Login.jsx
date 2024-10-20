@@ -18,14 +18,30 @@ const Login = () => {
 	const [rememberMe, setRememberMe] = useState(false)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
-	const [token, setToken] = useState(null)
-
 	const navigate = useNavigate()
 	const fieldsRef = useRef({})
+
+	const login = (data) => {
+		enqueueSnackbar('Login succesfully', { variant: 'success', autoHideDuration: 1000 })
+
+		localStorage.setItem('token', data.token)
+		secureLocalStorage.setItem('role', data.role)
+		window.dispatchEvent(new Event('roleChange'))
+
+		setTimeout(() => {
+			navigate('/')
+		}, 1000)
+	}
 
 	const handleLoginWithGoogle = useGoogleLogin({
 		onSuccess: async (res) => {
 			const profile = await AuthService.GET_LOGIN_PROFILE(res.access_token)
+
+			const formData = { email: profile.email, name: profile.name, picture: profile.picture }
+			const data = await AuthService.LOGIN_WITH_GOOGLE(formData)
+			if (data) {
+				login(data)
+			}
 		},
 	})
 
@@ -44,18 +60,8 @@ const Login = () => {
 
 		if (isValid) {
 			const data = await AuthService.LOGIN({ email, password })
-
 			if (data) {
-				enqueueSnackbar('Login succesfully', { variant: 'success', autoHideDuration: 1000 })
-
-				localStorage.setItem('token', data.token)
-				secureLocalStorage.setItem('role', data.role)
-
-				window.dispatchEvent(new Event('roleChange'))
-
-				setTimeout(() => {
-					navigate('/')
-				}, 1000)
+				login(data)
 			}
 		}
 		setIsSubmitting(false)

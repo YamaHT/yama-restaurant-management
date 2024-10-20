@@ -32,8 +32,6 @@ const Register = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 
-		setIsSubmitting(true)
-
 		let isValid = true
 
 		Object.keys(fieldsRef.current).forEach((key) => {
@@ -46,9 +44,12 @@ const Register = () => {
 			return
 		}
 
+		setIsSubmitting(true)
+
 		const isExisted = await AuthService.CHECK_EMAIL_EXISTED({ email: formData.email })
 		if (isExisted) {
 			enqueueSnackbar('Email is existed', { variant: 'error' })
+			setIsSubmitting(false)
 			return
 		}
 
@@ -72,8 +73,6 @@ const Register = () => {
 				navigate('/auth/otp-verification')
 			}, 1000)
 		}
-
-		setIsSubmitting(false)
 	}
 
 	return (
@@ -136,7 +135,14 @@ const Register = () => {
 				</Stack>
 
 				<Box my={2}>
-					<Button type='submit' variant='contained' color='info' size='large' fullWidth>
+					<Button
+						type='submit'
+						variant='contained'
+						color='info'
+						size='large'
+						disabled={isSubmitting}
+						fullWidth
+					>
 						Register
 					</Button>
 				</Box>

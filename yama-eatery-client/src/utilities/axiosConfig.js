@@ -1,8 +1,7 @@
-import axios from 'axios'
-import { BASE_URL } from './ApiRequest'
-import secureLocalStorage from 'react-secure-storage'
-import { enqueueSnackbar } from 'notistack'
 import { AuthService } from '@/services/AuthService'
+import axios from 'axios'
+import { enqueueSnackbar } from 'notistack'
+import { BASE_URL } from './ApiRequest'
 
 const axiosFormBody = axios.create({
 	baseURL: BASE_URL,
@@ -33,7 +32,6 @@ axiosFormBody.interceptors.response.use(
 	(error) => {
 		const status = error.response?.status
 		const errorMessage = error.response?.data?.error || 'Internal Server Error'
-
 		switch (status) {
 			case 401:
 				enqueueSnackbar('Unauthorized', { variant: 'warning', autoHideDuration: 1000 })
@@ -47,23 +45,20 @@ axiosFormBody.interceptors.response.use(
 					AuthService.LOGOUT()
 				}, 1000)
 				break
+			case 422:
+				errorMessage.map((error, index) =>
+					enqueueSnackbar(error, {
+						variant: 'error',
+					})
+				)
+				break
 			case 400:
 			case 404:
 			case 409:
 			case 500:
 				enqueueSnackbar(errorMessage, { variant: 'error' })
 				break
-			case 422:
-				if (Array.isArray(errorMessage)) {
-					const errorList = errorMessage.join('\n')
-					enqueueSnackbar(errorList, {
-						variant: 'error',
-						autoHideDuration: 8000,
-					})
-				} else {
-					enqueueSnackbar(errorMessage, { variant: 'error' })
-				}
-				break
+
 			default:
 				enqueueSnackbar('Internal Server Error', { variant: 'error' })
 				break
