@@ -49,13 +49,13 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             string[] includes = ["SubCategory", "SubCategory.Category"];
-            var products = await _unitOfWork.ProductRepository.GetAllAsync(includes);
+            var products = await _unitOfWork.ProductRepository.GetAllWithDeletedAsync(includes);
 
             return Ok(products);
         }
 
         [HttpPost("remove")]
-        public async Task<IActionResult> RemoveProduct(int productId)
+        public async Task<IActionResult> RemoveProduct([FromBody]int productId)
         {
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
 
