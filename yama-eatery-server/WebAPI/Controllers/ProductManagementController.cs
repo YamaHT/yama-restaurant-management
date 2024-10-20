@@ -13,7 +13,7 @@ namespace WebAPI.Controllers
     public class ProductManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
         [HttpPost("add")]
-        public async Task<IActionResult> AddProduct(AddProductDTO addProductDTO)
+        public async Task<IActionResult> AddProduct([FromForm]AddProductDTO addProductDTO)
         {
             List<string> image = [];
             foreach (var imageFile in addProductDTO.ImageFiles)
