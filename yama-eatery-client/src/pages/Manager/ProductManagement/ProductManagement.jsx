@@ -216,8 +216,8 @@ const ProductManagement = () => {
 
 	const handleRestockProduct = (restockQuantity) => {
 		setRows((prevRows) =>
-			prevRosw.map((row) =>
-				row.id === selectedProduct.id ? { ...row, quantity: restockQuantity } : row
+			prevRows.map((row) =>
+				row.id === selectedProduct.id ? { ...row, stockQuantity: restockQuantity } : row
 			)
 		)
 		setOpenRestockPage(false)
@@ -265,7 +265,7 @@ const ProductManagement = () => {
 							<RestockProduct
 								open={openRestockPage}
 								handleClose={() => setOpenRestockPage(false)}
-								currentQuantity={selectedProduct.quantity}
+								currentQuantity={selectedProduct.stockQuantity}
 								productName={selectedProduct.name}
 								onRestock={(newQuantity) => handleRestockProduct(newQuantity)}
 							/>

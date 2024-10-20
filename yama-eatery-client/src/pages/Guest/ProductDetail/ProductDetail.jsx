@@ -61,7 +61,6 @@ export default function ProductDetail() {
 
 		async function fetchGetFeedbackProduct() {
 			if (!localStorage.getItem('token')) return
-
 			setIsAuthorized(true)
 
 			const data = await FeedbackService.GET_FEEDBACK(id)
