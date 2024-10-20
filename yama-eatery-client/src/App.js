@@ -14,9 +14,9 @@ function App() {
 			case 'Customer':
 				return LayoutCustomer
 			case 'Manager':
-				return null
+				return Fragment
 			case 'Staff':
-				return null
+				return Fragment
 			default:
 				return LayoutGuest
 		}
