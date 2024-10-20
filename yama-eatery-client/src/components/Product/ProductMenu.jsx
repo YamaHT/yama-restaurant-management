@@ -15,6 +15,8 @@ import { useEffect, useState } from 'react'
 
 export default function ProductMenu({
 	priceRange,
+	minPrice,
+	maxPrice,
 	setPriceRange,
 	sortOption,
 	setSearchTerm,
@@ -94,7 +96,7 @@ export default function ProductMenu({
 	}
 
 	const handleShowAll = () => {
-		setPriceRange([0, 1000])
+		setPriceRange([minPrice, maxPrice])
 		setSortOption('')
 		setSearchTerm('')
 		resetCategory()
@@ -113,8 +115,8 @@ export default function ProductMenu({
 					value={priceRange}
 					onChange={(e, newValue) => setPriceRange(newValue)}
 					valueLabelDisplay='auto'
-					min={0}
-					max={1000}
+					min={minPrice}
+					max={maxPrice}
 				/>
 				<Typography>
 					Price Range: ${priceRange[0]} - ${priceRange[1]}

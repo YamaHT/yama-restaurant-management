@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
             List<string> image = [];
             foreach (var imageFile in addProductDTO.ImageFiles)
             {
-                var imageName = await ImageUtil.SaveImageAsync(nameof(Product), null, imageFile);
+                var imageName = await ImageUtil.AddImageAsync(nameof(Product), imageFile);
                 if (imageName != null)
                 {
                     image.Add(imageName);

@@ -13,7 +13,7 @@ namespace WebAPI.Repositories
             return await _dbContext.Product
                 .Include(x => x.SubCategory).ThenInclude(x => x.Category)
                 .Include(x => x.Feedbacks)
-                .Where(x => x.SubCategory.Category.Name.Equals(categoryName))
+                .Where(x => x.SubCategory.Category.Name.Equals(categoryName) && !x.IsDeleted)
                 .OrderBy(x => Guid.NewGuid())
                 .Take(10)
                 .ToListAsync();

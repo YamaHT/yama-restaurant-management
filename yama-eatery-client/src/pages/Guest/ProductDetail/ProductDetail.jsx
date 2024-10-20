@@ -3,6 +3,7 @@ import ReviewProgressBar from '@/components/Product/ReviewProgressBar'
 import { FeedbackService } from '@/services/FeedbackService'
 import { ProductService } from '@/services/ProductService'
 import { AssetImages } from '@/utilities/AssetImages'
+import { calculateAverageRating } from '@/utilities/Calculate'
 import { ChevronLeft, ChevronRight, Delete, Edit } from '@mui/icons-material'
 import {
 	Avatar,
@@ -26,12 +27,12 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { calculateAverageRating } from '../ProductList/ProductList'
 
 export default function ProductDetail() {
 	const { id } = useParams()
 	const navigate = useNavigate()
 
+	const [isAuthorized, setIsAuthorized] = useState(false)
 	const [product, setProduct] = useState()
 	const [recommendedProducts, setRecommendedProducts] = useState([])
 	const [feedbackProduct, setFeedbackProduct] = useState()
@@ -59,6 +60,10 @@ export default function ProductDetail() {
 		}
 
 		async function fetchGetFeedbackProduct() {
+			if (!localStorage.getItem('token')) return
+
+			setIsAuthorized(true)
+
 			const data = await FeedbackService.GET_FEEDBACK(id)
 			if (data) {
 				setFeedbackProduct(data)
@@ -157,8 +162,6 @@ export default function ProductDetail() {
 	}
 
 	if (!product) {
-		
-
 		return null
 	}
 
@@ -273,7 +276,7 @@ export default function ProductDetail() {
 				{reviewsToShow.map((feedbacks, index) => (
 					<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
 						<Grid2 size={0.5}>
-							<Avatar src={feedbacks.user.image} alt={feedbacks.user.name} />
+							<Avatar src={AssetImages.UserImage(feedbacks.user.image)} alt={feedbacks.user.name} />
 						</Grid2>
 						<Grid2 size={11.5}>
 							<Stack direction='row' alignItems='center' justifyContent='space-between'>
@@ -303,112 +306,125 @@ export default function ProductDetail() {
 						{showAllReviews ? 'Show less reviews' : 'Read all reviews'}
 					</Button>
 				)}
-
-				{feedbackProduct ? (
-					<>
-						<Divider sx={{ my: 2 }}>Your Feedbacks</Divider>
-						<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
-							<Grid2 size={0.5}>
-								<Avatar src={feedbackProduct.user.image} alt={feedbackProduct.user.name} />
-							</Grid2>
-							<Grid2 size={11.5}>
-								<Stack direction='row' alignItems='center' justifyContent='space-between'>
-									<Stack direction='row' alignItems='center'>
-										<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
-											{feedbackProduct.user.name}
-										</Typography>
-										<Typography variant='caption' color='textSecondary'>
-											{new Date(feedbackProduct.creationDate).toLocaleDateString()}
-										</Typography>
+				{isAuthorized &&
+					(feedbackProduct ? (
+						<>
+							<Divider sx={{ my: 2 }}>Your Feedbacks</Divider>
+							<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
+								<Grid2 size={0.5}>
+									<Avatar
+										src={AssetImages.UserImage(feedbackProduct.user.image)}
+										alt={feedbackProduct.user.name}
+									/>
+								</Grid2>
+								<Grid2 size={11.5}>
+									<Stack direction='row' alignItems='center' justifyContent='space-between'>
+										<Stack direction='row' alignItems='center'>
+											<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
+												{feedbackProduct.user.name}
+											</Typography>
+											<Typography variant='caption' color='textSecondary'>
+												{new Date(feedbackProduct.creationDate).toLocaleDateString()}
+											</Typography>
+										</Stack>
+										<CrudMenuOptions>
+											<MenuItem>
+												<Button startIcon={<Edit />} onClick={() => setIsEdittingFeedback(true)}>
+													Edit
+												</Button>
+											</MenuItem>
+											<MenuItem>
+												<Button startIcon={<Delete />} onClick={() => handleRemoveFeedback(id)}>
+													Delete
+												</Button>
+											</MenuItem>
+										</CrudMenuOptions>
 									</Stack>
-									<CrudMenuOptions>
-										<MenuItem>
-											<Button startIcon={<Edit />} onClick={() => setIsEdittingFeedback(true)}>
-												Edit
-											</Button>
-										</MenuItem>
-										<MenuItem>
-											<Button startIcon={<Delete />} onClick={() => handleRemoveFeedback(id)}>
-												Delete
-											</Button>
-										</MenuItem>
-									</CrudMenuOptions>
-								</Stack>
 
-								{isEdittingFeedback ? (
-									<>
-										<Rating
-											name='user-rating'
-											value={userRating}
-											onChange={(e, newValue) => setUserRating(newValue)}
-											size='large'
-											sx={{ mt: 2 }}
-										/>
-										<TextField
-											fullWidth
-											label='Your Review'
-											multiline
-											rows={4}
-											value={userReview}
-											onChange={(e) => setUserReview(e.target.value)}
-											sx={{ mt: 2 }}
-										/>
+									{isEdittingFeedback ? (
+										<>
+											<Rating
+												name='user-rating'
+												value={userRating}
+												onChange={(e, newValue) => setUserRating(newValue)}
+												size='large'
+												sx={{ mt: 2 }}
+											/>
+											<TextField
+												fullWidth
+												label='Your Review'
+												multiline
+												rows={4}
+												value={userReview}
+												onChange={(e) => setUserReview(e.target.value)}
+												sx={{ mt: 2 }}
+											/>
 
-										<Button
-											variant='contained'
-											color='primary'
-											sx={{ mt: 2 }}
-											onClick={handleUpdateFeedback}
-										>
-											Submit
-										</Button>
-										<Button
-											variant='contained'
-											color='inherit'
-											sx={{ mt: 2, ml: 2 }}
-											onClick={() => setIsEdittingFeedback(false)}
-										>
-											Cancel
-										</Button>
-									</>
-								) : (
-									<>
-										<Rating value={feedbackProduct.rating} readOnly size='small' sx={{ mt: 0.5 }} />
-										<Typography variant='body2' color='textSecondary' mt={1}>
-											{feedbackProduct.message}
-										</Typography>
-									</>
-								)}
+											<Button
+												variant='contained'
+												color='primary'
+												sx={{ mt: 2 }}
+												onClick={handleUpdateFeedback}
+											>
+												Submit
+											</Button>
+											<Button
+												variant='contained'
+												color='inherit'
+												sx={{ mt: 2, ml: 2 }}
+												onClick={() => setIsEdittingFeedback(false)}
+											>
+												Cancel
+											</Button>
+										</>
+									) : (
+										<>
+											<Rating
+												value={feedbackProduct.rating}
+												readOnly
+												size='small'
+												sx={{ mt: 0.5 }}
+											/>
+											<Typography variant='body2' color='textSecondary' mt={1}>
+												{feedbackProduct.message}
+											</Typography>
+										</>
+									)}
+								</Grid2>
 							</Grid2>
-						</Grid2>
-					</>
-				) : (
-					<Box mt={4}>
-						<Typography variant='h6' fontWeight='bold' color='textPrimary'>
-							Leave a Rating and Review
-						</Typography>
+						</>
+					) : (
+						<Box mt={4}>
+							<Typography variant='h6' fontWeight='bold' color='textPrimary'>
+								Leave a Rating and Review
+							</Typography>
 
-						<Rating
-							name='user-rating'
-							value={userRating}
-							onChange={(e, newValue) => setUserRating(newValue)}
-							size='large'
-							sx={{ mt: 2 }}
-						/>
-						<TextField
-							fullWidth
-							label='Your Review'
-							multiline
-							rows={4}
-							value={userReview}
-							onChange={(e) => setUserReview(e.target.value)}
-							sx={{ mt: 2 }}
-						/>
-						<Button variant='contained' color='primary' sx={{ mt: 2 }} onClick={handleAddFeedback}>
-							Submit
-						</Button>
-					</Box>
-				)}
+							<Rating
+								name='user-rating'
+								value={userRating}
+								onChange={(e, newValue) => setUserRating(newValue)}
+								size='large'
+								sx={{ mt: 2 }}
+							/>
+							<TextField
+								fullWidth
+								label='Your Review'
+								multiline
+								rows={4}
+								value={userReview}
+								onChange={(e) => setUserReview(e.target.value)}
+								sx={{ mt: 2 }}
+							/>
+							<Button
+								variant='contained'
+								color='primary'
+								sx={{ mt: 2 }}
+								onClick={handleAddFeedback}
+							>
+								Submit
+							</Button>
+						</Box>
+					))}
 			</Box>
 			{recommendedProducts.length > 0 && (
 				<Box mt={4}>
