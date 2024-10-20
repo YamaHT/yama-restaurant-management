@@ -1,5 +1,5 @@
 import { AuthRequest } from '@/requests/AuthRequest'
-import { ApiRequest } from '@/utilities/ApiRequest'
+import { ApiRequest } from '@/utilities/dsa'
 import axiosFormBody from '@/utilities/axiosFormBody'
 import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'

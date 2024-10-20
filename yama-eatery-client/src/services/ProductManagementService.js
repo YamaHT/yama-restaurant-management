@@ -1,4 +1,4 @@
-import { ApiRequest } from '@/utilities/ApiRequest'
+import { ApiRequest } from '@/utilities/dsa'
 import axiosFormBody from '@/utilities/axiosConfig'
 
 export const ProductManagementService = {
