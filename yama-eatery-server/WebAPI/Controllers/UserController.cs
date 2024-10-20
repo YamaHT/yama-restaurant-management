@@ -87,21 +87,21 @@ namespace WebAPI.Controllers
         [HttpGet("history-feedback")]
         public async Task<IActionResult> HistoryFeedbacks()
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Feedbacks"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Feedbacks", "Feedbacks.Product"]);
             return Ok(user?.Feedbacks);
         }
 
         [HttpGet("history-booking")]
         public async Task<IActionResult> GetHistoryBooking()
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings","Bookings.Table"]);
             return Ok(user?.Bookings);
         }
 
         [HttpGet("my-vouchers")]
         public async Task<IActionResult> GetMyVouchers()
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers","UserVouchers.Voucher"]);
             return Ok(user?.UserVouchers);
         }
 
