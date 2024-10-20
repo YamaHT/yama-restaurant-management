@@ -1,4 +1,4 @@
-import { ApiRequest } from '@/utilities/ApiRequest'
+import { ApiRequest } from '@/utilities/dsa'
 import axiosFormBody from '@/utilities/axiosFormBody'
 import axiosFormData from '@/utilities/axiosFormData'
 
