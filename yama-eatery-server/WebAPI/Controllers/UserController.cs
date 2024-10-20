@@ -50,12 +50,12 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordDTO userChangePasswordDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
-            if (!CryptoUtils.IsPasswordCorrect(userChangePasswordDTO.Password, user.Password))
+            if (!CryptoUtil.IsPasswordCorrect(userChangePasswordDTO.Password, user.Password))
             {
                 throw new InvalidDataException("Oldpassword is not correct");
             }
 
-            user.Password = CryptoUtils.EncryptPassword(userChangePasswordDTO.NewPassword);
+            user.Password = CryptoUtil.EncryptPassword(userChangePasswordDTO.NewPassword);
 
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();

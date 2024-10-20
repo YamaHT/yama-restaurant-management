@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
             };
             user.TryValidate();
 
-            user.Password = CryptoUtils.EncryptPassword(user.Password);
+            user.Password = CryptoUtil.EncryptPassword(user.Password);
 
             await _unitOfWork.MembershipRepository.AddAsync(membership);
             await _unitOfWork.UserRepository.AddAsync(user);
@@ -78,7 +78,7 @@ namespace WebAPI.Controllers
             string password = StringUtil.GenerateRandomPassword();
             _ = Task.Run(() => SendMailUtil.SendMailPasswordAsync(_configuration, email, password));
 
-            user.Password = CryptoUtils.EncryptPassword(password);
+            user.Password = CryptoUtil.EncryptPassword(password);
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
             return Ok(new { success = "Reset Password successfully" });
@@ -112,7 +112,7 @@ namespace WebAPI.Controllers
                 user = new User
                 {
                     Email = googleProfileDTO.Email,
-                    Password = CryptoUtils.EncryptPassword(StringUtil.GenerateRandomPassword()),
+                    Password = CryptoUtil.EncryptPassword(StringUtil.GenerateRandomPassword()),
                     Name = googleProfileDTO.Name,
                     Image = await ImageUtil.AddImageFromUrlAsync(nameof(User), googleProfileDTO.Name, googleProfileDTO.Picture),
                     Membership = membership

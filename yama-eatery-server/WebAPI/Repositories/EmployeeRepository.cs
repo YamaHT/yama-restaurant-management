@@ -14,7 +14,7 @@ namespace WebAPI.Repositories
                 .Include(x => x.Position)
                 .FirstOrDefaultAsync(x => x.Email == email);
 
-            return CryptoUtils.IsPasswordCorrect(password, employee?.Password) ? employee : null;
+            return CryptoUtil.IsPasswordCorrect(password, employee?.Password) ? employee : null;
         }
 
         public async Task<Employee?> GetByEmailAsync(string email)

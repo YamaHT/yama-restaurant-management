@@ -1,5 +1,5 @@
 import { ApiRequest } from '@/utilities/ApiRequest'
-import axiosFormBody from '@/utilities/axiosConfig'
+import axiosFormBody from '@/utilities/axiosFormBody'
 
 export const VoucherService = {
 	VIEW_ALL_VOUCHER: async () => {

@@ -1,5 +1,5 @@
 import { ApiRequest } from '@/utilities/ApiRequest'
-import axiosFormBody from '@/utilities/axiosConfig'
+import axiosFormBody from '@/utilities/axiosFormBody'
 
 export const TableService = {
 	GET_ALL: async () => {
