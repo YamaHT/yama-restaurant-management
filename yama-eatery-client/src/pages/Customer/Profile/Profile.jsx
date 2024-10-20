@@ -1,6 +1,7 @@
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import { UserService } from '@/services/UserService'
 import { AssetImages } from '@/utilities/AssetImages'
+import { formatDateWithLetterMonth } from '@/utilities/FormatUtil'
 import { Edit, PhotoCamera } from '@mui/icons-material'
 import {
 	Timeline,
@@ -26,7 +27,6 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
-import { Guid } from 'js-guid'
 import { enqueueSnackbar } from 'notistack'
 import { useEffect, useRef, useState } from 'react'
 
@@ -44,7 +44,7 @@ const Profile = () => {
 		},
 		creationDate: null,
 	})
-	const [imageData, setImageData] = useState(null)
+	const [imageFile, setImageFile] = useState(null)
 
 	const [profilePresentation, setProfilePresentation] = useState([])
 	const [imagePresentation, setImagePresentation] = useState(null)
@@ -65,11 +65,7 @@ const Profile = () => {
 	}, [])
 
 	useEffect(() => {
-		const formattedDate = new Date(profile.creationDate).toLocaleDateString('en-GB', {
-			day: '2-digit',
-			month: 'short',
-			year: 'numeric',
-		})
+		const formattedDate = formatDateWithLetterMonth(profile.creationDate)
 
 		setProfilePresentation([
 			`Enrolled on: ${formattedDate}`,
@@ -87,16 +83,13 @@ const Profile = () => {
 	}
 
 	const handleImageChange = (e) => {
-		const originFile = e.target.files[0]
-		if (originFile) {
-			const file = new File([originFile], Guid.newGuid().toString().concat('-', originFile.name), {
-				type: originFile.type,
-			})
+		const file = e.target.files[0]
+		if (file) {
 			const reader = new FileReader()
 			reader.onload = () => {
 				setImagePresentation(reader.result)
 			}
-			setImageData(file)
+			setImageFile(file)
 			reader.readAsDataURL(file)
 		}
 	}
@@ -121,7 +114,7 @@ const Profile = () => {
 		formData.append('birthday', profile.birthday)
 		formData.append('phone', profile.phone)
 		formData.append('gender', profile.gender)
-		formData.append('imageFile', imageData)
+		formData.append('imageFile', imageFile)
 
 		const data = await UserService.UPDATE_PROFILE(formData)
 		if (data) {
@@ -134,47 +127,45 @@ const Profile = () => {
 	return (
 		<Paper sx={{ p: '2% 5%', display: 'flex', justifyContent: 'space-between', gap: 5 }}>
 			<Stack width={'30%'} spacing={2}>
-				<Box>
-					<IconButton
-						sx={{
-							position: 'relative',
-							p: 0,
-							transition: 'transform 0.3s ease-in-out',
-						}}
-						onClick={isEditting ? handleAvatarClick : null}
-						onMouseEnter={() => setIsHovered(true)}
-						onMouseLeave={() => setIsHovered(false)}
-					>
-						<Avatar
-							src={
-								imagePresentation
-									? imagePresentation
-									: profile.image
-									? AssetImages.UserImage(profile.image)
-									: ''
-							}
-							sx={{ width: '100%', height: '100%', aspectRatio: 1, objectFit: 'cover' }}
-						/>
-						{isHovered && isEditting && (
-							<Box
-								sx={{
-									position: 'absolute',
-									top: 0,
-									left: 0,
-									right: 0,
-									bottom: 0,
-									backgroundColor: 'rgba(0, 0, 0, 0.5)',
-									borderRadius: '50%',
-									display: 'flex',
-									justifyContent: 'center',
-									alignItems: 'center',
-									color: 'white',
-								}}
-							>
-								<PhotoCamera sx={{ fontSize: 40 }} />
-							</Box>
-						)}
-					</IconButton>
+				<IconButton
+					sx={{
+						position: 'relative',
+						p: 0,
+						transition: 'transform 0.3s ease-in-out',
+					}}
+					onClick={isEditting ? handleAvatarClick : null}
+					onMouseEnter={() => setIsHovered(true)}
+					onMouseLeave={() => setIsHovered(false)}
+				>
+					<Avatar
+						src={
+							imagePresentation
+								? imagePresentation
+								: profile.image
+								? AssetImages.UserImage(profile.image)
+								: ''
+						}
+						sx={{ width: '100%', height: '100%', aspectRatio: 1, objectFit: 'cover' }}
+					/>
+					{isHovered && isEditting && (
+						<Box
+							sx={{
+								position: 'absolute',
+								top: 0,
+								left: 0,
+								right: 0,
+								bottom: 0,
+								backgroundColor: 'rgba(0, 0, 0, 0.5)',
+								borderRadius: '50%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+								color: 'white',
+							}}
+						>
+							<PhotoCamera sx={{ fontSize: 40 }} />
+						</Box>
+					)}
 					<input
 						ref={imageRef}
 						type='file'
@@ -182,7 +173,7 @@ const Profile = () => {
 						accept='image/*'
 						onChange={handleImageChange}
 					/>
-				</Box>
+				</IconButton>
 				<Timeline
 					sx={{
 						[`& .${timelineItemClasses.root}:before`]: {

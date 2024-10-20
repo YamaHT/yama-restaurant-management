@@ -1,6 +1,6 @@
 ﻿namespace WebAPI.Utils
 {
-    public static class CryptoUtils
+    public static class CryptoUtil
     {
         public static string EncryptPassword(string password)
         {

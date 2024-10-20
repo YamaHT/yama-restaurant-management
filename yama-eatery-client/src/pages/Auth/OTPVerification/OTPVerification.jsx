@@ -1,5 +1,5 @@
 import { AuthService } from '@/services/AuthService'
-import axiosFormBody from '@/utilities/axiosConfig'
+import axiosFormBody from '@/utilities/axiosFormBody'
 import { VerifiedUser } from '@mui/icons-material'
 import { Box, Button, Paper, TextField, Typography } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'

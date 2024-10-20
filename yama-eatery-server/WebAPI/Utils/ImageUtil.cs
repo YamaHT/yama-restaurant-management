@@ -11,8 +11,9 @@ namespace WebAPI.Utils
                 return null;
             }
 
+            var newFileName = $"{Guid.NewGuid()}-{file.FileName}";
             var directoryPath = Path.Combine("..", "..", "yama-eatery-client", "src", "assets", "img", entity.ToLower());
-            var newFilePath = Path.Combine(directoryPath, file.FileName);
+            var newFilePath = Path.Combine(directoryPath, newFileName);
 
             if (!Directory.Exists(directoryPath))
             {
@@ -24,7 +25,7 @@ namespace WebAPI.Utils
                 await file.CopyToAsync(stream);
             }
 
-            return file.FileName;
+            return newFileName;
         }
 
         public static async Task<string?> AddImageFromUrlAsync(string entity, string imageName, string? imageUrl)
@@ -67,22 +68,11 @@ namespace WebAPI.Utils
                 return oldImageName;
             }
 
-            var directoryPath = Path.Combine("..", "..", "yama-eatery-client", "src", "assets", "img", entity.ToLower());
-            var newFilePath = Path.Combine(directoryPath, file.FileName);
-
-            if (!Directory.Exists(directoryPath))
-            {
-                return oldImageName;
-            }
-
             DeleteImageAsync(entity, oldImageName);
 
-            using (var stream = new FileStream(newFilePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
+            var newFileName = await AddImageAsync(entity, file);
 
-            return file.FileName;
+            return newFileName;
         }
     }
 }

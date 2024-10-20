@@ -14,7 +14,7 @@ namespace WebAPI.Repositories
             var user = await _dbContext.User
                 .FirstOrDefaultAsync(x => x.Email == email);
 
-            return CryptoUtils.IsPasswordCorrect(password, user?.Password) ? user : null;
+            return CryptoUtil.IsPasswordCorrect(password, user?.Password) ? user : null;
         }
 
         public async Task<User?> GetByEmailAsync(string email)

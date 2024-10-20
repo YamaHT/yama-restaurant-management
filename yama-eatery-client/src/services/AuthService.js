@@ -1,6 +1,6 @@
 import { AuthRequest } from '@/requests/AuthRequest'
 import { ApiRequest } from '@/utilities/ApiRequest'
-import axiosFormBody from '@/utilities/axiosConfig'
+import axiosFormBody from '@/utilities/axiosFormBody'
 import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'
 
@@ -26,10 +26,10 @@ export const AuthService = {
 			.then((response) => response.data)
 	},
 	LOGOUT: () => {
+		window.location.href = '/'
 		localStorage.removeItem('token')
 		secureLocalStorage.removeItem('role')
 		window.dispatchEvent(new Event('roleChange'))
-		window.location.href = '/'
 	},
 	GET_LOGIN_PROFILE: async (token) => {
 		return await axios
