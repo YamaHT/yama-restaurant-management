@@ -26,14 +26,21 @@ export default function ProductList() {
 		async function fetchProducts() {
 			const data = await ProductService.GET_ALL()
 			if (data) {
-				setProducts(data.products)
+				setProducts(data)
+			}
+		}async function fetchPriceRange() {
+			const data = await ProductService.GET_PRICE_RANGE()
+			if (data) {
+				setPriceRange([data.minPrice, data.maxPrice])
 				setMinPrice(data.minPrice)
 				setMaxPrice(data.maxPrice)
-				setPriceRange([data.minPrice, data.maxPrice])
 			}
 		}
 		fetchProducts()
+		fetchPriceRange()
 	}, [])
+
+	
 
 	useEffect(() => {
 		let filtered = products.filter(

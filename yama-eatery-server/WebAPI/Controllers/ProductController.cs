@@ -11,14 +11,22 @@ namespace WebAPI.Controllers
         {
             string[] includes = ["SubCategory", "SubCategory.Category", "Feedbacks"];
             var products = await _unitOfWork.ProductRepository.GetAllAsync(includes);
-            var productGetAllDTO = new
+
+            return Ok(products);
+        }
+
+        [HttpGet("price-range")]
+        public async Task<IActionResult> GetPriceRange()
+        {
+            var products = await _unitOfWork.ProductRepository.GetAllAsync();
+            var priceRange = new
             {
-                products = products,
                 minPrice = products.Min(x => x.Price),
                 maxPrice = products.Max(x => x.Price),
             };
-            return Ok(productGetAllDTO);
+            return Ok(priceRange);
         }
+
 
         [HttpGet("detail/{id}")]
         public async Task<IActionResult> Detail(int id)

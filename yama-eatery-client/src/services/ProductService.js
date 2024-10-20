@@ -21,4 +21,9 @@ export const ProductService = {
 				return response.data
 			})
 	},
+	GET_PRICE_RANGE: async () => {
+		return await axiosFormBody.get(ApiRequest.ProductRequest.GET_PRICE_RANGE).then((response) => {
+			return response.data
+		})
+	},
 }

@@ -3,18 +3,16 @@ import { Box, Grid2, Stack, Typography } from '@mui/material'
 import React from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 
-const TableCard = ({table}) => {
+const TableCard = ({ table }) => {
 	const navigate = useNavigate()
 
-    const handleClick = (id) => {
+	const handleClick = (id) => {
 		navigate(`/table/detail/${id}`)
 	}
 
 	return (
 		<Grid2
-			xs={12}
-			sm={4}
-			md={3}
+			size={{ xs: 12, sm: 4, md: 3 }}
 			key={table.id}
 			onClick={() => handleClick(table.id)}
 			sx={{
