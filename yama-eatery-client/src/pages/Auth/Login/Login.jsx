@@ -29,9 +29,9 @@ const Login = () => {
 		window.dispatchEvent(new Event('roleChange'))
 
 		setTimeout(() => {
-			if (data.role === 'manager') {
+			if (data.role === 'Manager') {
 				navigate('/manager')
-			} else if (data.role === 'staff') {
+			} else if (data.role === 'Staff') {
 				navigate('/staff')
 			} else {
 				navigate('/')
