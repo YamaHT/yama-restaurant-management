@@ -1,6 +1,7 @@
+import { AuthRequest } from '@/requests/AuthRequest'
 import { ApiRequest } from '@/utilities/ApiRequest'
 import axiosFormBody from '@/utilities/axiosConfig'
-import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'
 
 export const AuthService = {
@@ -9,8 +10,7 @@ export const AuthService = {
 			.post(ApiRequest.AuthRequest.LOGIN, formData)
 			.then((response) => response.data)
 	},
-	SEND_MAIL_OTP: async ({ email, otp }) => {
-		const formData = { email: email, otp: otp }
+	SEND_MAIL_OTP: async (formData) => {
 		return await axiosFormBody
 			.post(ApiRequest.AuthRequest.SEND_MAIL_OTP, formData)
 			.then((response) => response.data)
@@ -28,10 +28,19 @@ export const AuthService = {
 	LOGOUT: () => {
 		localStorage.removeItem('token')
 		secureLocalStorage.removeItem('role')
-
-		const event = new Event('roleChange')
-		window.dispatchEvent(event)
-
-		useNavigate()('/')
+		window.dispatchEvent(new Event('roleChange'))
+		window.location.href = '/'
+	},
+	GET_LOGIN_PROFILE: async (token) => {
+		return await axios
+			.get(AuthRequest.GET_LOGIN_PROFILE + token, {
+				headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+			})
+			.then((response) => response.data)
+	},
+	LOGIN_WITH_GOOGLE: async (formData) => {
+		return await axiosFormBody
+			.post(AuthRequest.LOGIN_WITH_GOOGLE, formData)
+			.then((response) => response.data)
 	},
 }

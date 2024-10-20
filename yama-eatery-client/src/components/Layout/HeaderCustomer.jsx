@@ -70,6 +70,9 @@ const HeaderCustomer = () => {
 			}
 		}
 		fetchUserProfile()
+		window.addEventListener('profileChange', fetchUserProfile)
+
+		return () => window.removeEventListener('profileChange', fetchUserProfile)
 	}, [])
 
 	return (
@@ -80,14 +83,14 @@ const HeaderCustomer = () => {
 					alignItems={'center'}
 					justifyContent={'space-between'}
 					direction={'row'}
-					p={'0 5%'}
+					p={'5px 5%'}
 				>
 					<Avatar
 						src={AssetImages.SYSTEM_LOGO}
 						onClick={() => navigate('/')}
-						sx={{ cursor: 'pointer', width: 100, height: 100 }}
+						sx={{ cursor: 'pointer', width: 60, height: 60 }}
 					/>
-					<Stack direction={'row'} spacing={5} alignItems={'center'}>
+					<Stack direction={'row'} spacing={5}>
 						{menuItems.map((item) => (
 							<Button
 								variant='text'

@@ -35,7 +35,7 @@ namespace WebAPI.Controllers
 
             user.Birthday = updateUserProfileDTO.Birthday;
             user.Gender = updateUserProfileDTO.Gender;
-            user.Image = await ImageUtil.SaveImageAsync(nameof(User), user.Image, updateUserProfileDTO.ImageFile);
+            user.Image = await ImageUtil.UpdateImageAsync(nameof(User), user.Image, updateUserProfileDTO.ImageFile);
             user.Name = updateUserProfileDTO.Name;
             user.Phone = updateUserProfileDTO.Phone;
             user.TryValidate();
