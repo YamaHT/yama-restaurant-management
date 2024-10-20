@@ -1,0 +1,4 @@
+export const BookingRequest = {
+	GET_BOOKED_DAYPART: (tableId, date) => `/booking/booked-dayPart?tableId=${tableId}&date=${date}`,
+	GET_VALID_VOUCHER: `/booking/valid-vouchers`,
+}

@@ -17,6 +17,7 @@ import {
 import { useEffect, useState } from 'react'
 import { UserService } from '@/services/UserService'
 import { AssetImages } from '@/utilities/AssetImages'
+import CrudTabs from '@/components/Crud Components/CrudTabs'
 const VOUCHERS_PER_PAGE = 4
 
 function MyVoucher() {
@@ -26,36 +27,30 @@ function MyVoucher() {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [tabValue, setTabValue] = useState(0)
 	const [vouchers, setVouchers] = useState([])
-	const [filteredVouchers, setFilteredVouchers] = useState([]) 
+	const [filteredVouchers, setFilteredVouchers] = useState([])
 	const today = new Date()
 
 	useEffect(() => {
 		const fetchVoucherData = async () => {
-			try {
-				const data = await UserService.MY_VOUCHER()
+			const data = await UserService.MY_VOUCHER()
+			if (data) {
 				setVouchers(data)
 				setFilteredVouchers(data)
-			} catch (error) {
-				console.error('Error fetching vouchers ', error)
 			}
 		}
 		fetchVoucherData()
 	}, [])
 
-	const handleTabChange = (event, newValue) => {
-		setTabValue(newValue)
-		if (newValue === 0) {
-			setFilterValue('')
-			setSearchTerm('')
-		}
-	}
-
 	const applyFilters = () => {
 		const filtered = vouchers.filter((voucher) => {
 			const voucherDate = new Date(voucher.voucher.expiredDate)
 			const isExpired = voucherDate < today
+
 			const passesTabFilter =
-				tabValue === 0 || (tabValue === 1 && isExpired) || (tabValue === 2 && !isExpired)
+				tabValue === 0 ||
+				(tabValue === 1 && voucher.isUsed) ||
+				(tabValue === 2 && isExpired) ||
+				(tabValue === 3 && !isExpired && !voucher.isUsed)
 
 			const voucherName = voucher.voucher.name ? voucher.voucher.name.toLowerCase() : ''
 			const isDiscountValid = selectedDiscount
@@ -66,7 +61,6 @@ function MyVoucher() {
 		})
 		setFilteredVouchers(filtered)
 	}
-
 
 	useEffect(() => {
 		applyFilters()
@@ -85,12 +79,13 @@ function MyVoucher() {
 	}
 
 	return (
-		<Box width={'100%'} p={'2% 5%'}>
-			<Tabs value={tabValue} onChange={handleTabChange} centered variant='fullWidth'>
+		<Paper sx={{ p: '2%' }}>
+			<CrudTabs value={tabValue} handleChange={setTabValue}>
 				<Tab label='All' />
+				<Tab label='Used' />
 				<Tab label='Expired' />
 				<Tab label='Valid' />
-			</Tabs>
+			</CrudTabs>
 			<Grid2 container spacing={2} justifyContent='center' mt={2}>
 				<Grid2 size={{ xs: 12, md: 3 }}>
 					<TextField
@@ -131,7 +126,7 @@ function MyVoucher() {
 									borderRadius: '8px',
 								}}
 							>
-								<img src={AssetImages.VoucherImage(voucher.voucher.image)} alt='' width={'30%'}/>
+								<img src={AssetImages.VoucherImage(voucher.voucher.image)} alt='' width={'30%'} />
 								<Stack
 									width={'70%'}
 									justifyContent={'center'}
@@ -172,8 +167,20 @@ function MyVoucher() {
 										</Typography>
 									</Stack>
 									<Chip
-										label={new Date(voucher.voucher.expiredDate) < today ? 'Expired' : 'Valid'}
-										color={new Date(voucher.voucher.expiredDate) < today ? 'secondary' : 'primary'}
+										label={
+											voucher.isUsed
+												? 'Used'
+												: new Date(voucher.voucher.expiredDate) < today
+												? 'Expired'
+												: 'Valid'
+										}
+										color={
+											voucher.isUsed
+												? 'error'
+												: new Date(voucher.voucher.expiredDate) < today
+												? 'secondary'
+												: 'primary'
+										}
 										sx={{ mt: 1 }}
 									/>
 								</Stack>
@@ -189,7 +196,7 @@ function MyVoucher() {
 			<Box mt={4} display='flex' justifyContent='center'>
 				<Pagination count={totalPages} page={page} onChange={handlePageChange} color='primary' />
 			</Box>
-		</Box>
+		</Paper>
 	)
 }
 
