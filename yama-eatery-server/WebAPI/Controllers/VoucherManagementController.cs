@@ -49,36 +49,31 @@ namespace WebAPI.Controllers
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
 
-            // Kiểm tra nếu DTO không hợp lệ
             if (updateVoucherDTO == null)
             {
                 return BadRequest("Voucher data is required.");
             }
 
-            // Tìm voucher theo ID
             var existingVoucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
             if (existingVoucher == null)
             {
                 return NotFound($"Voucher with ID {id} not found.");
             }
 
-            // Cập nhật thông tin voucher
             existingVoucher.Name = updateVoucherDTO.Name;
             existingVoucher.Description = updateVoucherDTO.Description;
-            existingVoucher.ExpiredDate = DateOnly.FromDateTime(updateVoucherDTO.ExpiredDate); // Chuyển đổi nếu cần
+            existingVoucher.ExpiredDate = DateOnly.FromDateTime(updateVoucherDTO.ExpiredDate);
             existingVoucher.ReducedPercent = updateVoucherDTO.ReducedPercent;
             existingVoucher.MaxReducing = updateVoucherDTO.MaxReducing;
             existingVoucher.Quantity = updateVoucherDTO.Quantity;
             existingVoucher.Image = updateVoucherDTO.Image;
 
-            // Validate voucher (nếu cần)
             existingVoucher.TryValidate();
 
-            // Cập nhật voucher trong database
             _unitOfWork.VoucherRepository.Update(existingVoucher);
             await _unitOfWork.SaveChangeAsync();
 
-            return NoContent(); // Trả về 204 No Content khi cập nhật thành công
+            return NoContent();
         }
 
         [HttpDelete("remove/{id}")]
@@ -86,18 +81,16 @@ namespace WebAPI.Controllers
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
 
-            // Tìm voucher theo ID
             var existingVoucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
             if (existingVoucher == null)
             {
                 return NotFound($"Voucher with ID {id} not found.");
             }
 
-            // Xóa voucher khỏi database
             _unitOfWork.VoucherRepository.Remove(existingVoucher);
             await _unitOfWork.SaveChangeAsync();
 
-            return NoContent(); // Trả về 204 No Content khi xóa thành công
+            return NoContent();
         }
 
     }
