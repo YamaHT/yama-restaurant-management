@@ -45,7 +45,6 @@ namespace WebAPI.Controllers
         [HttpPost("update/{id}")]
         public async Task<IActionResult> UpdateVoucher(int id, [FromForm] UpdateVoucherDTO updateVoucherDTO)
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
             var existingVoucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
             if (existingVoucher == null)
             {
@@ -64,7 +63,6 @@ namespace WebAPI.Controllers
             _unitOfWork.VoucherRepository.Update(existingVoucher);
             await _unitOfWork.SaveChangeAsync();
             return Ok(existingVoucher);
-
         }
 
         [HttpPost("remove/{id}")]
