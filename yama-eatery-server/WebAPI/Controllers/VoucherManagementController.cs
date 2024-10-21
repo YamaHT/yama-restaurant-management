@@ -46,19 +46,11 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> UpdateVoucher(int id, [FromForm] UpdateVoucherDTO updateVoucherDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
-
-            if (updateVoucherDTO == null)
-            {
-                return BadRequest("Voucher data is required.");
-            }
-
             var existingVoucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
             if (existingVoucher == null)
             {
                 throw new DataNotFoundException($"Voucher with ID {id} not found.");
             }
-
-
             existingVoucher.Name = updateVoucherDTO.Name;
             existingVoucher.Description = updateVoucherDTO.Description;
             existingVoucher.ExpiredDate = DateOnly.FromDateTime(updateVoucherDTO.ExpiredDate);
@@ -78,13 +70,11 @@ namespace WebAPI.Controllers
         [HttpPost("remove/{id}")]
         public async Task<IActionResult> RemoveVoucher(int id)
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
-
             var existingVoucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
             if (existingVoucher == null)
             {
-                return NotFound($"Voucher with ID {id} not found.");
-            }
+                throw new DataNotFoundException($"Voucher with ID {id} not found.");
+            }    
             _unitOfWork.VoucherRepository.Remove(existingVoucher);
             await _unitOfWork.SaveChangeAsync();
 
