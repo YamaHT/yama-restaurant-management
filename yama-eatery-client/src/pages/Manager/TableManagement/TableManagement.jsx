@@ -166,10 +166,10 @@ const TableManagement = () => {
 					Table Management
 				</Typography>
 
-				<Stack direction={'row'} justifyContent={'right'} padding={'0 1%'}>
+				<Stack direction={'row'}>
 					<React.Fragment>
 						<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
-							Add New
+							Add New Table
 						</Button>
 						{openAddPage && (
 							<AddTable open={openAddPage} handleClose={() => setOpenAddPage(false)} />

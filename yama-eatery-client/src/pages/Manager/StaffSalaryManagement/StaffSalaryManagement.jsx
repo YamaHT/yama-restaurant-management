@@ -1,13 +1,10 @@
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
-import { AccessAlarm, Payment, Search } from '@mui/icons-material'
+import { Payment, Search } from '@mui/icons-material'
 import {
 	Autocomplete,
 	Box,
 	Button,
-	Checkbox,
-	Chip,
 	FormControl,
-	FormControlLabel,
 	InputAdornment,
 	InputLabel,
 	MenuItem,
@@ -126,7 +123,6 @@ const StaffSalaryManagement = () => {
 	const [searchName, setSearchName] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [month, setMonth] = useState('')
-
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === 'asc'
 		setOrder(isAsc ? 'desc' : 'asc')
@@ -192,6 +188,7 @@ const StaffSalaryManagement = () => {
 					<FormControl
 						sx={{
 							width: '200px',
+							ml: 1.5,
 						}}
 					>
 						<InputLabel>Select Month</InputLabel>
