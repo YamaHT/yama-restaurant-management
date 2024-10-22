@@ -65,11 +65,11 @@ const headCells = [
 		name: 'LateOrEarly',
 		orderData: 'lateOrEarly',
 		numeric: false,
-		widthPercent: 20,
+		widthPercent: 30,
 	},
 	{
-		name: '',
-		widthPercent: 20,
+		name: 'Action',
+		widthPercent: 5,
 	},
 ]
 
@@ -174,9 +174,7 @@ const StaffAttendanceManagement = () => {
 		<Paper
 			sx={{
 				width: '100%',
-				padding: '1%',
 				bgcolor: '#f0f2f5',
-				zIndex: -1,
 			}}
 		>
 			<Stack marginBottom={1} spacing={1}>
@@ -210,10 +208,11 @@ const StaffAttendanceManagement = () => {
 			</Stack>
 			<Button
 				variant='contained'
-				sx={{ mb: 1, width: '300px' }}
+				sx={{ mb: 1, width: 'auto', ml: 1.5 }}
 				onClick={handleOpenMembershipDialog}
+				startIcon={<Add />}
 			>
-				Add Staff
+				Add New Attendance
 			</Button>
 			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
 				<Table stickyHeader sx={{ minWidth: '750px' }}>
@@ -241,83 +240,76 @@ const StaffAttendanceManagement = () => {
 										</Stack>
 									</TableCell>
 									<TableCell>
-										<Stack direction={'column'} spacing={1}>
-											{checkinStatus === 'checkin' && (
-												<Button
-													startIcon={<AccessAlarm />}
-													onClick={() => handleCheckinClick(row.id)}
-													variant='contained'
-													color='primary'
-												>
-													Check in
-												</Button>
-											)}
-											{checkinStatus === 'checkout' && (
-												<Button
-													startIcon={<AccessAlarm />}
-													onClick={() => handleCheckoutClick(row.id)}
-													variant='contained'
-												>
-													Check out
-												</Button>
-											)}
-
-											{checkinStatus === 'checkbox' && (
-												<FormControlLabel
-													control={
-														<Checkbox
-															checked={row.isLate}
-															onChange={() => handleCheckboxChange(row.id, 'isLate')}
-														/>
-													}
-													label='Late Arrived'
-												/>
-											)}
-
-											{checkinStatus === 'checkbox' && (
-												<FormControlLabel
-													control={
-														<Checkbox
-															checked={row.isEarlyDeparture}
-															onChange={() => handleCheckboxChange(row.id, 'isEarlyDeparture')}
-														/>
-													}
-													label='Early Departure'
-												/>
-											)}
-
-											<Button
-												variant='contained'
-												onClick={() => setOpenAddPage(true)}
-												startIcon={<Update />}
-												color='success'
-											>
-												Update
-											</Button>
-											{openAddPage && (
-												<UpdateStaffAttendance
-													open={openAddPage}
-													handleClose={() => setOpenAddPage(false)}
-												/>
-											)}
-
-											<CrudConfirmation
-												title='Delete Confirmation'
-												description='Are you sure you want to delete this?'
-												handleConfirm={() => alert('Deleted')}
-											>
-												{(handleOpen) => (
+										<CrudMenuOptions>
+											<Stack direction={'column'} spacing={1}>
+												{checkinStatus === 'checkin' && (
+													<MenuItem>
+														<React.Fragment>
+															<Button
+																startIcon={<AccessAlarm />}
+																onClick={() => handleCheckinClick(row.id)}
+															>
+																Check in
+															</Button>
+														</React.Fragment>
+													</MenuItem>
+												)}
+												{checkinStatus === 'checkout' && (
 													<Button
-														color='error'
-														startIcon={<Delete />}
-														variant='contained'
-														onClick={handleOpen}
+														startIcon={<AccessAlarm />}
+														onClick={() => handleCheckoutClick(row.id)}
 													>
-														Delete
+														Check out
 													</Button>
 												)}
-											</CrudConfirmation>
-										</Stack>
+
+												{checkinStatus === 'checkbox' && (
+													<FormControlLabel
+														control={
+															<Checkbox
+																checked={row.isLate}
+																onChange={() => handleCheckboxChange(row.id, 'isLate')}
+															/>
+														}
+														label='Late Arrived'
+													/>
+												)}
+
+												{checkinStatus === 'checkbox' && (
+													<FormControlLabel
+														control={
+															<Checkbox
+																checked={row.isEarlyDeparture}
+																onChange={() => handleCheckboxChange(row.id, 'isEarlyDeparture')}
+															/>
+														}
+														label='Early Departure'
+													/>
+												)}
+
+												<Button onClick={() => setOpenAddPage(true)} startIcon={<Update />}>
+													Update
+												</Button>
+												{openAddPage && (
+													<UpdateStaffAttendance
+														open={openAddPage}
+														handleClose={() => setOpenAddPage(false)}
+													/>
+												)}
+
+												<CrudConfirmation
+													title='Delete Confirmation'
+													description='Are you sure you want to delete this?'
+													handleConfirm={() => alert('Deleted')}
+												>
+													{(handleOpen) => (
+														<Button startIcon={<Delete />} onClick={handleOpen}>
+															Delete
+														</Button>
+													)}
+												</CrudConfirmation>
+											</Stack>
+										</CrudMenuOptions>
 									</TableCell>
 								</TableRow>
 							)
