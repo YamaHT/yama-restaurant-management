@@ -115,7 +115,7 @@ export default function ProductList() {
 					setPriceRange={setPriceRange}
 					setSortOption={setSortOption}
 					setSelectedCategories={setSelectedCategories}
-				/>
+				/>				
 			</Grid2>
 			<Grid2 size={{ xs: 12, md: 9 }}>
 				<Box>

@@ -15,6 +15,7 @@ import {
 	LocalDrink,
 	LunchDining,
 	Menu,
+	Restore,
 	SystemUpdateAlt,
 	WineBar,
 } from '@mui/icons-material'
@@ -40,6 +41,7 @@ import RestockProduct from './RestockProduct'
 import UpdateProduct from './UpdateProduct'
 import { ProductManagementService } from '@/services/ProductManagementService'
 import { EnumService } from '@/services/EnumService'
+import { AssetImages } from '@/utilities/AssetImages'
 
 const headCells = [
 	{
@@ -120,7 +122,7 @@ const ProductManagement = () => {
 	const [openUpdatePage, setOpenUpdatePage] = useState(false)
 	const [openRestockPage, setOpenRestockPage] = useState(false)
 	const [selectedProduct, setSelectedProduct] = useState(null)
-
+	const [categories, setCategories] = useState()
 	const [rows, setRows] = useState([])
 	const [filteredRows, setFilteredRows] = useState([])
 
@@ -132,6 +134,16 @@ const ProductManagement = () => {
 				console.log(data)
 			}
 		}
+
+		async function fetchCategories() {
+			const data = await EnumService.GET_ALL_CATEGORY()
+			if (data) {
+				setCategories(data)
+				console.log(data)
+			}
+		}
+		fetchCategories()
+
 		fetchProducts()
 	}, [])
 
@@ -213,19 +225,36 @@ const ProductManagement = () => {
 		setSelectedProduct(product)
 		setOpenRestockPage(true)
 	}
+	const handleRestockProduct = async (restockQuantity) => {
+		const updatedRows = await ProductManagementService.RESTOCK_PRODUCT({
+			productId: selectedProduct.id,
+			stockQuantity: restockQuantity,
+		})
 
-	const handleRestockProduct = (restockQuantity) => {
-		setRows((prevRows) =>
-			prevRows.map((row) =>
-				row.id === selectedProduct.id ? { ...row, stockQuantity: restockQuantity } : row
-			)
-		)
+		setRows(updatedRows)
 		setOpenRestockPage(false)
 	}
 
-	const handleAddProduct = (newProduct) => {
-		setRows((prevRows) => [...prevRows, newProduct])
-		setOpenAddPage(false)
+	const handleAddProduct = async (newProduct) => {
+		const formData = new FormData()
+		formData.append('name', newProduct.name)
+		formData.append('description', newProduct.description)
+		formData.append('price', newProduct.price)
+		formData.append('stockQuantity', newProduct.stockQuantity)
+		formData.append('subCategoryId', newProduct.subCategoryId)
+
+		if (newProduct.imageFiles && Array.isArray(newProduct.imageFiles)) {
+			newProduct.imageFiles.forEach((file) => {
+				formData.append('imageFiles', file)
+			})
+		}
+
+		const data = await ProductManagementService.ADD_PRODUCT(formData)
+
+		if (data) {
+			setRows((prevRows) => [...prevRows, data])
+			setOpenAddPage(false)
+		}
 	}
 
 	return (
@@ -248,6 +277,7 @@ const ProductManagement = () => {
 						</Button>
 						{openAddPage && (
 							<AddProduct
+								categories={categories}
 								open={openAddPage}
 								handleClose={() => setOpenAddPage(false)}
 								handleAddProduct={handleAddProduct}
@@ -267,7 +297,7 @@ const ProductManagement = () => {
 								handleClose={() => setOpenRestockPage(false)}
 								currentQuantity={selectedProduct.stockQuantity}
 								productName={selectedProduct.name}
-								onRestock={(newQuantity) => handleRestockProduct(newQuantity)}
+								onRestock={handleRestockProduct}
 							/>
 						)}
 					</React.Fragment>
@@ -295,11 +325,13 @@ const ProductManagement = () => {
 									<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
 										<TableCell>
 											<Stack direction={'row'} spacing={2} alignItems={'center'}>
-												<Avatar src={row.image} />
+												<Avatar src={AssetImages.ProductImage(row.image[0])} />
 												<p>{row.name}</p>
 											</Stack>
 										</TableCell>
-										<TableCell>{row.subCategory.category.name}</TableCell>
+										<TableCell>
+											{row.subCategory.category.name} / {row.subCategory.name}
+										</TableCell>
 										<TableCell align='right'>${row.price.toFixed(2)}</TableCell>
 										<TableCell align='right'>
 											<Chip
@@ -321,32 +353,48 @@ const ProductManagement = () => {
 										</TableCell>
 										<TableCell>
 											<CrudMenuOptions>
-												<MenuItem>
-													<Button startIcon={<Edit />} onClick={() => handleOpenUpdate(row)}>
-														Update
-													</Button>
-												</MenuItem>
-												<MenuItem>
-													<Button
-														startIcon={<SystemUpdateAlt />}
-														onClick={() => handleOpenRestock(row)}
-													>
-														Restock
-													</Button>
-												</MenuItem>
-												<MenuItem>
-													<CrudConfirmation
-														title='Delete Confirmation'
-														description='Are you sure you want to delete this?'
-														handleConfirm={() => handleRemoveProduct(row.id)}
-													>
-														{(handleOpen) => (
-															<Button startIcon={<Delete />} onClick={handleOpen}>
-																Delete
+												{!row.isDeleted ? (
+													<>
+														<MenuItem>
+															<Button startIcon={<Edit />} onClick={() => handleOpenUpdate(row)}>
+																Update
 															</Button>
-														)}
-													</CrudConfirmation>
-												</MenuItem>
+														</MenuItem>
+														<MenuItem>
+															<Button
+																startIcon={<SystemUpdateAlt />}
+																onClick={() => handleOpenRestock(row)}
+															>
+																Restock
+															</Button>
+														</MenuItem>
+														<MenuItem>
+															<CrudConfirmation
+																title='Delete Confirmation'
+																description='Are you sure you want to delete this?'
+																handleConfirm={() => handleRemoveProduct(row.id)}
+															>
+																{(handleOpen) => (
+																	<Button startIcon={<Delete />} onClick={handleOpen}>
+																		Delete
+																	</Button>
+																)}
+															</CrudConfirmation>
+														</MenuItem>
+													</>
+												) : 	<MenuItem>
+												<CrudConfirmation
+													title='Restore Confirmation'
+													description='Are you sure you want to restore this?'
+													handleConfirm={() => handleRestoreProduct(row.id)}
+												>
+													{(handleOpen) => (
+														<Button startIcon={<Restore />} onClick={handleOpen}>
+															Restore
+														</Button>
+													)}
+												</CrudConfirmation>
+											</MenuItem>}
 											</CrudMenuOptions>
 										</TableCell>
 									</TableRow>
