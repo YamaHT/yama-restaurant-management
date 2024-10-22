@@ -33,6 +33,12 @@ const CrudMenuOptions = ({ children }) => {
 								ml: -0.5,
 								mr: 1,
 							},
+							'& .MuiMenuItem-root': {
+								transition: 'none',
+								'&:hover': { backgroundColor: 'white' },
+								'&:focus': { backgroundColor: 'white' },
+								'& .MuiTouchRipple-root': { display: 'none', cursor: 'pointer' },
+							},
 							'&::before': {
 								content: '""',
 								display: 'block',

@@ -16,22 +16,22 @@ import {
 	Typography,
 } from '@mui/material'
 import { useRef, useState } from 'react'
-
-const AddProduct = ({ open, handleClose, handleAddProduct }) => {
+const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
-	const [imageBase64Array, setImageBase64Array] = useState([])
+	const [imagePresentations, setImagePresentations] = useState([])
+	const [imageFiles, setImageFiles] = useState([])
 	const [values, setValues] = useState({
 		images: [],
 		name: '',
 		price: '',
 		description: '',
-		category: '',
+		subCategoryId: '',
+		stockQuantity: '',
 	})
 
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
-	const [draggingIndex, setDraggingIndex] = useState(null)
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
@@ -64,7 +64,8 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 					...prev,
 					images: [...prev.images, ...newImages],
 				}))
-				setImageBase64Array((prev) => [...prev, ...images.map(({ base64 }) => base64)])
+				setImageFiles((prev) => [...prev, ...Array.from(files)])
+				setImagePresentations((prev) => [...prev, ...images.map(({ base64 }) => base64)])
 			})
 		}
 	}
@@ -75,7 +76,7 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 			newImages.splice(index, 1)
 			return { ...prev, images: newImages }
 		})
-		setImageBase64Array((prev) => {
+		setImagePresentations((prev) => {
 			const newBase64 = [...prev]
 			newBase64.splice(index, 1)
 			return newBase64
@@ -89,7 +90,7 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 				values.name,
 				generatorOption
 			)
-			if (descriptionGenerated.toString() !== '404') {
+			if (descriptionGenerated.trim().toString() !== '404') {
 				setValues((prev) => ({
 					...prev,
 					description: descriptionGenerated.trim(),
@@ -109,71 +110,19 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 		})
 
 		if (isValid) {
-			const newProduct = {
-				id: Date.now(),
-				images: values.images,
-				imageBase64Array: imageBase64Array,
-				name: values.name,
-				price: parseFloat(values.price),
-				description: values.description,
-				category: values.category,
-				quantity: 0,
-				isDeleted: false,
-			}
-			handleAddProduct(newProduct)
+			var formData = new FormData()
+			imageFiles.forEach((file) => {
+				formData.append(`ImageFiles`, file)
+			})
+			formData.append('name', values.name)
+			formData.append('description', values.description)
+			formData.append('price', parseFloat(values.price))
+			formData.append('stockQuantity', parseInt(values.stockQuantity))
+			formData.append('subCategoryId', parseInt(values.subCategoryId))
+
+			handleAddProduct(formData)
 			handleClose()
 		}
-	}
-
-	const handleDragStart = (index) => {
-		setDraggingIndex(index)
-	}
-
-	const handleDragOver = (e, index) => {
-		e.preventDefault()
-		if (draggingIndex === index) return
-
-		const reorderedImages = [...values.images]
-		const reorderedBase64 = [...imageBase64Array]
-
-		const [movedImage] = reorderedImages.splice(draggingIndex, 1)
-		const [movedBase64] = reorderedBase64.splice(draggingIndex, 1)
-
-		reorderedImages.splice(index, 0, movedImage)
-		reorderedBase64.splice(index, 0, movedBase64)
-
-		setValues((prev) => ({
-			...prev,
-			images: reorderedImages,
-		}))
-		setImageBase64Array(reorderedBase64)
-		setDraggingIndex(index)
-	}
-
-	const handleDragEnd = () => {
-		setDraggingIndex(null)
-	}
-
-	const customInputImageProperties = {
-		inputLabel: {
-			style: { color: 'gray' },
-		},
-		input: {
-			disabled: true,
-			style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
-			endAdornment: (
-				<>
-					<input
-						accept='image/*'
-						type='file'
-						multiple
-						hidden
-						ref={fileRef}
-						onChange={handleImageChange}
-					/>
-				</>
-			),
-		},
 	}
 
 	return (
@@ -182,21 +131,15 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 			<DialogContent>
 				<Stack spacing={2}>
 					<Grid2 container spacing={2}>
-						{imageBase64Array.length > 0
-							? imageBase64Array.map((base64, index) => (
+						{imagePresentations.length > 0
+							? imagePresentations.map((base64, index) => (
 									<Grid2
 										key={index}
 										size={4}
-										draggable
-										onDragStart={() => handleDragStart(index)}
-										onDragOver={(e) => handleDragOver(e, index)}
-										onDragEnd={handleDragEnd}
 										sx={{
 											position: 'relative',
 											height: 130,
-											border: draggingIndex === index ? '2px dashed #000' : 'none',
 											borderRadius: '10px',
-											cursor: 'move',
 											marginBottom: '8px',
 										}}
 									>
@@ -243,7 +186,28 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						name='image'
 						value={values.images.join(', ')}
-						slotProps={customInputImageProperties}
+						sx={{ display: 'none' }}
+						slotProps={{
+							inputLabel: {
+								style: { color: 'gray' },
+							},
+							input: {
+								disabled: true,
+								style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+								endAdornment: (
+									<>
+										<input
+											accept='image/*'
+											type='file'
+											multiple
+											hidden
+											ref={fileRef}
+											onChange={handleImageChange}
+										/>
+									</>
+								),
+							},
+						}}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['name'] = el)}
@@ -262,6 +226,16 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 						value={values.price}
 						onChange={handleValueChange}
 					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['stockQuantity'] = el)}
+						label='Stock Quantity'
+						name='stockQuantity'
+						type='number'
+						variant='filled'
+						value={values.stockQuantity}
+						onChange={handleValueChange}
+					/>
+
 					<Stack direction={'row'} alignItems={'center'}>
 						<ValidationTextField
 							ref={(el) => (fieldsRef.current['description'] = el)}
@@ -295,14 +269,18 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 					<ValidationSelect
 						ref={(el) => (fieldsRef.current['category'] = el)}
 						label='Category'
-						name='category'
-						value={values.category}
+						name='subCategoryId'
+						value={values.subCategoryId}
 						onChange={handleValueChange}
+						variant='filled'
 					>
-						<MenuItem value='Food'>Food</MenuItem>
-						<MenuItem value='Drink'>Drink</MenuItem>
-						<MenuItem value='Dessert'>Dessert</MenuItem>
-						<MenuItem value='Snack'>Snack</MenuItem>
+						{categories?.map((category) =>
+							category.subCategories?.map((subCategory) => (
+								<MenuItem key={subCategory.id} value={subCategory.id}>
+									{subCategory.name}
+								</MenuItem>
+							))
+						)}
 					</ValidationSelect>
 				</Stack>
 			</DialogContent>

@@ -1,5 +1,6 @@
 import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
+import { AssetImages } from '@/utilities/AssetImages'
 import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
 import { Add, Close } from '@mui/icons-material'
 import {
@@ -18,34 +19,34 @@ import {
 
 import { useRef, useState, useEffect } from 'react'
 
-const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct }) => {
+const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleUpdateProduct }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
-	const [imageBase64Array, setImageBase64Array] = useState([])
+	const [imagePresentations, setImagePresentations] = useState([])
+	const [deletedImages, setDeletedImages] = useState([])
 	const [values, setValues] = useState({
 		id: '',
-		images: [],
+		image: [],
 		name: '',
 		price: '',
 		description: '',
-		category: '',
+		subCategoryId: '',
 	})
 
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
-	const [draggingIndex, setDraggingIndex] = useState(null)
 
 	useEffect(() => {
 		if (existingProduct) {
+			console.log(existingProduct)
 			setValues({
 				id: existingProduct.id || '',
-				images: existingProduct.images || [],
+				image: existingProduct.image || [],
 				name: existingProduct.name || '',
 				price: existingProduct.price?.toString() || '',
 				description: existingProduct.description || '',
-				category: existingProduct.category || '',
+				subCategoryId: existingProduct.subCategory.id || '',
 			})
-			setImageBase64Array(existingProduct.imageBase64Array || [])
 		}
 	}, [existingProduct])
 
@@ -59,7 +60,7 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 
 	const handleImageChange = (e) => {
 		const files = e.target.files
-		if (values.images.length + files.length > 5) {
+		if (values.image.length + files.length > 5) {
 			setError('You can upload up to 5 images.')
 			return
 		} else {
@@ -78,20 +79,25 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 				const newImages = images.map(({ name }) => name)
 				setValues((prev) => ({
 					...prev,
-					images: [...prev.images, ...newImages],
+					images: [...prev.image, ...newImages],
 				}))
-				setImageBase64Array((prev) => [...prev, ...images.map(({ base64 }) => base64)])
+				setImagePresentations((prev) => [...prev, ...images.map(({ base64 }) => base64)])
 			})
 		}
 	}
 
-	const removeImage = (index) => {
+	const removeExistedImage = (index) => {
 		setValues((prev) => {
-			const newImages = [...prev.images]
+			const newImages = [...prev.image]
 			newImages.splice(index, 1)
-			return { ...prev, images: newImages }
+			return { ...prev, image: newImages }
 		})
-		setImageBase64Array((prev) => {
+
+		setDeletedImages((prev) => [...prev, values.image[index]])
+	}
+
+	const removeNewImage = (index) => {
+		setImagePresentations((prev) => {
 			const newBase64 = [...prev]
 			newBase64.splice(index, 1)
 			return newBase64
@@ -105,7 +111,7 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 				values.name,
 				generatorOption
 			)
-			if (descriptionGenerated !== 404) {
+			if (descriptionGenerated.trim().toString() !== '404') {
 				setValues((prev) => ({
 					...prev,
 					description: descriptionGenerated.trim(),
@@ -128,46 +134,17 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 		if (isValid) {
 			const updatedProductData = {
 				...existingProduct,
-				images: values.images,
-				imageBase64Array: imageBase64Array,
+				images: values.image,
+				imageBase64Array: imagePresentations,
 				name: values.name,
 				price: parseFloat(values.price),
 				description: values.description,
-				category: values.category,
+				subCategoryId: values.subCategoryId,
 			}
 
 			handleUpdateProduct(updatedProductData)
 			handleClose()
 		}
-	}
-
-	const handleDragStart = (index) => {
-		setDraggingIndex(index)
-	}
-
-	const handleDragOver = (e, index) => {
-		e.preventDefault()
-		if (draggingIndex === index) return
-
-		const reorderedImages = [...values.images]
-		const reorderedBase64 = [...imageBase64Array]
-
-		const [movedImage] = reorderedImages.splice(draggingIndex, 1)
-		const [movedBase64] = reorderedBase64.splice(draggingIndex, 1)
-
-		reorderedImages.splice(index, 0, movedImage)
-		reorderedBase64.splice(index, 0, movedBase64)
-
-		setValues((prev) => ({
-			...prev,
-			images: reorderedImages,
-		}))
-		setImageBase64Array(reorderedBase64)
-		setDraggingIndex(index)
-	}
-
-	const handleDragEnd = () => {
-		setDraggingIndex(null)
 	}
 
 	const customInputImageProperties = {
@@ -198,19 +175,47 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 			<DialogContent>
 				<Stack spacing={2}>
 					<Stack direction='row' gap={2} style={{ flexWrap: 'wrap' }}>
-						{imageBase64Array.length > 0
-							? imageBase64Array.map((base64, index) => (
+						{values.image.length > 0
+							? values.image.map((image, index) => (
 									<Box
 										key={index}
-										draggable
-										onDragStart={() => handleDragStart(index)}
-										onDragOver={(e) => handleDragOver(e, index)}
-										onDragEnd={handleDragEnd}
 										sx={{
 											position: 'relative',
 											width: 160,
 											height: 130,
-											border: draggingIndex === index ? '2px dashed #000' : 'none',
+											borderRadius: '10px',
+											cursor: 'move',
+											marginBottom: '8px',
+										}}
+									>
+										<img
+											src={AssetImages.ProductImage(image)}
+											style={{
+												width: '100%',
+												height: '100%',
+												borderRadius: '10px',
+												objectFit: 'cover',
+											}}
+											alt={`Uploaded ${index}`}
+										/>
+										<IconButton
+											style={{ position: 'absolute', top: 0, right: 0 }}
+											onClick={() => removeExistedImage(index)}
+										>
+											<Close />
+										</IconButton>
+									</Box>
+							  ))
+							: null}
+
+						{imagePresentations.length > 0
+							? imagePresentations.map((base64, index) => (
+									<Box
+										key={index}
+										sx={{
+											position: 'relative',
+											width: 160,
+											height: 130,
 											borderRadius: '10px',
 											cursor: 'move',
 											marginBottom: '8px',
@@ -228,7 +233,7 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 										/>
 										<IconButton
 											style={{ position: 'absolute', top: 0, right: 0 }}
-											onClick={() => removeImage(index)}
+											onClick={() => removeNewImage(index)}
 										>
 											<Close />
 										</IconButton>
@@ -251,14 +256,6 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 						</IconButton>
 					</Stack>
 					{error && <Typography color='error'>{error}</Typography>}
-					<ValidationTextField
-						ref={(el) => (fieldsRef.current['image'] = el)}
-						label='Images'
-						variant='filled'
-						name='image'
-						value={values.images.join(', ')}
-						slotProps={customInputImageProperties}
-					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['id'] = el)}
 						label='ID'
@@ -317,15 +314,18 @@ const UpdateProduct = ({ open, handleClose, existingProduct, handleUpdateProduct
 					<ValidationSelect
 						ref={(el) => (fieldsRef.current['category'] = el)}
 						label='Category'
-						name='category'
-						variant='filled'
-						value={values.category}
+						name='subCategoryId'
+						value={values.subCategoryId}
 						onChange={handleValueChange}
+						variant='filled'
 					>
-						<MenuItem value='Food'>Food</MenuItem>
-						<MenuItem value='Drink'>Drink</MenuItem>
-						<MenuItem value='Dessert'>Dessert</MenuItem>
-						<MenuItem value='Snack'>Snack</MenuItem>
+						{categories?.map((category) =>
+							category.subCategories?.map((subCategory) => (
+								<MenuItem key={subCategory.id} value={subCategory.id}>
+									{subCategory.name}
+								</MenuItem>
+							))
+						)}
 					</ValidationSelect>
 				</Stack>
 			</DialogContent>
