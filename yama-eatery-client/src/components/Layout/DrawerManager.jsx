@@ -28,8 +28,6 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material'
-import StaffAttendanceManagement from '@/pages/Manager/StaffAttendanceManagement/StaffAttendanceManagement'
-import StaffInformationManagement from '@/pages/Manager/StaffInformationManagement/StaffInformationManagement'
 import StaffSalaryManagement from '@/pages/Manager/StaffSalaryManagement/StaffSalaryManagement'
 
 const navigations = [
@@ -69,12 +67,12 @@ const navigations = [
 			{
 				icon: <AccessAlarm />,
 				label: 'Attendance',
-				page: <StaffAttendanceManagement />,
+				page: <UserManagement />,
 			},
 			{
 				icon: <PermContactCalendar />,
 				label: 'Information',
-				page: <StaffInformationManagement />,
+				page: <UserManagement />,
 			},
 			{
 				icon: <Paid />,
