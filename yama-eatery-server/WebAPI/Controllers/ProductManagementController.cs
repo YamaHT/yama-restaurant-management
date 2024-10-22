@@ -50,6 +50,7 @@ namespace WebAPI.Controllers
             var subCategory = await _unitOfWork.SubCategoryRepository.GetByIdAsync(updateProductDTO.SubCategoryId);
 
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(updateProductDTO.ProductId);
+
             if (product == null)
             {
                 throw new DataNotFoundException("Product not found");
