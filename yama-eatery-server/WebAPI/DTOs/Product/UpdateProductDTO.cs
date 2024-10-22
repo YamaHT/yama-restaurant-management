@@ -1,8 +1,9 @@
 ﻿namespace WebAPI.DTOs.Product
 {
-    public class AddProductDTO
+    public class UpdateProductDTO
     {
-        public List<IFormFile> ImageFiles { get; set; }
+        public int ProductId { get; set; }
+        public List<IFormFile> ImageFiles { get; set; } 
         public string Name { get; set; }
         public string Description { get; set; }
         public double Price { get; set; }

@@ -16,8 +16,7 @@ import {
 	Typography,
 } from '@mui/material'
 import { useRef, useState } from 'react'
-
-const AddProduct = ({ open, handleClose, handleAddProduct }) => {
+const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
 	const [imageBase64Array, setImageBase64Array] = useState([])
@@ -27,12 +26,12 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 		price: '',
 		description: '',
 		category: '',
+		stockQuantity: '',
 	})
 
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
-	const [draggingIndex, setDraggingIndex] = useState(null)
-
+	
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
 		setValues((prev) => ({
@@ -110,70 +109,17 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 
 		if (isValid) {
 			const newProduct = {
-				id: Date.now(),
 				images: values.images,
 				imageBase64Array: imageBase64Array,
 				name: values.name,
 				price: parseFloat(values.price),
 				description: values.description,
 				category: values.category,
-				quantity: 0,
-				isDeleted: false,
+				stockQuantity: values.stockQuantity,
 			}
 			handleAddProduct(newProduct)
 			handleClose()
 		}
-	}
-
-	const handleDragStart = (index) => {
-		setDraggingIndex(index)
-	}
-
-	const handleDragOver = (e, index) => {
-		e.preventDefault()
-		if (draggingIndex === index) return
-
-		const reorderedImages = [...values.images]
-		const reorderedBase64 = [...imageBase64Array]
-
-		const [movedImage] = reorderedImages.splice(draggingIndex, 1)
-		const [movedBase64] = reorderedBase64.splice(draggingIndex, 1)
-
-		reorderedImages.splice(index, 0, movedImage)
-		reorderedBase64.splice(index, 0, movedBase64)
-
-		setValues((prev) => ({
-			...prev,
-			images: reorderedImages,
-		}))
-		setImageBase64Array(reorderedBase64)
-		setDraggingIndex(index)
-	}
-
-	const handleDragEnd = () => {
-		setDraggingIndex(null)
-	}
-
-	const customInputImageProperties = {
-		inputLabel: {
-			style: { color: 'gray' },
-		},
-		input: {
-			disabled: true,
-			style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
-			endAdornment: (
-				<>
-					<input
-						accept='image/*'
-						type='file'
-						multiple
-						hidden
-						ref={fileRef}
-						onChange={handleImageChange}
-					/>
-				</>
-			),
-		},
 	}
 
 	return (
@@ -187,16 +133,10 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 									<Grid2
 										key={index}
 										size={4}
-										draggable
-										onDragStart={() => handleDragStart(index)}
-										onDragOver={(e) => handleDragOver(e, index)}
-										onDragEnd={handleDragEnd}
 										sx={{
 											position: 'relative',
 											height: 130,
-											border: draggingIndex === index ? '2px dashed #000' : 'none',
 											borderRadius: '10px',
-											cursor: 'move',
 											marginBottom: '8px',
 										}}
 									>
@@ -243,7 +183,27 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						name='image'
 						value={values.images.join(', ')}
-						slotProps={customInputImageProperties}
+						slotProps={{
+							inputLabel: {
+								style: { color: 'gray' },
+							},
+							input: {
+								disabled: true,
+								style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+								endAdornment: (
+									<>
+										<input
+											accept='image/*'
+											type='file'
+											multiple
+											hidden
+											ref={fileRef}
+											onChange={handleImageChange}
+										/>
+									</>
+								),
+							},
+						}}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['name'] = el)}
@@ -262,6 +222,16 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 						value={values.price}
 						onChange={handleValueChange}
 					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['stockQuantity'] = el)}
+						label='Stock Quantity'
+						name='stockQuantity'
+						type='number'
+						variant='filled'
+						value={values.stockQuantity} 
+						onChange={handleValueChange}
+					/>
+
 					<Stack direction={'row'} alignItems={'center'}>
 						<ValidationTextField
 							ref={(el) => (fieldsRef.current['description'] = el)}
@@ -299,10 +269,13 @@ const AddProduct = ({ open, handleClose, handleAddProduct }) => {
 						value={values.category}
 						onChange={handleValueChange}
 					>
-						<MenuItem value='Food'>Food</MenuItem>
-						<MenuItem value='Drink'>Drink</MenuItem>
-						<MenuItem value='Dessert'>Dessert</MenuItem>
-						<MenuItem value='Snack'>Snack</MenuItem>
+						{categories?.map((category) =>
+							category.subCategories?.map((subCategory) => (
+								<MenuItem key={subCategory.id} value={subCategory.name}>
+									{subCategory.name}
+								</MenuItem>
+							))
+						)}
 					</ValidationSelect>
 				</Stack>
 			</DialogContent>
