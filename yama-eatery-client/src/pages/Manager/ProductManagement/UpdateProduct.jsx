@@ -24,6 +24,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 	const fieldsRef = useRef({})
 	const [imagePresentations, setImagePresentations] = useState([])
 	const [deletedImages, setDeletedImages] = useState([])
+	const [imageFiles, setImageFiles] = useState([])
 	const [values, setValues] = useState({
 		id: '',
 		image: [],
@@ -38,7 +39,6 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 
 	useEffect(() => {
 		if (existingProduct) {
-			console.log(existingProduct)
 			setValues({
 				id: existingProduct.id || '',
 				image: existingProduct.image || [],
@@ -76,11 +76,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 			})
 
 			Promise.all(fileReaders).then((images) => {
-				const newImages = images.map(({ name }) => name)
-				setValues((prev) => ({
-					...prev,
-					images: [...prev.image, ...newImages],
-				}))
+				setImageFiles((prev) => [...prev, ...Array.from(files)])
 				setImagePresentations((prev) => [...prev, ...images.map(({ base64 }) => base64)])
 			})
 		}
@@ -132,17 +128,23 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 		})
 
 		if (isValid) {
-			const updatedProductData = {
-				...existingProduct,
-				images: values.image,
-				imageBase64Array: imagePresentations,
-				name: values.name,
-				price: parseFloat(values.price),
-				description: values.description,
-				subCategoryId: values.subCategoryId,
-			}
+			var formData = new FormData()
+			formData.append('productId', values.id)
+			values.image.forEach((remainImage) => {
+				formData.append('remainImages', remainImage)
+			})
+			deletedImages.forEach((deletedImage) => {
+				formData.append('deletedImages', deletedImage)
+			})
+			imageFiles.forEach((file) => {
+				formData.append(`ImageFiles`, file)
+			})
+			formData.append('name', values.name)
+			formData.append('description', values.description)
+			formData.append('price', parseFloat(values.price))
+			formData.append('subCategoryId', parseInt(values.subCategoryId))
 
-			handleUpdateProduct(updatedProductData)
+			handleUpdateProduct(formData)
 			handleClose()
 		}
 	}

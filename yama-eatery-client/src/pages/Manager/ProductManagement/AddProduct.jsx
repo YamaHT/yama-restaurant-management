@@ -44,7 +44,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const handleImageChange = (e) => {
 		const files = e.target.files
 		if (values.images.length + files.length > 5) {
-			setError('You can upload up to 5 images.')
+			setError('You can only upload up to 5 images.')
 			return
 		} else {
 			setError('')
@@ -103,6 +103,14 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 
 	const handleAdd = () => {
 		let isValid = true
+
+		if (values.images.length === 0) {
+			setError('You must upload at least 1 image')
+			isValid = false
+		} else {
+			setError('')
+		}
+
 		Object.keys(fieldsRef.current).forEach((key) => {
 			if (!fieldsRef.current[key]?.validate()) {
 				isValid = false

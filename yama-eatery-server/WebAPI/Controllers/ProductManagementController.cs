@@ -56,7 +56,7 @@ namespace WebAPI.Controllers
             }
 
             var listImage = updateProductDTO.RemainImages;
-            foreach (var item in updateProductDTO.DeleteImages)
+            foreach (var item in updateProductDTO.DeletedImages)
             {
                 ImageUtil.DeleteImageAsync(nameof(Product), item);
             }
