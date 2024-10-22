@@ -22,4 +22,9 @@ export const ProductManagementService = {
 			.post(ApiRequest.ProductManagementRequest.ADD_PRODUCT, Product)
 			.then((response) => response.data)
 	},
+	RESTORE_PRODUCT: async (productId) => {
+		return await axiosFormBody
+			.post(ApiRequest.ProductManagementRequest.RESTORE_PRODUCT, productId)
+			.then((response) => response.data)
+	},
 }

@@ -186,6 +186,13 @@ const ProductManagement = () => {
 		}
 	}
 
+	const handleRestoreProduct = async (productId) => {
+		const data = await ProductManagementService.RESTORE_PRODUCT(productId)
+		if (data) {
+			setRows(data)
+		}
+	}
+
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === 'asc'
 		setOrder(isAsc ? 'desc' : 'asc')
@@ -273,7 +280,7 @@ const ProductManagement = () => {
 					/>
 					<React.Fragment>
 						<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
-							Add New
+							Add New Product
 						</Button>
 						{openAddPage && (
 							<AddProduct
@@ -382,19 +389,21 @@ const ProductManagement = () => {
 															</CrudConfirmation>
 														</MenuItem>
 													</>
-												) : 	<MenuItem>
-												<CrudConfirmation
-													title='Restore Confirmation'
-													description='Are you sure you want to restore this?'
-													handleConfirm={() => handleRestoreProduct(row.id)}
-												>
-													{(handleOpen) => (
-														<Button startIcon={<Restore />} onClick={handleOpen}>
-															Restore
-														</Button>
-													)}
-												</CrudConfirmation>
-											</MenuItem>}
+												) : (
+													<MenuItem>
+														<CrudConfirmation
+															title='Restore Confirmation'
+															description='Are you sure you want to restore this?'
+															handleConfirm={() => handleRestoreProduct(row.id)}	
+														>
+															{(handleOpen) => (
+																<Button startIcon={<Restore />} onClick={handleOpen}>
+																	Restore
+																</Button>
+															)}
+														</CrudConfirmation>
+													</MenuItem>
+												)}
 											</CrudMenuOptions>
 										</TableCell>
 									</TableRow>

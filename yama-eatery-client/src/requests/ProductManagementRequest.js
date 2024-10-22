@@ -3,4 +3,5 @@ export const ProductManagementRequest = {
 	ADD_PRODUCT: '/ProductManagement/add',
 	REMOVE_PRODUCT: '/ProductManagement/remove',
 	RESTOCK_PRODUCT: '/ProductManagement/restock',
+	RESTORE_PRODUCT: '/ProductManagement/restore',
 }
