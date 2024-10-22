@@ -1,86 +1,60 @@
-import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import { Close, FileUpload } from '@mui/icons-material'
+import { AssetImages } from '@/utilities/AssetImages'
+import { Add, Close } from '@mui/icons-material'
 import {
+	Box,
 	Button,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
 	FormControl,
+	FormControlLabel,
+	FormLabel,
 	IconButton,
-	InputLabel,
-	MenuItem,
-	Select,
-	Snackbar,
+	Radio,
+	RadioGroup,
 	Stack,
-	TextField,
+	Typography,
 } from '@mui/material'
-import Skeleton from '@mui/material/Skeleton'
-import { useRef, useState } from 'react'
 
-export default function AddStaff({ open, handleClose, currentStaff, onUpdate }) {
+import { useEffect, useRef, useState } from 'react'
+
+const UpdateProduct = ({ categories, open, handleClose, existingStaff, handleUpdateStaff }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
-	const [imageBase64, setImageBase64] = useState([])
+	const [imageFiles, setImageFiles] = useState([])
+	const [imagePresentations, setImagePresentations] = useState([])
+	const [deletedImages, setDeletedImages] = useState([])
 	const [values, setValues] = useState({
-		id: currentStaff?.id || '',
-		email: currentStaff?.email || '',
-		password: currentStaff?.password || '',
-		name: currentStaff?.name || '',
-		birthday: currentStaff?.birthday || '',
-		phone: currentStaff?.phone || '',
-		gender: currentStaff?.gender || '',
-		images: currentStaff?.images || [],
+		id: '',
+		image: [],
+		password: '',
+		name: '',
+		birthday: '',
+		phone: '',
+		gender: '',
 	})
-	const [openSnackbar, setOpenSnackbar] = useState(false)
-	const [emailError, setEmailError] = useState('')
-	const [passwordError, setPasswordError] = useState('')
-	const [inputError, setInputError] = useState('')
-	const emailRegex = /^[a-zA-Z]+[-.]?[\w]+@(([\w]+-?[\w]+)+\.)+[\w]{2,4}$/
-	const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!*()]).{8,}$/
 
-	const validatePassword = () => {
-		if (!passwordRegex.test(values.password)) {
-			setPasswordError(
-				'Password must have at least 8 characters, including at least one number, one lowercase letter, one uppercase letter, and one special character.'
-			)
-			return false
-		} else {
-			setPasswordError('')
-			return true
-		}
-	}
+	const [error, setError] = useState('')
 
-	const validateInput = () => {
-		const { birthday, gender, name, phone, images, password, email } = values
-		if (!birthday || !gender || images.length === 0 || !name || !phone || !password || !email) {
-			setInputError('All fields are required')
-			return false
-		} else {
-			setInputError('')
-			return true
+	useEffect(() => {
+		if (existingStaff) {
+			console.log(existingStaff)
+			setValues({
+				id: existingStaff.id || '',
+				image: existingStaff.image || [],
+				name: existingStaff.name || '',
+				password: existingStaff.password || '',
+				birthday: existingStaff.birthday || '',
+				phone: existingStaff.phone || '',
+				gender: existingStaff.gender || '',
+			})
 		}
-	}
-
-	const validateEmail = () => {
-		if (!emailRegex.test(values.email)) {
-			setEmailError('Invalid email format. Ex: example@example.com')
-			return false
-		} else {
-			setEmailError('')
-			return true
-		}
-	}
+	}, [existingStaff])
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
-		if (name === 'email') {
-			validateEmail(value)
-		}
-		if (name === 'password') {
-			validatePassword(value)
-		}
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
@@ -88,27 +62,54 @@ export default function AddStaff({ open, handleClose, currentStaff, onUpdate }) 
 	}
 
 	const handleImageChange = (e) => {
-		const files = Array.from(e.target.files)
-		if (files.length + values.images.length > 1) {
-			alert('You can only upload a maximum of 1 image.')
+		const files = e.target.files
+		if (values.image.length + files.length > 1) {
+			setError('You can upload up to 1 images.')
 			return
+		} else {
+			setError('')
 		}
+		if (files.length) {
+			const fileReaders = Array.from(files).map((file) => {
+				const reader = new FileReader()
+				reader.readAsDataURL(file)
+				return new Promise((resolve) => {
+					reader.onload = () => resolve({ name: file.name, base64: reader.result })
+				})
+			})
 
-		files.forEach((file) => {
-			const reader = new FileReader()
-			reader.onload = () => {
-				setImageBase64((prev) => [...prev, reader.result])
+			Promise.all(fileReaders).then((images) => {
+				const newImages = images.map(({ name }) => name)
 				setValues((prev) => ({
 					...prev,
-					images: [...prev.images, file.name],
+					images: [...prev.image, ...newImages],
 				}))
-			}
-			reader.readAsDataURL(file)
+				setImageFiles((prev) => [...prev, ...Array.from(files)])
+				setImagePresentations((prev) => [...prev, ...images.map(({ base64 }) => base64)])
+			})
+		}
+	}
+	const removeExistedImage = (index) => {
+		setValues((prev) => {
+			const newImages = [...prev.image]
+			newImages.splice(index, 1)
+			return { ...prev, image: newImages }
+		})
+
+		setDeletedImages((prev) => [...prev, values.image[index]])
+	}
+
+	const removeNewImage = (index) => {
+		setImagePresentations((prev) => {
+			const newBase64 = [...prev]
+			newBase64.splice(index, 1)
+			return newBase64
 		})
 	}
 
-	const handleAdd = () => {
+	const handleUpdate = () => {
 		let isValid = true
+
 		Object.keys(fieldsRef.current).forEach((key) => {
 			if (!fieldsRef.current[key]?.validate()) {
 				isValid = false
@@ -116,72 +117,142 @@ export default function AddStaff({ open, handleClose, currentStaff, onUpdate }) 
 		})
 
 		if (isValid) {
-			const newProduct = {
-				id: Date.now(),
-				images: values.images,
-				imageBase64Array: imageBase64,
+			const updatedStaffData = {
+				...existingStaff,
+				images: values.image,
+				imageBase64Array: imagePresentations,
+				email: values.email,
 				name: values.name,
-				price: parseFloat(values.price),
-				description: values.description,
-				category: values.category,
-				quantity: 0,
-				isDeleted: false,
+				password: values.password,
+				birthday: values.birthday,
+				phone: values.phone,
+				gender: values.gender,
 			}
-			AddStaff(newProduct)
+
+			handleUpdateStaff(updatedStaffData)
 			handleClose()
 		}
 	}
 
+	const customInputImageProperties = {
+		inputLabel: {
+			style: { color: 'gray' },
+		},
+		input: {
+			disabled: true,
+			style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+			endAdornment: (
+				<>
+					<input
+						accept='image/*'
+						type='file'
+						multiple
+						hidden
+						ref={fileRef}
+						onChange={handleImageChange}
+					/>
+				</>
+			),
+		},
+	}
+
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth>
-			<DialogTitle>Add New Staff</DialogTitle>
+			<DialogTitle>Update Staff</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					{imageBase64.length > 0 ? (
-						<Stack direction='row' spacing={1} flexWrap='wrap' justifyContent={'center'}>
-							{imageBase64.map((image, index) => (
-								<Stack key={index} spacing={1}>
-									<img
-										src={image}
-										style={{
-											width: 200,
-											height: 200,
+					<Stack direction='row' gap={2} style={{ flexWrap: 'wrap' }} justifyContent={'center'}>
+						{values.image.length > 0
+							? values.image.map((image, index) => (
+									<Box
+										key={index}
+										sx={{
+											position: 'relative',
+											width: 160,
+											height: 130,
 											borderRadius: '10px',
-											objectFit: 'fill',
-											cursor: 'pointer',
+											cursor: 'move',
+											marginBottom: '8px',
 										}}
-										alt={`Uploaded ${index + 1}`}
-									/>
-								</Stack>
-							))}
-						</Stack>
-					) : (
-						<Skeleton animation={false} height={200} variant='rounded' />
-					)}
+									>
+										<img
+											src={AssetImages.ProductImage(image)}
+											style={{
+												width: '100%',
+												height: '100%',
+												borderRadius: '10px',
+												objectFit: 'cover',
+											}}
+											alt={`Uploaded ${index}`}
+										/>
+										<IconButton
+											style={{ position: 'absolute', top: 0, right: 0 }}
+											onClick={() => removeExistedImage(index)}
+										>
+											<Close />
+										</IconButton>
+									</Box>
+							  ))
+							: null}
+
+						{imagePresentations.length > 0
+							? imagePresentations.map((base64, index) => (
+									<Box
+										key={index}
+										sx={{
+											position: 'relative',
+											width: 160,
+											height: 130,
+											borderRadius: '10px',
+											cursor: 'move',
+											marginBottom: '8px',
+										}}
+									>
+										<img
+											src={base64}
+											style={{
+												width: '100%',
+												height: '100%',
+												borderRadius: '10px',
+												objectFit: 'cover',
+											}}
+											alt={`Uploaded ${index}`}
+										/>
+										<IconButton
+											style={{ position: 'absolute', top: 0, right: 0 }}
+											onClick={() => removeNewImage(index)}
+										>
+											<Close />
+										</IconButton>
+									</Box>
+							  ))
+							: null}
+						<IconButton
+							sx={{
+								width: 175,
+								height: 130,
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+								border: '1px dashed gray',
+								borderRadius: '10px',
+							}}
+							onClick={() => fileRef.current.click()}
+						>
+							<Add sx={{ fontSize: 50 }} />
+						</IconButton>
+					</Stack>
+					{error && <Typography color='error'>{error}</Typography>}
 					<ValidationTextField
-						disabled
+						ref={(el) => (fieldsRef.current['id'] = el)}
 						label='ID'
 						name='id'
 						variant='filled'
 						value={values.id}
-						onChange={handleValueChange}
-					/>
-
-					<ValidationTextField
-						label='Email'
-						name='email'
-						variant='filled'
-						value={values.email}
-						onChange={handleValueChange}
+						slotProps={customInputImageProperties}
 					/>
 					<ValidationTextField
-						label='Password'
-						name='password'
-						variant='filled'
-						value={values.password}
-						onChange={handleValueChange}
-					/>
-					<ValidationTextField
+						ref={(el) => (fieldsRef.current['name'] = el)}
 						label='Name'
 						name='name'
 						variant='filled'
@@ -189,6 +260,16 @@ export default function AddStaff({ open, handleClose, currentStaff, onUpdate }) 
 						onChange={handleValueChange}
 					/>
 					<ValidationTextField
+						ref={(el) => (fieldsRef.current['email'] = el)}
+						label='Email'
+						name='email'
+						variant='filled'
+						value={values.email}
+						onChange={handleValueChange}
+					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['birthday'] = el)}
+						fullWidth
 						label='Birthday'
 						name='birthday'
 						variant='filled'
@@ -196,73 +277,45 @@ export default function AddStaff({ open, handleClose, currentStaff, onUpdate }) 
 						onChange={handleValueChange}
 					/>
 					<ValidationTextField
+						ref={(el) => (fieldsRef.current['phone'] = el)}
+						fullWidth
 						label='Phone'
 						name='phone'
 						variant='filled'
 						value={values.phone}
 						onChange={handleValueChange}
 					/>
-
-					<ValidationSelect
-						variant='filled'
-						value={values.gender}
-						label='Gender'
-						onChange={handleValueChange}
-						name='gender'
-					>
-						<MenuItem value='Male'>Male</MenuItem>
-						<MenuItem value='Female'>Female</MenuItem>
-					</ValidationSelect>
-
-					<ValidationTextField
-						label='Images'
-						variant='filled'
-						value={values.images.join(', ')}
-						InputProps={{
-							endAdornment: (
-								<>
-									{values.images.length > 0 && (
-										<IconButton
-											onClick={() => {
-												setImageBase64([])
-												setValues((prev) => ({ ...prev, images: [] }))
-											}}
-										>
-											<Close />
-										</IconButton>
-									)}
-									<input
-										accept='image/*'
-										type='file'
-										hidden
-										ref={fileRef}
-										multiple
-										onChange={handleImageChange}
-									/>
-									<IconButton onClick={() => fileRef.current.click()}>
-										<FileUpload />
-									</IconButton>
-								</>
-							),
-						}}
-					/>
+					<FormControl>
+						<FormLabel id='gender'>Gender</FormLabel>
+						<RadioGroup
+							row
+							aria-labelledby='gender'
+							name='gender'
+							value={values.gender}
+							onChange={handleValueChange}
+						>
+							<FormControlLabel control={<Radio value={'Female'} />} label='Female' />
+							<FormControlLabel control={<Radio value={'Male'} />} label='Male' />
+						</RadioGroup>
+					</FormControl>
 				</Stack>
 			</DialogContent>
-			<DialogActions sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-				<Button onClick={handleClose} variant='outlined' color='inherit' size='large'>
+			<DialogActions
+				sx={{
+					display: 'flex',
+					justifyContent: 'center',
+					gap: 2,
+				}}
+			>
+				<Button onClick={handleClose} variant='outlined' color='inherit'>
 					Close
 				</Button>
-				<Button onClick={handleAdd} variant='contained' color='primary' size='large'>
-					Add
+				<Button onClick={handleUpdate} size='large' variant='contained' color='primary'>
+					Update
 				</Button>
 			</DialogActions>
-			<Snackbar
-				enqueueSnackbar
-				open={openSnackbar}
-				autoHideDuration={1000}
-				onClose={() => setOpenSnackbar(false)}
-				message='Staff added successfully'
-			/>
 		</Dialog>
 	)
 }
+
+export default UpdateProduct

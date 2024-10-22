@@ -8,22 +8,27 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	FormControl,
+	FormControlLabel,
+	FormLabel,
 	Grid2,
 	IconButton,
 	MenuItem,
+	Radio,
+	RadioGroup,
 	Stack,
 	TextField,
 	Typography,
 } from '@mui/material'
 import { useRef, useState } from 'react'
-
-const AddStaff = ({ open, handleClose, handleAddProduct }) => {
+const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
-	const [imageBase64Array, setImageBase64Array] = useState([])
+	const [imagePresentations, setImagePresentations] = useState([])
+	const [imageFiles, setImageFiles] = useState([])
 	const [values, setValues] = useState({
 		images: [],
-		emai: '',
+		email: '',
 		password: '',
 		name: '',
 		birthday: '',
@@ -31,9 +36,7 @@ const AddStaff = ({ open, handleClose, handleAddProduct }) => {
 		gender: '',
 	})
 
-	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
-	const [draggingIndex, setDraggingIndex] = useState(null)
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
@@ -66,7 +69,8 @@ const AddStaff = ({ open, handleClose, handleAddProduct }) => {
 					...prev,
 					images: [...prev.images, ...newImages],
 				}))
-				setImageBase64Array((prev) => [...prev, ...images.map(({ base64 }) => base64)])
+				setImageFiles((prev) => [...prev, ...Array.from(files)])
+				setImagePresentations((prev) => [...prev, ...images.map(({ base64 }) => base64)])
 			})
 		}
 	}
@@ -77,7 +81,7 @@ const AddStaff = ({ open, handleClose, handleAddProduct }) => {
 			newImages.splice(index, 1)
 			return { ...prev, images: newImages }
 		})
-		setImageBase64Array((prev) => {
+		setImagePresentations((prev) => {
 			const newBase64 = [...prev]
 			newBase64.splice(index, 1)
 			return newBase64
@@ -93,99 +97,38 @@ const AddStaff = ({ open, handleClose, handleAddProduct }) => {
 		})
 
 		if (isValid) {
-			const newProduct = {
-				id: Date.now(),
-				email: values.emai,
-				password: values.password,
-				birthday: values.birthday,
-				phone: values.phone,
-				gender: values.gender,
-				images: values.images,
-				imageBase64Array: imageBase64Array,
-				name: values.name,
-				price: parseFloat(values.price),
-				description: values.description,
-				category: values.category,
-				quantity: 0,
-				isDeleted: false,
-			}
-			handleAddProduct(newProduct)
+			var formData = new FormData()
+			imageFiles.forEach((file) => {
+				formData.append(`ImageFiles`, file)
+			})
+			formData.append('name', values.name)
+			formData.append('email', values.email)
+			formData.append('password', values.password)
+			formData.append('birthday', values.birthday)
+			formData.append('phone', values.phone)
+			formData.append('gender', values.gender)
+			formData.append('positionId', parseInt(values.positionId))
+
+			handleAddProduct(formData)
 			handleClose()
 		}
 	}
 
-	const handleDragStart = (index) => {
-		setDraggingIndex(index)
-	}
-
-	const handleDragOver = (e, index) => {
-		e.preventDefault()
-		if (draggingIndex === index) return
-
-		const reorderedImages = [...values.images]
-		const reorderedBase64 = [...imageBase64Array]
-
-		const [movedImage] = reorderedImages.splice(draggingIndex, 1)
-		const [movedBase64] = reorderedBase64.splice(draggingIndex, 1)
-
-		reorderedImages.splice(index, 0, movedImage)
-		reorderedBase64.splice(index, 0, movedBase64)
-
-		setValues((prev) => ({
-			...prev,
-			images: reorderedImages,
-		}))
-		setImageBase64Array(reorderedBase64)
-		setDraggingIndex(index)
-	}
-
-	const handleDragEnd = () => {
-		setDraggingIndex(null)
-	}
-
-	const customInputImageProperties = {
-		inputLabel: {
-			style: { color: 'gray' },
-		},
-		input: {
-			disabled: true,
-			style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
-			endAdornment: (
-				<>
-					<input
-						accept='image/*'
-						type='file'
-						multiple
-						hidden
-						ref={fileRef}
-						onChange={handleImageChange}
-					/>
-				</>
-			),
-		},
-	}
-
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth>
-			<DialogTitle>Add New Product</DialogTitle>
+			<DialogTitle>Add New Staff</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					<Grid2 container spacing={2}>
-						{imageBase64Array.length > 0
-							? imageBase64Array.map((base64, index) => (
+					<Grid2 container spacing={2} justifyContent={'center'}>
+						{imagePresentations.length > 0
+							? imagePresentations.map((base64, index) => (
 									<Grid2
 										key={index}
 										size={4}
-										draggable
-										onDragStart={() => handleDragStart(index)}
-										onDragOver={(e) => handleDragOver(e, index)}
-										onDragEnd={handleDragEnd}
 										sx={{
 											position: 'relative',
 											height: 130,
-											border: draggingIndex === index ? '2px dashed #000' : 'none',
 											borderRadius: '10px',
-											cursor: 'move',
 											marginBottom: '8px',
 										}}
 									>
@@ -208,22 +151,24 @@ const AddStaff = ({ open, handleClose, handleAddProduct }) => {
 									</Grid2>
 							  ))
 							: null}
-						<Grid2 size={4}>
-							<IconButton
-								sx={{
-									width: '100%',
-									height: 130,
-									display: 'flex',
-									justifyContent: 'center',
-									alignItems: 'center',
-									border: '1px dashed gray',
-									borderRadius: '10px',
-								}}
-								onClick={() => fileRef.current.click()}
-							>
-								<Add sx={{ fontSize: 50 }} />
-							</IconButton>
-						</Grid2>
+						{imagePresentations.length === 0 && (
+							<Grid2 size={4}>
+								<IconButton
+									sx={{
+										width: '100%',
+										height: 130,
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+										border: '1px dashed gray',
+										borderRadius: '10px',
+									}}
+									onClick={() => fileRef.current.click()}
+								>
+									<Add sx={{ fontSize: 50 }} />
+								</IconButton>
+							</Grid2>
+						)}
 					</Grid2>
 					{error && <Typography color='error'>{error}</Typography>}
 					<ValidationTextField
@@ -232,7 +177,28 @@ const AddStaff = ({ open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						name='image'
 						value={values.images.join(', ')}
-						slotProps={customInputImageProperties}
+						sx={{ display: 'none' }}
+						slotProps={{
+							inputLabel: {
+								style: { color: 'gray' },
+							},
+							input: {
+								disabled: true,
+								style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+								endAdornment: (
+									<>
+										<input
+											accept='image/*'
+											type='file'
+											multiple
+											hidden
+											ref={fileRef}
+											onChange={handleImageChange}
+										/>
+									</>
+								),
+							},
+						}}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['name'] = el)}
@@ -243,48 +209,44 @@ const AddStaff = ({ open, handleClose, handleAddProduct }) => {
 						onChange={handleValueChange}
 					/>
 					<ValidationTextField
-						ref={(el) => (fieldsRef.current['price'] = el)}
-						label='Price'
-						name='price'
-						type='number'
+						ref={(el) => (fieldsRef.current['email'] = el)}
+						label='Email'
+						name='email'
 						variant='filled'
-						value={values.price}
+						value={values.email}
 						onChange={handleValueChange}
 					/>
-					<Stack direction={'row'} alignItems={'center'}>
-						<ValidationTextField
-							ref={(el) => (fieldsRef.current['description'] = el)}
-							fullWidth
-							label='Description'
-							name='description'
-							variant='filled'
-							multiline
-							minRows={3}
-							value={values.description}
-							onChange={handleValueChange}
-						/>
-						<Stack alignItems={'center'} padding={'0 1%'} spacing={1}>
-							<TextField
-								size='small'
-								variant='outlined'
-								label='(Optional)'
-								value={generatorOption}
-								onChange={(e) => setGeneratorOption(e.target.value)}
-							/>
-						</Stack>
-					</Stack>
-					<ValidationSelect
-						ref={(el) => (fieldsRef.current['category'] = el)}
-						label='Category'
-						name='category'
-						value={values.category}
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['birthday'] = el)}
+						label='Birthday'
+						name='birthday'
+						variant='filled'
+						value={values.birthday}
 						onChange={handleValueChange}
-					>
-						<MenuItem value='Food'>Food</MenuItem>
-						<MenuItem value='Drink'>Drink</MenuItem>
-						<MenuItem value='Dessert'>Dessert</MenuItem>
-						<MenuItem value='Snack'>Snack</MenuItem>
-					</ValidationSelect>
+					/>
+
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['phone'] = el)}
+						fullWidth
+						label='Phone'
+						name='phone'
+						variant='filled'
+						value={values.phone}
+						onChange={handleValueChange}
+					/>
+					<FormControl>
+						<FormLabel id='gender'>Gender</FormLabel>
+						<RadioGroup
+							row
+							aria-labelledby='gender'
+							name='gender'
+							value={values.gender}
+							onChange={handleValueChange}
+						>
+							<FormControlLabel control={<Radio value={'Female'} />} label='Female' />
+							<FormControlLabel control={<Radio value={'Male'} />} label='Male' />
+						</RadioGroup>
+					</FormControl>
 				</Stack>
 			</DialogContent>
 			<DialogActions
@@ -305,4 +267,4 @@ const AddStaff = ({ open, handleClose, handleAddProduct }) => {
 	)
 }
 
-export default AddStaff
+export default AddProduct
