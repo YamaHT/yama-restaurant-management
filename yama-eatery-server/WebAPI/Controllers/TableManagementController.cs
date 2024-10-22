@@ -11,7 +11,6 @@ namespace WebAPI.Controllers
     [Authorize(Roles = nameof(RoleEnum.Manager))]
     public class TableManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
-
         [HttpPost("add")]
         public async Task<IActionResult> AddTable([FromForm] AddTableDTO addTableDTO)
         {
@@ -30,7 +29,6 @@ namespace WebAPI.Controllers
                 Image = image,
                 Floor = addTableDTO.Floor,
                 Type = addTableDTO.Type,
-
             };
 
             table.TryValidate();
@@ -44,7 +42,6 @@ namespace WebAPI.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> UpdateTable([FromForm] UpdateTableDTO updateTableDTO)
         {
-
             var table = await _unitOfWork.TableRepository.GetByIdAsync(updateTableDTO.TableId);
 
             if (table == null)
@@ -70,6 +67,8 @@ namespace WebAPI.Controllers
             table.Floor = updateTableDTO.Floor;
             table.Type = updateTableDTO.Type;
             table.Image = listImage;
+
+            table.TryValidate();
 
             _unitOfWork.TableRepository.Update(table);
             await _unitOfWork.SaveChangeAsync();

@@ -4,6 +4,6 @@
     {
         public List<IFormFile> ImageFiles { get; set; } = [];
         public int Floor { get; set; }
-        public string Type { get; set; }
+        public string? Type { get; set; }
     }
 }

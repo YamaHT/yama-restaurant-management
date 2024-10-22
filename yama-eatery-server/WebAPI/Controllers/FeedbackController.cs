@@ -12,16 +12,16 @@ namespace WebAPI.Controllers
     public class FeedbackController(IUnitOfWork _unitOfWork) : ApiController    
     {
         [HttpPost("add")]
-        public async Task<IActionResult> AddFeedback([FromBody] ModifyProductFeedbackDTO modifyProductFeedbackDTO)
+        public async Task<IActionResult> AddFeedback([FromBody] ModifyFeedbackProductDTO modifyFeedbackProductDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
 
             var feedback = new FeedbackProduct
             {
                 UserId = user.Id,
-                ProductId = modifyProductFeedbackDTO.ProductId,
-                Message = modifyProductFeedbackDTO.Message,
-                Rating = modifyProductFeedbackDTO.Rating,
+                ProductId = modifyFeedbackProductDTO.ProductId,
+                Message = modifyFeedbackProductDTO.Message,
+                Rating = modifyFeedbackProductDTO.Rating,
                 CreationDate = DateTime.Now
             };
             feedback.TryValidate();
@@ -42,15 +42,15 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateFeedback([FromBody] ModifyProductFeedbackDTO modifyProductFeedbackDTO)
+        public async Task<IActionResult> UpdateFeedback([FromBody] ModifyFeedbackProductDTO modifyFeedbackProductDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
 
             var feedback = await _unitOfWork.FeedbackProductRepository
-                .GetByUserIdAndProductId(user.Id, modifyProductFeedbackDTO.ProductId) ?? throw new DataNotFoundException("Feedback not found.");
+                .GetByUserIdAndProductId(user.Id, modifyFeedbackProductDTO.ProductId) ?? throw new DataNotFoundException("Feedback not found.");
 
-            feedback.Message = modifyProductFeedbackDTO.Message;
-            feedback.Rating = modifyProductFeedbackDTO.Rating;
+            feedback.Message = modifyFeedbackProductDTO.Message;
+            feedback.Rating = modifyFeedbackProductDTO.Rating;
             feedback.ModificationDate = DateTime.Now;
 
             feedback.TryValidate();

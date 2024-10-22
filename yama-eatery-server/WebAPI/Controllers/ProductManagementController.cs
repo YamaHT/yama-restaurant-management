@@ -76,6 +76,8 @@ namespace WebAPI.Controllers
             product.SubCategory = subCategory;
             product.Image = listImage;
 
+            product.TryValidate();
+
             _unitOfWork.ProductRepository.Update(product);
             await _unitOfWork.SaveChangeAsync();
 
