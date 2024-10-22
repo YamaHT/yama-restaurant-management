@@ -94,14 +94,14 @@ namespace WebAPI.Controllers
         [HttpGet("history-booking")]
         public async Task<IActionResult> GetHistoryBooking()
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings", "Bookings.BookingDetails","Bookings.Table"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings", "Bookings.BookingDetails", "Bookings.Table"]);
             return Ok(user?.Bookings);
         }
 
         [HttpGet("my-vouchers")]
         public async Task<IActionResult> GetMyVouchers()
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers","UserVouchers.Voucher"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers", "UserVouchers.Voucher"]);
             return Ok(user?.UserVouchers);
         }
 

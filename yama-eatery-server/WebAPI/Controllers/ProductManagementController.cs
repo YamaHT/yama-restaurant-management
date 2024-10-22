@@ -50,6 +50,7 @@ namespace WebAPI.Controllers
             var subCategory = await _unitOfWork.SubCategoryRepository.GetByIdAsync(updateProductDTO.SubCategoryId);
 
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(updateProductDTO.ProductId);
+
             if (product == null)
             {
                 throw new DataNotFoundException("Product not found");
@@ -74,6 +75,8 @@ namespace WebAPI.Controllers
             product.Price = updateProductDTO.Price;
             product.SubCategory = subCategory;
             product.Image = listImage;
+
+            product.TryValidate();
 
             _unitOfWork.ProductRepository.Update(product);
             await _unitOfWork.SaveChangeAsync();
