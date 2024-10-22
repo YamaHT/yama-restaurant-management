@@ -18,9 +18,14 @@ export const ProductManagementService = {
 			.post(ApiRequest.ProductManagementRequest.RESTOCK_PRODUCT, restockProduct)
 			.then((response) => response.data)
 	},
-	ADD_PRODUCT: async (Product) => {
+	ADD_PRODUCT: async (product) => {
 		return await axiosFormData
-			.post(ApiRequest.ProductManagementRequest.ADD_PRODUCT, Product)
+			.post(ApiRequest.ProductManagementRequest.ADD_PRODUCT, product)
+			.then((response) => response.data)
+	},
+	UPDATE_PRODUCT: async (product) => {
+		return await axiosFormData
+			.post(ApiRequest.ProductManagementRequest.UPDATE_PRODUCT, product)
 			.then((response) => response.data)
 	},
 	RESTORE_PRODUCT: async (productId) => {

@@ -21,6 +21,7 @@ import {
 } from '@mui/icons-material'
 import {
 	Avatar,
+	AvatarGroup,
 	Box,
 	Button,
 	Chip,
@@ -223,13 +224,6 @@ const ProductManagement = () => {
 		setOpenUpdatePage(true)
 	}
 
-	const handleUpdateProduct = (updatedProduct) => {
-		setRows((prevRows) =>
-			prevRows.map((row) => (row.id === updatedProduct.id ? updatedProduct : row))
-		)
-		setOpenUpdatePage(false)
-	}
-
 	const handleOpenRestock = (product) => {
 		setSelectedProduct(product)
 		setOpenRestockPage(true)
@@ -246,14 +240,19 @@ const ProductManagement = () => {
 	}
 
 	const handleAddProduct = async (formData) => {
-		try {
-			const data = await ProductManagementService.ADD_PRODUCT(formData)
-			if (data) {
-				setRows((prevRows) => [...prevRows, data])
-				setOpenAddPage(false)
-			}
-		} catch (error) {
-			console.log(error)
+		const data = await ProductManagementService.ADD_PRODUCT(formData)
+		if (data) {
+			setRows(data)
+			setOpenAddPage(false)
+		}
+	}
+
+	const handleUpdateProduct = async (formData) => {
+		const data = await ProductManagementService.UPDATE_PRODUCT(formData)
+		if (data) {
+			setRows(data)
+			setSelectedProduct(null)
+			setOpenUpdatePage(false)
 		}
 	}
 
@@ -308,8 +307,20 @@ const ProductManagement = () => {
 									<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
 										<TableCell>
 											<Stack direction={'row'} spacing={2} alignItems={'center'}>
-												<Avatar src={AssetImages.ProductImage(row.image[0])} />
-												<p>{row.name}</p>
+												<AvatarGroup>
+													{row.image && row.image.length > 0 ? (
+														row.image.map((imgSrc, index) => (
+															<Avatar
+																key={index}
+																src={AssetImages.ProductImage(imgSrc)}
+																alt={`Product Image ${index}`}
+															/>
+														))
+													) : (
+														<Avatar alt={row.name} />
+													)}
+												</AvatarGroup>
+												<Typography variant='body2'>{row.name}</Typography>
 											</Stack>
 										</TableCell>
 										<TableCell>
@@ -400,7 +411,11 @@ const ProductManagement = () => {
 															handleConfirm={() => handleRestoreProduct(row.id)}
 														>
 															{(handleOpen) => (
-																<Button startIcon={<Restore />} onClick={handleOpen}>
+																<Button
+																	variant='outlined'
+																	startIcon={<Restore />}
+																	onClick={handleOpen}
+																>
 																	Restore
 																</Button>
 															)}
