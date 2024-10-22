@@ -19,19 +19,20 @@ import { useRef, useState } from 'react'
 const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
-	const [imageBase64Array, setImageBase64Array] = useState([])
+	const [imagePresentations, setImagePresentations] = useState([])
+	const [imageFiles, setImageFiles] = useState([])
 	const [values, setValues] = useState({
 		images: [],
 		name: '',
 		price: '',
 		description: '',
-		category: '',
+		subCategoryId: '',
 		stockQuantity: '',
 	})
 
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
-	
+
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
 		setValues((prev) => ({
@@ -63,7 +64,8 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 					...prev,
 					images: [...prev.images, ...newImages],
 				}))
-				setImageBase64Array((prev) => [...prev, ...images.map(({ base64 }) => base64)])
+				setImageFiles((prev) => [...prev, ...Array.from(files)])
+				setImagePresentations((prev) => [...prev, ...images.map(({ base64 }) => base64)])
 			})
 		}
 	}
@@ -74,7 +76,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 			newImages.splice(index, 1)
 			return { ...prev, images: newImages }
 		})
-		setImageBase64Array((prev) => {
+		setImagePresentations((prev) => {
 			const newBase64 = [...prev]
 			newBase64.splice(index, 1)
 			return newBase64
@@ -88,7 +90,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 				values.name,
 				generatorOption
 			)
-			if (descriptionGenerated.toString() !== '404') {
+			if (descriptionGenerated.trim().toString() !== '404') {
 				setValues((prev) => ({
 					...prev,
 					description: descriptionGenerated.trim(),
@@ -108,16 +110,17 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 		})
 
 		if (isValid) {
-			const newProduct = {
-				images: values.images,
-				imageBase64Array: imageBase64Array,
-				name: values.name,
-				price: parseFloat(values.price),
-				description: values.description,
-				category: values.category,
-				stockQuantity: values.stockQuantity,
-			}
-			handleAddProduct(newProduct)
+			var formData = new FormData()
+			imageFiles.forEach((file) => {
+				formData.append(`ImageFiles`, file)
+			})
+			formData.append('name', values.name)
+			formData.append('description', values.description)
+			formData.append('price', parseFloat(values.price))
+			formData.append('stockQuantity', parseInt(values.stockQuantity))
+			formData.append('subCategoryId', parseInt(values.subCategoryId))
+
+			handleAddProduct(formData)
 			handleClose()
 		}
 	}
@@ -128,8 +131,8 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 			<DialogContent>
 				<Stack spacing={2}>
 					<Grid2 container spacing={2}>
-						{imageBase64Array.length > 0
-							? imageBase64Array.map((base64, index) => (
+						{imagePresentations.length > 0
+							? imagePresentations.map((base64, index) => (
 									<Grid2
 										key={index}
 										size={4}
@@ -183,6 +186,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						name='image'
 						value={values.images.join(', ')}
+						sx={{ display: 'none' }}
 						slotProps={{
 							inputLabel: {
 								style: { color: 'gray' },
@@ -228,7 +232,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						name='stockQuantity'
 						type='number'
 						variant='filled'
-						value={values.stockQuantity} 
+						value={values.stockQuantity}
 						onChange={handleValueChange}
 					/>
 
@@ -265,13 +269,14 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 					<ValidationSelect
 						ref={(el) => (fieldsRef.current['category'] = el)}
 						label='Category'
-						name='category'
-						value={values.category}
+						name='subCategoryId'
+						value={values.subCategoryId}
 						onChange={handleValueChange}
+						variant='filled'
 					>
 						{categories?.map((category) =>
 							category.subCategories?.map((subCategory) => (
-								<MenuItem key={subCategory.id} value={subCategory.name}>
+								<MenuItem key={subCategory.id} value={subCategory.id}>
 									{subCategory.name}
 								</MenuItem>
 							))

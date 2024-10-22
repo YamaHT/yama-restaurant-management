@@ -1,5 +1,6 @@
 import { ApiRequest } from '@/utilities/ApiRequest'
 import axiosFormBody from '@/utilities/axiosFormBody'
+import axiosFormData from '@/utilities/axiosFormData'
 
 export const ProductManagementService = {
 	GET_ALL: async () => {
@@ -18,8 +19,13 @@ export const ProductManagementService = {
 			.then((response) => response.data)
 	},
 	ADD_PRODUCT: async (Product) => {
-		return await axiosFormBody
+		return await axiosFormData
 			.post(ApiRequest.ProductManagementRequest.ADD_PRODUCT, Product)
+			.then((response) => response.data)
+	},
+	RESTORE_PRODUCT: async (productId) => {
+		return await axiosFormBody
+			.post(ApiRequest.ProductManagementRequest.RESTORE_PRODUCT, productId)
 			.then((response) => response.data)
 	},
 }

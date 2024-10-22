@@ -18,19 +18,19 @@ namespace WebAPI.Controllers
             return Ok(staff);
         }
 
-        [HttpGet("checkInTime/{id}")]
-        public async Task<IActionResult> CheckInTime(int id)
-        {
-            var employee = await _unitOfWork.EmployeeRepository.GetByIdAsync(id );
+        //[HttpGet("checkInTime/{id}")]
+        //public async Task<IActionResult> CheckInTime(int id)
+        //{
+        //    var employee = await _unitOfWork.EmployeeRepository.GetByIdAsync(id );
 
-           employee.Attendances = TimeOnly.FromDateTime(DateTime.Now);
+        //   employee.Attendances = TimeOnly.FromDateTime(DateTime.Now);
 
-             _unitOfWork.AttendanceRepository.Update(employee);
-            await _unitOfWork.SaveChangeAsync();
+        //     _unitOfWork.AttendanceRepository.Update(employee);
+        //    await _unitOfWork.SaveChangeAsync();
 
 
-            return Ok(employee);
-        }
+        //    return Ok(employee);
+        //}
 
         [HttpGet("checkOutTime/{id}")]
         public async Task<IActionResult> CheckOutTime()
