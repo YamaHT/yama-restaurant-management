@@ -24,7 +24,6 @@ namespace WebAPI.Controllers
                     image.Add(imageName);
                 }
             }
-
             var subCategory = await _unitOfWork.SubCategoryRepository.GetByIdAsync(addProductDTO.SubCategoryId);
 
             var product = new Product
@@ -44,40 +43,39 @@ namespace WebAPI.Controllers
 
             return RedirectToAction("GetAll");
         }
+
         [HttpPost("update")]
         public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductDTO updateProductDTO)
         {
-            var existingProduct = await _unitOfWork.ProductRepository.GetByIdAsync(updateProductDTO.ProductId);
+            var subCategory = await _unitOfWork.SubCategoryRepository.GetByIdAsync(updateProductDTO.SubCategoryId);
 
-            List<string> currentImages = existingProduct?.Image ?? new List<string>();
-
-            List<string> updatedImages = new List<string>();
-            foreach (var imageFile in updateProductDTO.ImageFiles)
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(updateProductDTO.ProductId);
+            if (product == null)
             {
-                var oldImageName = currentImages.FirstOrDefault(); 
-                var updatedImage = await ImageUtil.UpdateImageAsync(nameof(Product), oldImageName, imageFile);
+                throw new DataNotFoundException("Product not found");
+            }
 
-                if (updatedImage != null)
-                {
-                    updatedImages.Add(updatedImage);
-                }
+            var listImage = updateProductDTO.RemainImages;
+            foreach (var item in updateProductDTO.DeleteImages)
+            {
+                ImageUtil.DeleteImageAsync(nameof(Product), item);
+            }
 
-                if (oldImageName != null)
-                {
-                    currentImages.Remove(oldImageName); 
+            foreach (var item in updateProductDTO.ImageFiles)
+            {
+                var imageName = await ImageUtil.AddImageAsync(nameof(Product), item);
+                if (imageName != null) { 
+                    listImage.Add(imageName);
                 }
             }
 
-            updatedImages.AddRange(currentImages);
-            var subCategory = await _unitOfWork.SubCategoryRepository.GetByIdAsync(updateProductDTO.SubCategoryId);
-            existingProduct.Name = updateProductDTO.Name;
-            existingProduct.Description = updateProductDTO.Description;
-            existingProduct.Price = updateProductDTO.Price;
-            existingProduct.StockQuantity = updateProductDTO.StockQuantity;
-            existingProduct.SubCategory = subCategory;
-            existingProduct.Image = updatedImages;
+            product.Name = updateProductDTO.Name;
+            product.Description = updateProductDTO.Description;
+            product.Price = updateProductDTO.Price;
+            product.SubCategory = subCategory;
+            product.Image = listImage;
 
-            _unitOfWork.ProductRepository.Update(existingProduct);
+            _unitOfWork.ProductRepository.Update(product);
             await _unitOfWork.SaveChangeAsync();
 
             return RedirectToAction("GetAll");
