@@ -1,6 +1,6 @@
 ﻿namespace WebAPI.DTOs.Feedback
 {
-    public class ModifyFeedbackProductDTO
+    public class ModifyProductFeedbackDTO
     {
         public int ProductId { get; set; }
         public string? Message { get; set; }
