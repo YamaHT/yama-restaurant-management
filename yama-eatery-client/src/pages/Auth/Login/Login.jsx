@@ -41,7 +41,7 @@ const Login = () => {
 
 	const handleLoginWithGoogle = useGoogleLogin({
 		onSuccess: async (res) => {
-			const profile = await AuthService.GET_LOGIN_PROFILE(res.access_token)
+			const profile = await AuthService.GET_GOOGLE_PROFILE(res.access_token)
 
 			const formData = { email: profile.email, name: profile.name, picture: profile.picture }
 			const data = await AuthService.LOGIN_WITH_GOOGLE(formData)

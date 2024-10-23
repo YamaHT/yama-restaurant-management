@@ -17,7 +17,6 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Detail(int id)
         {
             var table = await _unitOfWork.TableRepository.GetByIdAsync(id);
-
             return table != null ? Ok(table) : throw new DataNotFoundException("Table not found");
         }
     }

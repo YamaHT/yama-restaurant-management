@@ -12,6 +12,15 @@ namespace WebAPI.Controllers
     [Authorize(Roles = nameof(RoleEnum.Manager))]
     public class ProductManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            string[] includes = ["SubCategory", "SubCategory.Category"];
+            var products = await _unitOfWork.ProductRepository.GetAllWithDeletedAsync(includes);
+
+            return Ok(products);
+        }
+
         [HttpPost("add")]
         public async Task<IActionResult> AddProduct([FromForm] AddProductDTO addProductDTO)
         {
@@ -24,6 +33,7 @@ namespace WebAPI.Controllers
                     image.Add(imageName);
                 }
             }
+
             var subCategory = await _unitOfWork.SubCategoryRepository.GetByIdAsync(addProductDTO.SubCategoryId);
 
             var product = new Product
@@ -50,7 +60,6 @@ namespace WebAPI.Controllers
             var subCategory = await _unitOfWork.SubCategoryRepository.GetByIdAsync(updateProductDTO.SubCategoryId);
 
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(updateProductDTO.ProductId);
-
             if (product == null)
             {
                 throw new DataNotFoundException("Product not found");
@@ -84,15 +93,6 @@ namespace WebAPI.Controllers
             return RedirectToAction("GetAll");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            string[] includes = ["SubCategory", "SubCategory.Category"];
-            var products = await _unitOfWork.ProductRepository.GetAllWithDeletedAsync(includes);
-
-            return Ok(products);
-        }
-
         [HttpPost("remove")]
         public async Task<IActionResult> RemoveProduct([FromBody] int productId)
         {
@@ -112,7 +112,6 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> RestoreProduct([FromBody] int productId)
         {
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
-
             if (product == null)
             {
                 throw new DataNotFoundException("Product is not found");

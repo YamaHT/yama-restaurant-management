@@ -9,17 +9,10 @@ using WebAPI.Utils.Exceptions;
 namespace WebAPI.Controllers
 {
     [Authorize(Roles = nameof(RoleEnum.Manager))]
-    public class VoucherManagementController : ApiController
+    public class VoucherManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
-        private readonly IUnitOfWork _unitOfWork;
-
-        public VoucherManagementController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-
         [HttpGet]
-        public async Task<IActionResult> GetAllVoucher()
+        public async Task<IActionResult> GetAll()
         {
             var vouchers = await _unitOfWork.VoucherRepository.GetAllWithDeletedAsync();
             return Ok(vouchers);
@@ -28,7 +21,7 @@ namespace WebAPI.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddVoucher([FromForm] CreateVoucherDTO createVoucherDTO)
         {
-            var newVoucher = new Voucher
+            var voucher = new Voucher
             {
                 Name = createVoucherDTO.Name,
                 Description = createVoucherDTO.Description,
@@ -37,52 +30,55 @@ namespace WebAPI.Controllers
                 MaxReducing = createVoucherDTO.MaxReducing,
                 Quantity = createVoucherDTO.Quantity,
                 Image = await ImageUtil.AddImageAsync(nameof(Voucher), createVoucherDTO.Image),
-            }; 
+            };
 
-            newVoucher.TryValidate();
+            voucher.TryValidate();
 
-            await _unitOfWork.VoucherRepository.AddAsync(newVoucher);
+            await _unitOfWork.VoucherRepository.AddAsync(voucher);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(newVoucher);
+            return RedirectToAction("GetAll");
         }
 
-        [HttpPost("update/{id}")]
-        public async Task<IActionResult> UpdateVoucher(int id, [FromForm] UpdateVoucherDTO updateVoucherDTO)
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateVoucher([FromForm] UpdateVoucherDTO updateVoucherDTO)
         {
-            var existingVoucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
-            if (existingVoucher == null)
+            var voucher = await _unitOfWork.VoucherRepository.GetByIdAsync(updateVoucherDTO.Id);
+            if (voucher == null)
+            {
                 throw new DataNotFoundException("Voucher not found");
-            existingVoucher.Name = updateVoucherDTO.Name;
-            existingVoucher.Description = updateVoucherDTO.Description;
-            existingVoucher.ExpiredDate = DateOnly.FromDateTime(updateVoucherDTO.ExpiredDate);
-            existingVoucher.ReducedPercent = updateVoucherDTO.ReducedPercent;
-            existingVoucher.MaxReducing = updateVoucherDTO.MaxReducing;
-            existingVoucher.Quantity = updateVoucherDTO.Quantity;
+            }
+
+            voucher.Name = updateVoucherDTO.Name;
+            voucher.Description = updateVoucherDTO.Description;
+            voucher.ExpiredDate = DateOnly.FromDateTime(updateVoucherDTO.ExpiredDate);
+            voucher.ReducedPercent = updateVoucherDTO.ReducedPercent;
+            voucher.MaxReducing = updateVoucherDTO.MaxReducing;
+            voucher.Quantity = updateVoucherDTO.Quantity;
             if (updateVoucherDTO.Image != null)
             {
-                existingVoucher.Image = await ImageUtil.UpdateImageAsync(nameof(Voucher),existingVoucher.Image, updateVoucherDTO.Image);
+                voucher.Image = await ImageUtil.UpdateImageAsync(nameof(Voucher), voucher.Image, updateVoucherDTO.Image);
             }
-            existingVoucher.TryValidate();
 
+            voucher.TryValidate();
+
+            _unitOfWork.VoucherRepository.Update(voucher);
             await _unitOfWork.SaveChangeAsync();
-            return Ok(existingVoucher);
+            return RedirectToAction("GetAll");
         }
 
-        [HttpPost("remove")]
-        public async Task<IActionResult> RemoveVoucher([FromBody] int id)
+        [HttpPost("delete")]
+        public async Task<IActionResult> DeleteVoucher([FromBody] int id)
         {
-           
-            var existingVoucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
-            if (existingVoucher == null)
+            var voucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
+            if (voucher == null)
             {
-                throw new DataNotFoundException($"No voucher found with ID {id}");
+                throw new DataNotFoundException("Voucher not found");
             }
-            _unitOfWork.VoucherRepository.Remove(existingVoucher);
-            await _unitOfWork.SaveChangeAsync(); 
-            return Ok("Voucher removed successfully"); 
+
+            _unitOfWork.VoucherRepository.Remove(voucher);
+            await _unitOfWork.SaveChangeAsync();
+            return RedirectToAction("GetAll");
         }
-
-
     }
 }

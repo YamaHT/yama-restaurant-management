@@ -3,15 +3,13 @@ import axiosFormBody from '@/utilities/axiosFormBody'
 
 export const VoucherService = {
 	VIEW_ALL_VOUCHER: async () => {
-		return await axiosFormBody.get(ApiRequest.VoucherRequest.VIEW_ALL_VOUCHER).then((response) => {
-			return response.data
-		})
-	},
-	ADD_MY_VOUCHER: async (id) => {
 		return await axiosFormBody
-			.post(ApiRequest.VoucherRequest.ADD_MY_VOUCHER(id))  
-			.then((response) => {
-				return response.data
-			})
+			.get(ApiRequest.VoucherRequest.VIEW_ALL_VOUCHER)
+			.then((response) => response.data)
+	},
+	RECEIVE_VOUCHER: async (id) => {
+		return await axiosFormBody
+			.post(ApiRequest.VoucherRequest.RECEIVE_VOUCHER, id)
+			.then((response) => response.data)
 	},
 }

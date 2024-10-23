@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Numerics;
 using WebAPI.DTOs.Booking;
-using WebAPI.DTOs.User;
 using WebAPI.Models;
 using WebAPI.Models.Enums;
 using WebAPI.Utils;
@@ -24,7 +22,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetValidVoucher()
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
-            var validUserVoucher = await _unitOfWork.UserVoucherRepository.GetValidUserVouchersOfUserId(user.Id);
+            var validUserVoucher = await _unitOfWork.UserVoucherRepository.GetValidUserVouchersByUserId(user.Id);
             return Ok(validUserVoucher);
         }
 
@@ -32,13 +30,21 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Reserve([FromBody] AddBookingDTO addBookingDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings"]);
-            var table = await _unitOfWork.TableRepository.GetByIdAsync(addBookingDTO.TableId);
-            var userVoucher = await _unitOfWork.UserVoucherRepository.GetByIdAsync(addBookingDTO.UserVoucherId);
-
             if (user.Bookings.FirstOrDefault(x => x.BookingDate == addBookingDTO.BookingDate
                 && x.DayPart == addBookingDTO.DayPart) != null)
             {
                 throw new DataConflictException("This part of day did have a booking");
+            }
+
+            var table = await _unitOfWork.TableRepository.GetByIdAsync(addBookingDTO.TableId);
+            var userVoucher = await _unitOfWork.UserVoucherRepository.GetByIdAsync(addBookingDTO.UserVoucherId, ["Voucher"]);
+            if (userVoucher != null)
+            {
+                userVoucher.IsUsed = true;
+                userVoucher.Voucher.Quantity -= 1;
+
+                _unitOfWork.UserVoucherRepository.Update(userVoucher);
+                _unitOfWork.VoucherRepository.Update(userVoucher.Voucher);
             }
 
             var booking = new Booking
@@ -116,7 +122,7 @@ namespace WebAPI.Controllers
             var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(id);
             if (booking == null)
             {
-                throw new DataNotFoundException("Booking is not existed");
+                throw new DataNotFoundException("Booking not found");
             }
 
             if (booking.BookingStatus != BookingStatusEnum.Undeposited.ToString())

@@ -1,6 +1,6 @@
 export const VoucherManagementRequest = {
-	VIEW_ALL_VOUCHER_MANAGEMENT: '/VoucherManagement',
-	UPDATE_VOUCHER: (Id) => `/VoucherManagement/update/${Id}`,
+	GET_ALL: '/VoucherManagement',
+	UPDATE_VOUCHER: '/VoucherManagement/update',
 	ADD_VOUCHER: '/VoucherManagement/add',
-	DELETE_VOUCHER:  '/VoucherManagement/remove',
+	DELETE_VOUCHER: '/VoucherManagement/delete',
 }

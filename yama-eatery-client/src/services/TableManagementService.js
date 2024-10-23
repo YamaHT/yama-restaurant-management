@@ -4,12 +4,12 @@ import axiosFormData from '@/utilities/axiosFormData'
 
 export const TableManagementService = {
 	GET_ALL: async () => {
-		return await axiosFormBody.get(ApiRequest.TableManagementRequest.GET_ALL).then((response) => {
-			return response.data
-		})
+		return await axiosFormBody
+			.get(ApiRequest.TableManagementRequest.GET_ALL)
+			.then((response) => response.data)
 	},
 	REMOVE_TABLE: async (tableId) => {
-		return await axiosFormBody  
+		return await axiosFormBody
 			.post(ApiRequest.TableManagementRequest.REMOVE_TABLE, tableId)
 			.then((response) => response.data)
 	},

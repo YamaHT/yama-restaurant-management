@@ -11,6 +11,14 @@ namespace WebAPI.Controllers
     [Authorize(Roles = nameof(RoleEnum.Manager))]
     public class TableManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var tables = await _unitOfWork.TableRepository.GetAllWithDeletedAsync();
+
+            return Ok(tables);
+        }
+
         [HttpPost("add")]
         public async Task<IActionResult> AddTable([FromForm] AddTableDTO addTableDTO)
         {
@@ -43,7 +51,6 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> UpdateTable([FromForm] UpdateTableDTO updateTableDTO)
         {
             var table = await _unitOfWork.TableRepository.GetByIdAsync(updateTableDTO.TableId);
-
             if (table == null)
             {
                 throw new DataNotFoundException("Table not found");
@@ -76,21 +83,13 @@ namespace WebAPI.Controllers
             return RedirectToAction("GetAll");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var tables = await _unitOfWork.TableRepository.GetAllWithDeletedAsync();
-
-            return Ok(tables);
-        }
-
         [HttpPost("remove")]
         public async Task<IActionResult> RemoveTable([FromBody] int tableId)
         {
             var table = await _unitOfWork.TableRepository.GetByIdAsync(tableId);
             if (table == null)
             {
-                throw new DataNotFoundException("Table is not found");
+                throw new DataNotFoundException("Table not found");
             }
 
             _unitOfWork.TableRepository.Remove(table);
@@ -106,7 +105,7 @@ namespace WebAPI.Controllers
 
             if (table == null)
             {
-                throw new DataNotFoundException("Table is not found");
+                throw new DataNotFoundException("Table not found");
             }
 
             _unitOfWork.TableRepository.Restore(table);

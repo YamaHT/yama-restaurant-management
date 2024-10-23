@@ -125,7 +125,7 @@ namespace WebAPI.Controllers
             return Ok(user.Membership);
         }
 
-        [HttpGet("cancel-membership")]
+        [HttpPost("cancel-membership")]
         public async Task<IActionResult> CancelMembership()
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
