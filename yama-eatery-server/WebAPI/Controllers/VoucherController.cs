@@ -23,8 +23,8 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpPost("redeem/{voucherId}")]
-        public async Task<IActionResult> RedeemVoucher(int voucherId)
+        [HttpPost("redeem")]
+        public async Task<IActionResult> RedeemVoucher([FromBody]int voucherId)  
         {
 
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers"]);
@@ -33,7 +33,6 @@ namespace WebAPI.Controllers
 
             var userVouchers = await _unitOfWork.UserRepository.GetByIdAsync(user.Id);
 
-
             if (voucher.Quantity <= 0)
             {
                 throw new DataNotFoundException("Voucher is out of stock.");
@@ -41,7 +40,7 @@ namespace WebAPI.Controllers
 
             if (userVouchers.UserVouchers.Any(uv => uv.VoucherId == voucherId))
             {
-                return Ok(false);
+                throw new DataNotFoundException("Voucher not Redeem ");
             }
             else
             {

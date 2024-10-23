@@ -1,4 +1,4 @@
 export const VoucherRequest = {
 	VIEW_ALL_VOUCHER: '/voucher',
-	ADD_MY_VOUCHER: (voucherId) => `/Voucher/redeem/${voucherId}`, // Ensure this is correct
+	ADD_MY_VOUCHER: (voucherId) => `/Voucher/redeem/${voucherId}`,
 }

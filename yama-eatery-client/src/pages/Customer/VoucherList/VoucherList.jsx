@@ -29,21 +29,12 @@ function VoucherList() {
 	const [page, setPage] = useState(1)
 	const [totalPages, setTotalPages] = useState(0)
 	const [displayedVouchers, setDisplayedVouchers] = useState([])
-	const [snackbarOpen, setSnackbarOpen] = useState(false)
-	const [snackbarMessage, setSnackbarMessage] = useState('')
-	const [snackbarSeverity, setSnackbarSeverity] = useState('success') 
-	const navigate = useNavigate()
 
 	useEffect(() => {
 		const fetchVouchers = async () => {
-			try {
-				const data = await VoucherService.VIEW_ALL_VOUCHER()
-				console.log('Fetched Vouchers:', data)
-				setVouchers(data)
-				setFilteredVouchers(data)
-			} catch (error) {
-				console.error('Error fetching vouchers: ', error)
-			}
+			const data = await VoucherService.VIEW_ALL_VOUCHER()
+			setVouchers(data)
+			setFilteredVouchers(data)
 		}
 		fetchVouchers()
 	}, [])
@@ -92,26 +83,13 @@ function VoucherList() {
 	}
 
 	const redeemVoucher = async (id) => {
-		try {
-			const response = await VoucherService.ADD_MY_VOUCHER(id)
-			if (response) {
-				setFilteredVouchers((prevVouchers) =>
-					prevVouchers.map((voucher) =>
-						voucher.id === id ? { ...voucher, quantity: voucher.quantity - 1 } : voucher
-					)
+		const response = await VoucherService.ADD_MY_VOUCHER(id)
+		if (response) {
+			setFilteredVouchers((prevVouchers) =>
+				prevVouchers.map((voucher) =>
+					voucher.id === id ? { ...voucher, quantity: voucher.quantity - 1 } : voucher
 				)
-				setSnackbarMessage('Voucher redeemed successfully!')
-				setSnackbarSeverity('success')
-			} else {
-				setSnackbarMessage('You cannot redeem this voucher.')
-				setSnackbarSeverity('error')
-			}
-			setSnackbarOpen(true) 
-		} catch (error) {
-			console.error('Error redeeming voucher: ', error)
-			setSnackbarMessage('An error occurred while redeeming the voucher.')
-			setSnackbarSeverity('error')
-			setSnackbarOpen(true) 
+			)
 		}
 	}
 
@@ -119,7 +97,7 @@ function VoucherList() {
 		if (reason === 'clickaway') {
 			return
 		}
-		setSnackbarOpen(false)
+		
 	}
 
 	return (
@@ -152,15 +130,6 @@ function VoucherList() {
 								))}
 							</Select>
 						</FormControl>
-						<Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-							<Alert
-								onClose={handleSnackbarClose}
-								severity={snackbarSeverity}
-								sx={{ width: '100%' }}
-							>
-								{snackbarMessage}
-							</Alert>
-						</Snackbar>
 					</Grid2>
 				</Box>
 				<Grid2 container spacing={2} mt={4} justifyContent='center'>
@@ -221,7 +190,7 @@ function VoucherList() {
 											variant='contained'
 											color='error'
 											sx={{ mt: 1, mb: 1 }}
-											onClick={() => redeemVoucher(voucher.id)} 
+											onClick={() => redeemVoucher(voucher.id)}
 										>
 											REDEEM
 										</Button>

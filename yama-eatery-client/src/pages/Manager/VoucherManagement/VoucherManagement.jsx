@@ -50,15 +50,9 @@ const VoucherManagement = () => {
 
 	useEffect(() => {
 		const fetchVouchers = async () => {
-			try {
 				const data = await VoucherManagementService.VIEW_ALL_VOUCHER_MANAGEMENT()
 				setVouchers(data)
 				setFilteredVouchers(data)
-			} catch (error) {
-				console.error('Error fetching vouchers: ', error)
-				setVouchers([])
-				setFilteredVouchers([])
-			}
 		}
 		fetchVouchers()
 	}, [])
@@ -67,6 +61,21 @@ const VoucherManagement = () => {
 		const isAsc = orderBy === property && order === 'asc'
 		setOrder(isAsc ? 'desc' : 'asc')
 		setOrderBy(property)
+	}
+	const getVoucherStatus = (voucher) => {
+		if (voucher.isDeleted) {
+			return { label: 'Deleted', color: 'error' }
+		}
+		const currentDate = new Date()
+		const expirationDate = new Date(voucher.expiredDate)
+
+		if (expirationDate < currentDate) {
+			return { label: 'Expired', color: 'error' }
+		}
+		if (voucher.quantity === 0) {
+			return { label: 'Out of Stock', color: 'warning' }
+		}
+		return { label: 'Available', color: 'success' }
 	}
 
 	const handleChangePage = (event, newPage) => setPage(newPage)
@@ -108,6 +117,12 @@ const VoucherManagement = () => {
 			.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 	}, [order, orderBy, page, filteredVouchers, rowsPerPage])
 
+	const refreshVouchers = async () => {
+			const data = await VoucherManagementService.VIEW_ALL_VOUCHER_MANAGEMENT()
+			setVouchers(data)
+			setFilteredVouchers(data)
+	}	
+
 	const handleOpenUpdate = (row) => {
 		setSelectedRow(row)
 		setOpenUpdatePage(true)
@@ -118,14 +133,14 @@ const VoucherManagement = () => {
 		setSelectedRow(null)
 	}
 
-	const handleDelete = async (rowId) => {
-		try {
-			await VoucherManagementService.DELETE_VOUCHER(rowId)
-			setVouchers(vouchers.filter((voucher) => voucher.id !== rowId))
-		} catch (error) {
-			console.error('Error deleting voucher: ', error)
-		}
+	const handleDelete = async (Id) => {
+		const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa voucher này?')
+		if (confirmDelete) {
+				await VoucherManagementService.REMOVE_VOUCHER(Id)
+				setVouchers(vouchers.filter((voucher) => voucher.id !== Id))
+				refreshVouchers()
 	}
+     }
 
 	return (
 		<Box>
@@ -173,11 +188,10 @@ const VoucherManagement = () => {
 									<TableCell align='right'>{row.maxReducing.toLocaleString()}$</TableCell>
 									<TableCell align='right'>{row.quantity}</TableCell>
 									<TableCell>
-										{row.isDeleted ? (
-											<Chip label='Unavailable' color='error' />
-										) : (
-											<Chip label='Available' color='success' />
-										)}
+										{(() => {
+											const status = getVoucherStatus(row)
+											return <Chip label={status.label} color={status.color} />
+										})()}
 									</TableCell>
 									<TableCell>
 										<CrudMenuOptions>
@@ -187,7 +201,11 @@ const VoucherManagement = () => {
 												</Button>
 											</MenuItem>
 											<MenuItem>
-												<Button onClick={() => handleDelete(row.id)} startIcon={<Delete />}>
+												<Button
+													onClick={() => handleDelete(row.id)}
+													startIcon={<Delete />}
+													disabled={getVoucherStatus(row).label === 'Deleted'}
+												>
 													Remove
 												</Button>
 											</MenuItem>
@@ -213,12 +231,19 @@ const VoucherManagement = () => {
 					onPageChange={handleChangePage}
 				/>
 			</Paper>
-			{openAddPage && <VoucherAdd open={openAddPage} handleClose={() => setOpenAddPage(false)} />}
+			{openAddPage && (
+				<VoucherAdd
+					open={openAddPage}
+					handleClose={() => setOpenAddPage(false)}
+					onSuccess={refreshVouchers}
+				/>
+			)}
 			{openUpdatePage && (
 				<VoucherUpdate
 					open={openUpdatePage}
 					handleClose={handleCloseUpdate}
-					row={selectedRow} 
+					row={selectedRow}
+					onSuccess={refreshVouchers}
 				/>
 			)}
 		</Box>

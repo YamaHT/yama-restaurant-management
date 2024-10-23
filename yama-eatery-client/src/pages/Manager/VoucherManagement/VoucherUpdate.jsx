@@ -11,9 +11,9 @@ import {
 import { AssetImages } from '@/utilities/AssetImages'
 import { VoucherManagementService } from '@/services/VoucherManagementService'
 
-const VoucherUpdate = ({ open, handleClose, row }) => {
+const VoucherUpdate = ({ open, handleClose, row, onSuccess }) => {
 	const [imagePreview, setImagePreview] = useState('')
-	const [errors, setErrors] = useState({}) 
+	const [errors, setErrors] = useState({})
 
 	const [data, setData] = useState({
 		name: '',
@@ -70,13 +70,19 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 		if (!validate()) {
 			return
 		}
-		try {
-			const updatedVoucherData = await VoucherManagementService.UPDATE_VOUCHER(row.id, data)
-			console.log('Updated Voucher Data: ', updatedVoucherData)
-			handleClose() 
-		} catch (error) {
-			console.error('Error updating voucher: ', error)
-		}
+			const formData = new FormData()
+			formData.append('name', data.name)
+			formData.append('description', data.description)
+			formData.append('expiredDate', data.expiredDate)
+			formData.append('reducedPercent', data.reducedPercent)
+			formData.append('maxReducing', data.maxReducing)
+			formData.append('quantity', data.quantity)
+			if (data.image) {
+				formData.append('image', data.image)
+			}
+			const updatedVoucherData = await VoucherManagementService.UPDATE_VOUCHER(row.id, formData)
+			handleClose()
+			onSuccess()
 	}
 
 	return (
@@ -90,8 +96,8 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 					onChange={handleChange}
 					fullWidth
 					margin='normal'
-					error={!!errors.name} 
-					helperText={errors.name} 
+					error={!!errors.name}
+					helperText={errors.name}
 				/>
 				<TextField
 					name='description'
@@ -126,7 +132,7 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 				/>
 				<TextField
 					name='maxReducing'
-					label='Max Reducing (VND)'
+					label='Max Reducing (USD)'
 					type='number'
 					value={data.maxReducing}
 					onChange={handleChange}
@@ -146,7 +152,6 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 					error={!!errors.quantity}
 					helperText={errors.quantity}
 				/>
-
 				<Box marginTop={2} display='flex' flexDirection='column' alignItems='center'>
 					{imagePreview && (
 						<Box marginBottom={2}>
@@ -166,7 +171,7 @@ const VoucherUpdate = ({ open, handleClose, row }) => {
 					<Button
 						component='label'
 						style={{
-							border: '1px ',
+							border: '1px solid',
 							borderRadius: '8px',
 							display: 'flex',
 							alignItems: 'center',
