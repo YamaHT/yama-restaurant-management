@@ -12,4 +12,9 @@ export const BookingService = {
 			.get(ApiRequest.BookingRequest.GET_VALID_VOUCHER)
 			.then((response) => response.data)
 	},
+	RESERVE_A_BOOKING: async (information) => {
+		return await axiosFormBody
+			.post(ApiRequest.BookingRequest.RESERVE_A_BOOKING, information)
+			.then((response) => response.data)
+	},
 }

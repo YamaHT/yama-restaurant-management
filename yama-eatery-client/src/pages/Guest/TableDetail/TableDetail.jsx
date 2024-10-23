@@ -12,6 +12,11 @@ import {
 	Box,
 	Button,
 	Card,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	FormControl,
 	Grid2,
 	IconButton,
@@ -44,12 +49,16 @@ export default function TableDetail() {
 		dayPart: '',
 		note: '',
 		totalPayment: 0,
-		depositPrice: 0,
+		depositPrice: 5,
 		tableId: id,
 		userVoucherId: 0,
 	})
 	const [bookedDayPart, setBookedDayPart] = useState([])
 	const [userVoucher, setUserVoucher] = useState([])
+	const [afterBooked, setAfterBooked] = useState({
+		success: '',
+		depositLink: '',
+	})
 
 	const slideRef = useRef(null)
 	const fieldsRef = useRef([])
@@ -73,11 +82,12 @@ export default function TableDetail() {
 
 		if (isToday) {
 			if (currentHour >= 12 && currentHour < 18) {
-				return dayParts.filter((part) => part !== 'Morning' && !bookedDayPart.includes(part))
+				return dayParts.filter((part) => part === 'Evening' && !bookedDayPart.includes(part))
 			}
 			if (currentHour >= 18) {
 				return dayParts.filter((part) => part === 'Evening' && !bookedDayPart.includes(part))
 			}
+			return dayParts.filter((part) => part !== 'Morning' && !bookedDayPart.includes(part))
 		}
 
 		return dayParts.filter((part) => !bookedDayPart.includes(part))
@@ -120,7 +130,7 @@ export default function TableDetail() {
 			fetchUserProfile()
 			fetchUserVoucher()
 		}
-	}, [id])
+	}, [id, afterBooked])
 
 	useEffect(() => {
 		const totalPayment = formData.products
@@ -134,18 +144,17 @@ export default function TableDetail() {
 			totalPayment: totalPayment,
 			depositPrice: depositPrice,
 		}))
-	}, [formData.products])
+	}, [formData.products, afterBooked])
 
 	useEffect(() => {
 		async function fetchDaypart() {
-			console.log(formData)
 			const data = await BookingService.GET_BOOKED_DAYPART(id, formData.bookingDate)
 			if (data) {
 				setBookedDayPart(data)
 			}
 		}
 		if (role && formData.bookingDate) fetchDaypart()
-	}, [formData.bookingDate])
+	}, [formData.bookingDate, afterBooked])
 
 	const handleFormChange = (e) => {
 		const { name, value } = e.target
@@ -166,7 +175,7 @@ export default function TableDetail() {
 		}))
 	}
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault()
 
 		let isValid = true
@@ -178,7 +187,24 @@ export default function TableDetail() {
 		})
 
 		if (isValid) {
-			console.log(formData)
+			const products = formData.products.map((item) => ({
+				productId: item.product.id,
+				quantity: item.quantity,
+			}))
+
+			var bookingInformations = {
+				...formData,
+				products: products,
+			}
+
+			const data = await BookingService.RESERVE_A_BOOKING(bookingInformations)
+			if (data) {
+				setAfterBooked(data)
+				setFormData((prev) => ({
+					...prev,
+					products: [],
+				}))
+			}
 		}
 	}
 
@@ -274,7 +300,6 @@ export default function TableDetail() {
 					/>
 				))}
 			</Stack>
-
 			{role && (
 				<Paper
 					sx={{
@@ -440,6 +465,20 @@ export default function TableDetail() {
 						</Stack>
 					</Stack>
 				</Paper>
+			)}
+			{afterBooked.success !== '' && (
+				<Dialog open={!!afterBooked.success}>
+					<DialogTitle>Deposit?</DialogTitle>
+					<DialogContent>
+						<DialogContentText>{afterBooked.success}</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={() => setAfterBooked({})}>Cancel</Button>
+						<Button href={afterBooked.depositLink} variant='contained' color='primary'>
+							Pay Now
+						</Button>
+					</DialogActions>
+				</Dialog>
 			)}
 		</Box>
 	) : null
