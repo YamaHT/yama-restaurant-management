@@ -3,6 +3,9 @@ import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
 import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
 import CrudTabs from '@/components/Crud Components/CrudTabs'
+import { EnumService } from '@/services/EnumService'
+import { ProductManagementService } from '@/services/ProductManagementService'
+import { AssetImages } from '@/utilities/AssetImages'
 import {
 	Add,
 	Apple,
@@ -10,10 +13,6 @@ import {
 	Delete,
 	Dining,
 	Edit,
-	FoodBank,
-	Icecream,
-	LocalDrink,
-	LunchDining,
 	Menu,
 	Restore,
 	SystemUpdateAlt,
@@ -40,9 +39,6 @@ import React, { useEffect, useState } from 'react'
 import AddProduct from './AddProduct'
 import RestockProduct from './RestockProduct'
 import UpdateProduct from './UpdateProduct'
-import { ProductManagementService } from '@/services/ProductManagementService'
-import { EnumService } from '@/services/EnumService'
-import { AssetImages } from '@/utilities/AssetImages'
 
 const headCells = [
 	{
@@ -132,7 +128,6 @@ const ProductManagement = () => {
 			const data = await ProductManagementService.GET_ALL()
 			if (data) {
 				setRows(data)
-				console.log(data)
 			}
 		}
 
@@ -140,7 +135,6 @@ const ProductManagement = () => {
 			const data = await EnumService.GET_ALL_CATEGORY()
 			if (data) {
 				setCategories(data)
-				console.log(data)
 			}
 		}
 		fetchCategories()
@@ -306,8 +300,16 @@ const ProductManagement = () => {
 								return (
 									<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
 										<TableCell>
-											<Stack direction={'row'} spacing={2} alignItems={'center'}>
-												<AvatarGroup>
+											<Stack
+												direction='row'
+												alignItems='center'
+												spacing={2}
+												justifyContent='space-between'
+											>
+												<Typography variant='body2' sx={{ flexGrow: 1 }}>
+													{row.name}
+												</Typography>
+												<AvatarGroup max={3}>
 													{row.image && row.image.length > 0 ? (
 														row.image.map((imgSrc, index) => (
 															<Avatar
@@ -320,7 +322,6 @@ const ProductManagement = () => {
 														<Avatar alt={row.name} />
 													)}
 												</AvatarGroup>
-												<Typography variant='body2'>{row.name}</Typography>
 											</Stack>
 										</TableCell>
 										<TableCell>
@@ -432,6 +433,11 @@ const ProductManagement = () => {
 								<TableCell colSpan={6} align='center'>
 									No products available
 								</TableCell>
+							</TableRow>
+						)}
+						{emptyRows > 0 && (
+							<TableRow>
+								<TableCell colSpan={6} />
 							</TableRow>
 						)}
 					</TableBody>

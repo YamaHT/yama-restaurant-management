@@ -108,11 +108,12 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 						onChange={handleInputChange}
 						inputProps={{ min: 0 }}
 						fullWidth={false}
-						regex='^[0-9]*$'
-						regexErrorText='Quantity must be a positive integer.'
+						regex='^(0|[1-9][0-9]{0,2})$' 
+						regexErrorText='Quantity must be a positive integer between 0 and 999.'
 						requiredErrorText='Quantity is required.'
 						sx={{ width: '200px', textAlign: 'center' }}
 					/>
+
 					<IconButton onClick={handleIncrease}>
 						<Add />
 					</IconButton>
