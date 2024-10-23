@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
 using WebAPI.Models;
+using WebAPI.Models.Enums;
 using WebAPI.Repositories.IRepositories;
 using WebAPI.Utils;
 
@@ -25,6 +26,13 @@ namespace WebAPI.Repositories
         public async Task<bool> CheckEmailExistedAsync(string email)
         {
             return await _dbContext.Employee.AnyAsync(x => x.Email == email);
+        }
+
+        public async Task<List<Employee>> GetAllStaffs()
+        {
+            return await _dbContext.Employee
+                .Include(x => x.Position)
+                .Where(x => !x.IsDeleted && x.Position.Name == PositionEnum.Staff.ToString()).ToListAsync();
         }
     }
 }

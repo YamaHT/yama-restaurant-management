@@ -1,6 +1,4 @@
-import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
 import { Add, Close } from '@mui/icons-material'
 import {
 	Button,
@@ -13,15 +11,14 @@ import {
 	FormLabel,
 	Grid2,
 	IconButton,
-	MenuItem,
 	Radio,
 	RadioGroup,
 	Stack,
-	TextField,
 	Typography,
 } from '@mui/material'
 import { useRef, useState } from 'react'
-const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
+import { Form } from 'react-router-dom'
+const AddStaff = ({ open, handleClose, handleAddStaff }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
 	const [imagePresentations, setImagePresentations] = useState([])
@@ -107,9 +104,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 			formData.append('birthday', values.birthday)
 			formData.append('phone', values.phone)
 			formData.append('gender', values.gender)
-			formData.append('positionId', parseInt(values.positionId))
-
-			handleAddProduct(formData)
+			handleAddStaff(formData)
 			handleClose()
 		}
 	}
@@ -208,6 +203,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						value={values.name}
 						onChange={handleValueChange}
 					/>
+
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['email'] = el)}
 						label='Email'
@@ -216,24 +212,38 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						value={values.email}
 						onChange={handleValueChange}
 					/>
+
 					<ValidationTextField
-						ref={(el) => (fieldsRef.current['birthday'] = el)}
-						label='Birthday'
-						name='birthday'
+						ref={(el) => (fieldsRef.current['password'] = el)}
+						label='Password'
+						name='password'
 						variant='filled'
-						value={values.birthday}
+						value={values.password}
 						onChange={handleValueChange}
 					/>
 
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['phone'] = el)}
-						fullWidth
 						label='Phone'
 						name='phone'
 						variant='filled'
 						value={values.phone}
 						onChange={handleValueChange}
 					/>
+
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['phone'] = el)}
+						type='date'
+						label={'Birthday'}
+						name='birthday'
+						value={values.birthday}
+						onChange={handleValueChange}
+						slotProps={{
+							inputLabel: { shrink: true },
+							input: { inputProps: { max: new Date().toISOString().split('T')[0] } },
+						}}
+					/>
+
 					<FormControl>
 						<FormLabel id='gender'>Gender</FormLabel>
 						<RadioGroup
@@ -259,6 +269,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 				<Button onClick={handleClose} variant='outlined' color='inherit'>
 					Close
 				</Button>
+
 				<Button onClick={handleAdd} size='large' variant='contained' color='primary'>
 					Add
 				</Button>
@@ -267,4 +278,4 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	)
 }
 
-export default AddProduct
+export default AddStaff

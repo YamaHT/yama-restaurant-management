@@ -1,4 +1,5 @@
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
+import { StaffInformationManagementService } from '@/services/StaffInformationManagementService'
 import { Payment, Search } from '@mui/icons-material'
 import {
 	Autocomplete,
@@ -19,7 +20,7 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const headCells = [
 	{
@@ -64,41 +65,6 @@ const headCells = [
 		widthPercent: 20,
 	},
 ]
-function createData(id, name, workhours, numberOfFaults, netSalary, payday) {
-	return {
-		id,
-		name,
-		workhours,
-		numberOfFaults,
-		netSalary,
-		payday,
-	}
-}
-
-const rows = [
-	createData(1, 'John Doe', 8, 0, 3000, '2024-10-01'),
-	createData(2, 'Jane Smith', 7.83, 1, 2900, '2024-10-01'),
-	createData(3, 'Alice Johnson', 8, 0, 3100, '2024-10-01'),
-	createData(4, 'Bob Brown', 7.92, 1, 2850, '2024-10-01'),
-	createData(5, 'Charlie Davis', 8, 0, 3050, '2024-10-01'),
-	createData(6, 'Diana Evans', 7.95, 1, 2950, '2024-10-01'),
-	createData(7, 'Edward Green', 8, 0, 3000, '2024-10-01'),
-	createData(8, 'Fiona Harris', 8, 0, 3100, '2024-10-01'),
-	createData(9, 'George King', 7.97, 1, 2970, '2024-10-01'),
-	createData(10, 'Helen Lewis', 8, 0, 3000, '2024-10-01'),
-	createData(11, 'Ian Miller', 7.93, 1, 2930, '2024-10-01'),
-	createData(12, 'Jackie Nelson', 8, 0, 3050, '2024-10-01'),
-	createData(13, 'Karen Owens', 8, 0, 3100, '2024-10-01'),
-	createData(14, 'Larry Parker', 7.98, 1, 2980, '2024-10-01'),
-	createData(15, 'Mona Quinn', 8, 0, 3000, '2024-10-01'),
-	createData(16, 'Nancy Roberts', 8, 0, 3100, '2024-10-01'),
-	createData(17, 'Oliver Scott', 8, 0, 3000, '2024-10-01'),
-	createData(18, 'Paula Turner', 8, 0, 3100, '2024-10-01'),
-	createData(19, 'Quincy Underwood', 8, 0, 3000, '2024-10-01'),
-	createData(20, 'Rachel Vincent', 8, 0, 3100, '2024-10-01'),
-]
-
-console.log(rows)
 
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
@@ -123,6 +89,20 @@ const StaffSalaryManagement = () => {
 	const [searchName, setSearchName] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [month, setMonth] = useState('')
+	const [rows, setRows] = useState([])
+
+	const fetchStaffSalary = async () => {
+		const data = await StaffInformationManagementService.STAFF_SALARY_LIST()
+		if (data) {
+			console.log(data)
+			setRows(data)
+		}
+	}
+
+	useEffect(() => {
+		fetchStaffSalary()
+	}, [])
+
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === 'asc'
 		setOrder(isAsc ? 'desc' : 'asc')
@@ -152,7 +132,7 @@ const StaffSalaryManagement = () => {
 		return filteredRows
 			.sort(getComparator(order, orderBy))
 			.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-	}, [order, orderBy, page, rowsPerPage, searchName])
+	}, [order, orderBy, page, rowsPerPage, searchName, rows])
 
 	return (
 		<Box>
@@ -223,12 +203,15 @@ const StaffSalaryManagement = () => {
 							return (
 								<TableRow hover key={row.id}>
 									<TableCell align='right'>{row.id}</TableCell>
-									<TableCell>{row.name}</TableCell>
-									<TableCell align='right'>{row.workhours}</TableCell>
+									<TableCell>{row.employee.name}</TableCell>
+									<TableCell align='right'>
+										{row.employee.attendances && row.employee.attendances.length > 0
+											? row.employee.attendances[0].workHours
+											: 'N/A'}
+									</TableCell>{' '}
 									<TableCell align='right'>{row.numberOfFaults}</TableCell>
 									<TableCell align='right'>{row.netSalary}</TableCell>
-									<TableCell>{row.payday}</TableCell>
-
+									<TableCell>{row.payDay}</TableCell>
 									<TableCell>
 										<Button
 											startIcon={<Payment />}

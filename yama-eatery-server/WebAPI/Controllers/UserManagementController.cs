@@ -10,58 +10,48 @@ namespace WebAPI.Controllers
     [Authorize(Roles = nameof(RoleEnum.Manager))]
     public class UserManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
-       
-
-        [HttpGet("view-membership-register")] 
+        [HttpGet("view-membership-register")]
         public async Task<IActionResult> ViewMembershipRegister()
         {
-          var user = await _unitOfWork.UserRepository.GetAllAsync(["Membership"]);
-
-         
+            var user = await _unitOfWork.UserRepository.GetAllAsync(["Membership"]);
 
             var membership = user.Where(x => x.Membership?.MembershipStatus == MembershipStatusEnum.Requesting.ToString())
                 .Select(x => new { x.Id, x.Name, x.Phone });
             return Ok(membership);
         }
 
-        [HttpGet("approve-membership/{id}")]
-        public async Task<IActionResult> ApproveMembership(int id)
+        [HttpPost("membership/approve")]
+        public async Task<IActionResult> ApproveMembership([FromBody] int id)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(id, ["Membership"]);
 
-
             user.Membership.MembershipStatus = MembershipStatusEnum.Active.ToString();
-            
-            _unitOfWork.UserRepository.Update(user);
 
+            _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(new { success = "Membership approve successful." });
+            return Ok(new { success = "Membership approve successfully." });
         }
 
-        [HttpGet("deny-membership/{id}")]
-        public async Task<IActionResult> DenyMembership(int id)
+        [HttpPost("membership/deny")]
+        public async Task<IActionResult> DenyMembership([FromBody] int id)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(id,["Membership"]);
-          
-            
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id, ["Membership"]);
+
             user.Membership.MembershipStatus = MembershipStatusEnum.Inactive.ToString();
 
             _unitOfWork.UserRepository.Update(user);
-
             await _unitOfWork.SaveChangeAsync();
 
-
-            return Ok(new { success = "Membership deny successful."});
+            return Ok(new { success = "Membership deny successfully." });
         }
 
-        [HttpGet("view-user-list")]
-        public async Task<IActionResult> ViewUserList()
+        [HttpGet]
+        public async Task<IActionResult> GetAllUser()
         {
             var user = await _unitOfWork.UserRepository.GetAllAsync();
-
             return Ok(user);
         }
-        
+
     }
 }

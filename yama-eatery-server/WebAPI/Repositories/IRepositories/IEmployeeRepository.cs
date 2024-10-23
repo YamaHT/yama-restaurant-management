@@ -7,5 +7,6 @@ namespace WebAPI.Repositories.IRepositories
         Task<Employee?> GetByEmailAndPasswordAsync(string email, string password);
         Task<Employee?> GetByEmailAsync(string email);
         Task<bool> CheckEmailExistedAsync(string email);
+        Task<List<Employee>> GetAllStaffs();
     }
 }

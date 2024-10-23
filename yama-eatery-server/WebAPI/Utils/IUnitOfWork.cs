@@ -13,6 +13,7 @@ namespace WebAPI.Utils
         public IFeedbackProductRepository FeedbackProductRepository { get; }
         public IMembershipRepository MembershipRepository { get; }
         public IProductRepository ProductRepository { get; }
+        public IPositionRepository PositionRepository { get; }
         public ISalaryRepository SalaryRepository { get; }
         public ISubCategoryRepository SubCategoryRepository { get; }
         public ITableRepository TableRepository { get; }

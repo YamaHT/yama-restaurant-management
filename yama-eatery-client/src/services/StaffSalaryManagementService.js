@@ -1,11 +1,10 @@
 import { ApiRequest } from '@/utilities/ApiRequest'
 import axiosFormBody from '@/utilities/axiosFormBody'
 
-export const StaffManagementService = {
-	STAFF_ATTENDANCE_LIST: async () => {
-		console.log()
+export const StaffSalaryManagementService = {
+	GET_STAFF_SALARY: async () => {
 		return await axiosFormBody
-			.get(ApiRequest.StaffManagementRequest.STAFF_ATTENDANE_LIST)
+			.get(ApiRequest.StaffSalaryManagementRequest.GET_STAFF_SALARY)
 			.then((response) => response.data)
 	},
 }

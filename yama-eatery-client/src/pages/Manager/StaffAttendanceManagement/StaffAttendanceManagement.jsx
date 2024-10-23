@@ -11,7 +11,6 @@ import {
 	DialogActions,
 	DialogContent,
 	FormControlLabel,
-	IconButton,
 	InputAdornment,
 	MenuItem,
 	Paper,
@@ -27,7 +26,9 @@ import {
 import React, { useEffect, useState } from 'react'
 import AddStaffAttendance from './AddStaffAttendance'
 import UpdateStaffAttendance from './UpdateStaffAttendance'
-import { StaffManagementService } from '@/services/StaffManagementService'
+import { StaffInformationManagementService } from '@/services/StaffInformationManagementService'
+import { StaffAttendanceManagementService } from '@/services/StaffAttendanceManagementService'
+import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
 
 const headCells = [
 	{
@@ -93,20 +94,23 @@ const StaffAttendanceManagement = () => {
 	const [order, setOrder] = useState('asc')
 	const [orderBy, setOrderBy] = useState('id')
 	const [page, setPage] = useState(0)
-	const [searchName, setSearchName] = useState(null)
+	const [searchName, setSearchName] = useState('')
 	const [rowsPerPage, setRowsPerPage] = useState(10)
+
 	const [staffAttendance, setStaffAttendance] = useState([])
-	const [openAddPage, setOpenAddPage] = useState(false)
-	const [openMembershipDialog, setOpenMembershipDialog] = useState(false)
-	const [checkinStatus, setCheckinStatus] = useState('checkin')
-	const fetchStaffAttendance = async () => {
-		const data = await StaffManagementService.STAFF_ATTENDANCE_LIST()
-		if (data) {
-			setStaffAttendance(data)
-			console.log(data)
-		}
-	}
+	const [selectedAttendance, setSelectedAttendance] = useState(null)
+
+	const [openUpdatePage, setOpenUpdatePage] = useState(false)
+	const [openStaffListDialog, setOpenStaffListDialog] = useState(false)
+
 	useEffect(() => {
+		const fetchStaffAttendance = async () => {
+			const data = await StaffAttendanceManagementService.GET_TODAY_ATTENDANCE()
+			if (data) {
+				setStaffAttendance(data)
+				console.log(data)
+			}
+		}
 		fetchStaffAttendance()
 	}, [])
 
@@ -115,42 +119,41 @@ const StaffAttendanceManagement = () => {
 		setOrder(isAsc ? 'desc' : 'asc')
 		setOrderBy(property)
 	}
-	const handleCloseMembershipDialog = () => {
-		setOpenMembershipDialog(false)
-	}
-	const handleOpenMembershipDialog = () => {
-		setOpenMembershipDialog(true)
+
+	const handleAddStaffAttendance = async (staffId) => {
+		const data = await StaffAttendanceManagementService.ADD_STAFF_ATTENDANCE(staffId)
+		if (data) {
+			setStaffAttendance(data)
+		}
 	}
 
 	const handleChangePage = (e, newPage) => {
 		setPage(newPage)
 	}
-	const handleCheckboxChange = (id, field) => {
-		setStaffAttendance((prevRows) =>
-			prevRows.map((row) => (row.id === id ? { ...row, [field]: !row[field] } : row))
-		)
+
+	const handleSelectAttendance = (attendance) => {
+		setSelectedAttendance(attendance)
+		setOpenUpdatePage(true)
 	}
-	const handleCheckinClick = (id) => {
-		setStaffAttendance((prevRows) =>
-			prevRows.map((row) => {
-				if (row.id === id) {
-					setCheckinStatus('checkout')
-					return { ...row, checkinStatus: 'checkout' }
-				}
-				return row
-			})
-		)
+
+	const handleCheckinClick = async (id) => {
+		const data = await StaffAttendanceManagementService.CHECK_IN(id)
+		if (data) {
+			setStaffAttendance(data)
+		}
 	}
-	const handleCheckoutClick = (id) => {
-		setStaffAttendance((prevRows) =>
-			prevRows.map((row) => {
-				if (row.id === id) {
-					setCheckinStatus('checkbox')
-					return { ...row, checkinStatus: 'checkbox' }
-				}
-				return row
-			})
-		)
+	const handleCheckoutClick = async (id) => {
+		const data = await StaffAttendanceManagementService.CHECK_OUT(id)
+		if (data) {
+			setStaffAttendance(data)
+		}
+	}
+
+	const handleUpdateStaffAttendance = async (formData) => {
+		const data = await StaffAttendanceManagementService.UPDATE_STAFF_ATTENDANCE(formData)
+		if (data) {
+			setStaffAttendance(data)
+		}
 	}
 
 	const handleChangeRowsPerPage = (e) => {
@@ -162,7 +165,7 @@ const StaffAttendanceManagement = () => {
 
 	const visibleRows = React.useMemo(() => {
 		const filteredRows = staffAttendance.filter((row) => {
-			return searchName ? row.name.toLowerCase().includes(searchName.toLowerCase()) : true
+			return searchName ? row.employee.name?.toLowerCase().includes(searchName.toLowerCase()) : true
 		})
 
 		return filteredRows
@@ -182,34 +185,19 @@ const StaffAttendanceManagement = () => {
 					Staff Attendance Management
 				</Typography>
 				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
-					<Autocomplete
-						size='small'
-						options={[]}
+					<CrudSearchBar
+						listItem={staffAttendance.map((attendance) => attendance.employee.name)}
 						value={searchName}
-						onChange={(event, newValue) => setSearchName(newValue)}
-						freeSolo
-						sx={{ width: '50%' }}
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								InputProps={{
-									...params.InputProps,
-									startAdornment: (
-										<InputAdornment position='start'>
-											<Search />
-										</InputAdornment>
-									),
-								}}
-								placeholder='Search by name...'
-							/>
-						)}
+						handleChange={(event, newValue) => setSearchName(newValue)}
+						placeholder={'Search by Name...'}
+						widthPercent={30}
 					/>
 				</Stack>
 			</Stack>
 			<Button
 				variant='contained'
 				sx={{ mb: 1, width: 'auto', ml: 1.5 }}
-				onClick={handleOpenMembershipDialog}
+				onClick={() => setOpenStaffListDialog(true)}
 				startIcon={<Add />}
 			>
 				Add New Attendance
@@ -233,8 +221,10 @@ const StaffAttendanceManagement = () => {
 									<TableCell align='right'>{row.workHours}</TableCell>
 									<TableCell>
 										<Stack direction={'row'} spacing={1}>
-											{row.isLate && <Chip variant='filled' color='error' label='Late Arrived' />}
-											{row.isEarlyDeparture && (
+											{row.lateArrival && (
+												<Chip variant='filled' color='error' label='Late Arrived' />
+											)}
+											{row.earlyLeave && (
 												<Chip variant='filled' color='error' label='Early Departure' />
 											)}
 										</Stack>
@@ -242,7 +232,7 @@ const StaffAttendanceManagement = () => {
 									<TableCell>
 										<CrudMenuOptions>
 											<Stack direction={'column'} spacing={1}>
-												{checkinStatus === 'checkin' && (
+												{row.checkInTime === '00:00:00' && (
 													<MenuItem>
 														<React.Fragment>
 															<Button
@@ -254,7 +244,7 @@ const StaffAttendanceManagement = () => {
 														</React.Fragment>
 													</MenuItem>
 												)}
-												{checkinStatus === 'checkout' && (
+												{row.checkInTime !== '00:00:00' && row.checkOutTime === '00:00:00' && (
 													<Button
 														startIcon={<AccessAlarm />}
 														onClick={() => handleCheckoutClick(row.id)}
@@ -262,41 +252,24 @@ const StaffAttendanceManagement = () => {
 														Check out
 													</Button>
 												)}
-
-												{checkinStatus === 'checkbox' && (
-													<FormControlLabel
-														control={
-															<Checkbox
-																checked={row.isLate}
-																onChange={() => handleCheckboxChange(row.id, 'isLate')}
+												{row.checkInTime !== '00:00:00' && row.checkOutTime !== '00:00:00' && (
+													<>
+														<Button
+															onClick={() => handleSelectAttendance(row)}
+															startIcon={<Update />}
+														>
+															Update
+														</Button>
+														{openUpdatePage && (
+															<UpdateStaffAttendance
+																open={openUpdatePage}
+																handleClose={() => setOpenUpdatePage(false)}
+																onUpdate={handleUpdateStaffAttendance}
+																currentStaffAttendance={selectedAttendance}
 															/>
-														}
-														label='Late Arrived'
-													/>
+														)}
+													</>
 												)}
-
-												{checkinStatus === 'checkbox' && (
-													<FormControlLabel
-														control={
-															<Checkbox
-																checked={row.isEarlyDeparture}
-																onChange={() => handleCheckboxChange(row.id, 'isEarlyDeparture')}
-															/>
-														}
-														label='Early Departure'
-													/>
-												)}
-
-												<Button onClick={() => setOpenAddPage(true)} startIcon={<Update />}>
-													Update
-												</Button>
-												{openAddPage && (
-													<UpdateStaffAttendance
-														open={openAddPage}
-														handleClose={() => setOpenAddPage(false)}
-													/>
-												)}
-
 												<CrudConfirmation
 													title='Delete Confirmation'
 													description='Are you sure you want to delete this?'
@@ -331,19 +304,12 @@ const StaffAttendanceManagement = () => {
 					onRowsPerPageChange={handleChangeRowsPerPage}
 				/>
 			</Paper>
-			<Dialog
-				open={openMembershipDialog}
-				onClose={handleCloseMembershipDialog}
-				aria-labelledby='alert-dialog-title'
-				aria-describedby='alert-dialog-description'
-			>
-				<DialogContent>
-					<AddStaffAttendance />
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleCloseMembershipDialog}>Cancel</Button>
-				</DialogActions>
-			</Dialog>
+
+			<AddStaffAttendance
+				open={openStaffListDialog}
+				handleClose={() => setOpenStaffListDialog(false)}
+				handleAddStaffAttendance={handleAddStaffAttendance}
+			/>
 		</Paper>
 	)
 }

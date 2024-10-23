@@ -1,16 +1,13 @@
 ﻿namespace WebAPI.DTOs.Staff
 {
-    public class AddStaffDTO
+    public class AddStaffInformationDTO
     {
-        public List<IFormFile>? ImageFiles { get; set; }
+        public IFormFile? ImageFiles { get; set; }
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
-        public DateTime Birthday { get; set; }
-        public int Phone { get; set; }
+        public DateOnly? Birthday { get; set; }
+        public string? Phone { get; set; }
         public string? Gender { get; set; }
-        public int PositionId { get; set; }
-
-
     }
 }

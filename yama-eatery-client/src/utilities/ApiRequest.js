@@ -4,7 +4,9 @@ import { EnumRequest } from '@/requests/EnumRequest'
 import { FeedbackRequest } from '@/requests/FeedbackRequest'
 import { ProductManagementRequest } from '@/requests/ProductManagementRequest'
 import { ProductRequest } from '@/requests/ProductRequest'
-import { StaffManagementRequest } from '@/requests/StaffManagementRequest'
+import { StaffAttendanceManagementRequest } from '@/requests/StaffAttendanceManagementRequest'
+import { StaffInformationManagementRequest } from '@/requests/StaffInformationManagementRequest'
+import { StaffSalaryManagementRequest } from '@/requests/StaffSalaryManagementRequest'
 import { TableRequest } from '@/requests/TableRequest'
 import { UserManagementRequest } from '@/requests/UserManagementRequest'
 import { UserRequest } from '@/requests/UserRequest'
@@ -22,5 +24,7 @@ export const ApiRequest = {
 	VoucherRequest,
 	ProductManagementRequest,
 	UserManagementRequest,
-	StaffManagementRequest,
+	StaffAttendanceManagementRequest,
+	StaffSalaryManagementRequest,
+	StaffInformationManagementRequest,
 }
