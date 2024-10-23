@@ -3,6 +3,7 @@ import ValidationTextField from '@/components/CustomTextField/ValidationTextFiel
 import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
 import { Add, Close } from '@mui/icons-material'
 import {
+	Avatar,
 	Button,
 	Dialog,
 	DialogActions,
@@ -38,7 +39,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
 		if (name === 'price' && !/^\d*\.?\d*$/.test(value)) {
-			return;
+			return
 		}
 		setValues((prev) => ({
 			...prev,
@@ -165,9 +166,10 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 											marginBottom: '8px',
 										}}
 									>
-										<img
+										<Avatar
 											src={base64}
-											style={{
+											variant='rounded'
+											sx={{
 												width: '100%',
 												height: '100%',
 												borderRadius: '10px',
@@ -176,7 +178,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 											alt={`Uploaded ${index}`}
 										/>
 										<IconButton
-											style={{ position: 'absolute', top: 0, right: 0 }}
+											sx={{ position: 'absolute', top: 0, right: 0 }}
 											onClick={() => removeImage(index)}
 										>
 											<Close />
@@ -211,11 +213,11 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						sx={{ display: 'none' }}
 						slotProps={{
 							inputLabel: {
-								style: { color: 'gray' },
+								sx: { color: 'gray' },
 							},
 							input: {
 								disabled: true,
-								style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+								sx: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
 								endAdornment: (
 									<>
 										<input

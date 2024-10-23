@@ -4,6 +4,7 @@ import CrudTableHead from '@/components/Crud Components/CrudTableHead'
 import CrudTabs from '@/components/Crud Components/CrudTabs'
 import { EnumService } from '@/services/EnumService'
 import { TableManagementService } from '@/services/TableManagementService'
+import { AssetImages } from '@/utilities/AssetImages'
 import {
 	Add,
 	BackupTable,
@@ -35,7 +36,6 @@ import {
 import React, { useEffect, useState } from 'react'
 import AddTable from './AddTable'
 import UpdateTable from './UpdateTable'
-import { AssetImages } from '@/utilities/AssetImages'
 
 const headCells = [
 	{ name: 'Id', orderData: 'id', numeric: true, widthPercent: 10 },
@@ -66,8 +66,8 @@ const TableManagement = () => {
 	const [tableTypes, setTableTypes] = useState([])
 	const [rows, setRows] = useState([])
 	const [filteredRows, setFilteredRows] = useState([])
-	const [loading, setLoading] = useState(true) // Loading state
-	const [error, setError] = useState(null) // Error handling
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState(null)
 
 	useEffect(() => {
 		const fetchTables = async () => {
@@ -75,7 +75,7 @@ const TableManagement = () => {
 			try {
 				const data = await TableManagementService.GET_ALL()
 				setRows(data)
-				setFilteredRows(data) // Initialize filtered rows
+				setFilteredRows(data)
 			} catch (err) {
 				setError('Failed to fetch tables.')
 			} finally {
@@ -131,9 +131,25 @@ const TableManagement = () => {
 	}
 
 	const handleRestoreTable = async (tableId) => {
-		const data = await TableManagementService.RESTORE_PRODUCT(tableId)
+		const data = await TableManagementService.RESTORE_TABLE(tableId)
 		if (data) {
 			setRows(data)
+		}
+	}
+	const handleAddTable = async (formData) => {
+		const data = await TableManagementService.ADD_TABLE(formData)
+		if (data) {
+			setRows(data)
+			setOpenAddPage(false)
+		}
+	}
+
+	const handleUpdateTable = async (formData) => {
+		const data = await TableManagementService.UPDATE_TABLE(formData)
+		if (data) {
+			setRows(data)
+			setSelectedTable(null)
+			setOpenUpdatePage(false)
 		}
 	}
 
@@ -161,7 +177,14 @@ const TableManagement = () => {
 					<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
 						Add New Table
 					</Button>
-					{openAddPage && <AddTable open={openAddPage} handleClose={() => setOpenAddPage(false)} />}
+					{openAddPage && (
+						<AddTable
+							tableTypes={tableTypes}
+							open={openAddPage}
+							handleClose={() => setOpenAddPage(false)}
+							handleAddTable={handleAddTable}
+						/>
+					)}
 				</Stack>
 
 				<CrudTabs value={typeTab} handleChange={setTypeTab}>
@@ -203,7 +226,8 @@ const TableManagement = () => {
 										)}
 									</TableCell>
 
-									<TableCell align='right'>{row.floor}</TableCell>
+									<TableCell align='right'>{row.floor === 0 ? 'Ground' : row.floor}</TableCell>
+
 									<TableCell>{row.type}</TableCell>
 									<TableCell>
 										<Chip
@@ -225,9 +249,11 @@ const TableManagement = () => {
 														</Button>
 														{openUpdatePage && selectedTable && (
 															<UpdateTable
+																tableTypes={tableTypes}
 																open={openUpdatePage}
 																handleClose={() => setOpenUpdatePage(false)}
 																existingTable={selectedTable}
+																handleUpdateTable={handleUpdateTable}
 															/>
 														)}
 													</MenuItem>
