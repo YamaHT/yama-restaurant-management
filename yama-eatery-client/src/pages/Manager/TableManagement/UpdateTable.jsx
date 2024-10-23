@@ -1,31 +1,53 @@
-import { Close, FileUpload } from '@mui/icons-material'
+import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
+import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
+import { AssetImages } from '@/utilities/AssetImages'
+import { Add, Close } from '@mui/icons-material'
 import {
+	Avatar,
+	Box,
 	Button,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
 	IconButton,
-	Snackbar,
+	MenuItem,
 	Stack,
-	TextField,
+	Typography
 } from '@mui/material'
-import Skeleton from '@mui/material/Skeleton'
-import { useRef, useState } from 'react'
+import { enqueueSnackbar } from 'notistack'
 
-export default function CrudUpdate({ open, handleClose, currentProduct, onUpdate }) {
+import { useEffect, useRef, useState } from 'react'
+
+const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpdateTable }) => {
 	const fileRef = useRef(null)
-	const [imageBase64, setImageBase64] = useState([])
+	const fieldsRef = useRef({})
+
+	const [imagePresentations, setImagePresentations] = useState([])
+	const [deletedImages, setDeletedImages] = useState([])
+	const [imageFiles, setImageFiles] = useState([])
 	const [values, setValues] = useState({
-		tableId: currentProduct?.tableId || '',
-		type: currentProduct?.type || '',
-		floor: currentProduct?.floor || '',
-		images: currentProduct?.images || [],
+		type: '',
+		floor: '',
+		image: [],
 	})
-	const [openSnackbar, setOpenSnackbar] = useState(false)
+
+	const [error, setError] = useState('')
+
+	useEffect(() => {
+		if (existingTable) {
+			setValues({
+				id: existingTable.id || '',
+				image: existingTable.image || [],
+				floor: existingTable.floor?.toString() || '',
+				type: existingTable.type || '',
+			})
+		}
+	}, [existingTable])
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
+
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
@@ -33,138 +55,238 @@ export default function CrudUpdate({ open, handleClose, currentProduct, onUpdate
 	}
 
 	const handleImageChange = (e) => {
-		const files = Array.from(e.target.files)
-
-		if (files.length + values.images.length > 5) {
-			alert('You can only upload a maximum of 5 images.')
+		const files = e.target.files
+		if (values.image.length + files.length > 5) {
+			setError('You can upload up to 5 images.')
 			return
+		} else {
+			setError('')
 		}
+		if (files.length) {
+			const fileReaders = Array.from(files).map((file) => {
+				const reader = new FileReader()
+				reader.readAsDataURL(file)
+				return new Promise((resolve) => {
+					reader.onload = () => resolve({ name: file.name, base64: reader.result })
+				})
+			})
 
-		files.forEach((file) => {
-			const reader = new FileReader()
-			reader.onload = () => {
-				setImageBase64((prev) => [...prev, reader.result]) // Cập nhật hình ảnh đã tải lên
-				setValues((prev) => ({
-					...prev,
-					images: [...prev.images, file.name],
-				}))
-			}
-			reader.readAsDataURL(file)
+			Promise.all(fileReaders).then((images) => {
+				setImageFiles((prev) => [...prev, ...Array.from(files)])
+				setImagePresentations((prev) => [...prev, ...images.map(({ base64 }) => base64)])
+			})
+		}
+	}
+
+	const removeExistedImage = (index) => {
+		setValues((prev) => {
+			const newImages = [...prev.image]
+			newImages.splice(index, 1)
+			return { ...prev, image: newImages }
+		})
+
+		setDeletedImages((prev) => [...prev, values.image[index]])
+	}
+
+	const removeNewImage = (index) => {
+		setImagePresentations((prev) => {
+			const newBase64 = [...prev]
+			newBase64.splice(index, 1)
+			return newBase64
 		})
 	}
 
-	const removeImageInput = (index) => {
-		const updatedImages = values.images.filter((_, i) => i !== index)
-		const updatedImageBase64 = imageBase64.filter((_, i) => i !== index)
-		setValues((prev) => ({ ...prev, images: updatedImages }))
-		setImageBase64(updatedImageBase64)
-	}
+	const handleUpdate = () => {
+		let isValid = true
 
-	const handleUpdateProduct = async () => {
-		const updatedProductData = {
-			...values,
+		Object.keys(fieldsRef.current).forEach((key) => {
+			if (!fieldsRef.current[key]?.validate()) {
+				isValid = false
+			}
+		})
+
+		if (isValid) {
+			var formData = new FormData()
+			formData.append('tableId', values.id)
+			values.image.forEach((remainImage) => {
+				formData.append('remainImages', remainImage)
+			})
+			deletedImages.forEach((deletedImage) => {
+				formData.append('deletedImages', deletedImage)
+			})
+			imageFiles.forEach((file) => {
+				formData.append(`ImageFiles`, file)
+			})
+			formData.append('floor', parseInt(values.floor))
+			formData.append('type', values.type)
+
+			handleUpdateTable(formData)
+			enqueueSnackbar('Update Table Sucessfully', { variant: 'success' })
+			handleClose()
 		}
-
-		onUpdate(updatedProductData)
-		setOpenSnackbar(true)
-		handleClose()
 	}
+
+	const customInputImageProperties = {
+		inputLabel: {
+			style: { color: 'gray' },
+		},
+		input: {
+			disabled: true,
+			style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+			endAdornment: (
+				<>
+					<input
+						accept='image/*'
+						type='file'
+						multiple
+						hidden
+						ref={fileRef}
+						onChange={handleImageChange}
+					/>
+				</>
+			),
+		},
+	}	
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth>
 			<DialogTitle>Update Table</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					{imageBase64.length > 0 ? (
-						<Stack direction='row' spacing={1} flexWrap='wrap'>
-							{' '}
-							{imageBase64.map((image, index) => (
-								<Stack key={index} spacing={1} alignItems='center'>
-									<img
-										src={image}
-										style={{
-											width: 100,
-											height: 100,
+					<Stack direction='row' gap={2} style={{ flexWrap: 'wrap' }}>
+						{values.image.length > 0
+							? values.image.map((image, index) => (
+									<Box
+										key={index}
+										sx={{
+											position: 'relative',
+											width: 160,
+											height: 130,
 											borderRadius: '10px',
-											objectFit: 'cover',
-											cursor: 'pointer',
+											cursor: 'move',
+											marginBottom: '8px',
 										}}
-										alt={`Uploaded ${index + 1}`}
-									/>
-									<IconButton onClick={() => removeImageInput(index)} size='small'>
-										<Close />
-									</IconButton>
-								</Stack>
-							))}
-						</Stack>
-					) : (
-						<Skeleton animation={false} height={200} variant='rounded' />
-					)}
+									>
+										<Avatar
+											variant='rounded'
+											src={AssetImages.TableImage(image)}
+											sx={{
+												width: '100%',
+												height: '100%',
+												borderRadius: '10px',
+												objectFit: 'cover',
+											}}
+											alt={`Uploaded ${index}`}
+										/>
+										<IconButton
+											style={{ position: 'absolute', top: 0, right: 0 }}
+											onClick={() => removeExistedImage(index)}
+										>
+											<Close />
+										</IconButton>
+									</Box>
+							  ))
+							: null}
 
-					<TextField
-						label='Table ID'
-						name='tableId'
+						{imagePresentations.length > 0
+							? imagePresentations.map((base64, index) => (
+									<Box
+										key={index}
+										sx={{
+											position: 'relative',
+											width: 160,
+											height: 130,
+											borderRadius: '10px',
+											cursor: 'move',
+											marginBottom: '8px',
+										}}
+									>
+										<img
+											src={base64}
+											style={{
+												width: '100%',
+												height: '100%',
+												borderRadius: '10px',
+												objectFit: 'cover',
+											}}
+											alt={`Uploaded ${index}`}
+										/>
+										<IconButton
+											style={{ position: 'absolute', top: 0, right: 0 }}
+											onClick={() => removeNewImage(index)}
+										>
+											<Close />
+										</IconButton>
+									</Box>
+							  ))
+							: null}
+						<IconButton
+							sx={{
+								width: 175,
+								height: 130,
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+								border: '1px dashed gray',
+								borderRadius: '10px',
+							}}
+							onClick={() => fileRef.current.click()}
+						>
+							<Add sx={{ fontSize: 50 }} />
+						</IconButton>
+					</Stack>
+					{error && <Typography color='error'>{error}</Typography>}
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['id'] = el)}
+						label='ID'
+						name='id'
 						variant='filled'
-						value={values.tableId}
-						InputProps={{ readOnly: true }}
+						value={values.id}
+						slotProps={customInputImageProperties}
 					/>
-					<TextField
-						label='Type'
-						name='type'
-						variant='filled'
-						value={values.type}
-						onChange={handleValueChange}
-					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['floor'] = el)}
 						label='Floor'
 						name='floor'
+						type='number'
 						variant='filled'
 						value={values.floor}
 						onChange={handleValueChange}
+						regex='^(0|1|2|3)$'
+						regexErrorText='Floor must be 0, 1, 2, or 3.'
 					/>
-					<TextField
-						label='Images'
+					<ValidationSelect
+						ref={(el) => (fieldsRef.current['type'] = el)}
+						label='Table Type'
+						name='type'
+						value={values.type}
+						onChange={handleValueChange}
 						variant='filled'
-						value={values.images.join(', ')}
-						InputProps={{
-							endAdornment: (
-								<>
-									{values.images.length > 0 && (
-										<IconButton onClick={() => setValues((prev) => ({ ...prev, images: [] }))}>
-											<Close />
-										</IconButton>
-									)}
-									<input
-										accept='image/*'
-										type='file'
-										hidden
-										ref={fileRef}
-										multiple
-										onChange={handleImageChange}
-									/>
-									<IconButton onClick={() => fileRef.current.click()}>
-										<FileUpload />
-									</IconButton>
-								</>
-							),
-						}}
-					/>
+					>
+						{tableTypes.map((type) => (
+							<MenuItem key={type} value={type}>
+								{type}
+							</MenuItem>
+						))}
+					</ValidationSelect>
 				</Stack>
 			</DialogContent>
-			<DialogActions sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+			<DialogActions
+				sx={{
+					display: 'flex',
+					justifyContent: 'center',
+					gap: 2,
+				}}
+			>
 				<Button onClick={handleClose} variant='outlined' color='inherit'>
 					Close
 				</Button>
-				<Button onClick={handleUpdateProduct} size='large' variant='contained' color='primary'>
+				<Button onClick={handleUpdate} size='large' variant='contained' color='primary'>
 					Update
 				</Button>
 			</DialogActions>
-			<Snackbar
-				open={openSnackbar}
-				autoHideDuration={3000}
-				onClose={() => setOpenSnackbar(false)}
-				message='Table updated successfully'
-			/>
 		</Dialog>
 	)
 }
+
+export default UpdateProduct

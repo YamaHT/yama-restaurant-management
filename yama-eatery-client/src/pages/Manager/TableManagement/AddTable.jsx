@@ -1,4 +1,6 @@
-import { Close, FileUpload } from '@mui/icons-material'
+import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
+import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
+import { Add, Close } from '@mui/icons-material'
 import {
 	Button,
 	Dialog,
@@ -6,23 +8,28 @@ import {
 	DialogContent,
 	DialogTitle,
 	IconButton,
-	Snackbar,
 	Stack,
-	TextField,
+	Typography,
+	Grid2,
+	MenuItem,
+	Avatar,
 } from '@mui/material'
-import Skeleton from '@mui/material/Skeleton'
+import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
 
-export default function CrudUpdate({ open, handleClose, currentProduct, onUpdate }) {
+const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 	const fileRef = useRef(null)
-	const [imageBase64, setImageBase64] = useState([])
+	const fieldsRef = useRef({})
+	const [imagePresentations, setImagePresentations] = useState([])
+	const [imageFiles, setImageFiles] = useState([])
 	const [values, setValues] = useState({
-		tableId: currentProduct?.tableId || '',
-		type: currentProduct?.type || '',
-		floor: currentProduct?.floor || '',
-		images: currentProduct?.images || [],
+		type: '',
+		floor: '',
+		images: [],
 	})
-	const [openSnackbar, setOpenSnackbar] = useState(false)
+	const [floorError, setFloorError] = useState('')
+	const [typeError, setTypeError] = useState('')
+	const [imageError, setImageError] = useState('')
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
@@ -33,129 +40,209 @@ export default function CrudUpdate({ open, handleClose, currentProduct, onUpdate
 	}
 
 	const handleImageChange = (e) => {
-		const files = Array.from(e.target.files)
-		if (files.length + values.images.length > 5) {
-			alert('You can only upload a maximum of 5 images.')
+		const files = e.target.files
+		if (values.images.length + files.length > 5) {
+			setImageError('You can only upload up to 5 images.')
 			return
+		} else {
+			setImageError('')
 		}
+		if (files.length) {
+			const fileReaders = Array.from(files).map((file) => {
+				const reader = new FileReader()
+				reader.readAsDataURL(file)
+				return new Promise((resolve) => {
+					reader.onload = () => resolve({ name: file.name, base64: reader.result })
+				})
+			})
 
-		files.forEach((file) => {
-			const reader = new FileReader()
-			reader.onload = () => {
-				setImageBase64((prev) => [...prev, reader.result])
+			Promise.all(fileReaders).then((images) => {
+				const newImages = images.map(({ name }) => name)
 				setValues((prev) => ({
 					...prev,
-					images: [...prev.images, file.name],
+					images: [...prev.images, ...newImages],
 				}))
-			}
-			reader.readAsDataURL(file)
+				setImageFiles((prev) => [...prev, ...Array.from(files)])
+				setImagePresentations((prev) => [...prev, ...images.map(({ base64 }) => base64)])
+			})
+		}
+	}
+
+	const removeImage = (index) => {
+		setValues((prev) => {
+			const newImages = [...prev.images]
+			newImages.splice(index, 1)
+			return { ...prev, images: newImages }
+		})
+		setImagePresentations((prev) => {
+			const newBase64 = [...prev]
+			newBase64.splice(index, 1)
+			return newBase64
 		})
 	}
 
-	const removeImageInput = (index) => {
-		const updatedImages = values.images.filter((_, i) => i !== index)
-		const updatedImageBase64 = imageBase64.filter((_, i) => i !== index)
-		setValues((prev) => ({ ...prev, images: updatedImages }))
-		setImageBase64(updatedImageBase64)
-	}
+	const handleAdd = () => {
+		let isValid = true
 
-	const handleUpdateProduct = async () => {
-		const updatedProductData = {
-			...values,
+		setFloorError('')
+		setTypeError('')
+		setImageError('')
+
+		if (!values.floor) {
+			isValid = false
 		}
 
-		onUpdate(updatedProductData)
-		setOpenSnackbar(true)
-		handleClose()
+		if (!values.type) {
+			isValid = false
+		}
+
+		if (values.images.length === 0) {
+			setImageError('You must upload at least 1 image.')
+			isValid = false
+		}
+
+		if (isValid) {
+			const formData = new FormData()
+			imageFiles.forEach((file) => {
+				formData.append('ImageFiles', file)
+			})
+			formData.append('floor', parseInt(values.floor))
+			formData.append('type', values.type)
+
+			handleAddTable(formData)
+			enqueueSnackbar('Add Table Successfully', { variant: 'success' })
+			handleClose()
+		}
 	}
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth>
-			<DialogTitle>Update Table</DialogTitle>
+			<DialogTitle>Add New Table</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					{imageBase64.length > 0 ? (
-						<Stack direction='row' spacing={1} flexWrap='wrap'>
-							{imageBase64.map((image, index) => (
-								<Stack key={index} spacing={1} alignItems='center'>
-									<img
-										src={image}
-										style={{
-											width: 100,
-											height: 100,
+					<Grid2 container spacing={2}>
+						{imagePresentations.length > 0
+							? imagePresentations.map((base64, index) => (
+									<Grid2
+										key={index}
+										size={4}
+										sx={{
+											position: 'relative',
+											height: 130,
 											borderRadius: '10px',
-											objectFit: 'cover',
-											cursor: 'pointer',
+											marginBottom: '8px',
 										}}
-										alt={`Uploaded ${index + 1}`}
-									/>
-									<IconButton onClick={() => removeImageInput(index)} size='small'>
-										<Close />
-									</IconButton>
-								</Stack>
-							))}
-						</Stack>
-					) : (
-						<Skeleton animation={false} height={200} variant='rounded' />
-					)}
+									>
+										<Avatar
+											variant='rounded'
+											src={base64}
+											sx={{
+												width: '100%',
+												height: '100%',
+												borderRadius: '10px',
+												objectFit: 'cover',
+											}}
+											alt={`Uploaded ${index}`}
+										/>
+										<IconButton
+											sx={{ position: 'absolute', top: 0, right: 0 }}
+											onClick={() => removeImage(index)}
+										>
+											<Close />
+										</IconButton>
+									</Grid2>
+							  ))
+							: null}
+						<Grid2 size={4}>
+							<IconButton
+								sx={{
+									width: '100%',
+									height: 130,
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									border: '1px dashed gray',
+									borderRadius: '10px',
+								}}
+								onClick={() => fileRef.current.click()}
+							>
+								<Add sx={{ fontSize: 50 }} />
+							</IconButton>
+						</Grid2>
+					</Grid2>
+					<Stack spacing={2}>
+						{floorError && <Typography color='error'>{floorError}</Typography>}
+						{typeError && <Typography color='error'>{typeError}</Typography>}
+						{imageError && <Typography color='error'>{imageError}</Typography>}
+					</Stack>
 
-					<TextField
-						label='Type'
-						name='type'
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['image'] = el)}
+						label='Images'
 						variant='filled'
-						value={values.type}
-						onChange={handleValueChange}
+						name='image'
+						value={values.images.join(', ')}
+						sx={{ display: 'none' }}
+						slotProps={{
+							inputLabel: {
+								sx: { color: 'gray' },
+							},
+							input: {
+								disabled: true,
+								sx: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+								endAdornment: (
+									<>
+										<input
+											accept='image/*'
+											type='file'
+											multiple
+											hidden
+											ref={fileRef}
+											onChange={handleImageChange}
+										/>
+									</>
+								),
+							},
+						}}
 					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['floor'] = el)}
 						label='Floor'
 						name='floor'
+						type='number'
 						variant='filled'
 						value={values.floor}
 						onChange={handleValueChange}
+						regex='^(0|1|2|3)$'
+						regexErrorText='Floor must be 0, 1, 2, or 3.'
 					/>
-					<TextField
-						label='Images'
+
+					<ValidationSelect
+						ref={(el) => (fieldsRef.current['type'] = el)}
+						label='Table Type'
+						name='type'
+						value={values.type}
+						onChange={handleValueChange}
 						variant='filled'
-						value={values.images.join(', ')}
-						InputProps={{
-							endAdornment: (
-								<>
-									{values.images.length > 0 && (
-										<IconButton onClick={() => setValues((prev) => ({ ...prev, images: [] }))}>
-											<Close />
-										</IconButton>
-									)}
-									<input
-										accept='image/*'
-										type='file'
-										hidden
-										ref={fileRef}
-										multiple
-										onChange={handleImageChange}
-									/>
-									<IconButton onClick={() => fileRef.current.click()}>
-										<FileUpload />
-									</IconButton>
-								</>
-							),
-						}}
-					/>
+					>
+						{tableTypes.map((type) => (
+							<MenuItem key={type} value={type}>
+								{type}
+							</MenuItem>
+						))}
+					</ValidationSelect>
 				</Stack>
 			</DialogContent>
 			<DialogActions sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
 				<Button onClick={handleClose} variant='outlined' color='inherit'>
 					Close
 				</Button>
-				<Button onClick={handleUpdateProduct} size='large' variant='contained' color='primary'>
-					Update
+				<Button onClick={handleAdd} size='large' variant='contained' color='primary'>
+					Add
 				</Button>
 			</DialogActions>
-			<Snackbar
-				open={openSnackbar}
-				autoHideDuration={3000}
-				onClose={() => setOpenSnackbar(false)}
-				message='Table updated successfully'
-			/>
 		</Dialog>
 	)
 }
+
+export default AddTable

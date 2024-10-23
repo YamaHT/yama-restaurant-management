@@ -7,6 +7,7 @@ import { ProductRequest } from '@/requests/ProductRequest'
 import { StaffAttendanceManagementRequest } from '@/requests/StaffAttendanceManagementRequest'
 import { StaffInformationManagementRequest } from '@/requests/StaffInformationManagementRequest'
 import { StaffSalaryManagementRequest } from '@/requests/StaffSalaryManagementRequest'
+import { TableManagementRequest } from '@/requests/TableManagementRequest'
 import { TableRequest } from '@/requests/TableRequest'
 import { UserManagementRequest } from '@/requests/UserManagementRequest'
 import { UserRequest } from '@/requests/UserRequest'
@@ -27,4 +28,5 @@ export const ApiRequest = {
 	StaffAttendanceManagementRequest,
 	StaffSalaryManagementRequest,
 	StaffInformationManagementRequest,
+	TableManagementRequest,
 }

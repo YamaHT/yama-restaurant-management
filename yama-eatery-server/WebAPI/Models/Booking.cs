@@ -46,6 +46,8 @@ namespace WebAPI.Models
         [EnumDataType(typeof(BookingStatusEnum), ErrorMessage = "This status of booking is not available")]
         public required string BookingStatus { get; set; }
         
+        public DateTime NewPaymentDate { get; set; }
+
         public User? User { get; set; }
 
         [Required(ErrorMessage = "Table is required")]

@@ -3,6 +3,7 @@ import ValidationTextField from '@/components/CustomTextField/ValidationTextFiel
 import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
 import { Add, Close } from '@mui/icons-material'
 import {
+	Avatar,
 	Button,
 	Dialog,
 	DialogActions,
@@ -15,6 +16,7 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
 const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
@@ -32,13 +34,25 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
+	const [priceError, setPriceError] = useState('')
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
+		if (name === 'price' && !/^\d*\.?\d*$/.test(value)) {
+			return
+		}
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
 		}))
+		if (name === 'price') {
+			const priceValue = parseFloat(value)
+			if (priceValue <= 0 || priceValue >= 10000) {
+				setPriceError('Price must be greater than 0 and less than 10,000.')
+			} else {
+				setPriceError('')
+			}
+		}
 	}
 
 	const handleImageChange = (e) => {
@@ -129,6 +143,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 			formData.append('subCategoryId', parseInt(values.subCategoryId))
 
 			handleAddProduct(formData)
+			enqueueSnackbar('Add Product Sucessfully', { variant: 'success' })
 			handleClose()
 		}
 	}
@@ -151,9 +166,10 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 											marginBottom: '8px',
 										}}
 									>
-										<img
+										<Avatar
 											src={base64}
-											style={{
+											variant='rounded'
+											sx={{
 												width: '100%',
 												height: '100%',
 												borderRadius: '10px',
@@ -162,7 +178,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 											alt={`Uploaded ${index}`}
 										/>
 										<IconButton
-											style={{ position: 'absolute', top: 0, right: 0 }}
+											sx={{ position: 'absolute', top: 0, right: 0 }}
 											onClick={() => removeImage(index)}
 										>
 											<Close />
@@ -197,11 +213,11 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						sx={{ display: 'none' }}
 						slotProps={{
 							inputLabel: {
-								style: { color: 'gray' },
+								sx: { color: 'gray' },
 							},
 							input: {
 								disabled: true,
-								style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+								sx: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
 								endAdornment: (
 									<>
 										<input
@@ -233,6 +249,8 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						value={values.price}
 						onChange={handleValueChange}
+						error={!!priceError}
+						helperText={priceError}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['stockQuantity'] = el)}
@@ -242,6 +260,10 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						value={values.stockQuantity}
 						onChange={handleValueChange}
+						inputProps={{ min: 0 }}
+						regex='^(0|[1-9][0-9]{0,2})$'
+						regexErrorText='Stock Quantity must be a positive integer between 0 and 999.'
+						requiredErrorText='Stock Quantity is required.'
 					/>
 
 					<Stack direction={'row'} alignItems={'center'}>

@@ -13,29 +13,55 @@ import {
 import { UserService } from '@/services/UserService'
 
 const Membership = () => {
-	const progress = 25
-	const [membershipStatus, setMembershipStatus] = useState('')
+	const [membership, setMembership] = useState({
+		id: 0,
+		membershipStatus: '',
+		rank: '',
+		memberScore: 0,
+	})
+	const landmark = [100, 200, 500]
+
 	useEffect(() => {
 		const fectchMembershipStatus = async () => {
 			const data = await UserService.USER_MEMBERSHIP()
-			setMembershipStatus(data.membershipStatus)
+			console.log(data)
+			if (data) {
+				setMembership(data)
+			}
 		}
 		fectchMembershipStatus()
 	}, [])
 
+	const calculateProgress = (score, landmarks) => {
+		for (let i = 0; i < landmarks.length; i++) {
+			if (score < landmarks[i]) {
+				const previousLandmark = i === 0 ? 0 : landmarks[i - 1]
+				const progress = ((score - previousLandmark) / (landmarks[i] - previousLandmark)) * 100
+				return { nextLandmark: landmarks[i], progress: progress.toFixed(2) }
+			}
+		}
+		return { nextLandmark: landmarks[landmarks.length - 1], progress: 100 }
+	}
+
 	const handleCancelMembership = async () => {
 		const data = await UserService.CANCEL_MEMBERSHIP()
-		setMembershipStatus(data.membershipStatus)
-		setMembershipStatus('Inactive')
+		if (data) {
+			setMembership(data)
+		}
 	}
 
 	const handleMembershipRegister = async () => {
-		const data = await UserService.MEMBERSHIP_REGISTER()
+		const data = await UserService.REGISTER_MEMBERSHIP()
 		if (data) {
-			setMembershipStatus(data.membershipStatus)
-			setMembershipStatus('Requesting')
+			setMembership(data)
 		}
 	}
+
+	const getTierStatus = (score, tierLandmark) => {
+		return score >= tierLandmark ? 'Reached' : 'On Going'
+	}
+
+	const { nextLandmark, progress } = calculateProgress(membership.memberScore, landmark)
 
 	return (
 		<Paper
@@ -62,7 +88,7 @@ const Membership = () => {
 			<Box sx={{ marginY: 5, width: '100%' }}>
 				<Stack direction='row' justifyContent='space-between' sx={{ width: '100%' }}>
 					<Typography variant='body1' fontWeight={'bold'}>
-						Membership Point ($500/2000)
+						Membership Points ({membership.memberScore}/{nextLandmark})
 					</Typography>
 					<Typography variant='body1'>{progress}%</Typography>
 				</Stack>
@@ -73,16 +99,12 @@ const Membership = () => {
 				/>
 			</Box>
 			<Grid2 container spacing={3} justifyContent='center'>
-				<Grid2 item xs={12} sm={4}>
+				<Grid2>
 					<Card
 						variant='outlined'
 						sx={{
 							borderRadius: 3,
 							boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-							transition: 'transform 0.2s',
-							'&:hover': {
-								transform: 'scale(1.05)',
-							},
 						}}
 					>
 						<CardContent
@@ -106,28 +128,24 @@ const Membership = () => {
 							</ul>
 							<Button
 								variant='contained'
-								color='success'
+								color={
+									getTierStatus(membership.memberScore, 100) === 'Reached' ? 'success' : 'primary'
+								}
 								disableElevation
-								disableRipple
-								disableFocusRipple
 								disableTouchRipple
-								sx={{ marginTop: '30px' }}
+								sx={{ marginTop: '30px', pointerEvents: 'none' }}
 							>
-								Reached
+								{getTierStatus(membership.memberScore, 100)}
 							</Button>
 						</CardContent>
 					</Card>
 				</Grid2>
-				<Grid2 item xs={12} sm={4}>
+				<Grid2>
 					<Card
 						variant='outlined'
 						sx={{
 							borderRadius: 3,
 							boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-							transition: 'transform 0.2s',
-							'&:hover': {
-								transform: 'scale(1.05)',
-							},
 						}}
 					>
 						<CardContent
@@ -150,28 +168,24 @@ const Membership = () => {
 							</ul>
 							<Button
 								variant='contained'
-								color='primary'
+								color={
+									getTierStatus(membership.memberScore, 200) === 'Reached' ? 'success' : 'primary'
+								}
 								disableElevation
-								disableRipple
-								disableFocusRipple
 								disableTouchRipple
-								sx={{ marginTop: '30px' }}
+								sx={{ marginTop: '30px', pointerEvents: 'none' }}
 							>
-								On Going
+								{getTierStatus(membership.memberScore, 200)}
 							</Button>
 						</CardContent>
 					</Card>
 				</Grid2>
-				<Grid2 item xs={12} sm={4}>
+				<Grid2>
 					<Card
 						variant='outlined'
 						sx={{
 							borderRadius: 3,
 							boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3 )',
-							transition: 'transform 0.2s',
-							'&:hover': {
-								transform: 'scale(1.05)',
-							},
 						}}
 					>
 						<CardContent
@@ -195,21 +209,21 @@ const Membership = () => {
 							</ul>
 							<Button
 								variant='contained'
-								color='primary'
+								color={
+									getTierStatus(membership.memberScore, 500) === 'Reached' ? 'success' : 'primary'
+								}
 								disableElevation
-								disableRipple
-								disableFocusRipple
 								disableTouchRipple
-								sx={{ marginTop: '30px' }}
+								sx={{ marginTop: '30px', pointerEvents: 'none' }}
 							>
-								On Going
+								{getTierStatus(membership.memberScore, 500)}
 							</Button>
 						</CardContent>
 					</Card>
 				</Grid2>
 			</Grid2>
 
-			{membershipStatus === 'Inactive' ? (
+			{membership.membershipStatus === 'Inactive' ? (
 				<Button
 					fullWidth
 					variant='contained'
@@ -222,7 +236,8 @@ const Membership = () => {
 				>
 					Membership Register
 				</Button>
-			) : membershipStatus === 'Active' || membershipStatus === 'Requesting' ? (
+			) : membership.membershipStatus === 'Active' ||
+			  membership.membershipStatus === 'Requesting' ? (
 				<Button
 					fullWidth
 					variant='contained'
