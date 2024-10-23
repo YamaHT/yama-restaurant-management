@@ -32,25 +32,25 @@ axiosFormData.interceptors.response.use(
 	(error) => {
 		const status = error.response?.status
 		const errorMessage = error.response?.data?.error || 'Internal Server Error'
-		const role = secureLocalStorage.getItem('role')
-
 		switch (status) {
 			case 401:
-				window.location.href = '/'
-				enqueueSnackbar('Unauthorized', { variant: 'warning' })
+				enqueueSnackbar('Unauthorized', { variant: 'warning', autoHideDuration: 1000 })
+				setTimeout(() => {
+					AuthService.LOGOUT()
+				}, 1000)
 				break
 			case 403:
-				switch (role) {
-					case 'Manager':
-						window.location.href = '/manager'
-						break
-					case 'Staff':
-						window.location.href = '/staff'
-						break
-					default:
-						window.location.href = '/'
-				}
-				enqueueSnackbar('Access Denied', { variant: 'error' })
+				enqueueSnackbar('Access Denied', { variant: 'error', autoHideDuration: 1000 })
+				setTimeout(() => {
+					AuthService.LOGOUT()
+				}, 1000)
+				break
+			case 422:
+				errorMessage.map((error, index) =>
+					enqueueSnackbar(error, {
+						variant: 'error',
+					})
+				)
 				break
 			case 400:
 			case 404:
@@ -58,17 +58,7 @@ axiosFormData.interceptors.response.use(
 			case 500:
 				enqueueSnackbar(errorMessage, { variant: 'error' })
 				break
-			case 422:
-				if (Array.isArray(errorMessage)) {
-					const errorList = errorMessage.join('\n')
-					enqueueSnackbar(errorList, {
-						variant: 'error',
-						autoHideDuration: 8000,
-					})
-				} else {
-					enqueueSnackbar(errorMessage, { variant: 'error' })
-				}
-				break
+
 			default:
 				enqueueSnackbar('Internal Server Error', { variant: 'error' })
 				break

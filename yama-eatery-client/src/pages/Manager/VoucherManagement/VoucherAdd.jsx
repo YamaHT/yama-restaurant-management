@@ -9,11 +9,9 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material'
-import React, { useRef, useState } from 'react'
-import { VoucherManagementService } from '@/services/VoucherManagementService'
-import { enqueueSnackbar } from 'notistack'
+import { useRef, useState } from 'react'
 
-const VoucherAdd = ({ open, handleClose, onSuccess }) => {
+const VoucherAdd = ({ open, handleClose, handleAdd }) => {
 	const fileRef = useRef(null)
 	const [imageBase64, setImageBase64] = useState('')
 	const [values, setValues] = useState({
@@ -76,26 +74,19 @@ const VoucherAdd = ({ open, handleClose, onSuccess }) => {
 			return
 		}
 
-		try {
-			const formData = new FormData()
-			formData.append('name', values.name)
-			formData.append('description', values.description)
-			formData.append('expiredDate', values.expiredDate)
-			formData.append('reducedPercent', values.reducedPercent)
-			formData.append('maxReducing', values.maxReducing)
-			formData.append('quantity', values.quantity)
-			if (values.image) {
-				formData.append('image', values.image)
-			}
-			const newVoucherData = await VoucherManagementService.ADD_VOUCHER(formData)
-			console.log('Added Voucher Data: ', newVoucherData)
-			enqueueSnackbar('Add Success', {variant: 'success'})
-            handleClose()
-			onSuccess()
-	
-		} catch (error) {
-			console.error('Error adding voucher: ', error)
+		const formData = new FormData()
+		formData.append('name', values.name)
+		formData.append('description', values.description)
+		formData.append('expiredDate', values.expiredDate)
+		formData.append('reducedPercent', values.reducedPercent)
+		formData.append('maxReducing', values.maxReducing)
+		formData.append('quantity', values.quantity)
+		if (values.image) {
+			formData.append('image', values.image)
 		}
+
+		handleAdd(formData)
+		handleClose()
 	}
 
 	return (

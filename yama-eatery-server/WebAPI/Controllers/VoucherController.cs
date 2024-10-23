@@ -16,50 +16,33 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var vouchers = await _unitOfWork.VoucherRepository.GetAllAsync();
-            var validVouchers = vouchers
-                .Where(v => v.Quantity > 0 && v.ExpiredDate > DateOnly.FromDateTime(DateTime.Now)).ToList();
+            var validVouchers = vouchers.Where(v => v.Quantity > 0 && v.ExpiredDate > DateOnly.FromDateTime(DateTime.Now)).ToList();
 
             return Ok(validVouchers);
         }
 
-
-        [HttpPost("redeem")]
-        public async Task<IActionResult> RedeemVoucher([FromBody]int voucherId)  
+        [HttpPost("receive")]
+        public async Task<IActionResult> ReceiveVoucher([FromBody] int voucherId)
         {
 
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers"]);
- 
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
             var voucher = await _unitOfWork.VoucherRepository.GetByIdAsync(voucherId);
-
-            var userVouchers = await _unitOfWork.UserRepository.GetByIdAsync(user.Id);
 
             if (voucher.Quantity <= 0)
             {
-                throw new DataNotFoundException("Voucher is out of stock.");
+                throw new DataNotFoundException("Voucher is out of stock");
             }
 
-            if (userVouchers.UserVouchers.Any(uv => uv.VoucherId == voucherId))
+            var userVoucher = new UserVoucher
             {
-                throw new DataNotFoundException("Voucher not Redeem ");
-            }
-            else
-            {
-                var myVoucher = new UserVoucher
-                {
-                    UserId = user.Id,
-                    VoucherId = voucherId,
-                    IsUsed = false,
-                };
-                voucher.Quantity--;
+                UserId = user.Id,
+                VoucherId = voucherId,
+            };
 
-                _unitOfWork.VoucherRepository.Update(voucher);
+            await _unitOfWork.UserVoucherRepository.AddAsync(userVoucher);
+            await _unitOfWork.SaveChangeAsync();
 
-                await _unitOfWork.UserVoucherRepository.AddAsync(myVoucher);
-
-                await _unitOfWork.SaveChangeAsync();
-
-                return Ok(true);
-            }
+            return RedirectToAction("GetAll");
         }
     }
 }

@@ -3,16 +3,14 @@ import axiosFormBody from '@/utilities/axiosFormBody'
 
 export const FeedbackService = {
 	GET_FEEDBACK: async (id) => {
-		return await axiosFormBody.get(ApiRequest.FeedbackRequest.GET_FEEDBACK(id)).then((response) => {
-			return response.data
-		})
+		return await axiosFormBody
+			.get(ApiRequest.FeedbackRequest.GET_FEEDBACK(id))
+			.then((response) => response.data)
 	},
 	ADD_FEEDBACK: async (feedbackData) => {
 		return await axiosFormBody
 			.post(ApiRequest.FeedbackRequest.ADD_FEEDBACK, feedbackData)
-			.then((response) => {
-				return response.data
-			})
+			.then((response) => response.data)
 	},
 	UPDATE_FEEDBACK: async (updatedFeedback) => {
 		return await axiosFormBody

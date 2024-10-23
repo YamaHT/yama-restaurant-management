@@ -31,9 +31,9 @@ export const AuthService = {
 		secureLocalStorage.removeItem('role')
 		window.dispatchEvent(new Event('roleChange'))
 	},
-	GET_LOGIN_PROFILE: async (token) => {
+	GET_GOOGLE_PROFILE: async (token) => {
 		return await axios
-			.get(AuthRequest.GET_LOGIN_PROFILE + token, {
+			.get(AuthRequest.GET_GOOGLE_PROFILE + token, {
 				headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
 			})
 			.then((response) => response.data)

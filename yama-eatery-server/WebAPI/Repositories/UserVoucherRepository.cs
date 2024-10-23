@@ -7,7 +7,7 @@ namespace WebAPI.Repositories
 {
     public class UserVoucherRepository(ApplicationDbContext _dbContext) : GenericRepository<UserVoucher>(_dbContext), IUserVoucherRepository
     {
-        public async Task<List<UserVoucher>> GetValidUserVouchersOfUserId(int userId)
+        public async Task<List<UserVoucher>> GetValidUserVouchersByUserId(int userId)
         {
             return await _dbContext.UserVoucher
                 .Include(x => x.Voucher)

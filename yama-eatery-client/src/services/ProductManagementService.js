@@ -4,9 +4,9 @@ import axiosFormData from '@/utilities/axiosFormData'
 
 export const ProductManagementService = {
 	GET_ALL: async () => {
-		return await axiosFormBody.get(ApiRequest.ProductManagementRequest.GET_ALL).then((response) => {
-			return response.data
-		})
+		return await axiosFormBody
+			.get(ApiRequest.ProductManagementRequest.GET_ALL)
+			.then((response) => response.data)
 	},
 	REMOVE_PRODUCT: async (productId) => {
 		return await axiosFormBody

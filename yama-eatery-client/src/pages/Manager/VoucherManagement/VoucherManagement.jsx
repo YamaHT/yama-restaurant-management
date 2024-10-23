@@ -23,6 +23,7 @@ import VoucherAdd from './VoucherAdd'
 import VoucherUpdate from './VoucherUpdate'
 import { VoucherManagementService } from '@/services/VoucherManagementService'
 import { AssetImages } from '@/utilities/AssetImages'
+import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
 
 const headCells = [
 	{ name: 'Voucher Name', orderData: 'name', numeric: false, widthPercent: 20 },
@@ -50,9 +51,9 @@ const VoucherManagement = () => {
 
 	useEffect(() => {
 		const fetchVouchers = async () => {
-				const data = await VoucherManagementService.VIEW_ALL_VOUCHER_MANAGEMENT()
-				setVouchers(data)
-				setFilteredVouchers(data)
+			const data = await VoucherManagementService.GET_ALL()
+			setVouchers(data)
+			setFilteredVouchers(data)
 		}
 		fetchVouchers()
 	}, [])
@@ -62,6 +63,7 @@ const VoucherManagement = () => {
 		setOrder(isAsc ? 'desc' : 'asc')
 		setOrderBy(property)
 	}
+
 	const getVoucherStatus = (voucher) => {
 		if (voucher.isDeleted) {
 			return { label: 'Deleted', color: 'error' }
@@ -90,9 +92,9 @@ const VoucherManagement = () => {
 		let updatedVouchers = [...vouchers]
 
 		if (tabIndex === 1) {
-			updatedVouchers = updatedVouchers.filter((voucher) => voucher.quantity > 0) 
+			updatedVouchers = updatedVouchers.filter((voucher) => voucher.quantity > 0)
 		} else if (tabIndex === 2) {
-			updatedVouchers = updatedVouchers.filter((voucher) => voucher.quantity === 0) 
+			updatedVouchers = updatedVouchers.filter((voucher) => voucher.quantity === 0)
 		}
 
 		if (searchValue) {
@@ -117,12 +119,6 @@ const VoucherManagement = () => {
 			.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 	}, [order, orderBy, page, filteredVouchers, rowsPerPage])
 
-	const refreshVouchers = async () => {
-			const data = await VoucherManagementService.VIEW_ALL_VOUCHER_MANAGEMENT()
-			setVouchers(data)
-			setFilteredVouchers(data)
-	}	
-
 	const handleOpenUpdate = (row) => {
 		setSelectedRow(row)
 		setOpenUpdatePage(true)
@@ -133,14 +129,26 @@ const VoucherManagement = () => {
 		setSelectedRow(null)
 	}
 
-	const handleDelete = async (Id) => {
-		const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa voucher này?')
-		if (confirmDelete) {
-				await VoucherManagementService.REMOVE_VOUCHER(Id)
-				setVouchers(vouchers.filter((voucher) => voucher.id !== Id))
-				refreshVouchers()
+	const handleAdd = async (formData) => {
+		const data = await VoucherManagementService.ADD_VOUCHER(formData)
+		if (data) {
+			setVouchers(data)
+		}
 	}
-     }
+
+	const handleUpdate = async (formData) => {
+		const data = await VoucherManagementService.UPDATE_VOUCHER(formData)
+		if (data) {
+			setVouchers(data)
+		}
+	}
+
+	const handleDelete = async (Id) => {
+		const data = await VoucherManagementService.DELETE_VOUCHER(Id)
+		if (data) {
+			setVouchers(data)
+		}
+	}
 
 	return (
 		<Box>
@@ -201,13 +209,17 @@ const VoucherManagement = () => {
 												</Button>
 											</MenuItem>
 											<MenuItem>
-												<Button
-													onClick={() => handleDelete(row.id)}
-													startIcon={<Delete />}
-													disabled={getVoucherStatus(row).label === 'Deleted'}
+												<CrudConfirmation
+													title='Delete Confirmation'
+													description='Are you sure you want to delete this?'
+													handleConfirm={() => handleDelete(row.id)}
 												>
-													Remove
-												</Button>
+													{(handleOpen) => (
+														<Button onClick={handleOpen} startIcon={<Delete />}>
+															Remove
+														</Button>
+													)}
+												</CrudConfirmation>
 											</MenuItem>
 										</CrudMenuOptions>
 									</TableCell>
@@ -235,15 +247,15 @@ const VoucherManagement = () => {
 				<VoucherAdd
 					open={openAddPage}
 					handleClose={() => setOpenAddPage(false)}
-					onSuccess={refreshVouchers}
+					handleAdd={handleAdd}
 				/>
 			)}
 			{openUpdatePage && (
 				<VoucherUpdate
 					open={openUpdatePage}
 					handleClose={handleCloseUpdate}
-					row={selectedRow}
-					onSuccess={refreshVouchers}
+					selectedVoucher={selectedRow}
+					handleupdate={handleUpdate}
 				/>
 			)}
 		</Box>

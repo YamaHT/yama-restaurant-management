@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import {
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Button,
-	TextField,
-	Box,
-} from '@mui/material'
 import { AssetImages } from '@/utilities/AssetImages'
-import { VoucherManagementService } from '@/services/VoucherManagementService'
+import {
+	Box,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	TextField,
+} from '@mui/material'
+import { useEffect, useState } from 'react'
 
-const VoucherUpdate = ({ open, handleClose, row, onSuccess }) => {
+const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleupdate }) => {
 	const [imagePreview, setImagePreview] = useState('')
 	const [errors, setErrors] = useState({})
 
 	const [data, setData] = useState({
+		id: 0,
 		name: '',
 		description: '',
 		expiredDate: '',
@@ -26,21 +26,21 @@ const VoucherUpdate = ({ open, handleClose, row, onSuccess }) => {
 	})
 
 	useEffect(() => {
-		if (row) {
+		if (selectedVoucher) {
 			setData({
-				name: row.name,
-				description: row.description,
-				expiredDate: row.expiredDate,
-				reducedPercent: row.reducedPercent,
-				maxReducing: row.maxReducing,
-				quantity: row.quantity,
-				image: row.image,
+				name: selectedVoucher.name,
+				description: selectedVoucher.description,
+				expiredDate: selectedVoucher.expiredDate,
+				reducedPercent: selectedVoucher.reducedPercent,
+				maxReducing: selectedVoucher.maxReducing,
+				quantity: selectedVoucher.quantity,
+				image: selectedVoucher.image,
 			})
-			if (row.image) {
-				setImagePreview(AssetImages.VoucherImage(row.image))
+			if (selectedVoucher.image) {
+				setImagePreview(AssetImages.VoucherImage(selectedVoucher.image))
 			}
 		}
-	}, [row])
+	}, [selectedVoucher])
 
 	const handleChange = (e) => {
 		setData({ ...data, [e.target.name]: e.target.value })
@@ -70,19 +70,22 @@ const VoucherUpdate = ({ open, handleClose, row, onSuccess }) => {
 		if (!validate()) {
 			return
 		}
-			const formData = new FormData()
-			formData.append('name', data.name)
-			formData.append('description', data.description)
-			formData.append('expiredDate', data.expiredDate)
-			formData.append('reducedPercent', data.reducedPercent)
-			formData.append('maxReducing', data.maxReducing)
-			formData.append('quantity', data.quantity)
-			if (data.image) {
-				formData.append('image', data.image)
-			}
-			const updatedVoucherData = await VoucherManagementService.UPDATE_VOUCHER(row.id, formData)
-			handleClose()
-			onSuccess()
+
+		const formData = new FormData()
+
+		formData.append('id', data.id)
+		formData.append('name', data.name)
+		formData.append('description', data.description)
+		formData.append('expiredDate', data.expiredDate)
+		formData.append('reducedPercent', data.reducedPercent)
+		formData.append('maxReducing', data.maxReducing)
+		formData.append('quantity', data.quantity)
+		if (data.image) {
+			formData.append('image', data.image)
+		}
+
+		handleupdate(formData)
+		handleClose()
 	}
 
 	return (

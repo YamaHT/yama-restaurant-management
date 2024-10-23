@@ -13,19 +13,20 @@ export const UserService = {
 			.post(ApiRequest.UserRequest.CONTACT, { name, title, message })
 			.then((response) => response.data)
 	},
-	REGISTER_MEMBERSHIP: async () => {
-		return await axiosFormBody
-			.post(ApiRequest.UserRequest.REGISTER_MEMBERSHIP)
-			.then((response) => response.data)
-	},
 	USER_MEMBERSHIP: async () => {
 		return await axiosFormBody
 			.get(ApiRequest.UserRequest.USER_MEMBERSHIP)
 			.then((response) => response.data)
 	},
+	REGISTER_MEMBERSHIP: async () => {
+		return await axiosFormBody
+			.post(ApiRequest.UserRequest.REGISTER_MEMBERSHIP)
+			.then((response) => response.data)
+	},
+
 	CANCEL_MEMBERSHIP: async () => {
 		return await axiosFormBody
-			.get(ApiRequest.UserRequest.CANCEL_MEMBERSHIP)
+			.post(ApiRequest.UserRequest.CANCEL_MEMBERSHIP)
 			.then((response) => response.data)
 	},
 	MY_VOUCHER: async () => {

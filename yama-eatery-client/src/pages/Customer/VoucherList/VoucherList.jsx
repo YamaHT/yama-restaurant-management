@@ -82,22 +82,11 @@ function VoucherList() {
 		window.scrollTo(0, 0)
 	}
 
-	const redeemVoucher = async (id) => {
-		const response = await VoucherService.ADD_MY_VOUCHER(id)
-		if (response) {
-			setFilteredVouchers((prevVouchers) =>
-				prevVouchers.map((voucher) =>
-					voucher.id === id ? { ...voucher, quantity: voucher.quantity - 1 } : voucher
-				)
-			)
+	const receiveVoucher = async (id) => {
+		const data = await VoucherService.RECEIVE_VOUCHER(id)
+		if (data) {
+			setVouchers(data)
 		}
-	}
-
-	const handleSnackbarClose = (event, reason) => {
-		if (reason === 'clickaway') {
-			return
-		}
-		
 	}
 
 	return (
@@ -190,7 +179,7 @@ function VoucherList() {
 											variant='contained'
 											color='error'
 											sx={{ mt: 1, mb: 1 }}
-											onClick={() => redeemVoucher(voucher.id)}
+											onClick={() => receiveVoucher(voucher.id)}
 										>
 											REDEEM
 										</Button>

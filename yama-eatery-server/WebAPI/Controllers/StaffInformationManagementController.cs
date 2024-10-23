@@ -12,8 +12,8 @@ namespace WebAPI.Controllers
     [Authorize(Roles = nameof(RoleEnum.Manager))]
     public class StaffInformationManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
-        [HttpGet("staff-information-list")]
-        public async Task<IActionResult> GetAllStaff()
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             var employee = await _unitOfWork.EmployeeRepository.GetAllStaffs();
             return Ok(employee);
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
             await _unitOfWork.EmployeeRepository.AddAsync(employee);
             await _unitOfWork.SaveChangeAsync();
 
-            return RedirectToAction("StaffInformationList");
+            return RedirectToAction("GetAll");
         }
 
         [HttpPost("update")]
@@ -63,12 +63,13 @@ namespace WebAPI.Controllers
             employee.Image = await ImageUtil.UpdateImageAsync(nameof(Employee), employee.Image, updateStaffDTO.ImageFile);
             employee.Name = updateStaffDTO.Name;
             employee.Phone = updateStaffDTO.Phone;
+
             employee.TryValidate();
 
             _unitOfWork.EmployeeRepository.Update(employee);
             await _unitOfWork.SaveChangeAsync();
 
-            return RedirectToAction("StaffInformationList");
+            return RedirectToAction("GetAll");
         }
 
         [HttpPost("delete")]
@@ -77,13 +78,13 @@ namespace WebAPI.Controllers
             var employee = await _unitOfWork.EmployeeRepository.GetByIdAsync(employeeId);
             if (employee == null)
             {
-                throw new DataNotFoundException("Employee is not found");
+                throw new DataNotFoundException("Employee not found");
             }
 
             _unitOfWork.EmployeeRepository.Remove(employee);
             await _unitOfWork.SaveChangeAsync();
 
-            return RedirectToAction("StaffInformationList");
+            return RedirectToAction("GetAll");
         }
     }
 }

@@ -10,13 +10,20 @@ namespace WebAPI.Controllers
     [Authorize(Roles = nameof(RoleEnum.Manager))]
     public class UserManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
+        [HttpGet]
+        public async Task<IActionResult> GetAllUser()
+        {
+            var user = await _unitOfWork.UserRepository.GetAllAsync();
+            return Ok(user);
+        }
+
         [HttpGet("view-membership-register")]
         public async Task<IActionResult> ViewMembershipRegister()
         {
             var user = await _unitOfWork.UserRepository.GetAllAsync(["Membership"]);
 
             var membership = user.Where(x => x.Membership?.MembershipStatus == MembershipStatusEnum.Requesting.ToString())
-                .Select(x => new { x.Id, x.Name, x.Phone });
+                                 .Select(x => new { x.Id, x.Name, x.Phone });
             return Ok(membership);
         }
 
@@ -30,7 +37,7 @@ namespace WebAPI.Controllers
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(new { success = "Membership approve successfully." });
+            return Ok(new { success = "Membership approve successfully" });
         }
 
         [HttpPost("membership/deny")]
@@ -43,15 +50,7 @@ namespace WebAPI.Controllers
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(new { success = "Membership deny successfully." });
+            return Ok(new { success = "Membership deny successfully" });
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllUser()
-        {
-            var user = await _unitOfWork.UserRepository.GetAllAsync();
-            return Ok(user);
-        }
-
     }
 }
