@@ -18,6 +18,7 @@ import {
 	IconButton,
 	MenuItem,
 	Rating,
+	Snackbar,
 	Stack,
 	TextField,
 	Typography,
@@ -45,6 +46,7 @@ export default function ProductDetail() {
 	const [userReview, setUserReview] = useState('')
 	const [isBeginning, setIsBeginning] = useState(true)
 	const [isEnd, setIsEnd] = useState(false)
+	const [snackbarOpen, setSnackbarOpen] = useState(false)
 
 	const prevRef = useRef(null)
 	const nextRef = useRef(null)
@@ -115,6 +117,17 @@ export default function ProductDetail() {
 			}
 		}
 	}, [recommendedProducts])
+
+	useEffect(() => {
+		if (product?.isDeleted) {
+			setSnackbarOpen(true)
+		}
+	}, [product])
+
+	const handleSnackbarClose = () => {
+		setSnackbarOpen(false)
+		navigate('/product')
+	}
 
 	const handleAddFeedback = async () => {
 		const feedbackData = {
@@ -198,7 +211,7 @@ export default function ProductDetail() {
 		window.location.reload()
 	}
 
-	return product ? (
+	return product && !product.isDeleted ? (
 		<Box sx={{ p: 4, maxWidth: '1200px', mx: 'auto' }}>
 			<Grid2 container spacing={3}>
 				<Grid2 size={{ xs: 12, lg: 7 }}>
@@ -555,5 +568,12 @@ export default function ProductDetail() {
 				</Box>
 			)}
 		</Box>
-	) : null
+	) : (
+		<Snackbar
+			open={snackbarOpen}
+			onClose={handleSnackbarClose}
+			message='Product has been deleted'
+			autoHideDuration={1}
+		/>
+	)
 }
