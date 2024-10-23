@@ -13,16 +13,17 @@ import {
 	Card,
 	CardMedia,
 	Chip,
+	CircularProgress,
 	Divider,
 	Grid2,
 	IconButton,
 	MenuItem,
 	Rating,
-	Snackbar,
 	Stack,
 	TextField,
 	Typography,
 } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import 'swiper/css'
@@ -35,9 +36,9 @@ export default function ProductDetail() {
 	const navigate = useNavigate()
 
 	const [isAuthorized, setIsAuthorized] = useState(false)
-	const [product, setProduct] = useState()
+	const [product, setProduct] = useState(null)
 	const [recommendedProducts, setRecommendedProducts] = useState([])
-	const [feedbackProduct, setFeedbackProduct] = useState()
+	const [feedbackProduct, setFeedbackProduct] = useState(null)
 	const [isEdittingFeedback, setIsEdittingFeedback] = useState(false)
 	const [haveUpdated, setHaveUpdated] = useState(false)
 	const [selectedImage, setSelectedImage] = useState('')
@@ -46,55 +47,54 @@ export default function ProductDetail() {
 	const [userReview, setUserReview] = useState('')
 	const [isBeginning, setIsBeginning] = useState(true)
 	const [isEnd, setIsEnd] = useState(false)
-	const [snackbarOpen, setSnackbarOpen] = useState(false)
+	const [loading, setLoading] = useState(true) // Loading state
 
 	const prevRef = useRef(null)
 	const nextRef = useRef(null)
 	const swiperRef = useRef(null)
 
 	useEffect(() => {
-		async function fetchProductDetail() {
-			const data = await ProductService.GET_PRODUCT_DETAIL(id)
-			if (data) {
-				setProduct(data)
-			} else {
-				navigate('/product')
+		const fetchData = async () => {
+			setLoading(true) // Start loading
+			try {
+				const productData = await ProductService.GET_PRODUCT_DETAIL(id)
+				if (productData) {
+					setProduct(productData)
+				} else {
+					navigate('/product')
+				}
+
+				if (localStorage.getItem('token')) {
+					setIsAuthorized(true)
+					const feedbackData = await FeedbackService.GET_FEEDBACK(id)
+					if (feedbackData) {
+						setFeedbackProduct(feedbackData)
+						setUserRating(feedbackData.rating)
+						setUserReview(feedbackData.message)
+					} else {
+						setUserRating(0)
+						setUserReview('')
+					}
+				}
+			} catch (error) {
+				enqueueSnackbar('Error fetching product details', { variant: 'error' })
+			} finally {
+				setLoading(false)
 			}
 		}
 
-		async function fetchGetFeedbackProduct() {
-			if (!localStorage.getItem('token')) return
-			setIsAuthorized(true)
-
-			const data = await FeedbackService.GET_FEEDBACK(id)
-			if (data) {
-				setFeedbackProduct(data)
-				setUserRating(data.rating)
-				setUserReview(data.message)
-			} else {
-				setUserRating(0)
-				setUserReview('')
-			}
-		}
-
-		fetchGetFeedbackProduct()
-		fetchProductDetail()
+		fetchData()
 	}, [id, haveUpdated])
 
 	useEffect(() => {
-		setUserRating(feedbackProduct?.rating || 0)
-		setUserReview(feedbackProduct?.message || '')
-	}, [isEdittingFeedback])
-
-	useEffect(() => {
 		if (product) {
-			async function fetchSimilarProduct() {
+			const fetchSimilarProducts = async () => {
 				const data = await ProductService.GET_ALL_SIMILAR(product.subCategory.category.name)
 				if (data) {
 					setRecommendedProducts(data)
 				}
 			}
-			fetchSimilarProduct()
+			fetchSimilarProducts()
 			setSelectedImage(AssetImages.ProductImage(product?.image[0]))
 		}
 	}, [product])
@@ -118,24 +118,8 @@ export default function ProductDetail() {
 		}
 	}, [recommendedProducts])
 
-	useEffect(() => {
-		if (product?.isDeleted) {
-			setSnackbarOpen(true)
-		}
-	}, [product])
-
-	const handleSnackbarClose = () => {
-		setSnackbarOpen(false)
-		navigate('/product')
-	}
-
 	const handleAddFeedback = async () => {
-		const feedbackData = {
-			productId: id,
-			rating: userRating,
-			message: userReview,
-		}
-
+		const feedbackData = { productId: id, rating: userRating, message: userReview }
 		const data = await FeedbackService.ADD_FEEDBACK(feedbackData)
 		if (data) {
 			setFeedbackProduct(data)
@@ -144,12 +128,7 @@ export default function ProductDetail() {
 	}
 
 	const handleUpdateFeedback = async () => {
-		const updatedFeedbackData = {
-			productId: id,
-			rating: userRating,
-			message: userReview,
-		}
-
+		const updatedFeedbackData = { productId: id, rating: userRating, message: userReview }
 		const data = await FeedbackService.UPDATE_FEEDBACK(updatedFeedbackData)
 		if (data) {
 			setFeedbackProduct(data)
@@ -159,8 +138,7 @@ export default function ProductDetail() {
 	}
 
 	const handleRemoveFeedback = async () => {
-		const ProductId = id
-		const data = await FeedbackService.DELETE_FEEDBACK(ProductId)
+		const data = await FeedbackService.DELETE_FEEDBACK(id)
 		if (data) {
 			setFeedbackProduct(null)
 			setHaveUpdated(!haveUpdated)
@@ -174,19 +152,18 @@ export default function ProductDetail() {
 		}
 	}
 
-	if (!product) {
+	if (loading) {
+		return <CircularProgress />
+	}
+
+	if (!product || product.isDeleted) {
+		enqueueSnackbar('This product does not exist or is no longer available', { variant: 'error' })
+		navigate('/product')
 		return null
 	}
 
 	const averageRating = calculateAverageRating(product.feedbacks)
-
-	const ratingCount = {
-		1: 0,
-		2: 0,
-		3: 0,
-		4: 0,
-		5: 0,
-	}
+	const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
 
 	product.feedbacks.forEach((review) => {
 		ratingCount[review.rating]++
@@ -204,14 +181,12 @@ export default function ProductDetail() {
 
 	const reviewsToShow = showAllReviews ? product.feedbacks : product.feedbacks.slice(0, 3)
 
-	const handleClick = (id) => {
+	const handleClick = (productId) => {
+		navigate(`/product/detail/${productId}`)
 		window.scrollTo({ top: 0, behavior: 'smooth' })
-
-		navigate(`/product/detail/${id}`)
-		window.location.reload()
 	}
 
-	return product && !product.isDeleted ? (
+	return (
 		<Box sx={{ p: 4, maxWidth: '1200px', mx: 'auto' }}>
 			<Grid2 container spacing={3}>
 				<Grid2 size={{ xs: 12, lg: 7 }}>
@@ -286,25 +261,25 @@ export default function ProductDetail() {
 					</Stack>
 				))}
 
-				{reviewsToShow.map((feedbacks, index) => (
-					<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
+				{reviewsToShow.map((feedback, index) => (
+					<Grid2 container key={index} sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
 						<Grid2 size={0.5}>
-							<Avatar src={AssetImages.UserImage(feedbacks.user.image)} alt={feedbacks.user.name} />
+							<Avatar src={AssetImages.UserImage(feedback.user.image)} alt={feedback.user.name} />
 						</Grid2>
 						<Grid2 size={11.5}>
 							<Stack direction='row' alignItems='center' justifyContent='space-between'>
 								<Stack direction='row' alignItems='center'>
 									<Typography variant='subtitle2' fontWeight='bold' sx={{ mr: 3 }}>
-										{feedbacks.user.name}
+										{feedback.user.name}
 									</Typography>
 									<Typography variant='caption' color='textSecondary'>
-										{new Date(feedbacks.creationDate).toLocaleDateString()}
+										{new Date(feedback.creationDate).toLocaleDateString()}
 									</Typography>
 								</Stack>
 							</Stack>
-							<Rating value={feedbacks.rating} readOnly size='small' sx={{ mt: 0.5 }} />
+							<Rating value={feedback.rating} readOnly size='small' sx={{ mt: 0.5 }} />
 							<Typography variant='body2' color='textSecondary' mt={1}>
-								{feedbacks.message}
+								{feedback.message}
 							</Typography>
 						</Grid2>
 					</Grid2>
@@ -322,7 +297,7 @@ export default function ProductDetail() {
 				{isAuthorized &&
 					(feedbackProduct ? (
 						<>
-							<Divider sx={{ my: 2 }}>Your Feedbacks</Divider>
+							<Divider sx={{ my: 2 }}>Your Feedback</Divider>
 							<Grid2 container sx={{ width: '100%' }} alignItems='flex-start' mt={4}>
 								<Grid2 size={0.5}>
 									<Avatar
@@ -350,14 +325,14 @@ export default function ProductDetail() {
 												<CrudConfirmation
 													title='Delete Confirmation'
 													description='Are you sure you want to delete this?'
-													handleConfirm={() => handleRemoveFeedback(id)}
+													handleConfirm={handleRemoveFeedback}
 												>
 													{(handleOpen) => (
 														<Button startIcon={<Delete />} onClick={handleOpen}>
 															Delete
 														</Button>
 													)}
-												</CrudConfirmation>{' '}
+												</CrudConfirmation>
 											</MenuItem>
 										</CrudMenuOptions>
 									</Stack>
@@ -380,7 +355,6 @@ export default function ProductDetail() {
 												onChange={(e) => setUserReview(e.target.value)}
 												sx={{ mt: 2 }}
 											/>
-
 											<Button
 												variant='contained'
 												color='primary'
@@ -419,7 +393,6 @@ export default function ProductDetail() {
 							<Typography variant='h6' fontWeight='bold' color='textPrimary'>
 								Leave a Rating and Review
 							</Typography>
-
 							<Rating
 								name='user-rating'
 								value={userRating}
@@ -502,7 +475,6 @@ export default function ProductDetail() {
 												<Typography mb={1} variant='body2' color='textSecondary'>
 													${recommendedProduct.price}
 												</Typography>
-
 												<Stack direction='row' spacing={1} my={2}>
 													<Chip
 														label={recommendedProduct.subCategory.category.name}
@@ -568,12 +540,5 @@ export default function ProductDetail() {
 				</Box>
 			)}
 		</Box>
-	) : (
-		<Snackbar
-			open={snackbarOpen}
-			onClose={handleSnackbarClose}
-			message='Product has been deleted'
-			autoHideDuration={1}
-		/>
 	)
 }
