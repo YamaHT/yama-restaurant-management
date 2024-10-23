@@ -7,4 +7,11 @@ export const VoucherService = {
 			return response.data
 		})
 	},
+	ADD_MY_VOUCHER: async (id) => {
+		return await axiosFormBody
+			.post(ApiRequest.VoucherRequest.ADD_MY_VOUCHER(id))  
+			.then((response) => {
+				return response.data
+			})
+	},
 }

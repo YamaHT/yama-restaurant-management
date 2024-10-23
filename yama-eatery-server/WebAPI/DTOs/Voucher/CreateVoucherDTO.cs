@@ -8,6 +8,7 @@
         public int ReducedPercent { get; set; }
         public int MaxReducing { get; set; }
         public int Quantity { get; set; }
+
         public IFormFile? Image { get; set; }
     }
 }
