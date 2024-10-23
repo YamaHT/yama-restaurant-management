@@ -1,26 +1,44 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Paper, Typography, Button, Pagination, Grid2, Stack, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material'
+import {
+	Box,
+	Paper,
+	Typography,
+	Button,
+	Pagination,
+	Grid2,
+	Stack,
+	TextField,
+	Select,
+	MenuItem,
+	InputLabel,
+	FormControl,
+	Snackbar,
+	Alert,
+} from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { VoucherService } from '@/services/VoucherService' 
+import { VoucherService } from '@/services/VoucherService'
 import { AssetImages } from '@/utilities/AssetImages'
 
 const VOUCHERS_PER_PAGE = 4
 
 function VoucherList() {
 	const [vouchers, setVouchers] = useState([])
-	const [filteredVouchers, setFilteredVouchers] = useState([]) 
-	const [filterValue, setFilterValue] = useState('') 
-	const [selectedDiscount, setSelectedDiscount] = useState('') 
+	const [filteredVouchers, setFilteredVouchers] = useState([])
+	const [filterValue, setFilterValue] = useState('')
+	const [selectedDiscount, setSelectedDiscount] = useState('')
 	const [page, setPage] = useState(1)
 	const [totalPages, setTotalPages] = useState(0)
 	const [displayedVouchers, setDisplayedVouchers] = useState([])
-
+	const [snackbarOpen, setSnackbarOpen] = useState(false)
+	const [snackbarMessage, setSnackbarMessage] = useState('')
+	const [snackbarSeverity, setSnackbarSeverity] = useState('success') 
 	const navigate = useNavigate()
 
 	useEffect(() => {
 		const fetchVouchers = async () => {
 			try {
 				const data = await VoucherService.VIEW_ALL_VOUCHER()
+				console.log('Fetched Vouchers:', data)
 				setVouchers(data)
 				setFilteredVouchers(data)
 			} catch (error) {
@@ -29,9 +47,10 @@ function VoucherList() {
 		}
 		fetchVouchers()
 	}, [])
+
 	useEffect(() => {
 		const startIndex = (page - 1) * VOUCHERS_PER_PAGE
-		const endIndex = startIndex + VOUCHERS_PER_PAGE 
+		const endIndex = startIndex + VOUCHERS_PER_PAGE
 
 		setTotalPages(
 			filteredVouchers.length > 0 ? Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE) : 1
@@ -42,15 +61,15 @@ function VoucherList() {
 	const handleSearchChange = (e) => {
 		const value = e.target.value
 		setFilterValue(value)
-		applyFilters(value, selectedDiscount) 
+		applyFilters(value, selectedDiscount)
 		setPage(1)
 	}
 
 	const handleDiscountChange = (e) => {
 		const value = e.target.value
 		setSelectedDiscount(value)
-		applyFilters(filterValue, value) 
-		setPage(1) 
+		applyFilters(filterValue, value)
+		setPage(1)
 	}
 
 	const applyFilters = (nameSearch, discount) => {
@@ -68,21 +87,52 @@ function VoucherList() {
 	}
 
 	const handlePageChange = (event, value) => {
-		setPage(value) 
-		window.scrollTo(0, 0) 
+		setPage(value)
+		window.scrollTo(0, 0)
+	}
+
+	const redeemVoucher = async (id) => {
+		try {
+			const response = await VoucherService.ADD_MY_VOUCHER(id)
+			if (response) {
+				setFilteredVouchers((prevVouchers) =>
+					prevVouchers.map((voucher) =>
+						voucher.id === id ? { ...voucher, quantity: voucher.quantity - 1 } : voucher
+					)
+				)
+				setSnackbarMessage('Voucher redeemed successfully!')
+				setSnackbarSeverity('success')
+			} else {
+				setSnackbarMessage('You cannot redeem this voucher.')
+				setSnackbarSeverity('error')
+			}
+			setSnackbarOpen(true) 
+		} catch (error) {
+			console.error('Error redeeming voucher: ', error)
+			setSnackbarMessage('An error occurred while redeeming the voucher.')
+			setSnackbarSeverity('error')
+			setSnackbarOpen(true) 
+		}
+	}
+
+	const handleSnackbarClose = (event, reason) => {
+		if (reason === 'clickaway') {
+			return
+		}
+		setSnackbarOpen(false)
 	}
 
 	return (
 		<Grid2 container justifyContent='center'>
 			<Box width={'100%'} p={'2% 5%'}>
 				<Box display='flex' justifyContent='center' mb={3} gap={2}>
-					<Grid2 size={{xs:12, md:6}}  display='flex' justifyContent='center'>
+					<Grid2 size={{ xs: 12, md: 6 }} display='flex' justifyContent='center'>
 						<TextField
 							label='Search by Name'
 							variant='outlined'
 							value={filterValue}
 							onChange={handleSearchChange}
-							fullWidth 
+							fullWidth
 						/>
 					</Grid2>
 					<Grid2 xs={12} md={6} display='flex' justifyContent='center'>
@@ -93,7 +143,7 @@ function VoucherList() {
 								value={selectedDiscount}
 								onChange={handleDiscountChange}
 								label='Filter by Discount (%)'
-								sx={{ minWidth: 250 }} 
+								sx={{ minWidth: 250 }}
 							>
 								{[10, 20, 30, 40, 50].map((percent) => (
 									<MenuItem key={percent} value={percent}>
@@ -102,6 +152,15 @@ function VoucherList() {
 								))}
 							</Select>
 						</FormControl>
+						<Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+							<Alert
+								onClose={handleSnackbarClose}
+								severity={snackbarSeverity}
+								sx={{ width: '100%' }}
+							>
+								{snackbarMessage}
+							</Alert>
+						</Snackbar>
 					</Grid2>
 				</Box>
 				<Grid2 container spacing={2} mt={4} justifyContent='center'>
@@ -118,7 +177,7 @@ function VoucherList() {
 										borderRadius: '8px',
 									}}
 								>
-									<img src={AssetImages.VoucherImage(voucher.image)} alt="" />
+									<img src={AssetImages.VoucherImage(voucher.image)} alt='' width={'30%'} />
 									<Stack
 										width={'70%'}
 										justifyContent={'center'}
@@ -158,7 +217,12 @@ function VoucherList() {
 												Remaining: {voucher.quantity}
 											</Typography>
 										</Stack>
-										<Button variant='contained' color='error' sx={{ mt: 1, mb: 1 }}>
+										<Button
+											variant='contained'
+											color='error'
+											sx={{ mt: 1, mb: 1 }}
+											onClick={() => redeemVoucher(voucher.id)} 
+										>
 											REDEEM
 										</Button>
 									</Stack>

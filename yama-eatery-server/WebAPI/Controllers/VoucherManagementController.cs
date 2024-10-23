@@ -43,27 +43,40 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update/{id}")]
-        public async Task<IActionResult> UpdateVoucher(int id, [FromForm] UpdateVoucherDTO updateVoucherDTO)
+        public async Task<IActionResult> UpdateVoucher(int id, [FromBody] UpdateVoucherDTO updateVoucherDTO)
         {
+            // Lấy thông tin voucher hiện tại
             var existingVoucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
             if (existingVoucher == null)
             {
-                throw new DataNotFoundException($"Voucher with ID {id} not found.");
+                return NotFound(new { Message = $"Voucher with ID {id} not found." });
             }
+
+            // Cập nhật thông tin voucher
             existingVoucher.Name = updateVoucherDTO.Name;
             existingVoucher.Description = updateVoucherDTO.Description;
             existingVoucher.ExpiredDate = DateOnly.FromDateTime(updateVoucherDTO.ExpiredDate);
             existingVoucher.ReducedPercent = updateVoucherDTO.ReducedPercent;
             existingVoucher.MaxReducing = updateVoucherDTO.MaxReducing;
             existingVoucher.Quantity = updateVoucherDTO.Quantity;
-            existingVoucher.Image = await ImageUtil.AddImageAsync(nameof(Voucher), updateVoucherDTO.Image);
+
+            // Xử lý hình ảnh
+            if (updateVoucherDTO.Image != null)
+            {
+                existingVoucher.Image = await ImageUtil.AddImageAsync(nameof(Voucher), updateVoucherDTO.Image);
+            }
 
             existingVoucher.TryValidate();
+           
 
+            // Cập nhật vào cơ sở dữ liệu
             _unitOfWork.VoucherRepository.Update(existingVoucher);
             await _unitOfWork.SaveChangeAsync();
+
             return Ok(existingVoucher);
         }
+
+
 
         [HttpPost("remove/{id}")]
         public async Task<IActionResult> RemoveVoucher(int id)
