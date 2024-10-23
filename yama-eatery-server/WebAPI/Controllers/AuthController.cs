@@ -77,7 +77,7 @@ namespace WebAPI.Controllers
 
             string password = StringUtil.GenerateRandomPassword();
             _ = Task.Run(() => SendMailUtil.SendMailPasswordAsync(_configuration, email, password));
-
+            
             user.Password = CryptoUtil.EncryptPassword(password);
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();

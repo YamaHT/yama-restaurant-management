@@ -1,8 +1,11 @@
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
+import { ManagerRequest, UserManagementRequest } from '@/requests/UserManagementRequest'
+import { UserManagementService } from '@/services/UserManagementService'
 import { UserService } from '@/services/UserService'
 import { Search } from '@mui/icons-material'
 import {
 	Autocomplete,
+	Box,
 	Button,
 	InputAdornment,
 	Paper,
@@ -15,9 +18,15 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const headCells = [
+	{
+		name: 'ID',
+		orderData: 'id',
+		numeric: false,
+		widthPercent: 5,
+	},
 	{
 		name: 'Name',
 		orderData: 'name',
@@ -32,36 +41,6 @@ const headCells = [
 		widthPercent: 10,
 	},
 	{},
-]
-
-function createData(name, phone) {
-	return {
-		name,
-		phone,
-	}
-}
-
-const rows = [
-	createData('User 1', '0123456789'),
-	createData('User 2', '0987654321'),
-	createData('User 3', '0192837465'),
-	createData('User 4', '0246813579'),
-	createData('User 5', '0357911135'),
-	createData('User 6', '0468201357'),
-	createData('User 7', '0579313579'),
-	createData('User 8', '0689425791'),
-	createData('User 9', '0791535791'),
-	createData('User 10', '0813579135'),
-	createData('User 11', '0924681357'),
-	createData('User 12', '1035791357'),
-	createData('User 13', '1146913579'),
-	createData('User 14', '1257035791'),
-	createData('User 15', '1368145791'),
-	createData('User 16', '1479257913'),
-	createData('User 17', '1580368135'),
-	createData('User 18', '1691479257'),
-	createData('User 19', '1702580368'),
-	createData('User 20', '1813691479'),
 ]
 
 function descendingComparator(a, b, orderBy) {
@@ -86,20 +65,33 @@ export default function ViewMembershipRequest() {
 	const [page, setPage] = useState(0)
 	const [searchPhone, setSearchPhone] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
-	const [membershipStatus, setMembershipStatus] = useState('')
+	const [membership, setMembership] = useState([])
 
-	const handleCancelMembership = async () => {
-		const data = await UserService.CANCEL_MEMBERSHIP()
+	const fetchMembership = async () => {
+		try {
+			const data = await UserManagementService.VIEW_MEMBERSHIP_REQUEST()
+			if (data) {
+				setMembership(data)
+				console.log(data)
+			}
+		} catch (error) {
+			console.error('Error fetching membership data:', error)
+		}
+	}
+	useEffect(() => {
+		fetchMembership()
+	}, [])
+
+	const handleDenyMembership = async (id) => {
+		const data = await UserManagementService.DENY_MEMBERSHIP(id)
 		console.log(data)
-		setMembershipStatus(data.membershipStatus)
-		setMembershipStatus('Inactive')
+		await fetchMembership()
 	}
 
-	const handleMembershipRegister = async () => {
-		const data = await UserService.REGISTER_MEMBERSHIP()
+	const handlApproveMembership = async (id) => {
+		const data = await UserManagementService.APPROVE_MEMBERSHIP(id)
 		console.log(data)
-		setMembershipStatus(data.membershipStatus)
-		setMembershipStatus('Requesting')
+		await fetchMembership()
 	}
 
 	const handleRequestSort = (event, property) => {
@@ -117,21 +109,22 @@ export default function ViewMembershipRequest() {
 		setPage(0)
 	}
 
-	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
+	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - membership.length) : 0
 
 	const visibleRows = React.useMemo(
 		() =>
-			[...rows]
+			[...membership]
 				.filter(
-					(row) => !searchPhone || row.phone.toLowerCase().includes(searchPhone.toLowerCase())
+					(membership) =>
+						!searchPhone || membership.phone.toLowerCase().includes(searchPhone.toLowerCase())
 				)
 				.sort(getComparator(order, orderBy))
 				.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-		[order, orderBy, page, rowsPerPage, searchPhone]
+		[order, orderBy, page, rowsPerPage, searchPhone, membership]
 	)
 
 	return (
-		<>
+		<Box width={'500px'}>
 			<Stack marginBottom={1} spacing={2}>
 				<Typography variant='h5' fontWeight={'bold'}>
 					View Membership Request
@@ -163,7 +156,7 @@ export default function ViewMembershipRequest() {
 				</Stack>
 			</Stack>
 
-			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
+			<Paper>
 				<Table stickyHeader sx={{ minWidth: '200px' }}>
 					<CrudTableHead
 						order={order}
@@ -172,29 +165,39 @@ export default function ViewMembershipRequest() {
 						onRequestSort={handleRequestSort}
 					/>
 					<TableBody>
-						{visibleRows.map((row, index) => {
-							return (
-								<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
+						{visibleRows.length > 0 ? (
+							visibleRows.map((row) => (
+								<TableRow hover key={row} sx={{ cursor: 'pointer' }}>
+									<TableCell>{row.id}</TableCell>
 									<TableCell>{row.name}</TableCell>
-
 									<TableCell>{row.phone}</TableCell>
 									<TableCell>
 										<Stack direction='row' spacing={1}>
-											<Button variant='contained' color='error' onClick={handleCancelMembership}>
+											<Button
+												variant='contained'
+												color='error'
+												onClick={() => handleDenyMembership(row.id)}
+											>
 												Deny
 											</Button>
 											<Button
 												variant='contained'
 												color='success'
-												onClick={handleMembershipRegister}
+												onClick={() => handlApproveMembership(row.id)}
 											>
 												Approve
 											</Button>
 										</Stack>
 									</TableCell>
 								</TableRow>
-							)
-						})}
+							))
+						) : (
+							<TableRow>
+								<TableCell colSpan={10} align='center'>
+									No membership requests available.
+								</TableCell>
+							</TableRow>
+						)}
 						{emptyRows > 0 && (
 							<TableRow>
 								<TableCell colSpan={6} />
@@ -205,13 +208,13 @@ export default function ViewMembershipRequest() {
 				<TablePagination
 					rowsPerPageOptions={[5, 10, 20]}
 					component={'div'}
-					count={rows.length}
+					count={membership.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onPageChange={handleChangePage}
 					onRowsPerPageChange={handleChangeRowsPerPage}
 				/>
 			</Paper>
-		</>
+		</Box>
 	)
 }

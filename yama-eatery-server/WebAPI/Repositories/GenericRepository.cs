@@ -98,6 +98,16 @@ namespace WebAPI.Repositories
             }
         }
 
+        public void Restore(T entity)
+        {
+            if (entity is TrackableEntity trackableEntity)
+            {
+                trackableEntity.DeletionDate = null;
+                trackableEntity.IsDeleted = false;
+                _dbContext.Set<T>().Update(entity);
+            }
+        }
+
         public void Update(T entity)
         {
             if (entity is TrackableEntity trackableEntity)
