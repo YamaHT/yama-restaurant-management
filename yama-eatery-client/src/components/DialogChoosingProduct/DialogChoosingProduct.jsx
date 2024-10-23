@@ -33,7 +33,7 @@ const DialogChoosingProduct = ({ open, handleClose, handleAddProduct, selectedPr
 			}
 		}
 		fetchProducts()
-	}, [])
+	}, [open])
 
 	useEffect(() => {
 		setSelects(selectedProducts)

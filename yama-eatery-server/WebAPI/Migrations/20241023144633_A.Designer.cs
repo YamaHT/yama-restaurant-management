@@ -12,7 +12,7 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241019112442_A")]
+    [Migration("20241023144633_A")]
     partial class A
     {
         /// <inheritdoc />
@@ -88,6 +88,9 @@ namespace WebAPI.Migrations
 
                     b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("NewPaymentDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
                         .HasMaxLength(1000)

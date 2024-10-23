@@ -342,6 +342,7 @@ namespace WebAPI.Migrations
                     BookingDate = table.Column<DateOnly>(type: "date", nullable: false),
                     DayPart = table.Column<string>(type: "nvarchar(10)", nullable: false),
                     BookingStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NewPaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true),
                     TableId = table.Column<int>(type: "int", nullable: false),
                     EmployeeId = table.Column<int>(type: "int", nullable: true),

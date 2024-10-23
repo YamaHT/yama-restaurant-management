@@ -1,8 +1,14 @@
 ﻿namespace WebAPI.DTOs.Booking
 {
+    public class ProductWithQuantity
+    {
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+    }
+
     public class AddBookingDTO
     {
-        public List<WebAPI.Models.Product>? Products { get; set; }
+        public List<ProductWithQuantity> Products { get; set; } = [];
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Phone { get; set; }
