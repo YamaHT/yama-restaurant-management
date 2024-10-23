@@ -51,6 +51,7 @@ namespace WebAPI.Controllers
                 Note = addBookingDTO.Note,
                 TotalPayment = addBookingDTO.TotalPayment,
                 DepositPrice = addBookingDTO.DepositPrice,
+                NewPaymentDate = DateTime.Now,
                 User = user,
                 Table = table,
                 UserVoucher = userVoucher
@@ -87,7 +88,124 @@ namespace WebAPI.Controllers
             }
 
             await _unitOfWork.SaveChangeAsync();
-            return Ok(new { success = $"Reserve a booking successfully. You can now pay for its deposit (${booking.DepositPrice})" });
+            await Task.WhenAll();
+
+            string? paymentURL = await PayOSPayment.GeneratePaymentLink(_unitOfWork, booking.Id);
+            if (paymentURL == null)
+            {
+                _unitOfWork.BookingRepository.Remove(booking);
+                await _unitOfWork.SaveChangeAsync();
+                throw new InvalidDataException("Booking can't be completed. Please try again");
+            }
+
+            return Ok(new
+            {
+                success = $"Reserve a booking successfully. You can now pay for its deposit (${booking.DepositPrice})",
+                paymentURL
+            });
+        }
+
+        [HttpPost("verify")]
+        public async Task<IActionResult> VerifyPayment([FromBody] string bookingId)
+        {
+            if (!Guid.TryParse(bookingId, out var id))
+            {
+                throw new InvalidDataException("Invalid booking id");
+            }
+
+            var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(id);
+            if (booking == null)
+            {
+                throw new DataNotFoundException("Booking is not existed");
+            }
+
+            if (booking.BookingStatus != BookingStatusEnum.Undeposited.ToString())
+            {
+                throw new DataConflictException("This booking is already paid");
+            }
+
+            var information = await booking.GetPaymentInformation();
+            if (information.status != "PAID")
+            {
+                throw new InvalidDataException("The booking is not paid");
+            }
+
+            booking.BookingStatus = BookingStatusEnum.Booking.ToString();
+            _unitOfWork.BookingRepository.Update(booking);
+            await _unitOfWork.SaveChangeAsync();
+
+            return Ok(new { success = "Pay for booking deposit successfully" });
+        }
+
+        [HttpPost("cancel")]
+        public async Task<IActionResult> CancelBooking([FromBody] string bookingId)
+        {
+            if (!Guid.TryParse(bookingId, out var id))
+            {
+                throw new InvalidDataException("Invalid booking id");
+            }
+
+            var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(id);
+            if (booking == null)
+            {
+                throw new DataNotFoundException("Booking is not existed");
+            }
+
+            _unitOfWork.BookingRepository.Remove(booking);
+            await _unitOfWork.SaveChangeAsync();
+
+            return RedirectToAction("HistoryBooking", "User");
+        }
+
+        [HttpPost("re-pay")]
+        public async Task<IActionResult> RepayDeposit([FromBody] string bookingId)
+        {
+            if (!Guid.TryParse(bookingId, out var id))
+            {
+                throw new InvalidDataException("Invalid booking id");
+            }
+
+            var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(id);
+            if (booking == null)
+            {
+                throw new DataNotFoundException("Booking is not existed");
+            }
+
+            if (booking.BookingDate < DateOnly.FromDateTime(DateTime.Now))
+            {
+                _unitOfWork.BookingRepository.Remove(booking);
+                await _unitOfWork.SaveChangeAsync();
+                throw new InvalidDataException("This booking is expired to be booked, we will remove it from your history");
+            }
+
+            var paymentURL = "";
+
+            var information = await booking.GetPaymentInformation();
+            if (information.status == "PAID")
+            {
+                booking.BookingStatus = BookingStatusEnum.Booking.ToString();
+
+                _unitOfWork.BookingRepository.Update(booking);
+                await _unitOfWork.SaveChangeAsync();
+
+                throw new DataConflictException("This booking is already paid");
+            }
+            else if (information.status == "PENDING")
+            {
+                paymentURL = "https://pay.payos.vn/web/" + information.id;
+            }
+            else if (information.status == "CANCELLED")
+            {
+                booking.NewPaymentDate = DateTime.Now;
+
+                _unitOfWork.BookingRepository.Update(booking);
+                await _unitOfWork.SaveChangeAsync();
+                await Task.WhenAll();
+
+                paymentURL = await PayOSPayment.GeneratePaymentLink(_unitOfWork, id);
+            }
+
+            return Ok(paymentURL);
         }
     }
 }

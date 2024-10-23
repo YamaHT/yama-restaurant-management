@@ -49,7 +49,7 @@ export default function TableDetail() {
 		dayPart: '',
 		note: '',
 		totalPayment: 0,
-		depositPrice: 5,
+		depositPrice: 5.0,
 		tableId: id,
 		userVoucherId: 0,
 	})
@@ -57,7 +57,7 @@ export default function TableDetail() {
 	const [userVoucher, setUserVoucher] = useState([])
 	const [afterBooked, setAfterBooked] = useState({
 		success: '',
-		depositLink: '',
+		paymentURL: '',
 	})
 
 	const slideRef = useRef(null)
@@ -81,10 +81,10 @@ export default function TableDetail() {
 			currentDate.getDate() === selectedDate.getDate()
 
 		if (isToday) {
-			if (currentHour >= 12 && currentHour < 18) {
-				return dayParts.filter((part) => part === 'Evening' && !bookedDayPart.includes(part))
-			}
 			if (currentHour >= 18) {
+				return []
+			}
+			if (currentHour >= 12 && currentHour < 18) {
 				return dayParts.filter((part) => part === 'Evening' && !bookedDayPart.includes(part))
 			}
 			return dayParts.filter((part) => part !== 'Morning' && !bookedDayPart.includes(part))
@@ -133,9 +133,10 @@ export default function TableDetail() {
 	}, [id, afterBooked])
 
 	useEffect(() => {
-		const totalPayment = formData.products
-			.reduce((acc, product) => acc + product.product.price * product.quantity, 0)
-			.toFixed(2)
+		const totalPayment = formData.products.reduce(
+			(acc, product) => acc + product.product.price * product.quantity,
+			0
+		)
 
 		const depositPrice = totalPayment !== 0 ? (totalPayment * 0.1).toFixed(2) : (5.0).toFixed(2)
 
@@ -194,6 +195,7 @@ export default function TableDetail() {
 
 			var bookingInformations = {
 				...formData,
+				depositPrice: formData.depositPrice == 0 ? 5 : formData.depositPrice,
 				products: products,
 			}
 
@@ -474,7 +476,7 @@ export default function TableDetail() {
 					</DialogContent>
 					<DialogActions>
 						<Button onClick={() => setAfterBooked({})}>Cancel</Button>
-						<Button href={afterBooked.depositLink} variant='contained' color='primary'>
+						<Button href={afterBooked.paymentURL} variant='contained' color='primary'>
 							Pay Now
 						</Button>
 					</DialogActions>

@@ -96,7 +96,7 @@ export default function ViewMembershipRequest() {
 	}
 
 	const handleMembershipRegister = async () => {
-		const data = await UserService.MEMBERSHIP_REGISTER()
+		const data = await UserService.REGISTER_MEMBERSHIP()
 		console.log(data)
 		setMembershipStatus(data.membershipStatus)
 		setMembershipStatus('Requesting')

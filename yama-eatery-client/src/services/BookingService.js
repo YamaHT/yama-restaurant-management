@@ -17,4 +17,19 @@ export const BookingService = {
 			.post(ApiRequest.BookingRequest.RESERVE_A_BOOKING, information)
 			.then((response) => response.data)
 	},
+	VERIFY_BOOKING: async (bookingId) => {
+		return await axiosFormBody
+			.post(ApiRequest.BookingRequest.VERIFY_BOOKING, bookingId)
+			.then((response) => response.data)
+	},
+	RE_PAY_DEPOSIT: async (bookingId) => {
+		return await axiosFormBody
+			.post(ApiRequest.BookingRequest.RE_PAY_DEPOSIT, bookingId)
+			.then((response) => response.data)
+	},
+	CANCEL_BOOKING: async (bookingId) => {
+		return await axiosFormBody
+			.post(ApiRequest.BookingRequest.CANCEL_BOOKING, bookingId)
+			.then((response) => response.data)
+	},
 }

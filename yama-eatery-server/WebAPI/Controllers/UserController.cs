@@ -63,27 +63,6 @@ namespace WebAPI.Controllers
             return Ok(new { success = "Change Password successfully" });
         }
 
-        [HttpGet("cancel-booking/{bookingId}")]
-        public async Task<IActionResult> CancelBooking(int bookingId)
-        {
-            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
-            if (booking == null)
-            {
-                throw new DataNotFoundException($"Booking with ID {bookingId} not found.");
-            }
-
-            if (Enum.TryParse(booking.BookingStatus.ToString(), out BookingStatusEnum status) && (status == BookingStatusEnum.Undeposited || status == BookingStatusEnum.Booking))
-            {
-                _unitOfWork.BookingRepository.Remove(booking);
-                await _unitOfWork.SaveChangeAsync();
-                return Ok($"Booking with ID {bookingId} has been canceled successfully.");
-            }
-            else
-            {
-                throw new DataNotFoundException($"Cannot cancel booking. Current status is: {booking.BookingStatus}.");
-            }
-        }
-
         [HttpGet("history-feedback")]
         public async Task<IActionResult> HistoryFeedbacks()
         {
@@ -92,16 +71,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("history-booking")]
-        public async Task<IActionResult> GetHistoryBooking()
+        public async Task<IActionResult> HistoryBooking()
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings", "Bookings.BookingDetails","Bookings.Table"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings", "Bookings.BookingDetails", "Bookings.Table"]);
             return Ok(user?.Bookings);
         }
 
         [HttpGet("my-vouchers")]
-        public async Task<IActionResult> GetMyVouchers()
+        public async Task<IActionResult> MyVouchers()
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers","UserVouchers.Voucher"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers", "UserVouchers.Voucher"]);
             return Ok(user?.UserVouchers);
         }
 
@@ -123,7 +102,7 @@ namespace WebAPI.Controllers
             await _unitOfWork.ContactRepository.AddAsync(contact);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(new { success = "Contact send sucessfully" });
+            return Ok(new { success = "Contact send successfully" });
         }
 
         [HttpGet("user-membership")]
@@ -133,18 +112,17 @@ namespace WebAPI.Controllers
             return Ok(user.Membership);
         }
 
-        [HttpPost("membership-register")]
-        public async Task<IActionResult> MembershipRegister()
+        [HttpPost("register-membership")]
+        public async Task<IActionResult> RegisterMembership()
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Membership"]);
 
             user.Membership.MembershipStatus = MembershipStatusEnum.Requesting.ToString();
 
             _unitOfWork.UserRepository.Update(user);
-
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(new { success = "Membership registration successful.", UserId = user.Id, user.Membership });
+            return Ok(user.Membership);
         }
 
         [HttpGet("cancel-membership")]
@@ -155,10 +133,9 @@ namespace WebAPI.Controllers
             user.Membership.MembershipStatus = MembershipStatusEnum.Inactive.ToString();
 
             _unitOfWork.UserRepository.Update(user);
-
             await _unitOfWork.SaveChangeAsync();
-
-            return Ok(new { success = "Membership Cancel successful.", user.Membership });
+            
+            return Ok(user.Membership);
         }
     }
 }
