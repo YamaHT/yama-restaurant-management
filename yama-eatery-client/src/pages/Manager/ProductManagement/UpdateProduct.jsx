@@ -18,7 +18,7 @@ import {
 } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 
-import { useRef, useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleUpdateProduct }) => {
 	const fileRef = useRef(null)

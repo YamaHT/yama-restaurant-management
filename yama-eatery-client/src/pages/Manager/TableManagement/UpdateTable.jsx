@@ -1,7 +1,6 @@
 import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import { AssetImages } from '@/utilities/AssetImages'
-import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
 import { Add, Close } from '@mui/icons-material'
 import {
 	Avatar,
@@ -14,12 +13,11 @@ import {
 	IconButton,
 	MenuItem,
 	Stack,
-	TextField,
-	Typography,
+	Typography
 } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 
-import { useRef, useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpdateTable }) => {
 	const fileRef = useRef(null)
