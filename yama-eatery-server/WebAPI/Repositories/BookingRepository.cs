@@ -7,7 +7,7 @@ namespace WebAPI.Repositories
 {
     public class BookingRepository(ApplicationDbContext _dbContext) : GenericRepository<Booking>(_dbContext), IBookingRepository
     {
-        public async Task<Booking?> GetByGuidAsync(int id, string[]? includes = null)
+        public async Task<Booking?> GetByGuidAsync(Guid id, string[]? includes = null)
         {
             IQueryable<Booking> query = _dbContext.Booking;
 
