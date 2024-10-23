@@ -16,6 +16,7 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 
 import { useRef, useState, useEffect } from 'react'
 
@@ -36,6 +37,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
+	const [priceError, setPriceError] = useState('')
 
 	useEffect(() => {
 		if (existingProduct) {
@@ -56,6 +58,14 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 			...prev,
 			[name]: value,
 		}))
+		if (name === 'price') {
+			const priceValue = parseFloat(value)
+			if (priceValue <= 0 || priceValue >= 10000) {
+				setPriceError('Price must be greater than 0 and less than 10,000.')
+			} else {
+				setPriceError('')
+			}
+		}
 	}
 
 	const handleImageChange = (e) => {
@@ -112,6 +122,8 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 					...prev,
 					description: descriptionGenerated.trim(),
 				}))
+			} else {
+				enqueueSnackbar('Ten qua vo nghia', { variant: 'warning' })
 			}
 		} catch (error) {
 			setValues((prev) => ({ ...prev, description: '' }))
@@ -282,6 +294,8 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 						variant='filled'
 						value={values.price}
 						onChange={handleValueChange}
+						error={!!priceError}
+						helperText={priceError}
 					/>
 					<Stack direction={'row'} alignItems={'center'}>
 						<ValidationTextField

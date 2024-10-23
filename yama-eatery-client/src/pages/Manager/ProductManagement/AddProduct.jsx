@@ -32,13 +32,22 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
-
+	const [priceError, setPriceError] = useState('')
+	
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
 		}))
+		if (name === 'price') {
+			const priceValue = parseFloat(value)
+			if (priceValue <= 0 || priceValue >= 10000) {
+				setPriceError('Price must be greater than 0 and less than 10,000.')
+			} else {
+				setPriceError('')
+			}
+		}
 	}
 
 	const handleImageChange = (e) => {
@@ -233,6 +242,8 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						value={values.price}
 						onChange={handleValueChange}
+						error={!!priceError}
+						helperText={priceError}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['stockQuantity'] = el)}
@@ -242,6 +253,10 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						value={values.stockQuantity}
 						onChange={handleValueChange}
+						inputProps={{ min: 0 }}
+						regex='^(0|[1-9][0-9]{0,2})$'
+						regexErrorText='Stock Quantity must be a positive integer between 0 and 999.'
+						requiredErrorText='Stock Quantity is required.'
 					/>
 
 					<Stack direction={'row'} alignItems={'center'}>

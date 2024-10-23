@@ -306,8 +306,16 @@ const ProductManagement = () => {
 								return (
 									<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
 										<TableCell>
-											<Stack direction={'row'} spacing={2} alignItems={'center'}>
-												<AvatarGroup>
+											<Stack
+												direction='row'
+												alignItems='center'
+												spacing={2}
+												justifyContent='space-between'
+											>
+												<Typography variant='body2' sx={{ flexGrow: 1 }}>
+													{row.name}
+												</Typography>
+												<AvatarGroup max={3}>
 													{row.image && row.image.length > 0 ? (
 														row.image.map((imgSrc, index) => (
 															<Avatar
@@ -320,7 +328,6 @@ const ProductManagement = () => {
 														<Avatar alt={row.name} />
 													)}
 												</AvatarGroup>
-												<Typography variant='body2'>{row.name}</Typography>
 											</Stack>
 										</TableCell>
 										<TableCell>
