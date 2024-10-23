@@ -1,3 +1,4 @@
+import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
 import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
 import ReviewProgressBar from '@/components/Product/ReviewProgressBar'
 import { FeedbackService } from '@/services/FeedbackService'
@@ -61,7 +62,6 @@ export default function ProductDetail() {
 
 		async function fetchGetFeedbackProduct() {
 			if (!localStorage.getItem('token')) return
-
 			setIsAuthorized(true)
 
 			const data = await FeedbackService.GET_FEEDBACK(id)
@@ -334,9 +334,17 @@ export default function ProductDetail() {
 												</Button>
 											</MenuItem>
 											<MenuItem>
-												<Button startIcon={<Delete />} onClick={() => handleRemoveFeedback(id)}>
-													Delete
-												</Button>
+												<CrudConfirmation
+													title='Delete Confirmation'
+													description='Are you sure you want to delete this?'
+													handleConfirm={() => handleRemoveFeedback(id)}
+												>
+													{(handleOpen) => (
+														<Button startIcon={<Delete />} onClick={handleOpen}>
+															Delete
+														</Button>
+													)}
+												</CrudConfirmation>{' '}
 											</MenuItem>
 										</CrudMenuOptions>
 									</Stack>

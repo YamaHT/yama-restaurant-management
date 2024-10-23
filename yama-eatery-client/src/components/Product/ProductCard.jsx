@@ -63,7 +63,7 @@ const ProductCard = ({ product }) => {
 							: AssetImages.ProductImage(product.image[0])
 					}
 					alt={product.name}
-					style={{
+					sx={{
 						objectFit: 'fill',
 						maxHeight: '100%',
 						maxWidth: '100%',
