@@ -12,16 +12,16 @@ namespace WebAPI.Controllers
     public class FeedbackController(IUnitOfWork _unitOfWork) : ApiController    
     {
         [HttpPost("add")]
-        public async Task<IActionResult> AddFeedback([FromBody] ModifyFeedbackProductDTO addProductDTO)
+        public async Task<IActionResult> AddFeedback([FromBody] ModifyFeedbackProductDTO modifyFeedbackProductDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
 
             var feedback = new FeedbackProduct
             {
                 UserId = user.Id,
-                ProductId = addProductDTO.ProductId,
-                Message = addProductDTO.Message,
-                Rating = addProductDTO.Rating,
+                ProductId = modifyFeedbackProductDTO.ProductId,
+                Message = modifyFeedbackProductDTO.Message,
+                Rating = modifyFeedbackProductDTO.Rating,
                 CreationDate = DateTime.Now
             };
             feedback.TryValidate();

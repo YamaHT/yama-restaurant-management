@@ -24,9 +24,10 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AddStaffAttendance from './AddStaffAttendance'
 import UpdateStaffAttendance from './UpdateStaffAttendance'
+import { StaffManagementService } from '@/services/StaffManagementService'
 
 const headCells = [
 	{
@@ -64,59 +65,13 @@ const headCells = [
 		name: 'LateOrEarly',
 		orderData: 'lateOrEarly',
 		numeric: false,
-		widthPercent: 20,
+		widthPercent: 30,
 	},
 	{
-		name: '',
-		widthPercent: 20,
+		name: 'Action',
+		widthPercent: 5,
 	},
 ]
-
-function createData(
-	id,
-	name,
-	checkin,
-	checkout,
-	workhours,
-	isLate = false,
-	isEarlyDeparture = false
-) {
-	return {
-		id,
-		name,
-		checkin,
-		checkout,
-		workhours,
-		isLate,
-		isEarlyDeparture,
-		checkinStatus: 'checkin',
-	}
-}
-
-const rows = [
-	createData(1, 'John Doe', '08:00', '17:00', 8),
-	createData(2, 'Jane Smith', '08:10', '17:00', 7.83),
-	createData(3, 'Alice Johnson', '08:00', '17:00', 8),
-	createData(4, 'Bob Brown', '08:05', '17:00', 7.92),
-	createData(5, 'Charlie Davis', '08:00', '17:00', 8),
-	createData(6, 'Diana Evans', '08:03', '17:00', 7.95),
-	createData(7, 'Edward Green', '08:00', '17:00', 8),
-	createData(8, 'Fiona Harris', '08:00', '17:00', 8),
-	createData(9, 'George King', '08:02', '17:00', 7.97),
-	createData(10, 'Helen Lewis', '08:00', '17:00', 8),
-	createData(11, 'Ian Miller', '08:04', '17:00', 7.93),
-	createData(12, 'Jackie Nelson', '08:00', '17:00', 8),
-	createData(13, 'Karen Owens', '08:00', '17:00', 8),
-	createData(14, 'Larry Parker', '08:01', '17:00', 7.98),
-	createData(15, 'Mona Quinn', '08:00', '17:00', 8),
-	createData(16, 'Nancy Roberts', '08:00', '17:00', 8),
-	createData(17, 'Oliver Scott', '08:00', '17:00', 8),
-	createData(18, 'Paula Turner', '08:00', '17:00', 8),
-	createData(19, 'Quincy Underwood', '08:00', '17:00', 8),
-	createData(20, 'Rachel Vincent', '08:00', '17:00', 8),
-]
-
-console.log(rows)
 
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
@@ -140,9 +95,20 @@ const StaffAttendanceManagement = () => {
 	const [page, setPage] = useState(0)
 	const [searchName, setSearchName] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
-	const [attendanceRows, setAttendanceRows] = useState(rows)
+	const [staffAttendance, setStaffAttendance] = useState([])
 	const [openAddPage, setOpenAddPage] = useState(false)
 	const [openMembershipDialog, setOpenMembershipDialog] = useState(false)
+	const [checkinStatus, setCheckinStatus] = useState('checkin')
+	const fetchStaffAttendance = async () => {
+		const data = await StaffManagementService.STAFF_ATTENDANCE_LIST()
+		if (data) {
+			setStaffAttendance(data)
+			console.log(data)
+		}
+	}
+	useEffect(() => {
+		fetchStaffAttendance()
+	}, [])
 
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === 'asc'
@@ -160,18 +126,30 @@ const StaffAttendanceManagement = () => {
 		setPage(newPage)
 	}
 	const handleCheckboxChange = (id, field) => {
-		setAttendanceRows((prevRows) =>
+		setStaffAttendance((prevRows) =>
 			prevRows.map((row) => (row.id === id ? { ...row, [field]: !row[field] } : row))
 		)
 	}
 	const handleCheckinClick = (id) => {
-		setAttendanceRows((prevRows) =>
-			prevRows.map((row) => (row.id === id ? { ...row, checkinStatus: 'checkout' } : row))
+		setStaffAttendance((prevRows) =>
+			prevRows.map((row) => {
+				if (row.id === id) {
+					setCheckinStatus('checkout')
+					return { ...row, checkinStatus: 'checkout' }
+				}
+				return row
+			})
 		)
 	}
 	const handleCheckoutClick = (id) => {
-		setAttendanceRows((prevRows) =>
-			prevRows.map((row) => (row.id === id ? { ...row, checkinStatus: 'checkbox' } : row))
+		setStaffAttendance((prevRows) =>
+			prevRows.map((row) => {
+				if (row.id === id) {
+					setCheckinStatus('checkbox')
+					return { ...row, checkinStatus: 'checkbox' }
+				}
+				return row
+			})
 		)
 	}
 
@@ -180,25 +158,23 @@ const StaffAttendanceManagement = () => {
 		setPage(0)
 	}
 
-	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
+	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - staffAttendance.length) : 0
 
 	const visibleRows = React.useMemo(() => {
-		const filteredRows = attendanceRows.filter((row) => {
+		const filteredRows = staffAttendance.filter((row) => {
 			return searchName ? row.name.toLowerCase().includes(searchName.toLowerCase()) : true
 		})
 
 		return filteredRows
 			.sort(getComparator(order, orderBy))
 			.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-	}, [order, orderBy, page, rowsPerPage, searchName, attendanceRows])
+	}, [order, orderBy, page, rowsPerPage, searchName, staffAttendance])
 
 	return (
 		<Paper
 			sx={{
 				width: '100%',
-				padding: '1%',
 				bgcolor: '#f0f2f5',
-				zIndex: -1,
 			}}
 		>
 			<Stack marginBottom={1} spacing={1}>
@@ -232,10 +208,11 @@ const StaffAttendanceManagement = () => {
 			</Stack>
 			<Button
 				variant='contained'
-				sx={{ mb: 1, width: '300px' }}
+				sx={{ mb: 1, width: 'auto', ml: 1.5 }}
 				onClick={handleOpenMembershipDialog}
+				startIcon={<Add />}
 			>
-				Add Staff
+				Add New Attendance
 			</Button>
 			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
 				<Table stickyHeader sx={{ minWidth: '750px' }}>
@@ -250,10 +227,10 @@ const StaffAttendanceManagement = () => {
 							return (
 								<TableRow hover key={row.id}>
 									<TableCell align='center'>{row.id}</TableCell>
-									<TableCell>{row.name}</TableCell>
-									<TableCell>{row.checkin}</TableCell>
-									<TableCell>{row.checkout}</TableCell>
-									<TableCell align='right'>{row.workhours}</TableCell>
+									<TableCell>{row.employee.name}</TableCell>
+									<TableCell>{row.checkInTime}</TableCell>
+									<TableCell>{row.checkOutTime}</TableCell>
+									<TableCell align='right'>{row.workHours}</TableCell>
 									<TableCell>
 										<Stack direction={'row'} spacing={1}>
 											{row.isLate && <Chip variant='filled' color='error' label='Late Arrived' />}
@@ -263,83 +240,76 @@ const StaffAttendanceManagement = () => {
 										</Stack>
 									</TableCell>
 									<TableCell>
-										<Stack direction={'column'} spacing={1}>
-											{row.checkinStatus === 'checkin' && (
-												<Button
-													startIcon={<AccessAlarm />}
-													onClick={() => handleCheckinClick(row.id)}
-													variant='contained'
-													color='primary'
-												>
-													Check in
-												</Button>
-											)}
-											{row.checkinStatus === 'checkout' && (
-												<Button
-													startIcon={<AccessAlarm />}
-													onClick={() => handleCheckoutClick(row.id)}
-													variant='contained'
-												>
-													Check out
-												</Button>
-											)}
-
-											{row.checkinStatus === 'checkbox' && (
-												<FormControlLabel
-													control={
-														<Checkbox
-															checked={row.isLate}
-															onChange={() => handleCheckboxChange(row.id, 'isLate')}
-														/>
-													}
-													label='Late Arrived'
-												/>
-											)}
-
-											{row.checkinStatus === 'checkbox' && (
-												<FormControlLabel
-													control={
-														<Checkbox
-															checked={row.isEarlyDeparture}
-															onChange={() => handleCheckboxChange(row.id, 'isEarlyDeparture')}
-														/>
-													}
-													label='Early Departure'
-												/>
-											)}
-
-											<Button
-												variant='contained'
-												onClick={() => setOpenAddPage(true)}
-												startIcon={<Update />}
-												color='success'
-											>
-												Update
-											</Button>
-											{openAddPage && (
-												<UpdateStaffAttendance
-													open={openAddPage}
-													handleClose={() => setOpenAddPage(false)}
-												/>
-											)}
-
-											<CrudConfirmation
-												title='Delete Confirmation'
-												description='Are you sure you want to delete this?'
-												handleConfirm={() => alert('Deleted')}
-											>
-												{(handleOpen) => (
+										<CrudMenuOptions>
+											<Stack direction={'column'} spacing={1}>
+												{checkinStatus === 'checkin' && (
+													<MenuItem>
+														<React.Fragment>
+															<Button
+																startIcon={<AccessAlarm />}
+																onClick={() => handleCheckinClick(row.id)}
+															>
+																Check in
+															</Button>
+														</React.Fragment>
+													</MenuItem>
+												)}
+												{checkinStatus === 'checkout' && (
 													<Button
-														color='error'
-														startIcon={<Delete />}
-														variant='contained'
-														onClick={handleOpen}
+														startIcon={<AccessAlarm />}
+														onClick={() => handleCheckoutClick(row.id)}
 													>
-														Delete
+														Check out
 													</Button>
 												)}
-											</CrudConfirmation>
-										</Stack>
+
+												{checkinStatus === 'checkbox' && (
+													<FormControlLabel
+														control={
+															<Checkbox
+																checked={row.isLate}
+																onChange={() => handleCheckboxChange(row.id, 'isLate')}
+															/>
+														}
+														label='Late Arrived'
+													/>
+												)}
+
+												{checkinStatus === 'checkbox' && (
+													<FormControlLabel
+														control={
+															<Checkbox
+																checked={row.isEarlyDeparture}
+																onChange={() => handleCheckboxChange(row.id, 'isEarlyDeparture')}
+															/>
+														}
+														label='Early Departure'
+													/>
+												)}
+
+												<Button onClick={() => setOpenAddPage(true)} startIcon={<Update />}>
+													Update
+												</Button>
+												{openAddPage && (
+													<UpdateStaffAttendance
+														open={openAddPage}
+														handleClose={() => setOpenAddPage(false)}
+													/>
+												)}
+
+												<CrudConfirmation
+													title='Delete Confirmation'
+													description='Are you sure you want to delete this?'
+													handleConfirm={() => alert('Deleted')}
+												>
+													{(handleOpen) => (
+														<Button startIcon={<Delete />} onClick={handleOpen}>
+															Delete
+														</Button>
+													)}
+												</CrudConfirmation>
+											</Stack>
+										</CrudMenuOptions>
 									</TableCell>
 								</TableRow>
 							)
@@ -354,7 +324,7 @@ const StaffAttendanceManagement = () => {
 				<TablePagination
 					rowsPerPageOptions={[5, 10, 20]}
 					component={'div'}
-					count={rows.length}
+					count={staffAttendance.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onPageChange={handleChangePage}

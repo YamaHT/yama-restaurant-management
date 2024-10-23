@@ -34,7 +34,7 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 
 	const handleIncrease = () => {
 		if (quantity < 1000) {
-			setQuantity((prev) => prev + prev)
+			setQuantity((prev) => prev + 1)
 			setError('')
 		} else {
 			setError('Maximum quantity reached.')
@@ -42,9 +42,11 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 	}
 
 	const handleDecrease = () => {
-		if (quantity > 0) {
-			setQuantity((prev) => prev - prev)
+		if (quantity >= 0) {
+			setQuantity((prev) => prev - 1)
 			setError('')
+		} else {
+			setError('Quantity cannot be less than 0.')
 		}
 	}
 
@@ -58,13 +60,21 @@ const RestockProduct = ({ open, handleClose, currentQuantity, productName, onRes
 		}
 
 		const numericValue = parseInt(value, 10)
-		setQuantity(numericValue)
+
+		if (!isNaN(numericValue)) {
+			setQuantity(numericValue)
+			setError('')
+		} else {
+			setError('Quantity must be a positive integer.')
+		}
 	}
 
 	const handleConfirm = () => {
-		if (quantityFieldRef.current.validate()) {
+		if (quantity >= 0) {
 			onRestock(quantity)
 			handleClose()
+		} else {
+			setError('Quantity must be zero or a positive integer.')
 		}
 	}
 

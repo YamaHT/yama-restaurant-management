@@ -10,6 +10,7 @@
         Task AddRangeAsync(List<T> entities);
 
         void Remove(T entity);
+        void Restore(T entity);
 
         void Update(T entity);
         void UpdateRange(List<T> entities);

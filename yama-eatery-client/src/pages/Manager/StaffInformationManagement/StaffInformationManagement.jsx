@@ -173,9 +173,7 @@ const StaffInformationManagement = () => {
 		<Paper
 			sx={{
 				width: '100%',
-				padding: '1%',
 				bgcolor: '#f0f2f5',
-				zIndex: -1,
 			}}
 		>
 			<Stack marginBottom={1} spacing={2}>
@@ -210,7 +208,7 @@ const StaffInformationManagement = () => {
 				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
 					<React.Fragment>
 						<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
-							Add Staff
+							Add New Staff
 						</Button>
 						{openAddPage && (
 							<AddStaff open={openAddPage} handleClose={() => setOpenAddPage(false)} />

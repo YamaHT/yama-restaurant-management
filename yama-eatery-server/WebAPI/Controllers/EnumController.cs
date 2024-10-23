@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         [HttpGet("table-type")]
         public async Task<IActionResult> TableType()
         {
-            var types = Enum.GetValues(typeof(TypeEnum)).Cast<TypeEnum>().Select(t => t.ToString());
+            var types =  Enum.GetValues(typeof(TypeEnum)).Cast<TypeEnum>().Select(t => t.ToString());
 
             return Ok(types);
         }

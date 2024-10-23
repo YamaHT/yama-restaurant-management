@@ -1,32 +1,42 @@
-import { Close, FileUpload } from '@mui/icons-material'
+import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
+import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
+import { DescriptionGenerator } from '@/utilities/DescriptionGenerator'
+import { Add, Close } from '@mui/icons-material'
 import {
 	Button,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	FormControl,
+	FormControlLabel,
+	FormLabel,
+	Grid2,
 	IconButton,
-	Snackbar,
+	MenuItem,
+	Radio,
+	RadioGroup,
 	Stack,
 	TextField,
+	Typography,
 } from '@mui/material'
-import Skeleton from '@mui/material/Skeleton'
 import { useRef, useState } from 'react'
-
-export default function AddStaff({ open, handleClose, currentProduct, onUpdate }) {
+const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
-	const [imageBase64, setImageBase64] = useState([])
+	const fieldsRef = useRef({})
+	const [imagePresentations, setImagePresentations] = useState([])
+	const [imageFiles, setImageFiles] = useState([])
 	const [values, setValues] = useState({
-		employeeId: currentProduct?.employeeId || '',
-		email: currentProduct?.email || '',
-		password: currentProduct?.password || '',
-		name: currentProduct?.name || '',
-		birthday: currentProduct?.birthday || '',
-		phone: currentProduct?.phone || '',
-		gender: currentProduct?.gender || '',
-		images: currentProduct?.images || [],
+		images: [],
+		email: '',
+		password: '',
+		name: '',
+		birthday: '',
+		phone: '',
+		gender: '',
 	})
-	const [openSnackbar, setOpenSnackbar] = useState(false)
+
+	const [error, setError] = useState('')
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
@@ -37,157 +47,224 @@ export default function AddStaff({ open, handleClose, currentProduct, onUpdate }
 	}
 
 	const handleImageChange = (e) => {
-		const files = Array.from(e.target.files)
-		if (files.length + values.images.length > 1) {
-			alert('You can only upload a maximum of 1 images.')
+		const files = e.target.files
+		if (values.images.length + files.length > 1) {
+			setError('You can upload up to 1 images.')
 			return
+		} else {
+			setError('')
 		}
+		if (files.length) {
+			const fileReaders = Array.from(files).map((file) => {
+				const reader = new FileReader()
+				reader.readAsDataURL(file)
+				return new Promise((resolve) => {
+					reader.onload = () => resolve({ name: file.name, base64: reader.result })
+				})
+			})
 
-		files.forEach((file) => {
-			const reader = new FileReader()
-			reader.onload = () => {
-				setImageBase64((prev) => [...prev, reader.result])
+			Promise.all(fileReaders).then((images) => {
+				const newImages = images.map(({ name }) => name)
 				setValues((prev) => ({
 					...prev,
-					images: [...prev.images, file.name],
+					images: [...prev.images, ...newImages],
 				}))
-			}
-			reader.readAsDataURL(file)
+				setImageFiles((prev) => [...prev, ...Array.from(files)])
+				setImagePresentations((prev) => [...prev, ...images.map(({ base64 }) => base64)])
+			})
+		}
+	}
+
+	const removeImage = (index) => {
+		setValues((prev) => {
+			const newImages = [...prev.images]
+			newImages.splice(index, 1)
+			return { ...prev, images: newImages }
+		})
+		setImagePresentations((prev) => {
+			const newBase64 = [...prev]
+			newBase64.splice(index, 1)
+			return newBase64
 		})
 	}
 
-	const handleUpdateProduct = async () => {
-		const updatedProductData = {
-			...values,
-		}
+	const handleAdd = () => {
+		let isValid = true
+		Object.keys(fieldsRef.current).forEach((key) => {
+			if (!fieldsRef.current[key]?.validate()) {
+				isValid = false
+			}
+		})
 
-		onUpdate(updatedProductData)
-		setOpenSnackbar(true)
-		handleClose()
+		if (isValid) {
+			var formData = new FormData()
+			imageFiles.forEach((file) => {
+				formData.append(`ImageFiles`, file)
+			})
+			formData.append('name', values.name)
+			formData.append('email', values.email)
+			formData.append('password', values.password)
+			formData.append('birthday', values.birthday)
+			formData.append('phone', values.phone)
+			formData.append('gender', values.gender)
+			formData.append('positionId', parseInt(values.positionId))
+
+			handleAddProduct(formData)
+			handleClose()
+		}
 	}
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth>
-			<DialogTitle>Add Staff</DialogTitle>
+			<DialogTitle>Add New Staff</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					{imageBase64.length > 0 ? (
-						<Stack direction='row' spacing={1} flexWrap='wrap'>
-							{imageBase64.map((image, index) => (
-								<Stack key={index} spacing={1} alignItems={'center'}>
-									<img
-										src={image}
-										style={{
-											width: 200,
-											height: 200,
+					<Grid2 container spacing={2} justifyContent={'center'}>
+						{imagePresentations.length > 0
+							? imagePresentations.map((base64, index) => (
+									<Grid2
+										key={index}
+										size={4}
+										sx={{
+											position: 'relative',
+											height: 130,
 											borderRadius: '10px',
-											objectFit: 'fill',
-											cursor: 'pointer',
+											marginBottom: '8px',
 										}}
-										alt={`Uploaded ${index + 1}`}
-									/>
-								</Stack>
-							))}
-						</Stack>
-					) : (
-						<Skeleton animation={false} height={200} variant='rounded' />
-					)}
-
-					<TextField
-						disabled
-						label='Employee_ID'
-						name='employeeId'
+									>
+										<img
+											src={base64}
+											style={{
+												width: '100%',
+												height: '100%',
+												borderRadius: '10px',
+												objectFit: 'cover',
+											}}
+											alt={`Uploaded ${index}`}
+										/>
+										<IconButton
+											style={{ position: 'absolute', top: 0, right: 0 }}
+											onClick={() => removeImage(index)}
+										>
+											<Close />
+										</IconButton>
+									</Grid2>
+							  ))
+							: null}
+						{imagePresentations.length === 0 && (
+							<Grid2 size={4}>
+								<IconButton
+									sx={{
+										width: '100%',
+										height: 130,
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+										border: '1px dashed gray',
+										borderRadius: '10px',
+									}}
+									onClick={() => fileRef.current.click()}
+								>
+									<Add sx={{ fontSize: 50 }} />
+								</IconButton>
+							</Grid2>
+						)}
+					</Grid2>
+					{error && <Typography color='error'>{error}</Typography>}
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['image'] = el)}
+						label='Images'
 						variant='filled'
-						value={values.employeeId}
-						onChange={handleValueChange}
+						name='image'
+						value={values.images.join(', ')}
+						sx={{ display: 'none' }}
+						slotProps={{
+							inputLabel: {
+								style: { color: 'gray' },
+							},
+							input: {
+								disabled: true,
+								style: { backgroundColor: 'rgba(0, 0, 0, 0.06)' },
+								endAdornment: (
+									<>
+										<input
+											accept='image/*'
+											type='file'
+											multiple
+											hidden
+											ref={fileRef}
+											onChange={handleImageChange}
+										/>
+									</>
+								),
+							},
+						}}
 					/>
-					<TextField
-						label='Email'
-						name='email'
-						variant='filled'
-						value={values.email}
-						onChange={handleValueChange}
-					/>
-					<TextField
-						label='Password'
-						name='password'
-						variant='filled'
-						value={values.password}
-						onChange={handleValueChange}
-					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['name'] = el)}
 						label='Name'
 						name='name'
 						variant='filled'
 						value={values.name}
 						onChange={handleValueChange}
 					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['email'] = el)}
+						label='Email'
+						name='email'
+						variant='filled'
+						value={values.email}
+						onChange={handleValueChange}
+					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['birthday'] = el)}
 						label='Birthday'
 						name='birthday'
 						variant='filled'
 						value={values.birthday}
 						onChange={handleValueChange}
 					/>
-					<TextField
+
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['phone'] = el)}
+						fullWidth
 						label='Phone'
 						name='phone'
 						variant='filled'
 						value={values.phone}
 						onChange={handleValueChange}
 					/>
-					<TextField
-						label='Gender'
-						name='gender'
-						variant='filled'
-						value={values.gender}
-						onChange={handleValueChange}
-					/>
-
-					<TextField
-						label='Images'
-						variant='filled'
-						value={values.images.join(', ')}
-						InputProps={{
-							endAdornment: (
-								<>
-									{values.images.length > 0 && (
-										<IconButton onClick={() => setValues((prev) => ({ ...prev, images: [] }))}>
-											<Close />
-										</IconButton>
-									)}
-									<input
-										accept='image/*'
-										type='file'
-										hidden
-										ref={fileRef}
-										multiple
-										onChange={handleImageChange}
-									/>
-									<IconButton onClick={() => fileRef.current.click()}>
-										<FileUpload />
-									</IconButton>
-								</>
-							),
-						}}
-					/>
+					<FormControl>
+						<FormLabel id='gender'>Gender</FormLabel>
+						<RadioGroup
+							row
+							aria-labelledby='gender'
+							name='gender'
+							value={values.gender}
+							onChange={handleValueChange}
+						>
+							<FormControlLabel control={<Radio value={'Female'} />} label='Female' />
+							<FormControlLabel control={<Radio value={'Male'} />} label='Male' />
+						</RadioGroup>
+					</FormControl>
 				</Stack>
 			</DialogContent>
-			<DialogActions sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+			<DialogActions
+				sx={{
+					display: 'flex',
+					justifyContent: 'center',
+					gap: 2,
+				}}
+			>
 				<Button onClick={handleClose} variant='outlined' color='inherit'>
 					Close
 				</Button>
-				<Button onClick={handleUpdateProduct} size='large' variant='contained' color='primary'>
+				<Button onClick={handleAdd} size='large' variant='contained' color='primary'>
 					Add
 				</Button>
 			</DialogActions>
-			<Snackbar
-				enqueueSnackbar
-				open={openSnackbar}
-				autoHideDuration={3000}
-				onClose={() => setOpenSnackbar(false)}
-				message='Staff add successfully'
-			/>
 		</Dialog>
 	)
 }
+
+export default AddProduct
