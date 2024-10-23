@@ -20,17 +20,18 @@ import {
 	Typography,
 } from '@mui/material'
 
-import { Search } from '@mui/icons-material'
+import { Search, TrendingUpTwoTone } from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
 import ViewMembershipRequest from './ViewMebershipRequest'
 import { UserManagementService } from '@/services/UserManagementService'
+import { AssetImages } from '@/utilities/AssetImages'
 
 const headCells = [
 	{
 		name: 'Id',
 		orderData: 'id',
 		numeric: true,
-		widthPercent: 10,
+		widthPercent: 5,
 	},
 	{
 		name: 'Name',
@@ -47,7 +48,7 @@ const headCells = [
 	{
 		name: 'Phone',
 		orderData: 'phone',
-		numeric: false,
+		numeric: true,
 		widthPercent: 20,
 	},
 	{
@@ -66,7 +67,7 @@ const headCells = [
 		name: 'Status',
 		orderData: 'isMembership',
 		numeric: false,
-		widthPercent: 5,
+		widthPercent: 10,
 	},
 ]
 
@@ -118,7 +119,7 @@ export default function UserManagement() {
 		setOpenMembershipDialog(false)
 	}
 
-	const handleRequestSort = (event, property) => {
+	const handleRequestSort = (property) => {
 		const isAsc = orderBy === property && order === 'asc'
 		setOrder(isAsc ? 'desc' : 'asc')
 		setOrderBy(property)
@@ -158,7 +159,7 @@ export default function UserManagement() {
 						size='small'
 						options={[]}
 						value={searchPhone}
-						onChange={(event, newValue) => setSearchPhone(newValue)}
+						onChange={(newValue) => setSearchPhone(newValue)}
 						freeSolo
 						sx={{ width: '50%' }}
 						renderInput={(params) => (
@@ -198,12 +199,12 @@ export default function UserManagement() {
 									<TableCell align='right'>{row.id}</TableCell>
 									<TableCell>
 										<Stack direction='row' spacing={2} alignItems='center'>
-											<Avatar alt={row.name} src={row.image} />
+											<Avatar alt={row.name} src={AssetImages.UserImage(row.image)} />
 											<Typography>{row.name}</Typography>
 										</Stack>
 									</TableCell>
 									<TableCell>{row.email}</TableCell>
-									<TableCell>{row.phone}</TableCell>
+									<TableCell align='right'>{row.phone}</TableCell>
 									<TableCell>{row.gender}</TableCell>
 									<TableCell>{row.birthday}</TableCell>
 									<TableCell>

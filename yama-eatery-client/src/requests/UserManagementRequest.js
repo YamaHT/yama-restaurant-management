@@ -1,6 +1,6 @@
 export const UserManagementRequest = {
+	GET_ALL_USER: '/usermanagement',
 	VIEW_MEMBERSHIP_REGISTER: '/usermanagement/view-membership-register',
-	APPROVE_MEMBERSHIP: (id) => `/usermanagement/approve-membership/${id}`,
-	DENY_MEMBERSHIP: (id) => `/usermanagement/deny-membership/${id}`,
-	VIEW_USER_LIST: '/usermanagement/view-user-list',
+	APPROVE_MEMBERSHIP: `/usermanagement/membership/approve`,
+	DENY_MEMBERSHIP: `/usermanagement/membership/deny`,
 }

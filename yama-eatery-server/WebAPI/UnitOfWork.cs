@@ -15,6 +15,7 @@ namespace WebAPI
         IFeedbackProductRepository feedbackProductRepository,
         IMembershipRepository membershipRepository,
         IProductRepository productRepository,
+        IPositionRepository positionRepository,
         ISalaryRepository salaryRepository,
         ISubCategoryRepository subCategoryRepository,
         ITableRepository tableRepository,
@@ -25,6 +26,7 @@ namespace WebAPI
         public IAttendanceRepository AttendanceRepository => attendanceRepository;
         public IUserRepository UserRepository => userRepository;
         public IProductRepository ProductRepository => productRepository;
+        public IPositionRepository PositionRepository => positionRepository;
         public ITableRepository TableRepository => tableRepository;
         public IBookingDetailRepository BookingDetailRepository => bookingDetailRepository;
         public IBookingRepository BookingRepository => bookingRepository;

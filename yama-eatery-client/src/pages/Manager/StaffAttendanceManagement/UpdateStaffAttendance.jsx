@@ -1,13 +1,21 @@
+import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import {
 	Button,
+	Checkbox,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	FormControlLabel,
 	Stack,
-	TextField,
 } from '@mui/material'
-import { useState } from 'react'
+import { enqueueSnackbar } from 'notistack'
+import { useRef, useState } from 'react'
+
+const formatTime = (timeString) => {
+	const [hours, minutes] = timeString.split(':')
+	return `${hours}:${minutes}`
+}
 
 export default function UpdateStaffAttendance({
 	open,
@@ -16,28 +24,45 @@ export default function UpdateStaffAttendance({
 	onUpdate,
 }) {
 	const [values, setValues] = useState({
-		employeeId: currentStaffAttendance?.employeeId || '',
-		name: currentStaffAttendance?.name || '',
-		checkin: currentStaffAttendance?.checkin || '',
-		checkout: currentStaffAttendance?.checkout || '',
-		lateOrEarly: currentStaffAttendance?.lateOrEarly || '',
+		id: currentStaffAttendance?.id || 0,
+		checkInTime: formatTime(currentStaffAttendance?.checkInTime) || '',
+		checkOutTime: formatTime(currentStaffAttendance?.checkOutTime) || '',
+		lateArrival: currentStaffAttendance?.lateArrival || false,
+		earlyLeave: currentStaffAttendance?.earlyLeave || false,
 	})
 
+	const fieldsRef = useRef({})
+
 	const handleValueChange = (e) => {
-		const { name, value } = e.target
+		const { name, type, checked, value } = e.target
 		setValues((prev) => ({
 			...prev,
-			[name]: value,
+			[name]: type === 'checkbox' ? checked : value,
 		}))
 	}
 
 	const handleUpdateStaffAttendance = async () => {
-		const addStaffAttendanceData = {
-			...values,
+		let isValid = true
+
+		Object.keys(fieldsRef.current).forEach((key) => {
+			if (!fieldsRef.current[key]?.validate()) {
+				isValid = false
+			}
+		})
+
+		const checkInTime = new Date(`1970-01-01T${values.checkInTime}:00`)
+		const checkOutTime = new Date(`1970-01-01T${values.checkOutTime}:00`)
+
+		if (checkOutTime < checkInTime) {
+			isValid = false
+			enqueueSnackbar("Check Out Time can't be earlier than Check In Time", { variant: 'error' })
 		}
 
-		onUpdate(addStaffAttendanceData)
-		handleClose()
+		if (isValid) {
+			console.log(values)
+			onUpdate(values)
+			handleClose()
+		}
 	}
 
 	return (
@@ -45,33 +70,49 @@ export default function UpdateStaffAttendance({
 			<DialogTitle>Update Staff Attendance</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
-					<TextField
-						label='Name'
-						name='name'
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['checkIn'] = el)}
+						label='Check In Time'
+						name='checkInTime'
+						type='time'
 						variant='filled'
-						value={values.name}
+						value={values.checkInTime}
 						onChange={handleValueChange}
+						slotProps={{
+							inputLabel: { shrink: true },
+						}}
 					/>
-					<TextField
-						label='Checkin'
-						name='checkin'
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['checkOut'] = el)}
+						label='Check Out Time'
+						name='checkOutTime'
+						type='time'
 						variant='filled'
-						value={values.checkin}
+						value={values.checkOutTime}
 						onChange={handleValueChange}
+						slotProps={{
+							inputLabel: { shrink: true },
+						}}
 					/>
-					<TextField
-						label='Checkout'
-						name='checkout'
-						variant='filled'
-						value={values.checkout}
-						onChange={handleValueChange}
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={values.lateArrival}
+								name={'lateArrival'}
+								onChange={handleValueChange}
+							/>
+						}
+						label='Late Arrival'
 					/>
-					<TextField
-						label='LateOrEarly'
-						name='lateOrEarly'
-						variant='filled'
-						value={values.lateOrEarly}
-						onChange={handleValueChange}
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={values.earlyLeave}
+								name={'earlyLeave'}
+								onChange={handleValueChange}
+							/>
+						}
+						label='Early Departure'
 					/>
 				</Stack>
 			</DialogContent>

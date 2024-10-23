@@ -1,7 +1,12 @@
 import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
+import { StaffAttendanceManagementService } from '@/services/StaffAttendanceManagementService'
+import { StaffInformationManagementService } from '@/services/StaffInformationManagementService'
 import {
 	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
 	Paper,
 	Stack,
 	Table,
@@ -11,9 +16,15 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const headCells = [
+	{
+		name: 'ID',
+		orderData: 'id',
+		numeric: true,
+		widthPercent: 5,
+	},
 	{
 		name: 'Name',
 		orderData: 'name',
@@ -24,35 +35,6 @@ const headCells = [
 	{
 		widthPercent: 10,
 	},
-]
-
-function createData(name) {
-	return {
-		name,
-	}
-}
-
-const rows = [
-	createData('User 1'),
-	createData('User 2'),
-	createData('User 3'),
-	createData('User 4'),
-	createData('User 5'),
-	createData('User 6'),
-	createData('User 7'),
-	createData('User 8'),
-	createData('User 9'),
-	createData('User 10'),
-	createData('User 11'),
-	createData('User 12'),
-	createData('User 13'),
-	createData('User 14'),
-	createData('User 15'),
-	createData('User 16'),
-	createData('User 17'),
-	createData('User 18'),
-	createData('User 19'),
-	createData('User 20'),
 ]
 
 function descendingComparator(a, b, orderBy) {
@@ -71,12 +53,24 @@ function getComparator(order, orderBy) {
 		: (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-export default function ViewMembershipRequest() {
+export default function AddStaffAttendance({ open, handleAddStaffAttendance, handleClose }) {
 	const [order, setOrder] = useState('asc')
 	const [orderBy, setOrderBy] = useState('id')
 	const [page, setPage] = useState(0)
-	const [searchName, setSearchName] = useState(null)
+	const [searchName, setSearchName] = useState('')
 	const [rowsPerPage, setRowsPerPage] = useState(10)
+	const [rows, setRows] = useState([])
+
+	const fetchStaffInformation = async () => {
+		const data = await StaffAttendanceManagementService.GET_NOT_TODAY_ATTENDANCE()
+		if (data) {
+			setRows(data)
+		}
+	}
+
+	useEffect(() => {
+		fetchStaffInformation()
+	}, [open])
 
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === 'asc'
@@ -93,6 +87,11 @@ export default function ViewMembershipRequest() {
 		setPage(0)
 	}
 
+	const handleAdd = (staffId) => {
+		handleAddStaffAttendance(staffId)
+		handleClose()
+	}
+
 	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
 	const visibleRows = React.useMemo(
@@ -101,65 +100,70 @@ export default function ViewMembershipRequest() {
 				.filter((row) => !searchName || row.name.toLowerCase().includes(searchName.toLowerCase()))
 				.sort(getComparator(order, orderBy))
 				.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-		[order, orderBy, page, rowsPerPage, searchName]
+		[order, orderBy, page, rowsPerPage, searchName, rows]
 	)
 
 	return (
-		<>
-			<Stack marginBottom={1} spacing={2}>
-				<Typography variant='h5' fontWeight={'bold'}>
-					List Staff
-				</Typography>
+		<Dialog open={open}>
+			<DialogContent>
+				<Stack marginBottom={1} spacing={2}>
+					<Typography variant='h5' fontWeight={'bold'}>
+						List Staff
+					</Typography>
 
-				<CrudSearchBar
-					listItem={[]}
-					value={searchName}
-					handleChange={(e) => setSearchName(e.target.value)}
-					placeholder={'Search by Name...'}
-				/>
-			</Stack>
-
-			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
-				<Table stickyHeader sx={{ minWidth: '200px' }}>
-					<CrudTableHead
-						order={order}
-						orderBy={orderBy}
-						headCells={headCells}
-						onRequestSort={handleRequestSort}
+					<CrudSearchBar
+						listItem={rows.map((row) => row.name)}
+						value={searchName}
+						handleChange={(e) => setSearchName(e.target.value)}
+						placeholder={'Search by Name...'}
 					/>
-					<TableBody>
-						{visibleRows.map((row, index) => {
-							return (
-								<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
-									<TableCell>{row.name}</TableCell>
+				</Stack>
 
+				<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
+					<Table stickyHeader sx={{ minWidth: '200px' }}>
+						<CrudTableHead
+							order={order}
+							orderBy={orderBy}
+							headCells={headCells}
+							onRequestSort={handleRequestSort}
+						/>
+						<TableBody>
+							{visibleRows.map((row) => (
+								<TableRow key={row.id}>
+									{' '}
+									<TableCell align='right'>{row.id}</TableCell>
+									<TableCell>{row.name}</TableCell>
 									<TableCell>
 										<Stack direction='row' spacing={1}>
-											<Button variant='contained' color='primary' onClick={null}>
+											<Button variant='contained' color='primary' onClick={() => handleAdd(row.id)}>
 												Add
 											</Button>
 										</Stack>
 									</TableCell>
 								</TableRow>
-							)
-						})}
-						{emptyRows > 0 && (
-							<TableRow>
-								<TableCell colSpan={6} />
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-				<TablePagination
-					rowsPerPageOptions={[5, 10, 20]}
-					component={'div'}
-					count={rows.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onPageChange={handleChangePage}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
-			</Paper>
-		</>
+							))}
+							{emptyRows > 0 && (
+								<TableRow>
+									<TableCell colSpan={6} />
+								</TableRow>
+							)}
+						</TableBody>
+					</Table>
+					<TablePagination
+						rowsPerPageOptions={[5, 10, 20]}
+						component={'div'}
+						count={rows.length}
+						rowsPerPage={rowsPerPage}
+						page={page}
+						onPageChange={handleChangePage}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
+				</Paper>
+			</DialogContent>
+
+			<DialogActions>
+				<Button onClick={() => handleClose()}>Cancel</Button>
+			</DialogActions>
+		</Dialog>
 	)
 }
