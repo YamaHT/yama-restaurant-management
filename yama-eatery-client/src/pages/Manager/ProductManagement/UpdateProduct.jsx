@@ -54,6 +54,11 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
+
+		if (name === 'price' && !/^\d*\.?\d*$/.test(value)) {
+			return
+		}
+
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
@@ -123,7 +128,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 					description: descriptionGenerated.trim(),
 				}))
 			} else {
-				enqueueSnackbar('Ten qua vo nghia', { variant: 'warning' })
+				enqueueSnackbar('Cant generate description', { variant: 'warning' })
 			}
 		} catch (error) {
 			setValues((prev) => ({ ...prev, description: '' }))
@@ -157,6 +162,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 			formData.append('subCategoryId', parseInt(values.subCategoryId))
 
 			handleUpdateProduct(formData)
+			enqueueSnackbar('Update Product Sucessfully', { variant: 'success' })
 			handleClose()
 		}
 	}

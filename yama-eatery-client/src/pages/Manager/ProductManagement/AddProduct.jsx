@@ -15,6 +15,7 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
 const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
@@ -33,9 +34,12 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
 	const [priceError, setPriceError] = useState('')
-	
+
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
+		if (name === 'price' && !/^\d*\.?\d*$/.test(value)) {
+			return;
+		}
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
@@ -138,6 +142,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 			formData.append('subCategoryId', parseInt(values.subCategoryId))
 
 			handleAddProduct(formData)
+			enqueueSnackbar('Add Product Sucessfully', { variant: 'success' })
 			handleClose()
 		}
 	}
