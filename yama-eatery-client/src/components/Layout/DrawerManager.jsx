@@ -39,6 +39,7 @@ const navigations = [
 			{
 				icon: <Leaderboard />,
 				label: 'Statistics',
+				pageKey: 'Statistics',
 				page: <Statistics />,
 			},
 		],
@@ -49,16 +50,19 @@ const navigations = [
 			{
 				icon: <Category />,
 				label: 'Product',
+				pageKey: 'Product',
 				page: <ProductManagement />,
 			},
 			{
 				icon: <TableRestaurant />,
 				label: 'Table',
+				pageKey: 'Table',
 				page: <TableManagement />,
 			},
 			{
 				icon: <LocalOffer />,
 				label: 'Voucher',
+				pageKey: 'Voucher',
 				page: <VoucherManagement />,
 			},
 		],
@@ -69,16 +73,19 @@ const navigations = [
 			{
 				icon: <AccessAlarm />,
 				label: 'Attendance',
+				pageKey: 'Attendance',
 				page: <StaffAttendanceManagement />,
 			},
 			{
 				icon: <PermContactCalendar />,
 				label: 'Information',
+				pageKey: 'Information',
 				page: <StaffInformationManagement />,
 			},
 			{
 				icon: <Paid />,
 				label: 'Salary',
+				pageKey: 'Salary',
 				page: <StaffSalaryManagement />,
 			},
 		],
@@ -89,18 +96,20 @@ const navigations = [
 			{
 				icon: <Person />,
 				label: 'Info & Membership',
+				pageKey: 'InfoMembership',
 				page: <UserManagement />,
 			},
 			{
 				icon: <HelpCenter />,
 				label: 'Contact',
+				pageKey: 'Contact',
 				page: <ContactManagement />,
 			},
 		],
 	},
 ]
 
-const DrawerManager = ({ openDrawer, selectedPage, handleSelectPage }) => {
+const DrawerManager = ({ openDrawer, selectedPageKey, handleSelectPage }) => {
 	return (
 		<Drawer
 			variant='persistent'
@@ -127,9 +136,10 @@ const DrawerManager = ({ openDrawer, selectedPage, handleSelectPage }) => {
 				>
 					{nav.items.map((item) => (
 						<ListItemButton
-							selected={selectedPage.type === item.page.type}
+							key={item.pageKey}
+							selected={selectedPageKey === item.pageKey}
 							defaultChecked={<Statistics />}
-							onClick={() => handleSelectPage(item.page)}
+							onClick={() => handleSelectPage(item)}
 							sx={{
 								'&:hover': {
 									bgcolor: '#9cf4',
@@ -149,7 +159,7 @@ const DrawerManager = ({ openDrawer, selectedPage, handleSelectPage }) => {
 							<ListItemIcon
 								sx={{
 									minWidth: 40,
-									color: item.page === selectedPage ? 'primary.main' : 'inherit',
+									color: selectedPageKey === item.pageKey ? 'primary.main' : 'inherit',
 								}}
 							>
 								{item.icon}
