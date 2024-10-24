@@ -42,7 +42,7 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 	const handleImageChange = (e) => {
 		const files = e.target.files
 		if (values.images.length + files.length > 5) {
-			setImageError('You can only upload up to 5 images.')
+			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
 		} else {
 			setImageError('')
@@ -97,7 +97,7 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 		}
 
 		if (values.images.length === 0) {
-			setImageError('You must upload at least 1 image.')
+			enqueueSnackbar(`Images are required`, { variant: 'error' })
 			isValid = false
 		}
 
