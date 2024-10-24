@@ -11,7 +11,7 @@ import ProductDetail from '@/pages/Guest/ProductDetail/ProductDetail'
 import ProductList from '@/pages/Guest/ProductList/ProductList'
 import TableDetail from '@/pages/Guest/TableDetail/TableDetail'
 import TableList from '@/pages/Guest/TableList/TableList'
-import DashboardManger from '@/pages/Manager/DashboardManger'
+import DashboardManager from '@/pages/Manager/DashboardManager'
 
 const publicRoutes = [
 	{ path: '/', component: Home },
@@ -29,7 +29,7 @@ const publicRoutes = [
 	{ path: '/auth/login', component: Login, layout: null },
 	{ path: '/auth/register', component: Register, layout: null },
 
-	{ path: '/manager', component: DashboardManger, layout: null },
+	{ path: '/manager', component: DashboardManager, layout: null },
 ]
 
 export { publicRoutes }
