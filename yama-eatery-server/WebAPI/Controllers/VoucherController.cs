@@ -15,22 +15,28 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var vouchers = await _unitOfWork.VoucherRepository.GetAllAsync();
-            var validVouchers = vouchers.Where(v => v.Quantity > 0 && v.ExpiredDate > DateOnly.FromDateTime(DateTime.Now)).ToList();
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers"]);
+            var userVoucher = user.UserVouchers.Select(x => x.Voucher).ToList();
 
-            return Ok(validVouchers);
+            var vouchers = await _unitOfWork.VoucherRepository.GetAllValidVoucherAsync();
+            var voucherRemain = vouchers.Except(userVoucher).ToList();
+            return Ok(voucherRemain);
         }
 
         [HttpPost("receive")]
         public async Task<IActionResult> ReceiveVoucher([FromBody] int voucherId)
         {
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers", "UserVouchers.Voucher"]);
 
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext);
             var voucher = await _unitOfWork.VoucherRepository.GetByIdAsync(voucherId);
-
             if (voucher.Quantity <= 0)
             {
                 throw new DataNotFoundException("Voucher is out of stock");
+            }
+
+            if (user.UserVouchers.Select(x => x.Voucher).Contains(voucher))
+            {
+                throw new DataConflictException("This voucher has been received");
             }
 
             var userVoucher = new UserVoucher
