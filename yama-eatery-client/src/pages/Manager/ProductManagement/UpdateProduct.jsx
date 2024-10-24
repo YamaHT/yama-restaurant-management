@@ -75,8 +75,8 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 
 	const handleImageChange = (e) => {
 		const files = e.target.files
-		if (values.image.length + files.length > 5) {
-			setError('You can upload up to 5 images.')
+		if (values.image.length + imageFiles.length + files.length > 5) {
+			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
 		} else {
 			setError('')
@@ -143,6 +143,12 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 				isValid = false
 			}
 		})
+
+		var imageLength = values.image.length + imageFiles.length
+		if (imageLength <= 0) {
+			isValid = false
+			enqueueSnackbar(`Images are required`, { variant: 'error' })
+		}
 
 		if (isValid) {
 			var formData = new FormData()

@@ -13,7 +13,7 @@ import {
 	IconButton,
 	MenuItem,
 	Stack,
-	Typography
+	Typography,
 } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 
@@ -56,8 +56,8 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 
 	const handleImageChange = (e) => {
 		const files = e.target.files
-		if (values.image.length + files.length > 5) {
-			setError('You can upload up to 5 images.')
+		if (values.image.length + imageFiles.length + files.length > 5) {
+			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
 		} else {
 			setError('')
@@ -105,6 +105,13 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 			}
 		})
 
+		var imageLength = values.image.length + imageFiles.length
+		console.log(imageLength)
+		if (imageLength <= 0 || imageLength > 5) {
+			isValid = false
+			enqueueSnackbar(`Images are required`, { variant: 'error' })
+		}
+
 		if (isValid) {
 			var formData = new FormData()
 			formData.append('tableId', values.id)
@@ -146,7 +153,7 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 				</>
 			),
 		},
-	}	
+	}
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth>
