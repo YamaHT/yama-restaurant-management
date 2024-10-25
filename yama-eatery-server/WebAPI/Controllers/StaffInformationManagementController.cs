@@ -15,7 +15,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var employee = await _unitOfWork.EmployeeRepository.GetAllStaffs();
+            var employee = await _unitOfWork.EmployeeRepository.GetAllStaffsAsync();
             return Ok(employee);
         }
 
@@ -52,7 +52,7 @@ namespace WebAPI.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> UpdateStaff([FromForm] UpdateStaffInformationDTO updateStaffDTO)
         {
-            var employee = await _unitOfWork.EmployeeRepository.GetByIdAsync(updateStaffDTO.EmployeeId);
+            var employee = await _unitOfWork.EmployeeRepository.GetByIdAsync(updateStaffDTO.EmployeeId, ["Position"]);
             if (employee == null)
             {
                 throw new DataNotFoundException("Employee not found");

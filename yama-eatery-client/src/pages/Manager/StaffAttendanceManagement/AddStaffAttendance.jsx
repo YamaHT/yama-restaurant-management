@@ -114,7 +114,13 @@ export default function AddStaffAttendance({ open, handleAddStaffAttendance, han
 					<CrudSearchBar
 						listItem={rows.map((row) => row.name)}
 						value={searchName}
-						handleChange={(e) => setSearchName(e.target.value)}
+						handleChange={(event, newValue) => {
+							if (typeof newValue === 'string') {
+								setSearchName(newValue)
+							} else if (event && event.target) {
+								setSearchName(event.target.value)
+							}
+						}}
 						placeholder={'Search by Name...'}
 					/>
 				</Stack>

@@ -25,11 +25,10 @@ export const ApiRequest = {
 	TableRequest,
 	VoucherRequest,
 	ProductManagementRequest,
-	VoucherManagementRequest
+	VoucherManagementRequest,
 	UserManagementRequest,
 	StaffAttendanceManagementRequest,
 	StaffSalaryManagementRequest,
 	StaffInformationManagementRequest,
 	TableManagementRequest,
-
 }

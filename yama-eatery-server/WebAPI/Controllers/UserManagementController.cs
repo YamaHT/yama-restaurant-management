@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
             var user = await _unitOfWork.UserRepository.GetAllAsync();
             return Ok(user);
         }
-
+            
         [HttpGet("view-membership-register")]
         public async Task<IActionResult> ViewMembershipRegister()
         {

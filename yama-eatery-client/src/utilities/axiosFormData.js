@@ -2,6 +2,7 @@ import axios from 'axios'
 import { BASE_URL } from './ApiRequest'
 import secureLocalStorage from 'react-secure-storage'
 import { enqueueSnackbar } from 'notistack'
+import { AuthService } from '@/services/AuthService'
 
 const axiosFormData = axios.create({
 	baseURL: BASE_URL,

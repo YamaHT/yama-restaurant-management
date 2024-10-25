@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { UserService } from '@/services/UserService'
 import {
 	Box,
 	Button,
@@ -10,7 +10,7 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material'
-import { UserService } from '@/services/UserService'
+import { useEffect, useState } from 'react'
 
 const Membership = () => {
 	const [membership, setMembership] = useState({
@@ -236,8 +236,7 @@ const Membership = () => {
 				>
 					Membership Register
 				</Button>
-			) : membership.membershipStatus === 'Active' ||
-			  membership.membershipStatus === 'Requesting' ? (
+			) : membership.membershipStatus === 'Active' ? (
 				<Button
 					fullWidth
 					variant='contained'
@@ -249,6 +248,18 @@ const Membership = () => {
 					onClick={handleCancelMembership}
 				>
 					Cancel Membership Register
+				</Button>
+			) : membership.membershipStatus === 'Requesting' ? (
+				<Button
+					disabled
+					fullWidth
+					variant='contained'
+					style={{
+						textTransform: 'capitalize',
+						marginTop: '20px',
+					}}
+				>
+					Membership is requesting
 				</Button>
 			) : null}
 		</Paper>

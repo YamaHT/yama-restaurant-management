@@ -119,5 +119,20 @@ namespace WebAPI.Controllers
 
             return RedirectToAction("GetAllTodayAttendances");
         }
+
+        [HttpPost("delete")]
+        public async Task<IActionResult> DeleteStaffAttendance([FromBody] int employeeId)
+        {
+            var employee = await _unitOfWork.AttendanceRepository.GetByIdAsync(employeeId);
+            if (employee == null)
+            {
+                throw new DataNotFoundException("Employee not found");
+            }
+
+            _unitOfWork.AttendanceRepository.Remove(employee);
+            await _unitOfWork.SaveChangeAsync();
+
+            return RedirectToAction("GetAllTodayAttendances");
+        }
     }
 }

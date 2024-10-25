@@ -1,17 +1,12 @@
 import CrudConfirmation from '@/components/Crud Components/CrudConfirmation'
 import CrudMenuOptions from '@/components/Crud Components/CrudMenuOptions'
+import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
-import { AccessAlarm, Add, Delete, Search, Update } from '@mui/icons-material'
+import { StaffAttendanceManagementService } from '@/services/StaffAttendanceManagementService'
+import { AccessAlarm, Add, Delete, Update } from '@mui/icons-material'
 import {
-	Autocomplete,
 	Button,
-	Checkbox,
 	Chip,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	FormControlLabel,
-	InputAdornment,
 	MenuItem,
 	Paper,
 	Stack,
@@ -20,15 +15,12 @@ import {
 	TableCell,
 	TablePagination,
 	TableRow,
-	TextField,
 	Typography,
 } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 import AddStaffAttendance from './AddStaffAttendance'
 import UpdateStaffAttendance from './UpdateStaffAttendance'
-import { StaffInformationManagementService } from '@/services/StaffInformationManagementService'
-import { StaffAttendanceManagementService } from '@/services/StaffAttendanceManagementService'
-import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
 
 const headCells = [
 	{
@@ -155,6 +147,14 @@ const StaffAttendanceManagement = () => {
 			setStaffAttendance(data)
 		}
 	}
+	const handleDeleteStaffAttendance = async (employeeId) => {
+		const data = await StaffAttendanceManagementService.DELETE_STAFF_ATTENDANCE(employeeId)
+		if (data) {
+			console.log(data)
+			setStaffAttendance(data)
+			enqueueSnackbar('Delete Staff Successfully', { variant: 'error', autoHideDuration: 1000 })
+		}
+	}
 
 	const handleChangeRowsPerPage = (e) => {
 		setRowsPerPage(parseInt(e.target.value, 10))
@@ -276,7 +276,10 @@ const StaffAttendanceManagement = () => {
 													handleConfirm={() => alert('Deleted')}
 												>
 													{(handleOpen) => (
-														<Button startIcon={<Delete />} onClick={handleOpen}>
+														<Button
+															startIcon={<Delete />}
+															onClick={() => handleDeleteStaffAttendance(row.id)}
+														>
 															Delete
 														</Button>
 													)}
