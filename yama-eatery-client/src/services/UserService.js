@@ -23,7 +23,6 @@ export const UserService = {
 			.post(ApiRequest.UserRequest.REGISTER_MEMBERSHIP)
 			.then((response) => response.data)
 	},
-
 	CANCEL_MEMBERSHIP: async () => {
 		return await axiosFormBody
 			.post(ApiRequest.UserRequest.CANCEL_MEMBERSHIP)

@@ -32,7 +32,7 @@ namespace WebAPI.Repositories
         {
             return await _dbContext.Employee
                 .Include(x => x.Position)
-                .Where(x => !x.IsDeleted && x.Position.Name == PositionEnum.Staff.ToString()).ToListAsync();
+                .Where(x => x.Position.Name == PositionEnum.Staff.ToString()).ToListAsync();
         }
     }
 }

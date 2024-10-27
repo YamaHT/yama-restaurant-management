@@ -35,7 +35,7 @@ const actionSX = {
 	transform: 'none',
 }
 
-const Statistics = () => {
+const StatisticsManager = () => {
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
 			{/* row 1 */}
@@ -233,4 +233,4 @@ const Statistics = () => {
 	)
 }
 
-export default Statistics
+export default StatisticsManager

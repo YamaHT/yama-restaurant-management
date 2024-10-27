@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace WebAPI.Models
 {
-    public class Employee : TrackableEntity
+    public class Employee : BaseEntity
     {
         [Required(ErrorMessage = "Email is required")]
         [MaxLength(50, ErrorMessage = "Email can't exceed 50 characters")]

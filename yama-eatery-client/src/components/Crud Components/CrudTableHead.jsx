@@ -35,7 +35,7 @@ const CrudTableHead = ({ order, orderBy, onRequestSort, headCells }) => {
 						width={headCell.widthPercent + '%'}
 						sx={{ textTransform: 'capitalize' }}
 					>
-						{headCell.name ? (
+						{headCell.name && headCell.orderData ? (
 							<TableSortLabel
 								active={orderBy === headCell.orderData}
 								direction={orderBy === headCell.orderData ? order : 'asc'}

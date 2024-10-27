@@ -1,5 +1,5 @@
 import ContactManagement from '@/pages/Manager/ContactManagement/ContactManagement'
-import Statistics from '@/pages/Manager/Statistics/Statistics'
+import StatisticsManager from '@/pages/Manager/StatisticsManager/StatisticsManager'
 import ProductManagement from '@/pages/Manager/ProductManagement/ProductManagement'
 import TableManagement from '@/pages/Manager/TableManagement/TableManagement'
 import UserManagement from '@/pages/Manager/UserManagement/UserManagement'
@@ -39,8 +39,8 @@ const navigations = [
 			{
 				icon: <Leaderboard />,
 				label: 'Statistics',
-				pageKey: 'Statistics',
-				page: <Statistics />,
+				pageKey: 'StatisticsManager',
+				page: <StatisticsManager />,
 			},
 		],
 	},
@@ -138,7 +138,7 @@ const DrawerManager = ({ openDrawer, selectedPageKey, handleSelectPage }) => {
 						<ListItemButton
 							key={item.pageKey}
 							selected={selectedPageKey === item.pageKey}
-							defaultChecked={<Statistics />}
+							defaultChecked={<StatisticsManager />}
 							onClick={() => handleSelectPage(item)}
 							sx={{
 								'&:hover': {

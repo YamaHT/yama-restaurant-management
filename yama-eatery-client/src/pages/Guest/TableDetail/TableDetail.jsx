@@ -1,6 +1,6 @@
 import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import DialogChoosingProduct from '@/components/DialogChoosingProduct/DialogChoosingProduct'
+import DialogChoosingProduct from '@/components/DialogChoosing/DialogChoosingProduct'
 import { BookingService } from '@/services/BookingService'
 import { TableService } from '@/services/TableService'
 import { UserService } from '@/services/UserService'

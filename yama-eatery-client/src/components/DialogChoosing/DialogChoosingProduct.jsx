@@ -21,7 +21,7 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 
-const DialogChoosingProduct = ({ open, handleClose, handleAddProduct, selectedProducts }) => {
+const DialogChoosingProduct = ({ open, handleClose, handleSelectProducts, selectedProducts }) => {
 	const [products, setProducts] = useState([])
 	const [selects, setSelects] = useState([])
 
@@ -81,17 +81,12 @@ const DialogChoosingProduct = ({ open, handleClose, handleAddProduct, selectedPr
 	}
 
 	const handleSubmitAdd = () => {
-		handleAddProduct(selects.filter((select) => select.quantity !== 0))
+		handleSelectProducts(selects.filter((select) => select.quantity !== 0))
 		handleClose()
 	}
 
 	return (
-		<Dialog
-			open={open}
-			maxWidth={'lg'}
-			onClose={handleClose}
-			PaperProps={{ sx: { bgcolor: '#eee' } }}
-		>
+		<Dialog open={open} maxWidth onClose={handleClose} PaperProps={{ sx: { bgcolor: '#eee' } }}>
 			<DialogTitle>List Product</DialogTitle>
 			<DialogContent>
 				<Grid2 container spacing={2}>

@@ -257,7 +257,7 @@ const ProductManagement = () => {
 					Product Management
 				</Typography>
 
-				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
+				<Stack direction={'row'} justifyContent={'space-between'}>
 					<CrudSearchBar
 						listItem={rows.map((row) => row.name)}
 						widthPercent={50}
@@ -442,16 +442,16 @@ const ProductManagement = () => {
 						)}
 					</TableBody>
 				</Table>
+				<TablePagination
+					component='div'
+					count={filteredRows.length}
+					page={page}
+					onPageChange={handleChangePage}
+					rowsPerPage={rowsPerPage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+					rowsPerPageOptions={[5, 10, 25]}
+				/>
 			</Paper>
-			<TablePagination
-				component='div'
-				count={filteredRows.length}
-				page={page}
-				onPageChange={handleChangePage}
-				rowsPerPage={rowsPerPage}
-				onRowsPerPageChange={handleChangeRowsPerPage}
-				rowsPerPageOptions={[5, 10, 25]}
-			/>
 		</Box>
 	)
 }
