@@ -28,7 +28,7 @@ namespace WebAPI.Repositories
             return await _dbContext.Employee.AnyAsync(x => x.Email == email);
         }
 
-        public async Task<List<Employee>> GetAllStaffs()
+        public async Task<List<Employee>> GetAllStaffsAsync()
         {
             return await _dbContext.Employee
                 .Include(x => x.Position)

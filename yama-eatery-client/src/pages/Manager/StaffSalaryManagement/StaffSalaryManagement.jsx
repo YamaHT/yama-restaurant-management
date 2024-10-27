@@ -1,5 +1,7 @@
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
+import { StaffAttendanceManagementService } from '@/services/StaffAttendanceManagementService'
 import { StaffInformationManagementService } from '@/services/StaffInformationManagementService'
+import { StaffSalaryManagementService } from '@/services/StaffSalaryManagementService'
 import { Payment, Search } from '@mui/icons-material'
 import {
 	Autocomplete,
@@ -92,7 +94,7 @@ const StaffSalaryManagement = () => {
 	const [rows, setRows] = useState([])
 
 	const fetchStaffSalary = async () => {
-		const data = await StaffInformationManagementService.STAFF_SALARY_LIST()
+		const data = await StaffSalaryManagementService.GET_STAFF_SALARY()
 		if (data) {
 			console.log(data)
 			setRows(data)
@@ -103,6 +105,14 @@ const StaffSalaryManagement = () => {
 		fetchStaffSalary()
 	}, [])
 
+	const handleButtonPaySalary = async (employeeId, month) => {
+		const data = await StaffSalaryManagementService.PAY_SALARY({ employeeId, month })
+		if (data) {
+			console.log(data)
+			setRows(data)
+		}
+	}
+
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === 'asc'
 		setOrder(isAsc ? 'desc' : 'asc')
@@ -112,7 +122,6 @@ const StaffSalaryManagement = () => {
 	const handleChangePage = (e, newPage) => {
 		setPage(newPage)
 	}
-	const handlePaySalaryButton = () => {}
 
 	const handleChangeRowsPerPage = (e) => {
 		setRowsPerPage(parseInt(e.target.value, 10))
@@ -215,7 +224,7 @@ const StaffSalaryManagement = () => {
 									<TableCell>
 										<Button
 											startIcon={<Payment />}
-											onClick={() => handlePaySalaryButton()}
+											onClick={() => handleButtonPaySalary(row.id)}
 											variant='contained'
 											color='success'
 										>

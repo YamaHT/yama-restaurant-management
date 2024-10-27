@@ -17,7 +17,6 @@ import {
 	Typography,
 } from '@mui/material'
 import { useRef, useState } from 'react'
-import { Form } from 'react-router-dom'
 const AddStaff = ({ open, handleClose, handleAddStaff }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
@@ -232,7 +231,7 @@ const AddStaff = ({ open, handleClose, handleAddStaff }) => {
 					/>
 
 					<ValidationTextField
-						ref={(el) => (fieldsRef.current['phone'] = el)}
+						ref={(el) => (fieldsRef.current['birthday'] = el)}
 						type='date'
 						label={'Birthday'}
 						name='birthday'

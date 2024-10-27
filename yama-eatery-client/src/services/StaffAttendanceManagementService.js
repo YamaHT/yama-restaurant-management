@@ -32,4 +32,9 @@ export const StaffAttendanceManagementService = {
 			.post(ApiRequest.StaffAttendanceManagementRequest.UPDATE_STAFF_ATTENDANCE, formData)
 			.then((response) => response.data)
 	},
+	DELETE_STAFF_ATTENDANCE: async (employeeId) => {
+		return await axiosFormBody
+			.post(ApiRequest.StaffAttendanceManagementRequest.DELETE_STAFF_ATTENDANCE, employeeId)
+			.then((response) => response.data)
+	},
 }

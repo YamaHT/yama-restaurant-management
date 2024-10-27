@@ -143,7 +143,7 @@ const StaffInformationManagement = () => {
 		>
 			<Stack marginBottom={1} spacing={2}>
 				<Typography variant='h5' fontWeight={'bold'}>
-					Staff Management
+					Staff Information Management
 				</Typography>
 				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
 					<Autocomplete

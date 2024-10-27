@@ -7,4 +7,9 @@ export const StaffSalaryManagementService = {
 			.get(ApiRequest.StaffSalaryManagementRequest.GET_STAFF_SALARY)
 			.then((response) => response.data)
 	},
+	PAY_SALARY: async ({ employeeId, month }) => {
+		return await axiosFormBody
+			.post(ApiRequest.StaffSalaryManagementRequest.PAY_SALARY, { employeeId, month })
+			.then((response) => response.data)
+	},
 }

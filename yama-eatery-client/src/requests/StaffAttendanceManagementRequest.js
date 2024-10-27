@@ -5,4 +5,5 @@ export const StaffAttendanceManagementRequest = {
 	CHECK_IN: '/staffattendancemanagement/check-in',
 	CHECK_OUT: '/staffattendancemanagement/check-out',
 	UPDATE_STAFF_ATTENDANCE: '/staffattendancemanagement/update',
+	DELETE_STAFF_ATTENDANCE: '/staffattendancemanagement/delete',
 }
