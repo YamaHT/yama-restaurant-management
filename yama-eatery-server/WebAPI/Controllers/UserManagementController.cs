@@ -13,7 +13,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUser()
         {
-            var user = await _unitOfWork.UserRepository.GetAllAsync();
+            var user = await _unitOfWork.UserRepository.GetAllAsync(["Membership"]);
             return Ok(user);
         }
             
