@@ -58,6 +58,8 @@ export default function ForgotPassword() {
 			setTimeout(() => {
 				navigate('/auth/otp-verification')
 			}, 1000)
+		} else {
+			enqueueSnackbar('Email not found', { variant: 'error' })
 		}
 	}
 

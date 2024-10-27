@@ -15,7 +15,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 
-const HeaderManager = ({ handleOpenDrawer }) => {
+const HeaderStaff = ({ handleOpenDrawer }) => {
 	const [anchorEl, setAnchorEl] = useState(null)
 	const open = Boolean(anchorEl)
 
@@ -39,7 +39,7 @@ const HeaderManager = ({ handleOpenDrawer }) => {
 					<MenuSharp />
 				</IconButton>
 				<Typography variant='h6' sx={{ flexGrow: 1, textTransform: 'capitalize' }}>
-					Manager Management
+					Staff Management
 				</Typography>
 				<ButtonBase
 					onClick={handleClick}
@@ -86,4 +86,4 @@ const HeaderManager = ({ handleOpenDrawer }) => {
 	)
 }
 
-export default HeaderManager
+export default HeaderStaff

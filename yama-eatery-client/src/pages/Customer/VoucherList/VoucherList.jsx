@@ -34,7 +34,6 @@ function VoucherList() {
 		const fetchVouchers = async () => {
 			const data = await VoucherService.VIEW_ALL_VOUCHER()
 			setVouchers(data)
-			setFilteredVouchers(data)
 		}
 		fetchVouchers()
 	}, [])
@@ -44,38 +43,29 @@ function VoucherList() {
 		const endIndex = startIndex + VOUCHERS_PER_PAGE
 
 		setTotalPages(
-			filteredVouchers.length > 0 ? Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE) : 1
+			!filteredVouchers
+				? 1
+				: filteredVouchers.length > 0
+				? Math.ceil(filteredVouchers.length / VOUCHERS_PER_PAGE)
+				: 1
 		)
 		setDisplayedVouchers(filteredVouchers.slice(startIndex, endIndex))
 	}, [filteredVouchers, page])
 
-	const handleSearchChange = (e) => {
-		const value = e.target.value
-		setFilterValue(value)
-		applyFilters(value, selectedDiscount)
-		setPage(1)
-	}
-
-	const handleDiscountChange = (e) => {
-		const value = e.target.value
-		setSelectedDiscount(value)
-		applyFilters(filterValue, value)
-		setPage(1)
-	}
-
-	const applyFilters = (nameSearch, discount) => {
+	useEffect(() => {
 		let filtered = vouchers
-		if (discount) {
-			const numericDiscount = parseInt(discount, 10)
-			filtered = filtered.filter((voucher) => voucher.reducedPercent >= numericDiscount)
+		if (selectedDiscount) {
+			const numericDiscount = parseInt(selectedDiscount, 10)
+			filtered = filtered.filter((voucher) => voucher.reducedPercent <= numericDiscount)
 		}
-		if (nameSearch) {
+		if (filterValue) {
 			filtered = filtered.filter((voucher) =>
-				voucher.name.toLowerCase().includes(nameSearch.toLowerCase())
+				voucher.name.toLowerCase().includes(filterValue.toLowerCase())
 			)
 		}
+		setPage(1)
 		setFilteredVouchers(filtered)
-	}
+	}, [selectedDiscount, filterValue, vouchers])
 
 	const handlePageChange = (event, value) => {
 		setPage(value)
@@ -98,17 +88,16 @@ function VoucherList() {
 							label='Search by Name'
 							variant='outlined'
 							value={filterValue}
-							onChange={handleSearchChange}
+							onChange={(e) => setFilterValue(e.target.value)}
 							fullWidth
 						/>
 					</Grid2>
 					<Grid2 xs={12} md={6} display='flex' justifyContent='center'>
 						<FormControl variant='outlined' fullWidth>
-							<InputLabel id='discount-select-label'>Filter by Discount (%)</InputLabel>
+							<InputLabel>Filter by Discount (%)</InputLabel>
 							<Select
-								labelId='discount-select-label'
 								value={selectedDiscount}
-								onChange={handleDiscountChange}
+								onChange={(e) => setSelectedDiscount(e.target.value)}
 								label='Filter by Discount (%)'
 								sx={{ minWidth: 250 }}
 							>

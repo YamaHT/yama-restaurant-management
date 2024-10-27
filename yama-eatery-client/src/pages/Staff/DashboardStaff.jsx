@@ -1,12 +1,12 @@
-import DrawerManager from '@/components/Layout/DrawerManager'
-import HeaderManager from '@/components/Layout/HeaderManager'
+import DrawerStaff from '@/components/Layout/DrawerStaff'
+import HeaderStaff from '@/components/Layout/HeaderStaff'
 import { Box, Stack } from '@mui/material'
 import { useState } from 'react'
-import StatisticsManager from './StatisticsManager/StatisticsManager'
+import StatisticsStaff from './StatisticsStaff/StatisticsStaff'
 
-const DashboardManager = () => {
-	const [selectedPage, setSelectedPage] = useState(<StatisticsManager />)
-	const [selectedPageKey, setSelectedPageKey] = useState('StatisticsManager')
+const DashboardStaff = () => {
+	const [selectedPage, setSelectedPage] = useState(<StatisticsStaff />)
+	const [selectedPageKey, setSelectedPageKey] = useState('StatisticsStaff')
 	const [openDrawer, setOpenDrawer] = useState(true)
 
 	const handleOpenDrawer = () => {
@@ -20,17 +20,17 @@ const DashboardManager = () => {
 
 	return (
 		<Stack direction={'row'}>
-			<DrawerManager
+			<DrawerStaff
 				openDrawer={openDrawer}
 				selectedPageKey={selectedPageKey}
 				handleSelectPage={handleSelectPage}
 			/>
 			<Box width={'100%'}>
-				<HeaderManager handleOpenDrawer={handleOpenDrawer} />
+				<HeaderStaff handleOpenDrawer={handleOpenDrawer} />
 				<Box p={3}>{selectedPage}</Box>
 			</Box>
 		</Stack>
 	)
 }
 
-export default DashboardManager
+export default DashboardStaff

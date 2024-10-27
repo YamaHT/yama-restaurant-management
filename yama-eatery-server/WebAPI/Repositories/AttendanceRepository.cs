@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
 using WebAPI.Models;
+using WebAPI.Models.Enums;
 using WebAPI.Repositories.IRepositories;
 
 namespace WebAPI.Repositories
@@ -9,24 +10,28 @@ namespace WebAPI.Repositories
     {
         public async Task<List<Attendance>> GetAllTodayAttendanceAsync()
         {
-            var attendences = await _dbContext.Attendance
-                                .Include(x => x.Employee)
-                                .Where(x => x.Date == DateOnly.FromDateTime(DateTime.Now))
+            var staffAttendance = await _dbContext.Attendance
+                                .Include(x => x.Employee).ThenInclude(x => x.Position)
+                                .Where(x => x.Date == DateOnly.FromDateTime(DateTime.Now)
+                                         && x.Employee.Position.Name == PositionEnum.Staff.ToString())
                                 .ToListAsync();
-            return attendences;
+            return staffAttendance;
         }
 
         public async Task<List<Employee?>> GetAllStaffNotInTodayAttendanceAsync()
         {
-            var employeesInAttendence = await _dbContext.Attendance
-                                .Include(x => x.Employee)
-                                .Where(x => x.Date == DateOnly.FromDateTime(DateTime.Now))
+            var staffInAttendence = await _dbContext.Attendance
+                                .Include(x => x.Employee).ThenInclude(x => x.Position)
+                                .Where(x => x.Date == DateOnly.FromDateTime(DateTime.Now)
+                                         && x.Employee.Position.Name == PositionEnum.Staff.ToString())
                                 .Select(x => x.Employee)
                                 .ToListAsync();
 
-            var allEmployees = await _dbContext.Employee.ToListAsync();
+            var allStaffs = await _dbContext.Employee.Include(x => x.Position)
+                                .Where(x => x.Position.Name == PositionEnum.Staff.ToString())
+                                .ToListAsync();
 
-            var employessNotInAttendence = allEmployees.Except(employeesInAttendence) ?? [];
+            var employessNotInAttendence = allStaffs.Except(staffInAttendence) ?? [];
             return employessNotInAttendence.ToList();
         }
     }

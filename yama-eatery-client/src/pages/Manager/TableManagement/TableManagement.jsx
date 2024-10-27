@@ -7,14 +7,14 @@ import { TableManagementService } from '@/services/TableManagementService'
 import { AssetImages } from '@/utilities/AssetImages'
 import {
 	Add,
-	BackupTable,
 	Delete,
 	Edit,
-	Icecream,
 	Menu,
+	People,
 	Restore,
 	TableBar,
 	TableRestaurant,
+	Weekend,
 } from '@mui/icons-material'
 import {
 	Avatar,
@@ -38,7 +38,7 @@ import AddTable from './AddTable'
 import UpdateTable from './UpdateTable'
 
 const headCells = [
-	{ name: 'Id', orderData: 'id', numeric: true, widthPercent: 10 },
+	{ name: 'ID', orderData: 'id', numeric: true, widthPercent: 10 },
 	{ name: 'Image', orderData: 'image', numeric: true, widthPercent: 25 },
 	{ name: 'Floor', orderData: 'floor', numeric: true, widthPercent: 10 },
 	{ name: 'Type', orderData: 'type', numeric: false, widthPercent: 10 },
@@ -48,10 +48,10 @@ const headCells = [
 
 const typeNavigation = [
 	{ icon: <Menu />, name: 'All' },
-	{ icon: <BackupTable />, name: 'Small' },
+	{ icon: <Weekend />, name: 'Small' },
 	{ icon: <TableRestaurant />, name: 'Big' },
 	{ icon: <TableBar />, name: 'Round' },
-	{ icon: <Icecream />, name: 'Private' },
+	{ icon: <People />, name: 'Private' },
 ]
 
 const TableManagement = () => {

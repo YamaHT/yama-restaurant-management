@@ -15,7 +15,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers"]);
+            var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["UserVouchers", "UserVouchers.Voucher"]);
             var userVoucher = user.UserVouchers.Select(x => x.Voucher).ToList();
 
             var vouchers = await _unitOfWork.VoucherRepository.GetAllValidVoucherAsync();

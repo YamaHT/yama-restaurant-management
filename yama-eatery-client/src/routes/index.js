@@ -12,6 +12,7 @@ import ProductList from '@/pages/Guest/ProductList/ProductList'
 import TableDetail from '@/pages/Guest/TableDetail/TableDetail'
 import TableList from '@/pages/Guest/TableList/TableList'
 import DashboardManager from '@/pages/Manager/DashboardManager'
+import DashboardStaff from '@/pages/Staff/DashboardStaff'
 
 const publicRoutes = [
 	{ path: '/', component: Home },
@@ -29,7 +30,10 @@ const publicRoutes = [
 	{ path: '/auth/login', component: Login, layout: null },
 	{ path: '/auth/register', component: Register, layout: null },
 
+	{ path: '/staff', component: DashboardStaff, layout: null },
 	{ path: '/manager', component: DashboardManager, layout: null },
+
+	{ path: '/*', component: Home },
 ]
 
 export { publicRoutes }

@@ -87,7 +87,7 @@ namespace WebAPI.Controllers
         [HttpGet("check-email")]
         public async Task<IActionResult> CheckEmailExisted(string email)
         {
-            return Ok(await _unitOfWork.UserRepository.CheckEmailExistedAsync(email));
+            return Ok(await _unitOfWork.UserRepository.CheckEmailExistedAsync(email) || await _unitOfWork.EmployeeRepository.CheckEmailExistedAsync(email));
         }
 
         [HttpPost("login-google")]

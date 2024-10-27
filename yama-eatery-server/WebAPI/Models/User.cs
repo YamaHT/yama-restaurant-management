@@ -7,7 +7,7 @@ namespace WebAPI.Models
     public class User : TrackableEntity
     {
         [Required(ErrorMessage = "Email is required")]
-        [MaxLength(255, ErrorMessage = "Email can't exceed 255 characters")]
+        [MaxLength(50, ErrorMessage = "Email can't exceed 50 characters")]
         [EmailAddress(ErrorMessage = "Email must be in correct format")]
         public required string Email { get; set; }
 

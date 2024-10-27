@@ -72,6 +72,7 @@ export default function ProductDetail() {
 						setUserRating(feedbackData.rating)
 						setUserReview(feedbackData.message)
 					} else {
+						setFeedbackProduct(null)
 						setUserRating(0)
 						setUserReview('')
 					}
