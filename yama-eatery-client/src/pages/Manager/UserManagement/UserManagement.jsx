@@ -208,8 +208,8 @@ export default function UserManagement() {
 									<TableCell>{row.gender}</TableCell>
 									<TableCell>{row.birthday}</TableCell>
 									<TableCell>
-										{row.isMembership ? (
-											<Chip label='Membership' color='success' />
+										{row.membership?.membershipStatus === 'Active' ? (
+											<Chip label={row.membership?.rank} color='success' />
 										) : (
 											<Chip label='Not membership' color='error' />
 										)}
