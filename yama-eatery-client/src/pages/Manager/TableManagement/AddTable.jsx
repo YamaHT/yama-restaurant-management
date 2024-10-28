@@ -27,8 +27,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 		floor: '',
 		images: [],
 	})
-	const [floorError, setFloorError] = useState('')
-	const [typeError, setTypeError] = useState('')
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
@@ -81,9 +79,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 
 	const handleAdd = () => {
 		let isValid = true
-
-		setFloorError('')
-		setTypeError('')
 
 		if (!values.floor) {
 			isValid = false
@@ -167,10 +162,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 							</IconButton>
 						</Grid2>
 					</Grid2>
-					<Stack spacing={2}>
-						{floorError && <Typography color='error'>{floorError}</Typography>}
-						{typeError && <Typography color='error'>{typeError}</Typography>}
-					</Stack>
 
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['image'] = el)}
