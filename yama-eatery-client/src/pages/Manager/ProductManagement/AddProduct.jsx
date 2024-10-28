@@ -35,26 +35,15 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
-	const [priceError, setPriceError] = useState('')
 	const [isGenerating, setIsGenerating] = useState(false)
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
-		if (name === 'price' && !/^\d*\.?\d*$/.test(value)) {
-			return
-		}
+
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
 		}))
-		if (name === 'price') {
-			const priceValue = parseFloat(value)
-			if (priceValue <= 0 || priceValue >= 10000) {
-				setPriceError('Price must be greater than 0 and less than 10,000.')
-			} else {
-				setPriceError('')
-			}
-		}
 	}
 
 	const handleImageChange = (e) => {
@@ -137,13 +126,6 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 			isValid = false
 		} else {
 			setError('')
-		}
-
-		if (!values.price) {
-			setPriceError('This is required.')
-			isValid = false
-		} else {
-			setPriceError('')
 		}
 
 		Object.keys(fieldsRef.current).forEach((key) => {
@@ -270,8 +252,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						value={values.price}
 						onChange={handleValueChange}
-						error={!!priceError}
-						helperText={priceError}
+						maxLength={4}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['stockQuantity'] = el)}
