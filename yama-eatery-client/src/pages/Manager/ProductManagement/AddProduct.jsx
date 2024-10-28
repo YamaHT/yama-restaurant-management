@@ -18,6 +18,7 @@ import {
 } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
+
 const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
@@ -35,6 +36,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
 	const [priceError, setPriceError] = useState('')
+	const [isGenerating, setIsGenerating] = useState(false)
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
@@ -98,20 +100,32 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	}
 
 	const handleDescriptionGenerator = async () => {
+		if (values.name.trim() === '') {
+			enqueueSnackbar('Please enter a name', { variant: 'warning' })
+			return
+		}
+
+		setIsGenerating(true)
+
 		try {
 			const descriptionGenerated = await DescriptionGenerator(
 				'Product',
 				values.name,
 				generatorOption
 			)
-			if (descriptionGenerated.trim().toString() !== '404') {
+			if (descriptionGenerated.trim() !== '404') {
 				setValues((prev) => ({
 					...prev,
 					description: descriptionGenerated.trim(),
 				}))
+			} else {
+				enqueueSnackbar('Cant find this food to generate description', { variant: 'warning' })
 			}
 		} catch (error) {
 			setValues((prev) => ({ ...prev, description: '' }))
+			enqueueSnackbar('Cant find this food to generate description', { variant: 'warning' })
+		} finally {
+			setIsGenerating(false)
 		}
 	}
 
@@ -123,6 +137,13 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 			isValid = false
 		} else {
 			setError('')
+		}
+
+		if (!values.price) {
+			setPriceError('This is required.')
+			isValid = false
+		} else {
+			setPriceError('')
 		}
 
 		Object.keys(fieldsRef.current).forEach((key) => {
@@ -143,7 +164,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 			formData.append('subCategoryId', parseInt(values.subCategoryId))
 
 			handleAddProduct(formData)
-			enqueueSnackbar('Add Product Sucessfully', { variant: 'success' })
+			enqueueSnackbar('Add Product Successfully', { variant: 'success' })
 			handleClose()
 		}
 	}
@@ -291,8 +312,9 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 								variant='contained'
 								color='info'
 								onClick={handleDescriptionGenerator}
+								disabled={isGenerating}
 							>
-								Auto Generate
+								{isGenerating ? 'Generating...' : 'Auto Generate'}
 							</Button>
 						</Stack>
 					</Stack>

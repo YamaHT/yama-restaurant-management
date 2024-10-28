@@ -33,6 +33,7 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
+		const newValue = name === 'floor' ? parseInt(value, 10) : value
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
@@ -205,17 +206,26 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 							},
 						}}
 					/>
-					<ValidationTextField
+					<ValidationSelect
 						ref={(el) => (fieldsRef.current['floor'] = el)}
 						label='Floor'
 						name='floor'
-						type='number'
-						variant='filled'
 						value={values.floor}
 						onChange={handleValueChange}
-						regex='^(0|1|2|3)$'
-						regexErrorText='Floor must be 0, 1, 2, or 3.'
-					/>
+						variant='filled'
+					>
+						{[
+							{ value: '0', label: 'Ground' },
+							{ value: '1', label: '1st' },
+							{ value: '2', label: '2nd' },
+							{ value: '3', label: '3rd' },
+							{ value: '4', label: '4th' },
+						].map(({ value, label }) => (
+							<MenuItem key={value} value={value}>
+								{label}
+							</MenuItem>
+						))}
+					</ValidationSelect>
 
 					<ValidationSelect
 						ref={(el) => (fieldsRef.current['type'] = el)}

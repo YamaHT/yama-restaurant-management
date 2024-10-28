@@ -38,6 +38,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 	const [generatorOption, setGeneratorOption] = useState('')
 	const [error, setError] = useState('')
 	const [priceError, setPriceError] = useState('')
+	const [isGenerating, setIsGenerating] = useState(false)
 
 	useEffect(() => {
 		if (existingProduct) {
@@ -116,27 +117,49 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 	}
 
 	const handleDescriptionGenerator = async () => {
+		if (values.name.trim() === '') {
+			enqueueSnackbar('Please enter a name', { variant: 'warning' })
+			return
+		}
+
+		setIsGenerating(true)
+
 		try {
 			const descriptionGenerated = await DescriptionGenerator(
 				'Product',
 				values.name,
 				generatorOption
 			)
-			if (descriptionGenerated.trim().toString() !== '404') {
+			if (descriptionGenerated.trim() !== '404') {
 				setValues((prev) => ({
 					...prev,
 					description: descriptionGenerated.trim(),
 				}))
 			} else {
-				enqueueSnackbar('Cant generate description', { variant: 'warning' })
+				enqueueSnackbar('Cant find this food to generate description', { variant: 'warning' })
 			}
 		} catch (error) {
 			setValues((prev) => ({ ...prev, description: '' }))
+			enqueueSnackbar('Cant find this food to generate description', { variant: 'warning' })
+		} finally {
+			setIsGenerating(false)
 		}
 	}
-
 	const handleUpdate = () => {
 		let isValid = true
+
+		if (!values.price) {
+			setPriceError('This field is required.')
+			isValid = false
+		} else {
+			const priceValue = parseFloat(values.price)
+			if (priceValue <= 0 || priceValue >= 10000) {
+				setPriceError('Price must be greater than 0 and less than 10,000.')
+				isValid = false
+			} else {
+				setPriceError('')
+			}
+		}
 
 		Object.keys(fieldsRef.current).forEach((key) => {
 			if (!fieldsRef.current[key]?.validate()) {
@@ -144,14 +167,14 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 			}
 		})
 
-		var imageLength = values.image.length + imageFiles.length
+		const imageLength = values.image.length + imageFiles.length
 		if (imageLength <= 0) {
 			isValid = false
 			enqueueSnackbar(`Images are required`, { variant: 'error' })
 		}
 
 		if (isValid) {
-			var formData = new FormData()
+			const formData = new FormData()
 			formData.append('productId', values.id)
 			values.image.forEach((remainImage) => {
 				formData.append('remainImages', remainImage)
@@ -168,7 +191,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 			formData.append('subCategoryId', parseInt(values.subCategoryId))
 
 			handleUpdateProduct(formData)
-			enqueueSnackbar('Update Product Sucessfully', { variant: 'success' })
+			enqueueSnackbar('Update Product Successfully', { variant: 'success' })
 			handleClose()
 		}
 	}
@@ -334,8 +357,9 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 								variant='contained'
 								color='info'
 								onClick={handleDescriptionGenerator}
+								disabled={isGenerating}
 							>
-								Auto Generate
+								{isGenerating ? 'Generating...' : 'Auto Generate'}
 							</Button>
 						</Stack>
 					</Stack>
