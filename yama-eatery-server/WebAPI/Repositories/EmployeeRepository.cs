@@ -28,11 +28,21 @@ namespace WebAPI.Repositories
             return await _dbContext.Employee.AnyAsync(x => x.Email == email);
         }
 
-        public async Task<List<Employee>> GetAllStaffsAsync()
+        public async Task<List<Employee>> GetAllStaffsAsync(string[]? includes = null)
         {
-            return await _dbContext.Employee
+            var query = _dbContext.Employee
                 .Include(x => x.Position)
-                .Where(x => x.Position.Name != PositionEnum.Manager.ToString()).ToListAsync();
+                .Where(x => x.Position.Name != PositionEnum.Manager.ToString());
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return await query.ToListAsync();
         }
     }
 }

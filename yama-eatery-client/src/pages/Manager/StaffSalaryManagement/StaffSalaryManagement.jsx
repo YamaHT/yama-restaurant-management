@@ -27,16 +27,16 @@ import React, { useEffect, useState } from 'react'
 
 const headCells = [
 	{
-		name: 'Id',
+		name: 'EmployeeId',
 		orderData: 'id',
 		numeric: true,
-		widthPercent: 5,
+		widthPercent: 10,
 	},
 	{
 		name: 'Name',
 		orderData: 'name',
 		numeric: false,
-		widthPercent: 20,
+		widthPercent: 15,
 	},
 
 	{
@@ -59,7 +59,7 @@ const headCells = [
 	},
 	{
 		name: 'Payday',
-		orderData: 'payday',
+		orderData: 'payDay',
 		numeric: false,
 		widthPercent: 15,
 	},
@@ -86,19 +86,20 @@ function getComparator(order, orderBy) {
 }
 
 const StaffSalaryManagement = () => {
+	const currentMonth = new Date().getMonth()
+
 	const [order, setOrder] = useState('asc')
 	const [orderBy, setOrderBy] = useState('id')
 	const [page, setPage] = useState(0)
 	const [searchName, setSearchName] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
-	const [month, setMonth] = useState(new Date().getMonth())
+	const [month, setMonth] = useState(currentMonth)
 	const [rows, setRows] = useState([])
-
-	const currentMonth = new Date().getMonth()
 
 	useEffect(() => {
 		const fetchStaffSalary = async () => {
-			const data = await StaffSalaryManagementService.GET_STAFF_SALARY()
+			const serverSideMonth = month + 1
+			const data = await StaffSalaryManagementService.GET_STAFF_SALARY(serverSideMonth)
 			if (data) {
 				setRows(data)
 			}
@@ -106,10 +107,15 @@ const StaffSalaryManagement = () => {
 		fetchStaffSalary()
 	}, [month])
 
-	const handleButtonPaySalary = async (employeeId, month) => {
-		const data = await StaffSalaryManagementService.PAY_SALARY({ employeeId, month })
+	const handlePaySalary = async (id) => {
+		const formData = {
+			employeeId: id,
+			month: month + 1,
+		}
+		const data = await StaffSalaryManagementService.PAY_SALARY(formData)
 		if (data) {
 			setRows(data)
+			console.log(data)
 		}
 	}
 
@@ -132,7 +138,7 @@ const StaffSalaryManagement = () => {
 
 	const visibleRows = React.useMemo(() => {
 		const filteredRows = rows.filter((row) => {
-			return searchName ? row.name.toLowerCase().includes(searchName.toLowerCase()) : true
+			return searchName ? row.name?.toLowerCase().includes(searchName.toLowerCase()) : true
 		})
 
 		return filteredRows
@@ -176,24 +182,22 @@ const StaffSalaryManagement = () => {
 								return (
 									<TableRow hover key={row.id}>
 										<TableCell align='right'>{row.id}</TableCell>
-										<TableCell>{row.employee.name}</TableCell>
-										<TableCell align='right'>
-											{row.employee.attendances && row.employee.attendances.length > 0
-												? row.employee.attendances[0].workHours
-												: 'N/A'}
-										</TableCell>{' '}
+										<TableCell>{row.name}</TableCell>
+										<TableCell align='right'>{row.workHours}</TableCell>{' '}
 										<TableCell align='right'>{row.numberOfFaults}</TableCell>
 										<TableCell align='right'>{row.netSalary}</TableCell>
-										<TableCell>{row.payDay}</TableCell>
+										<TableCell>{row.payDay ? row.payDay : 'Not pay yet'}</TableCell>
 										<TableCell>
-											<Button
-												startIcon={<Payment />}
-												onClick={() => handleButtonPaySalary(row.id)}
-												variant='contained'
-												color='success'
-											>
-												Pay Salary
-											</Button>
+											{!row.payDay && (
+												<Button
+													startIcon={<Payment />}
+													onClick={() => handlePaySalary(row.id)}
+													variant='contained'
+													color='success'
+												>
+													Pay Salary
+												</Button>
+											)}
 										</TableCell>
 									</TableRow>
 								)

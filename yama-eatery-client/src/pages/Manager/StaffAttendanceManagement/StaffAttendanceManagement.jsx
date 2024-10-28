@@ -23,18 +23,17 @@ import UpdateStaffAttendance from './UpdateStaffAttendance'
 
 const headCells = [
 	{
-		name: 'Id',
+		name: 'AttendanceId',
 		orderData: 'id',
 		numeric: true,
-		widthPercent: 5,
+		widthPercent: 10,
 	},
 	{
-		name: 'Name',
-		orderData: 'name',
+		name: 'Employee Name',
+		orderData: 'employee.name',
 		numeric: false,
-		widthPercent: 20,
+		widthPercent: 25,
 	},
-
 	{
 		name: 'CheckIn',
 		orderData: 'checkin',
@@ -51,7 +50,7 @@ const headCells = [
 		name: 'Workhours',
 		orderData: 'workhours',
 		numeric: true,
-		widthPercent: 5,
+		widthPercent: 10,
 	},
 	{
 		name: 'LateOrEarly',
