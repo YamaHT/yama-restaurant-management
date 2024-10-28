@@ -23,4 +23,9 @@ export const VoucherManagementService = {
 			.post(ApiRequest.VoucherManagementRequest.DELETE_VOUCHER, id)
 			.then((response) => response.data)
 	},
+	RESTORE_VOUCHER: async (id) => {
+		return await axiosFormBody
+			.post(ApiRequest.VoucherManagementRequest.RESTORE_VOUCHER, id)
+			.then((response) => response.data)
+	},
 }

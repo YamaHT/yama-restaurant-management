@@ -17,14 +17,13 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material'
-import { enqueueSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 import AddStaffAttendance from './AddStaffAttendance'
 import UpdateStaffAttendance from './UpdateStaffAttendance'
 
 const headCells = [
 	{
-		name: 'ID',
+		name: 'Id',
 		orderData: 'id',
 		numeric: true,
 		widthPercent: 5,
@@ -61,7 +60,7 @@ const headCells = [
 		widthPercent: 30,
 	},
 	{
-		name: 'Action',
+		name: '',
 		widthPercent: 5,
 	},
 ]
@@ -95,12 +94,13 @@ const StaffAttendanceManagement = () => {
 	const [openUpdatePage, setOpenUpdatePage] = useState(false)
 	const [openStaffListDialog, setOpenStaffListDialog] = useState(false)
 
+	const today = new Date()
+
 	useEffect(() => {
 		const fetchStaffAttendance = async () => {
 			const data = await StaffAttendanceManagementService.GET_TODAY_ATTENDANCE()
 			if (data) {
 				setStaffAttendance(data)
-				console.log(data)
 			}
 		}
 		fetchStaffAttendance()
@@ -150,9 +150,7 @@ const StaffAttendanceManagement = () => {
 	const handleDeleteStaffAttendance = async (employeeId) => {
 		const data = await StaffAttendanceManagementService.DELETE_STAFF_ATTENDANCE(employeeId)
 		if (data) {
-			console.log(data)
 			setStaffAttendance(data)
-			enqueueSnackbar('Delete Staff Successfully', { variant: 'error', autoHideDuration: 1000 })
 		}
 	}
 
@@ -174,34 +172,26 @@ const StaffAttendanceManagement = () => {
 	}, [order, orderBy, page, rowsPerPage, searchName, staffAttendance])
 
 	return (
-		<Paper
-			sx={{
-				width: '100%',
-				bgcolor: '#f0f2f5',
-			}}
-		>
-			<Stack marginBottom={1} spacing={1}>
-				<Typography variant='h5' fontWeight={'bold'}>
-					Staff Attendance Management
-				</Typography>
-				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
-					<CrudSearchBar
-						listItem={staffAttendance.map((attendance) => attendance.employee.name)}
-						value={searchName}
-						handleChange={(event, newValue) => setSearchName(newValue)}
-						placeholder={'Search by Name...'}
-						widthPercent={30}
-					/>
-				</Stack>
+		<Stack spacing={2}>
+			<Typography variant='h5' fontWeight={'bold'}>
+				Staff Attendance Management - {`${today.toLocaleDateString()}`}
+			</Typography>
+			<Stack direction={'row'} justifyContent={'space-between'}>
+				<CrudSearchBar
+					listItem={staffAttendance.map((attendance) => attendance.employee.name)}
+					value={searchName}
+					handleChange={(event, newValue) => setSearchName(newValue)}
+					placeholder={'Search by name...'}
+					widthPercent={30}
+				/>
+				<Button
+					variant='contained'
+					onClick={() => setOpenStaffListDialog(true)}
+					startIcon={<Add />}
+				>
+					Add New Attendance
+				</Button>
 			</Stack>
-			<Button
-				variant='contained'
-				sx={{ mb: 1, width: 'auto', ml: 1.5 }}
-				onClick={() => setOpenStaffListDialog(true)}
-				startIcon={<Add />}
-			>
-				Add New Attendance
-			</Button>
 			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
 				<Table stickyHeader sx={{ minWidth: '750px' }}>
 					<CrudTableHead
@@ -211,85 +201,99 @@ const StaffAttendanceManagement = () => {
 						onRequestSort={handleRequestSort}
 					/>
 					<TableBody>
-						{visibleRows.map((row) => {
-							return (
-								<TableRow hover key={row.id}>
-									<TableCell align='center'>{row.id}</TableCell>
-									<TableCell>{row.employee.name}</TableCell>
-									<TableCell>{row.checkInTime}</TableCell>
-									<TableCell>{row.checkOutTime}</TableCell>
-									<TableCell align='right'>{row.workHours}</TableCell>
-									<TableCell>
-										<Stack direction={'row'} spacing={1}>
-											{row.lateArrival && (
-												<Chip variant='filled' color='error' label='Late Arrived' />
-											)}
-											{row.earlyLeave && (
-												<Chip variant='filled' color='error' label='Early Departure' />
-											)}
-										</Stack>
-									</TableCell>
-									<TableCell>
-										<CrudMenuOptions>
-											<Stack direction={'column'} spacing={1}>
-												{row.checkInTime === '00:00:00' && (
-													<MenuItem>
-														<React.Fragment>
+						{visibleRows.length > 0 ? (
+							visibleRows.map((row) => {
+								return (
+									<TableRow hover key={row.id}>
+										<TableCell align='right'>{row.id}</TableCell>
+										<TableCell>{row.employee.name}</TableCell>
+										<TableCell>{row.checkInTime}</TableCell>
+										<TableCell>{row.checkOutTime}</TableCell>
+										<TableCell align='right'>{row.workHours}</TableCell>
+										<TableCell>
+											<Stack direction={'row'} spacing={1}>
+												{row.lateArrival && (
+													<Chip variant='filled' color='error' label='Late Arrived' />
+												)}
+												{row.earlyLeave && (
+													<Chip variant='filled' color='error' label='Early Departure' />
+												)}
+											</Stack>
+										</TableCell>
+										<TableCell>
+											<CrudMenuOptions>
+												<Stack direction={'column'} spacing={1}>
+													{row.checkInTime === '00:00:00' && (
+														<MenuItem>
 															<Button
+																variant='outlined'
 																startIcon={<AccessAlarm />}
 																onClick={() => handleCheckinClick(row.id)}
 															>
 																Check in
 															</Button>
-														</React.Fragment>
-													</MenuItem>
-												)}
-												{row.checkInTime !== '00:00:00' && row.checkOutTime === '00:00:00' && (
-													<Button
-														startIcon={<AccessAlarm />}
-														onClick={() => handleCheckoutClick(row.id)}
-													>
-														Check out
-													</Button>
-												)}
-												{row.checkInTime !== '00:00:00' && row.checkOutTime !== '00:00:00' && (
-													<>
-														<Button
-															onClick={() => handleSelectAttendance(row)}
-															startIcon={<Update />}
-														>
-															Update
-														</Button>
-														{openUpdatePage && (
-															<UpdateStaffAttendance
-																open={openUpdatePage}
-																handleClose={() => setOpenUpdatePage(false)}
-																onUpdate={handleUpdateStaffAttendance}
-																currentStaffAttendance={selectedAttendance}
-															/>
-														)}
-													</>
-												)}
-												<CrudConfirmation
-													title='Delete Confirmation'
-													description='Are you sure you want to delete this?'
-													handleConfirm={() => alert('Deleted')}
-												>
-													{(handleOpen) => (
-														<Button
-															startIcon={<Delete />}
-															onClick={() => handleDeleteStaffAttendance(row.id)}
-														>
-															Delete
-														</Button>
+														</MenuItem>
 													)}
-												</CrudConfirmation>
-											</Stack>
-										</CrudMenuOptions>
-									</TableCell>
-								</TableRow>
-							)
-						})}
+													{row.checkInTime !== '00:00:00' && row.checkOutTime === '00:00:00' && (
+														<MenuItem>
+															<Button
+																variant='outlined'
+																startIcon={<AccessAlarm />}
+																onClick={() => handleCheckoutClick(row.id)}
+															>
+																Check out
+															</Button>
+														</MenuItem>
+													)}
+													{row.checkInTime !== '00:00:00' && row.checkOutTime !== '00:00:00' && (
+														<MenuItem>
+															<Button
+																variant='outlined'
+																onClick={() => handleSelectAttendance(row)}
+																startIcon={<Update />}
+															>
+																Update
+															</Button>
+															{openUpdatePage && (
+																<UpdateStaffAttendance
+																	open={openUpdatePage}
+																	handleClose={() => setOpenUpdatePage(false)}
+																	onUpdate={handleUpdateStaffAttendance}
+																	currentStaffAttendance={selectedAttendance}
+																/>
+															)}
+														</MenuItem>
+													)}
+													<MenuItem>
+														<CrudConfirmation
+															title='Delete Confirmation'
+															description='Are you sure you want to delete this?'
+															handleConfirm={() => handleDeleteStaffAttendance(row.id)}
+														>
+															{(handleOpen) => (
+																<Button
+																	variant='outlined'
+																	startIcon={<Delete />}
+																	onClick={handleOpen}
+																>
+																	Delete
+																</Button>
+															)}
+														</CrudConfirmation>
+													</MenuItem>
+												</Stack>
+											</CrudMenuOptions>
+										</TableCell>
+									</TableRow>
+								)
+							})
+						) : (
+							<TableRow>
+								<TableCell colSpan={100} align='center'>
+									No attendances are specified
+								</TableCell>
+							</TableRow>
+						)}
 						{emptyRows > 0 && (
 							<TableRow>
 								<TableCell colSpan={6} />
@@ -313,7 +317,7 @@ const StaffAttendanceManagement = () => {
 				handleClose={() => setOpenStaffListDialog(false)}
 				handleAddStaffAttendance={handleAddStaffAttendance}
 			/>
-		</Paper>
+		</Stack>
 	)
 }
 

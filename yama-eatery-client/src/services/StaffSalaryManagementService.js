@@ -2,9 +2,9 @@ import { ApiRequest } from '@/utilities/ApiRequest'
 import axiosFormBody from '@/utilities/axiosFormBody'
 
 export const StaffSalaryManagementService = {
-	GET_STAFF_SALARY: async () => {
+	GET_STAFF_SALARY: async (month) => {
 		return await axiosFormBody
-			.get(ApiRequest.StaffSalaryManagementRequest.GET_STAFF_SALARY)
+			.get(ApiRequest.StaffSalaryManagementRequest.GET_STAFF_SALARY + `?month=${month}`)
 			.then((response) => response.data)
 	},
 	PAY_SALARY: async ({ employeeId, month }) => {

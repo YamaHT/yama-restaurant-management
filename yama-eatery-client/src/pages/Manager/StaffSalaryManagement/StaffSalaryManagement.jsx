@@ -1,3 +1,4 @@
+import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
 import { StaffAttendanceManagementService } from '@/services/StaffAttendanceManagementService'
 import { StaffInformationManagementService } from '@/services/StaffInformationManagementService'
@@ -26,7 +27,7 @@ import React, { useEffect, useState } from 'react'
 
 const headCells = [
 	{
-		name: 'ID',
+		name: 'Id',
 		orderData: 'id',
 		numeric: true,
 		widthPercent: 5,
@@ -90,25 +91,24 @@ const StaffSalaryManagement = () => {
 	const [page, setPage] = useState(0)
 	const [searchName, setSearchName] = useState(null)
 	const [rowsPerPage, setRowsPerPage] = useState(10)
-	const [month, setMonth] = useState('')
+	const [month, setMonth] = useState(new Date().getMonth())
 	const [rows, setRows] = useState([])
 
-	const fetchStaffSalary = async () => {
-		const data = await StaffSalaryManagementService.GET_STAFF_SALARY()
-		if (data) {
-			console.log(data)
-			setRows(data)
-		}
-	}
+	const currentMonth = new Date().getMonth()
 
 	useEffect(() => {
+		const fetchStaffSalary = async () => {
+			const data = await StaffSalaryManagementService.GET_STAFF_SALARY()
+			if (data) {
+				setRows(data)
+			}
+		}
 		fetchStaffSalary()
-	}, [])
+	}, [month])
 
 	const handleButtonPaySalary = async (employeeId, month) => {
 		const data = await StaffSalaryManagementService.PAY_SALARY({ employeeId, month })
 		if (data) {
-			console.log(data)
 			setRows(data)
 		}
 	}
@@ -127,9 +127,6 @@ const StaffSalaryManagement = () => {
 		setRowsPerPage(parseInt(e.target.value, 10))
 		setPage(0)
 	}
-	const handleChangeMonth = (event) => {
-		setMonth(event.target.value)
-	}
 
 	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
@@ -144,61 +141,27 @@ const StaffSalaryManagement = () => {
 	}, [order, orderBy, page, rowsPerPage, searchName, rows])
 
 	return (
-		<Box>
-			<Stack marginBottom={1} spacing={1}>
-				<Typography variant='h5' fontWeight={'bold'}>
-					Staff Salary Management
-				</Typography>
-				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
-					<Autocomplete
-						size='small'
-						options={[]}
-						value={searchName}
-						onChange={(event, newValue) => setSearchName(newValue)}
-						freeSolo
-						sx={{ width: '50%' }}
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								InputProps={{
-									...params.InputProps,
-									startAdornment: (
-										<InputAdornment position='start'>
-											<Search />
-										</InputAdornment>
-									),
-								}}
-								placeholder='Search by name...'
-							/>
-						)}
-					/>
-				</Stack>
-				<Box>
-					<FormControl
-						sx={{
-							width: '200px',
-							ml: 1.5,
-						}}
-					>
-						<InputLabel>Select Month</InputLabel>
-						<Select value={month} label='Select Month' onChange={handleChangeMonth}>
-							<MenuItem value='January'>January</MenuItem>
-							<MenuItem value='February'>February</MenuItem>
-							<MenuItem value='March'>March</MenuItem>
-							<MenuItem value='April'>April</MenuItem>
-							<MenuItem value='May'>May</MenuItem>
-							<MenuItem value='June'>June</MenuItem>
-							<MenuItem value='July'>July</MenuItem>
-							<MenuItem value='August'>August</MenuItem>
-							<MenuItem value='September'>September</MenuItem>
-							<MenuItem value='October'>October</MenuItem>
-							<MenuItem value='November'>November</MenuItem>
-							<MenuItem value='December'>December</MenuItem>
-						</Select>
-					</FormControl>
-				</Box>
-			</Stack>
-
+		<Stack spacing={2}>
+			<Typography variant='h5' fontWeight={'bold'}>
+				Staff Salary Management
+			</Typography>
+			<CrudSearchBar
+				listItem={rows.map((row) => row.name)}
+				value={searchName}
+				handleChange={(e, value) => setSearchName(value)}
+				placeholder={'Search by name...'}
+				widthPercent={50}
+			></CrudSearchBar>
+			<FormControl sx={{ width: 200 }}>
+				<InputLabel>Select Month</InputLabel>
+				<Select label='Select Month' value={month} onChange={(e) => setMonth(e.target.value)}>
+					{[...Array(currentMonth + 1).keys()].map((m) => (
+						<MenuItem key={m} value={m}>
+							{new Date(0, m).toLocaleString('en-US', { month: 'long' })}
+						</MenuItem>
+					))}
+				</Select>
+			</FormControl>
 			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
 				<Table stickyHeader sx={{ minWidth: '750px' }}>
 					<CrudTableHead
@@ -208,32 +171,40 @@ const StaffSalaryManagement = () => {
 						onRequestSort={handleRequestSort}
 					/>
 					<TableBody>
-						{visibleRows.map((row) => {
-							return (
-								<TableRow hover key={row.id}>
-									<TableCell align='right'>{row.id}</TableCell>
-									<TableCell>{row.employee.name}</TableCell>
-									<TableCell align='right'>
-										{row.employee.attendances && row.employee.attendances.length > 0
-											? row.employee.attendances[0].workHours
-											: 'N/A'}
-									</TableCell>{' '}
-									<TableCell align='right'>{row.numberOfFaults}</TableCell>
-									<TableCell align='right'>{row.netSalary}</TableCell>
-									<TableCell>{row.payDay}</TableCell>
-									<TableCell>
-										<Button
-											startIcon={<Payment />}
-											onClick={() => handleButtonPaySalary(row.id)}
-											variant='contained'
-											color='success'
-										>
-											Pay Salary
-										</Button>
-									</TableCell>
-								</TableRow>
-							)
-						})}
+						{visibleRows.length > 0 ? (
+							visibleRows.map((row) => {
+								return (
+									<TableRow hover key={row.id}>
+										<TableCell align='right'>{row.id}</TableCell>
+										<TableCell>{row.employee.name}</TableCell>
+										<TableCell align='right'>
+											{row.employee.attendances && row.employee.attendances.length > 0
+												? row.employee.attendances[0].workHours
+												: 'N/A'}
+										</TableCell>{' '}
+										<TableCell align='right'>{row.numberOfFaults}</TableCell>
+										<TableCell align='right'>{row.netSalary}</TableCell>
+										<TableCell>{row.payDay}</TableCell>
+										<TableCell>
+											<Button
+												startIcon={<Payment />}
+												onClick={() => handleButtonPaySalary(row.id)}
+												variant='contained'
+												color='success'
+											>
+												Pay Salary
+											</Button>
+										</TableCell>
+									</TableRow>
+								)
+							})
+						) : (
+							<TableRow>
+								<TableCell colSpan={100} align='center'>
+									No employees available
+								</TableCell>
+							</TableRow>
+						)}
 						{emptyRows > 0 && (
 							<TableRow>
 								<TableCell colSpan={6} />
@@ -251,7 +222,7 @@ const StaffSalaryManagement = () => {
 					onRowsPerPageChange={handleChangeRowsPerPage}
 				/>
 			</Paper>
-		</Box>
+		</Stack>
 	)
 }
 

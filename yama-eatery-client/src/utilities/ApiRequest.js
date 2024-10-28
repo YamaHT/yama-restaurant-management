@@ -1,5 +1,7 @@
 import { AuthRequest } from '@/requests/AuthRequest'
 import { BookingRequest } from '@/requests/BookingRequest'
+import { ContactManagementRequest } from '@/requests/ContactManagementRequest'
+import { EmployeeRequest } from '@/requests/EmployeeRequest'
 import { EnumRequest } from '@/requests/EnumRequest'
 import { FeedbackRequest } from '@/requests/FeedbackRequest'
 import { ProductManagementRequest } from '@/requests/ProductManagementRequest'
@@ -18,6 +20,8 @@ export const BASE_URL = 'https://localhost:7219/api/v1'
 export const ApiRequest = {
 	AuthRequest,
 	BookingRequest,
+	ContactManagementRequest,
+	EmployeeRequest,
 	EnumRequest,
 	ProductRequest,
 	UserRequest,

@@ -1,4 +1,6 @@
 import { AuthService } from '@/services/AuthService'
+import { EmployeeService } from '@/services/EmployeeService'
+import { AssetImages } from '@/utilities/AssetImages'
 import { Logout, MenuSharp } from '@mui/icons-material'
 import {
 	Avatar,
@@ -13,11 +15,23 @@ import {
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const HeaderStaff = ({ handleOpenDrawer }) => {
 	const [anchorEl, setAnchorEl] = useState(null)
+	const [employeeProfile, setEmployeeProfile] = useState({})
 	const open = Boolean(anchorEl)
+
+	useEffect(() => {
+		const fetchProfile = async () => {
+			const data = await EmployeeService.GET_PROFILE()
+			if (data) {
+				setEmployeeProfile(data)
+			}
+		}
+
+		fetchProfile()
+	}, [])
 
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget)
@@ -51,9 +65,12 @@ const HeaderStaff = ({ handleOpenDrawer }) => {
 					}}
 				>
 					<Stack direction={'row'} flexGrow={1} spacing={1.25} alignItems='center' sx={{ p: 0.5 }}>
-						<Avatar sx={{ fontSize: '0.875rem', width: 32, height: 32 }} />
+						<Avatar
+							src={AssetImages.EmployeeImage(employeeProfile.image)}
+							sx={{ fontSize: '0.875rem', width: 32, height: 32 }}
+						/>
 						<Typography fontWeight={550} variant='body1' sx={{ textTransform: 'capitalize' }}>
-							Le Phuoc Duy
+							{employeeProfile.name}
 						</Typography>
 					</Stack>
 				</ButtonBase>

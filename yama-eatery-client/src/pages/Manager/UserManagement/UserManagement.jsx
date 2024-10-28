@@ -22,9 +22,10 @@ import {
 
 import { Search, TrendingUpTwoTone } from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
-import ViewMembershipRequest from './ViewMebershipRequest'
+import MembershipRequest from './MebershipRequest'
 import { UserManagementService } from '@/services/UserManagementService'
 import { AssetImages } from '@/utilities/AssetImages'
+import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
 
 const headCells = [
 	{
@@ -91,20 +92,15 @@ export default function UserManagement() {
 	const [order, setOrder] = useState('asc')
 	const [orderBy, setOrderBy] = useState('id')
 	const [page, setPage] = useState(0)
-	const [searchPhone, setSearchPhone] = useState(null)
+	const [searchEmail, setSearchEmail] = useState('')
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [openMembershipDialog, setOpenMembershipDialog] = useState(false)
-	const [user, setUser] = useState([])
+	const [users, setUsers] = useState([])
 
 	const fetchUserList = async () => {
-		try {
-			const data = await UserManagementService.VIEW_USER_LIST()
-			if (data) {
-				setUser(data)
-				console.log(data)
-			}
-		} catch (error) {
-			console.error('Error fetching user list data')
+		const data = await UserManagementService.VIEW_USER_LIST()
+		if (data) {
+			setUsers(data)
 		}
 	}
 	useEffect(() => {
@@ -134,17 +130,17 @@ export default function UserManagement() {
 		setPage(0)
 	}
 
-	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - user.length) : 0
+	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0
 
 	const visibleRows = React.useMemo(
 		() =>
-			[...user]
+			[...users]
 				.filter(
-					(row) => !searchPhone || row.phone.toLowerCase().includes(searchPhone.toLowerCase())
+					(row) => !searchEmail || row.email.toLowerCase().includes(searchEmail.toLowerCase())
 				)
 				.sort(getComparator(order, orderBy))
 				.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-		[order, orderBy, page, rowsPerPage, searchPhone, user]
+		[order, orderBy, page, rowsPerPage, searchEmail, users]
 	)
 
 	return (
@@ -154,30 +150,14 @@ export default function UserManagement() {
 					User Management
 				</Typography>
 
-				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
-					<Autocomplete
-						size='small'
-						options={[]}
-						value={searchPhone}
-						onChange={(newValue) => setSearchPhone(newValue)}
-						freeSolo
-						sx={{ width: '50%' }}
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								InputProps={{
-									...params.InputProps,
-									startAdornment: (
-										<InputAdornment position='start'>
-											<Search />
-										</InputAdornment>
-									),
-								}}
-								placeholder='Search by phone...'
-							/>
-						)}
+				<Stack direction={'row'} justifyContent={'space-between'}>
+					<CrudSearchBar
+						listItem={users.map((user) => user.email)}
+						widthPercent={50}
+						placeholder={'Search by email...'}
+						value={searchEmail}
+						handleChange={(e, newValue) => setSearchEmail(newValue)}
 					/>
-
 					<Button variant='contained' onClick={handleOpenMembershipDialog}>
 						View Membership Request
 					</Button>
@@ -234,7 +214,7 @@ export default function UserManagement() {
 				<TablePagination
 					rowsPerPageOptions={[5, 10, 25]}
 					component='div'
-					count={user.length}
+					count={users.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onPageChange={handleChangePage}
@@ -248,7 +228,7 @@ export default function UserManagement() {
 				aria-describedby='alert-dialog-description'
 			>
 				<DialogContent>
-					<ViewMembershipRequest />
+					<MembershipRequest />
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleCloseMembershipDialog}>Cancel</Button>

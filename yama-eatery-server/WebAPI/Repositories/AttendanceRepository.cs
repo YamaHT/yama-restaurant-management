@@ -13,7 +13,7 @@ namespace WebAPI.Repositories
             var staffAttendance = await _dbContext.Attendance
                                 .Include(x => x.Employee).ThenInclude(x => x.Position)
                                 .Where(x => x.Date == DateOnly.FromDateTime(DateTime.Now)
-                                         && x.Employee.Position.Name == PositionEnum.Staff.ToString())
+                                         && x.Employee.Position.Name != PositionEnum.Manager.ToString())
                                 .ToListAsync();
             return staffAttendance;
         }
@@ -23,12 +23,12 @@ namespace WebAPI.Repositories
             var staffInAttendence = await _dbContext.Attendance
                                 .Include(x => x.Employee).ThenInclude(x => x.Position)
                                 .Where(x => x.Date == DateOnly.FromDateTime(DateTime.Now)
-                                         && x.Employee.Position.Name == PositionEnum.Staff.ToString())
+                                         && x.Employee.Position.Name != PositionEnum.Manager.ToString())
                                 .Select(x => x.Employee)
                                 .ToListAsync();
 
             var allStaffs = await _dbContext.Employee.Include(x => x.Position)
-                                .Where(x => x.Position.Name == PositionEnum.Staff.ToString())
+                                .Where(x => x.Position.Name != PositionEnum.Manager.ToString())
                                 .ToListAsync();
 
             var employessNotInAttendence = allStaffs.Except(staffInAttendence) ?? [];

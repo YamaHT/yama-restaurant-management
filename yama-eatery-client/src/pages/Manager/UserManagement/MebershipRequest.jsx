@@ -59,7 +59,7 @@ function getComparator(order, orderBy) {
 		: (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-export default function ViewMembershipRequest() {
+export default function MembershipRequest() {
 	const [order, setOrder] = useState('asc')
 	const [orderBy, setOrderBy] = useState('id')
 	const [page, setPage] = useState(0)
@@ -67,31 +67,28 @@ export default function ViewMembershipRequest() {
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [membership, setMembership] = useState([])
 
-	const fetchMembership = async () => {
-		try {
-			const data = await UserManagementService.VIEW_MEMBERSHIP_REQUEST()
+	useEffect(() => {
+		const fetchMembership = async () => {
+			const data = await UserManagementService.GET_MEMBERSHIP_REQUEST()
 			if (data) {
 				setMembership(data)
-				console.log(data)
 			}
-		} catch (error) {
-			console.error('Error fetching membership data:', error)
 		}
-	}
-	useEffect(() => {
 		fetchMembership()
 	}, [])
 
 	const handleDenyMembership = async (id) => {
 		const data = await UserManagementService.DENY_MEMBERSHIP(id)
-		console.log(data)
-		await fetchMembership()
+		if (data) {
+			setMembership(data)
+		}
 	}
 
 	const handlApproveMembership = async (id) => {
 		const data = await UserManagementService.APPROVE_MEMBERSHIP(id)
-		console.log(data)
-		await fetchMembership()
+		if (data) {
+			setMembership(data)
+		}
 	}
 
 	const handleRequestSort = (event, property) => {

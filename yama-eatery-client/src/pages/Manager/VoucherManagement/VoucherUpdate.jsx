@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 
-const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleupdate }) => {
+const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleUpdate }) => {
 	const [imagePreview, setImagePreview] = useState('')
 	const [errors, setErrors] = useState({})
 
@@ -28,6 +28,7 @@ const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleupdate }) => 
 	useEffect(() => {
 		if (selectedVoucher) {
 			setData({
+				id: selectedVoucher.id,
 				name: selectedVoucher.name,
 				description: selectedVoucher.description,
 				expiredDate: selectedVoucher.expiredDate,
@@ -83,8 +84,8 @@ const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleupdate }) => 
 		if (data.image) {
 			formData.append('image', data.image)
 		}
-
-		handleupdate(formData)
+		console.log(formData)
+		handleUpdate(formData)
 		handleClose()
 	}
 

@@ -38,7 +38,7 @@ import AddTable from './AddTable'
 import UpdateTable from './UpdateTable'
 
 const headCells = [
-	{ name: 'ID', orderData: 'id', numeric: true, widthPercent: 10 },
+	{ name: 'Id', orderData: 'id', numeric: true, widthPercent: 10 },
 	{ name: 'Image', orderData: 'image', numeric: true, widthPercent: 25 },
 	{ name: 'Floor', orderData: 'floor', numeric: true, widthPercent: 10 },
 	{ name: 'Type', orderData: 'type', numeric: false, widthPercent: 10 },
