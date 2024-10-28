@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs.Staff;
 using WebAPI.Models;
@@ -13,25 +12,39 @@ namespace WebAPI.Controllers
     public class StaffSalaryManagementController(IUnitOfWork _unitOfWork) : ApiController
     {
         [HttpGet]
-        public async Task<IActionResult> GetAllStaffSalary()
+        public async Task<IActionResult> GetAllStaffSalaryInMonth(int month)
         {
-            string[] includes = ["Employee", "Employee.Attendances"];
+            string[] includes = ["Attendances", "Salaries"];
+            var employees = await _unitOfWork.EmployeeRepository.GetAllStaffsAsync(includes);
 
-            var salary = await _unitOfWork.SalaryRepository.GetAllAsync(includes);
+            List<GetStaffSalaryDTO> getStaffSalaryDTO = employees.Select(x => new GetStaffSalaryDTO
+            {
+                Id = x.Id,
+                Name = x.Name,
+                WorkHours = x.Attendances.Where(x => x.Date.Month == month).Sum(x => x.WorkHours),
+                NumberOfFaults = x.Attendances.Where(a => a.Date.Month == month).Sum(a => (a.LateArrival ? 1 : 0) + (a.EarlyLeave ? 1 : 0)),
+                NetSalary = x.Salaries.FirstOrDefault(x => x.PayDay.HasValue && x.PayDay.Value.Month == month)?.NetSalary ?? 0,
+                PayDay = x.Salaries.FirstOrDefault(x => x.PayDay.HasValue && x.PayDay.Value.Month == month)?.PayDay
+            }).ToList();
 
-            return Ok(salary);
+            return Ok(getStaffSalaryDTO);
         }
 
-        [HttpPost("update-net-salary")]
-        public async Task<IActionResult> UpdateNetSalary([FromBody] PaymentStaffSalaryDTO paymentStaffSalaryDTO)
+        [HttpPost("pay-salary")]
+        public async Task<IActionResult> PaySalary([FromBody] PaymentStaffSalaryDTO paymentStaffSalaryDTO)
         {
-            string[] includes = [ "Position", "Attendances"];
+            string[] includes = ["Position", "Attendances", "Salaries"];
 
             var employee = await _unitOfWork.EmployeeRepository.GetByIdAsync(paymentStaffSalaryDTO.EmployeeId, includes);
 
             if (employee == null)
             {
                 throw new DataNotFoundException("Employee not found");
+            }
+
+            if (employee.Salaries.Any(x => x.PayDay.HasValue && x.PayDay.Value.Month == paymentStaffSalaryDTO.Month))
+            {
+                throw new DataConflictException("This month has already paid");
             }
 
             var attendanceInMonth = employee.Attendances.Where(x => x.Date.Month == paymentStaffSalaryDTO.Month).ToList();
@@ -42,16 +55,19 @@ namespace WebAPI.Controllers
             var salary = new Salary
             {
                 Employee = employee,
-                PayDay = DateOnly.FromDateTime(DateTime.Now),
+                PayDay = paymentStaffSalaryDTO.Month == DateTime.Now.Month
+                            ? DateOnly.FromDateTime(DateTime.Now)
+                            : DateOnly.FromDateTime(new DateTime(DateTime.Now.Year, paymentStaffSalaryDTO.Month,
+                                                                 DateTime.DaysInMonth(DateTime.Now.Year, paymentStaffSalaryDTO.Month))),
                 Deductions = deductions,
                 NetSalary = employee.Position.HourlyWage * attendanceInMonth.Sum(x => x.WorkHours) - deductions
             };
 
-             _unitOfWork.SalaryRepository.Update(salary);
+            await _unitOfWork.SalaryRepository.AddAsync(salary);
             await _unitOfWork.SaveChangeAsync();
+            await Task.WhenAll();
 
-            return Ok(salary);
-                  
+            return RedirectToAction("GetAllStaffSalaryInMonth", new { month = paymentStaffSalaryDTO.Month });
         }
     }
 }
