@@ -303,7 +303,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 						variant='filled'
 						value={values.price}
 						onChange={handleValueChange}
-						maxLength={4}
+						maxLength={1000}
 					/>
 					<Stack direction={'row'} alignItems={'center'}>
 						<ValidationTextField

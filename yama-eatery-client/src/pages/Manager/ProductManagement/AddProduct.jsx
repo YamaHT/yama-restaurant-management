@@ -252,7 +252,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						value={values.price}
 						onChange={handleValueChange}
-						maxLength={4}
+						maxLength={1000}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['stockQuantity'] = el)}
