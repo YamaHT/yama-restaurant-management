@@ -20,18 +20,19 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
-import { enqueueSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 import AddStaff from './AddStaff'
 import UpdateStaff from './UpdateStaff'
 
 const headCells = [
-	{ name: 'ID', orderData: 'id', numeric: true, widthPercent: 5 },
-	{ name: 'Image', orderData: 'image', numeric: false, widthPercent: 20 },
-	{ name: 'Email', orderData: 'email', numeric: false, widthPercent: 25 },
-	{ name: 'Phone', orderData: 'phone', numeric: true, widthPercent: 20 },
+	{ name: 'Id', orderData: 'id', numeric: true, widthPercent: 5 },
+	{ name: 'Name', orderData: 'name', numeric: false, widthPercent: 20 },
+	{ name: 'Email', orderData: 'email', numeric: false, widthPercent: 20 },
+	{ name: 'Birthday', orderData: 'birthday', numeric: false, widthPercent: 15 },
+	{ name: 'Phone', orderData: 'phone', numeric: false, widthPercent: 15 },
 	{ name: 'Gender', orderData: 'gender', numeric: false, widthPercent: 10 },
-	{ name: 'Action', widthPercent: 10 },
+	{ name: 'Position', orderData: 'position.name', numeric: false, widthPercent: 15 },
+	{ name: '', widthPercent: 5 },
 ]
 
 function descendingComparator(a, b, orderBy) {
@@ -61,15 +62,13 @@ const StaffInformationManagement = () => {
 	const [openUpdatePage, setOpenUpdatePage] = useState(false)
 	const [selectedStaff, setSelectedStaff] = useState(null)
 
-	const fetchStaffInformation = async () => {
-		const data = await StaffInformationManagementService.GET_ALL_STAFF()
-		if (data) {
-			setStaffInformation(data)
-			console.log(data)
-		}
-	}
-
 	useEffect(() => {
+		const fetchStaffInformation = async () => {
+			const data = await StaffInformationManagementService.GET_ALL_STAFF()
+			if (data) {
+				setStaffInformation(data)
+			}
+		}
 		fetchStaffInformation()
 	}, [])
 
@@ -78,8 +77,6 @@ const StaffInformationManagement = () => {
 		if (data) {
 			setStaffInformation(data)
 		}
-		enqueueSnackbar('Remove Staff Successfully', { variant: 'error', autoHideDuration: 1000 })
-		fetchStaffInformation()
 	}
 
 	const handleRequestSort = (property) => {
@@ -100,20 +97,14 @@ const StaffInformationManagement = () => {
 	const handleAddStaff = async (formData) => {
 		const data = await StaffInformationManagementService.ADD_STAFF(formData)
 		if (data) {
-			console.log(data)
 			setStaffInformation(data)
-			setOpenAddPage(false)
-			enqueueSnackbar('Add Staff Successfully', { variant: 'success', autoHideDuration: 1000 })
 		}
 	}
 
 	const handleUpdateStaff = async (formData) => {
 		const data = await StaffInformationManagementService.UPDATE_STAFF(formData)
 		if (data) {
-			console.log(data)
 			setStaffInformation(data)
-			setOpenUpdatePage(false)
-			enqueueSnackbar('Update Staff Successfully', { variant: 'success', autoHideDuration: 1000 })
 		}
 	}
 
@@ -135,57 +126,44 @@ const StaffInformationManagement = () => {
 	}, [order, orderBy, page, rowsPerPage, searchName, staffInformation])
 
 	return (
-		<Paper
-			sx={{
-				width: '100%',
-				bgcolor: '#f0f2f5',
-			}}
-		>
-			<Stack marginBottom={1} spacing={2}>
-				<Typography variant='h5' fontWeight={'bold'}>
-					Staff Information Management
-				</Typography>
-				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
-					<Autocomplete
-						size='small'
-						options={[]}
-						value={searchName}
-						onChange={(newValue) => setSearchName(newValue)}
-						freeSolo
-						sx={{ width: '50%' }}
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								InputProps={{
-									...params.InputProps,
-									startAdornment: (
-										<InputAdornment position='start'>
-											<Search />
-										</InputAdornment>
-									),
-								}}
-								placeholder='Search by name...'
-							/>
-						)}
+		<Stack spacing={2}>
+			<Typography variant='h5' fontWeight={'bold'}>
+				Staff Information Management
+			</Typography>
+			<Stack direction={'row'} justifyContent={'space-between'}>
+				<Autocomplete
+					size='small'
+					options={[]}
+					value={searchName}
+					onChange={(newValue) => setSearchName(newValue)}
+					freeSolo
+					sx={{ width: '50%' }}
+					renderInput={(params) => (
+						<TextField
+							{...params}
+							InputProps={{
+								...params.InputProps,
+								startAdornment: (
+									<InputAdornment position='start'>
+										<Search />
+									</InputAdornment>
+								),
+							}}
+							placeholder='Search by name...'
+						/>
+					)}
+				/>
+				<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
+					Add New Staff
+				</Button>
+				{openAddPage && (
+					<AddStaff
+						open={openAddPage}
+						handleClose={() => setOpenAddPage(false)}
+						handleAddStaff={handleAddStaff}
 					/>
-				</Stack>
-
-				<Stack direction={'row'} justifyContent={'space-between'} padding={'0 1%'}>
-					<React.Fragment>
-						<Button variant='contained' onClick={() => setOpenAddPage(true)} startIcon={<Add />}>
-							Add New Staff
-						</Button>
-						{openAddPage && (
-							<AddStaff
-								open={openAddPage}
-								handleClose={() => setOpenAddPage(false)}
-								handleAddStaff={handleAddStaff}
-							/>
-						)}
-					</React.Fragment>
-				</Stack>
+				)}
 			</Stack>
-
 			<Paper sx={{ borderRadius: 3, overflow: 'auto' }}>
 				<Table stickyHeader sx={{ minWidth: '750px' }}>
 					<CrudTableHead
@@ -195,23 +173,25 @@ const StaffInformationManagement = () => {
 						onRequestSort={handleRequestSort}
 					/>
 					<TableBody>
-						{visibleRows.map((row) => {
-							return (
-								<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
-									<TableCell align='right'>{row.id}</TableCell>
-									<TableCell>
-										<Stack direction='row' spacing={2} alignItems='center'>
-											<Avatar alt={row.name} src={AssetImages.EmployeeImage(row.image)} />
-											<Typography>{row.name}</Typography>
-										</Stack>
-									</TableCell>
-									<TableCell>{row.email}</TableCell>
-									<TableCell align='right'>{row.phone}</TableCell>
-									<TableCell>{row.gender}</TableCell>
-									<TableCell>
-										<CrudMenuOptions>
-											<MenuItem>
-												<React.Fragment>
+						{visibleRows.length > 0 ? (
+							visibleRows.map((row) => {
+								return (
+									<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
+										<TableCell align='right'>{row.id}</TableCell>
+										<TableCell>
+											<Stack direction='row' spacing={2} alignItems='center'>
+												<Avatar alt={row.name} src={AssetImages.EmployeeImage(row.image)} />
+												<Typography>{row.name}</Typography>
+											</Stack>
+										</TableCell>
+										<TableCell>{row.email}</TableCell>
+										<TableCell>{row.birthday}</TableCell>
+										<TableCell>{row.phone}</TableCell>
+										<TableCell>{row.gender}</TableCell>
+										<TableCell>{row.position?.name}</TableCell>
+										<TableCell>
+											<CrudMenuOptions>
+												<MenuItem>
 													<Button onClick={() => handleUpdateClick(row)} startIcon={<Edit />}>
 														Update
 													</Button>
@@ -223,27 +203,32 @@ const StaffInformationManagement = () => {
 															existingStaff={selectedStaff}
 														/>
 													)}
-												</React.Fragment>
-											</MenuItem>
-
-											<MenuItem>
-												<CrudConfirmation
-													title='Delete Confirmation'
-													description='Are you sure you want to delete this?'
-													handleConfirm={() => handleRemoveStaff(row.id)}
-												>
-													{(handleOpen) => (
-														<Button onClick={handleOpen} startIcon={<Delete />}>
-															Remove
-														</Button>
-													)}
-												</CrudConfirmation>
-											</MenuItem>
-										</CrudMenuOptions>
-									</TableCell>
-								</TableRow>
-							)
-						})}
+												</MenuItem>
+												<MenuItem>
+													<CrudConfirmation
+														title='Delete Confirmation'
+														description='Are you sure you want to delete this?'
+														handleConfirm={() => handleRemoveStaff(row.id)}
+													>
+														{(handleOpen) => (
+															<Button onClick={handleOpen} startIcon={<Delete />}>
+																Remove
+															</Button>
+														)}
+													</CrudConfirmation>
+												</MenuItem>
+											</CrudMenuOptions>
+										</TableCell>
+									</TableRow>
+								)
+							})
+						) : (
+							<TableRow>
+								<TableCell colSpan={100} align='center'>
+									No employees available
+								</TableCell>
+							</TableRow>
+						)}
 						{emptyRows > 0 && (
 							<TableRow>
 								<TableCell colSpan={6} />
@@ -261,7 +246,7 @@ const StaffInformationManagement = () => {
 					onRowsPerPageChange={handleChangeRowsPerPage}
 				/>
 			</Paper>
-		</Paper>
+		</Stack>
 	)
 }
 

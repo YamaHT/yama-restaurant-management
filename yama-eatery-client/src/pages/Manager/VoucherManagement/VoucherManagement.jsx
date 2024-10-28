@@ -13,6 +13,7 @@ import {
 	Inventory,
 	MenuSharp,
 	RemoveShoppingCart,
+	Restore,
 } from '@mui/icons-material'
 import {
 	Box,
@@ -164,6 +165,13 @@ const VoucherManagement = () => {
 		}
 	}
 
+	const handleRestore = async (Id) => {
+		const data = await VoucherManagementService.RESTORE_VOUCHER(Id)
+		if (data) {
+			setVouchers(data)
+		}
+	}
+
 	return (
 		<Box>
 			<Stack marginBottom={1} spacing={2}>
@@ -217,24 +225,54 @@ const VoucherManagement = () => {
 									</TableCell>
 									<TableCell>
 										<CrudMenuOptions>
-											<MenuItem>
-												<Button onClick={() => handleOpenUpdate(row)} startIcon={<Edit />}>
-													Update
-												</Button>
-											</MenuItem>
-											<MenuItem>
-												<CrudConfirmation
-													title='Delete Confirmation'
-													description='Are you sure you want to delete this?'
-													handleConfirm={() => handleDelete(row.id)}
-												>
-													{(handleOpen) => (
-														<Button onClick={handleOpen} startIcon={<Delete />}>
-															Remove
+											{!row.isDeleted ? (
+												<>
+													<MenuItem>
+														<Button
+															variant='outlined'
+															onClick={() => handleOpenUpdate(row)}
+															startIcon={<Edit />}
+														>
+															Update
 														</Button>
-													)}
-												</CrudConfirmation>
-											</MenuItem>
+													</MenuItem>
+													<MenuItem>
+														<CrudConfirmation
+															title='Delete Confirmation'
+															description='Are you sure you want to delete this?'
+															handleConfirm={() => handleDelete(row.id)}
+														>
+															{(handleOpen) => (
+																<Button
+																	variant='outlined'
+																	onClick={handleOpen}
+																	startIcon={<Delete />}
+																>
+																	Remove
+																</Button>
+															)}
+														</CrudConfirmation>
+													</MenuItem>
+												</>
+											) : (
+												<MenuItem>
+													<CrudConfirmation
+														title='Restore Confirmation'
+														description='Are you sure you want to restore this?'
+														handleConfirm={() => handleRestore(row.id)}
+													>
+														{(handleOpen) => (
+															<Button
+																variant='outlined'
+																startIcon={<Restore />}
+																onClick={handleOpen}
+															>
+																Restore
+															</Button>
+														)}
+													</CrudConfirmation>
+												</MenuItem>
+											)}
 										</CrudMenuOptions>
 									</TableCell>
 								</TableRow>
@@ -270,7 +308,7 @@ const VoucherManagement = () => {
 					open={openUpdatePage}
 					handleClose={handleCloseUpdate}
 					selectedVoucher={selectedRow}
-					handleupdate={handleUpdate}
+					handleUpdate={handleUpdate}
 				/>
 			)}
 		</Box>

@@ -119,7 +119,8 @@ namespace WebAPI.Controllers
                 throw new InvalidDataException("Invalid booking id");
             }
 
-            var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(id);
+            string[] includes = ["BookingDetails", "BookingDetails.Product"];
+            var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(id, includes);
             if (booking == null)
             {
                 throw new DataNotFoundException("Booking not found");
@@ -137,6 +138,11 @@ namespace WebAPI.Controllers
             }
 
             booking.BookingStatus = BookingStatusEnum.Booking.ToString();
+            foreach(var detail in booking.BookingDetails)
+            {
+                detail.Product.StockQuantity = Math.Max(0, detail.Product.StockQuantity - detail.Quantity);
+            }
+
             _unitOfWork.BookingRepository.Update(booking);
             await _unitOfWork.SaveChangeAsync();
 

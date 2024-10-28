@@ -43,9 +43,15 @@ const ValidationTextField = (
 			return false
 		}
 
-		if (maxLength && value.length > maxLength) {
-			setError(`This field can't exceed ${maxLength} characters`)
-			return false
+		if (maxLength) {
+			if (type === 'number' && value > maxLength) {
+				setError(`Number input can't greater than ${maxLength}`)
+				return false
+			}
+			if (value.length > maxLength) {
+				setError(`This field can't exceed ${maxLength} characters`)
+				return false
+			}
 		}
 
 		setError('')

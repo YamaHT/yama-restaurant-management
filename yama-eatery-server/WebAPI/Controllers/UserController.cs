@@ -94,6 +94,7 @@ namespace WebAPI.Controllers
                 FullName = userContactDTO.Name,
                 Title = userContactDTO.Title,
                 Message = userContactDTO.Message,
+                CreationDate = DateTime.Now,
                 User = user
             };
 

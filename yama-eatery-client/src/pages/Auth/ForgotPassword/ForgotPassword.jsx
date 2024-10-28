@@ -9,6 +9,8 @@ import secureLocalStorage from 'react-secure-storage'
 export default function ForgotPassword() {
 	const [email, setEmail] = useState('')
 	const [emailError, setEmailError] = useState('')
+	const [isSubmitting, setIsSubmitting] = useState(false)
+
 	const emailRegex = /^[a-zA-Z]+[-.]?[\w]+@(([\w]+-?[\w]+)+\.)+[\w]{2,4}$/
 
 	const validateEmail = () => {
@@ -31,8 +33,10 @@ export default function ForgotPassword() {
 		if (!validateEmail()) {
 			return
 		}
-		const isExisted = await AuthService.CHECK_EMAIL_EXISTED({ email })
 
+		setIsSubmitting(true)
+
+		const isExisted = await AuthService.CHECK_EMAIL_EXISTED({ email })
 		if (isExisted) {
 			const otp = Math.floor(100000 + Math.random() * 900000).toString()
 			const expirationTime = Date.now() + 1000 * 60 * 5
@@ -59,7 +63,8 @@ export default function ForgotPassword() {
 				navigate('/auth/otp-verification')
 			}, 1000)
 		} else {
-			enqueueSnackbar('Email not found', { variant: 'error' })
+			enqueueSnackbar('Email not existed', { variant: 'error' })
+			setIsSubmitting(false)
 		}
 	}
 
@@ -99,7 +104,14 @@ export default function ForgotPassword() {
 					onBlur={() => validateEmail(email)}
 				></TextField>
 
-				<Button type='submit' color='primary' variant='contained' sx={{ mt: 2 }} fullWidth>
+				<Button
+					type='submit'
+					color='primary'
+					variant='contained'
+					disabled={isSubmitting}
+					sx={{ mt: 2 }}
+					fullWidth
+				>
 					Submit
 				</Button>
 			</Box>

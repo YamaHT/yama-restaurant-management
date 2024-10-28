@@ -235,6 +235,7 @@ const AddStaff = ({ open, handleClose, handleAddStaff }) => {
 						type='date'
 						label={'Birthday'}
 						name='birthday'
+						variant='filled'
 						value={values.birthday}
 						onChange={handleValueChange}
 						slotProps={{

@@ -1,7 +1,6 @@
 import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
 import CrudTableHead from '@/components/Crud Components/CrudTableHead'
 import { StaffAttendanceManagementService } from '@/services/StaffAttendanceManagementService'
-import { StaffInformationManagementService } from '@/services/StaffInformationManagementService'
 import {
 	Button,
 	Dialog,
@@ -20,7 +19,7 @@ import React, { useEffect, useState } from 'react'
 
 const headCells = [
 	{
-		name: 'ID',
+		name: 'Id',
 		orderData: 'id',
 		numeric: true,
 		widthPercent: 5,
@@ -121,7 +120,7 @@ export default function AddStaffAttendance({ open, handleAddStaffAttendance, han
 								setSearchName(event.target.value)
 							}
 						}}
-						placeholder={'Search by Name...'}
+						placeholder={'Search by name...'}
 					/>
 				</Stack>
 

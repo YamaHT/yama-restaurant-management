@@ -80,5 +80,20 @@ namespace WebAPI.Controllers
             await _unitOfWork.SaveChangeAsync();
             return RedirectToAction("GetAll");
         }
+
+        [HttpPost("restore")]
+        public async Task<IActionResult> RestoreVoucher([FromBody] int id)
+        {
+            var voucher = await _unitOfWork.VoucherRepository.GetByIdAsync(id);
+            if (voucher == null)
+            {
+                throw new DataNotFoundException("Product is not found");
+            }
+
+            _unitOfWork.VoucherRepository.Restore(voucher);
+            await _unitOfWork.SaveChangeAsync();
+
+            return RedirectToAction("GetAll");
+        }
     }
 }

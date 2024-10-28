@@ -21,6 +21,8 @@ namespace WebAPI.Models
         [MaxLength(1000, ErrorMessage = "Message can't exceed 1000 characters")]
         public string? Respond { get; set; } = null;
 
+        public DateTime CreationDate { get; set; }
+
         public User? User { get; set; }
 
     }

@@ -2,9 +2,9 @@ import { ApiRequest } from '@/utilities/ApiRequest'
 import axiosFormBody from '@/utilities/axiosFormBody'
 
 export const UserManagementService = {
-	VIEW_MEMBERSHIP_REQUEST: async () => {
+	GET_MEMBERSHIP_REQUEST: async () => {
 		return await axiosFormBody
-			.get(ApiRequest.UserManagementRequest.VIEW_MEMBERSHIP_REGISTER)
+			.get(ApiRequest.UserManagementRequest.GET_MEMBERSHIP_REGISTER)
 			.then((response) => response.data)
 	},
 	APPROVE_MEMBERSHIP: async (id) => {

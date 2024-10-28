@@ -48,7 +48,7 @@ const Register = () => {
 
 		const isExisted = await AuthService.CHECK_EMAIL_EXISTED({ email: formData.email })
 		if (isExisted) {
-			enqueueSnackbar('Email is existed', { variant: 'error' })
+			enqueueSnackbar('Email existed', { variant: 'error' })
 			setIsSubmitting(false)
 			return
 		}
@@ -65,7 +65,7 @@ const Register = () => {
 		}
 
 		const data = await AuthService.SEND_MAIL_OTP({ email: formData.email, otp: otp })
-		if (data?.success) {
+		if (data) {
 			enqueueSnackbar(data.success, { variant: 'success', autoHideDuration: 1000 })
 			secureLocalStorage.setItem('requestData', JSON.stringify(requestData))
 

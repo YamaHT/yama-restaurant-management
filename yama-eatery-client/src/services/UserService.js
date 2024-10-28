@@ -8,9 +8,9 @@ export const UserService = {
 			.post(ApiRequest.UserRequest.CHANGE_PASSWORD, { password, newPassword })
 			.then((response) => response.data)
 	},
-	CONTACT: async ({ name, title, message }) => {
+	CONTACT: async (formData) => {
 		return await axiosFormBody
-			.post(ApiRequest.UserRequest.CONTACT, { name, title, message })
+			.post(ApiRequest.UserRequest.CONTACT, formData)
 			.then((response) => response.data)
 	},
 	USER_MEMBERSHIP: async () => {

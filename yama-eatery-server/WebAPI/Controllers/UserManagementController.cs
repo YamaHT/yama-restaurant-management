@@ -4,6 +4,7 @@ using WebAPI.Data;
 using WebAPI.Models.Enums;
 using WebAPI.Repositories;
 using WebAPI.Utils;
+using WebAPI.Utils.Exceptions;
 
 namespace WebAPI.Controllers
 {
@@ -17,40 +18,48 @@ namespace WebAPI.Controllers
             return Ok(user);
         }
             
-        [HttpGet("view-membership-register")]
-        public async Task<IActionResult> ViewMembershipRegister()
+        [HttpGet("membership")]
+        public async Task<IActionResult> MembershipRegister()
         {
             var user = await _unitOfWork.UserRepository.GetAllAsync(["Membership"]);
 
-            var membership = user.Where(x => x.Membership?.MembershipStatus == MembershipStatusEnum.Requesting.ToString())
+            var userRequestMembership = user.Where(x => x.Membership?.MembershipStatus == MembershipStatusEnum.Requesting.ToString())
                                  .Select(x => new { x.Id, x.Name, x.Phone });
-            return Ok(membership);
+            return Ok(userRequestMembership);
         }
 
         [HttpPost("membership/approve")]
         public async Task<IActionResult> ApproveMembership([FromBody] int id)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(id, ["Membership"]);
+            if (user == null)
+            {
+                throw new DataNotFoundException("User not found");
+            }
 
             user.Membership.MembershipStatus = MembershipStatusEnum.Active.ToString();
 
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(new { success = "Membership approve successfully" });
+            return RedirectToAction("MembershipRegister");
         }
 
         [HttpPost("membership/deny")]
         public async Task<IActionResult> DenyMembership([FromBody] int id)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(id, ["Membership"]);
+            if (user == null)
+            {
+                throw new DataNotFoundException("User not found");
+            }
 
             user.Membership.MembershipStatus = MembershipStatusEnum.Inactive.ToString();
 
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
 
-            return Ok(new { success = "Membership deny successfully" });
+            return RedirectToAction("MembershipRegister");
         }
     }
 }

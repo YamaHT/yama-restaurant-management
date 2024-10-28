@@ -69,7 +69,22 @@ const ContactUs = () => {
 	})
 	const fieldsRef = useRef([])
 
-	const handleSubmit = async () => {
+	const handleChange = (e) => {
+		const { name, value } = e.target
+		setValue((prevValue) => ({
+			...prevValue,
+			[name]: value,
+		}))
+	}
+
+	const handleSubmit = async (e) => {
+		e.preventDefault()
+
+		if (!localStorage.getItem('token')) {
+			enqueueSnackbar('You need to login to use this function', { variant: 'error' })
+			return
+		}
+
 		let isValid = true
 
 		Object.keys(fieldsRef.current).forEach((key) => {
@@ -78,26 +93,19 @@ const ContactUs = () => {
 			}
 		})
 
-		if (!isValid) {
-			return
-		}
-		const data = await UserService.CONTACT({
-			name: value.name,
-			title: value.title,
-			message: value.message,
-		})
-		console.log(data)
-		if (data?.success) {
-			enqueueSnackbar(data.success, { variant: 'success', autoHideDuration: 1000 })
-		}
-	}
+		if (isValid) {
+			const formData = {
+				name: value.name,
+				title: value.title,
+				message: value.message,
+			}
+			const data = await UserService.CONTACT(formData)
 
-	const handleChange = (e) => {
-		const { name, value } = e.target
-		setValue((prevValue) => ({
-			...prevValue,
-			[name]: value,
-		}))
+			if (data) {
+				enqueueSnackbar(data.success, { variant: 'success', autoHideDuration: 1000 })
+				setValue({ name: '', title: '', message: '' })
+			}
+		}
 	}
 
 	return (
@@ -151,7 +159,7 @@ const ContactUs = () => {
 						bgcolor: '#5abfff',
 					}}
 				>
-					<Stack spacing={5}>
+					<Stack component={'form'} onSubmit={(e) => handleSubmit(e)} noValidate spacing={5}>
 						<FormLabel>
 							<Typography
 								variant='h3'
@@ -209,7 +217,7 @@ const ContactUs = () => {
 						</Stack>
 						<Button
 							variant='contained'
-							type='button'
+							type='submit'
 							size='large'
 							sx={{
 								color: 'black',
@@ -218,7 +226,6 @@ const ContactUs = () => {
 								width: '50%',
 								fontWeight: 'bold',
 							}}
-							onClick={handleSubmit}
 						>
 							Send message
 						</Button>

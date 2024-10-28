@@ -177,10 +177,13 @@ const UpdateStaff = ({ open, handleClose, existingStaff, handleUpdateStaff }) =>
 						type='date'
 						label='Birthday'
 						name='birthday'
+						variant='filled'
 						value={values.birthday}
 						onChange={handleValueChange}
-						InputLabelProps={{ shrink: true }}
-						inputProps={{ max: new Date().toISOString().split('T')[0] }}
+						slotProps={{
+							inputLabel: { shrink: true },
+							input: { inputProps: { max: new Date().toISOString().split('T')[0] } },
+						}}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['phone'] = el)}
