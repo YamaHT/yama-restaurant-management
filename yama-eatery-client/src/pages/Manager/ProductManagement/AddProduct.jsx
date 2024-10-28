@@ -34,7 +34,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	})
 
 	const [generatorOption, setGeneratorOption] = useState('')
-	const [error, setError] = useState('')
+
 	const [isGenerating, setIsGenerating] = useState(false)
 
 	const handleValueChange = (e) => {
@@ -51,8 +51,6 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 		if (values.images.length + files.length > 5) {
 			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
-		} else {
-			setError('')
 		}
 		if (files.length) {
 			const fileReaders = Array.from(files).map((file) => {
@@ -124,8 +122,6 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 		if (values.images.length === 0) {
 			enqueueSnackbar(`Images are required`, { variant: 'error' })
 			isValid = false
-		} else {
-			setError('')
 		}
 
 		Object.keys(fieldsRef.current).forEach((key) => {
@@ -206,7 +202,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 							</IconButton>
 						</Grid2>
 					</Grid2>
-					{error && <Typography color='error'>{error}</Typography>}
+
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['image'] = el)}
 						label='Images'

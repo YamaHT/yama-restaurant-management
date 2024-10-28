@@ -29,7 +29,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 	})
 	const [floorError, setFloorError] = useState('')
 	const [typeError, setTypeError] = useState('')
-	const [imageError, setImageError] = useState('')
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
@@ -45,8 +44,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 		if (values.images.length + files.length > 5) {
 			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
-		} else {
-			setImageError('')
 		}
 		if (files.length) {
 			const fileReaders = Array.from(files).map((file) => {
@@ -87,7 +84,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 
 		setFloorError('')
 		setTypeError('')
-		setImageError('')
 
 		if (!values.floor) {
 			isValid = false
@@ -174,7 +170,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 					<Stack spacing={2}>
 						{floorError && <Typography color='error'>{floorError}</Typography>}
 						{typeError && <Typography color='error'>{typeError}</Typography>}
-						{imageError && <Typography color='error'>{imageError}</Typography>}
 					</Stack>
 
 					<ValidationTextField

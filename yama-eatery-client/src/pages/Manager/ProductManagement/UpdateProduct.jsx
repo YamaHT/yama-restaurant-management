@@ -36,7 +36,6 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 	})
 
 	const [generatorOption, setGeneratorOption] = useState('')
-	const [error, setError] = useState('')
 	const [isGenerating, setIsGenerating] = useState(false)
 
 	useEffect(() => {
@@ -66,8 +65,6 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 		if (values.image.length + imageFiles.length + files.length > 5) {
 			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
-		} else {
-			setError('')
 		}
 		if (files.length) {
 			const fileReaders = Array.from(files).map((file) => {
@@ -278,7 +275,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 							<Add sx={{ fontSize: 50 }} />
 						</IconButton>
 					</Stack>
-					{error && <Typography color='error'>{error}</Typography>}
+
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['id'] = el)}
 						label='ID'

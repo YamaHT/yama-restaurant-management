@@ -32,8 +32,6 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 		image: [],
 	})
 
-	const [error, setError] = useState('')
-
 	useEffect(() => {
 		if (existingTable) {
 			setValues({
@@ -59,8 +57,6 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 		if (values.image.length + imageFiles.length + files.length > 5) {
 			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
-		} else {
-			setError('')
 		}
 		if (files.length) {
 			const fileReaders = Array.from(files).map((file) => {
@@ -242,7 +238,6 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 							<Add sx={{ fontSize: 50 }} />
 						</IconButton>
 					</Stack>
-					{error && <Typography color='error'>{error}</Typography>}
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['id'] = el)}
 						label='ID'
