@@ -24,7 +24,6 @@ const Membership = () => {
 	useEffect(() => {
 		const fectchMembershipStatus = async () => {
 			const data = await UserService.USER_MEMBERSHIP()
-			console.log(data)
 			if (data) {
 				setMembership(data)
 			}

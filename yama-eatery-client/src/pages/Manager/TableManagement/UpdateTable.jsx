@@ -102,7 +102,6 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 		})
 
 		var imageLength = values.image.length + imageFiles.length
-		console.log(imageLength)
 		if (imageLength <= 0 || imageLength > 5) {
 			isValid = false
 			enqueueSnackbar(`Images are required`, { variant: 'error' })

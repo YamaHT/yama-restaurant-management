@@ -38,14 +38,9 @@ function HistoryFeedback() {
 
 	useEffect(() => {
 		const fetchFeedback = async () => {
-			try {
-				const data = await UserService.HISTORY_FEEDBACK()
-				console.log(data)
-				setReviews(data)
-				applyFilters(selectedRating, data)
-			} catch (error) {
-				console.error('Error fetching feedback:', error)
-			}
+			const data = await UserService.HISTORY_FEEDBACK()
+			setReviews(data)
+			applyFilters(selectedRating, data)
 		}
 		fetchFeedback()
 	}, [])

@@ -17,12 +17,12 @@ namespace WebAPI.Controllers
 
         [HttpGet("price-range")]
         public async Task<IActionResult> GetPriceRange()
-        {
+        {   
             var products = await _unitOfWork.ProductRepository.GetAllAsync();
             var priceRange = new
             {
-                minPrice = products.Min(x => x.Price),
-                maxPrice = products.Max(x => x.Price),
+                minPrice = products.Count() > 0 ? products.Min(x => x.Price) : 0,
+                maxPrice = products.Count() > 0 ? products.Max(x => x.Price) : 0,
             };
             return Ok(priceRange);
         }
