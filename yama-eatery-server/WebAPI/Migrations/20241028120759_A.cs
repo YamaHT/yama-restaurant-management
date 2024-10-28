@@ -122,7 +122,7 @@ namespace WebAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Image = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -158,11 +158,7 @@ namespace WebAPI.Migrations
                     Birthday = table.Column<DateOnly>(type: "date", nullable: true),
                     Phone = table.Column<string>(type: "char(10)", maxLength: 10, nullable: true),
                     Gender = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    PositionId = table.Column<int>(type: "int", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    PositionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -214,6 +210,7 @@ namespace WebAPI.Migrations
                     Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     IsIgnored = table.Column<bool>(type: "bit", nullable: false),
                     Respond = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -341,7 +338,7 @@ namespace WebAPI.Migrations
                     RemainPayment = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     BookingDate = table.Column<DateOnly>(type: "date", nullable: false),
                     DayPart = table.Column<string>(type: "nvarchar(10)", nullable: false),
-                    BookingStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BookingStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     NewPaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true),
                     TableId = table.Column<int>(type: "int", nullable: false),
