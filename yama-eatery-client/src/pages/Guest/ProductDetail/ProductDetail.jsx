@@ -47,7 +47,7 @@ export default function ProductDetail() {
 	const [userReview, setUserReview] = useState('')
 	const [isBeginning, setIsBeginning] = useState(true)
 	const [isEnd, setIsEnd] = useState(false)
-	const [loading, setLoading] = useState(true) // Loading state
+	const [loading, setLoading] = useState(true)
 
 	const prevRef = useRef(null)
 	const nextRef = useRef(null)
@@ -55,7 +55,7 @@ export default function ProductDetail() {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			setLoading(true) // Start loading
+			setLoading(true)
 			try {
 				const productData = await ProductService.GET_PRODUCT_DETAIL(id)
 				if (productData) {

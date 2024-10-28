@@ -22,7 +22,6 @@ export default function TableList() {
 			const data = await TableService.GET_ALL()
 			if (data) {
 				setTables(data)
-				console.log(data)
 			}
 		}
 		fetchTables()

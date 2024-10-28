@@ -39,7 +39,6 @@ const UpdateStaff = ({ open, handleClose, existingStaff, handleUpdateStaff }) =>
 
 	useEffect(() => {
 		if (existingStaff) {
-			console.log('existingStaff', existingStaff)
 			setValues({
 				id: existingStaff.id || '',
 				image: existingStaff.image || '',

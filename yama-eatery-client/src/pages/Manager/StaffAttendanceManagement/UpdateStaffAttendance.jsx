@@ -59,7 +59,6 @@ export default function UpdateStaffAttendance({
 		}
 
 		if (isValid) {
-			console.log(values)
 			onUpdate(values)
 			handleClose()
 		}

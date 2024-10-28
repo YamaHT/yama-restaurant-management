@@ -38,7 +38,6 @@ export default function ChangePassword() {
 		}
 
 		if (isValid) {
-			console.log(isValid)
 			const data = await UserService.CHANGE_PASSWORD({
 				password: oldPassword,
 				newPassword: newPassword,

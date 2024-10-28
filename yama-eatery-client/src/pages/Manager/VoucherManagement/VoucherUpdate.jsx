@@ -84,7 +84,6 @@ const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleUpdate }) => 
 		if (data.image) {
 			formData.append('image', data.image)
 		}
-		console.log(formData)
 		handleUpdate(formData)
 		handleClose()
 	}

@@ -99,7 +99,6 @@ const CrudAdd = ({ open, handleClose }) => {
 				category: values.category,
 			}
 
-			console.log(productData)
 			handleClose()
 		}
 	}
