@@ -36,8 +36,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 	})
 
 	const [generatorOption, setGeneratorOption] = useState('')
-	const [error, setError] = useState('')
-	const [priceError, setPriceError] = useState('')
+	const [isGenerating, setIsGenerating] = useState(false)
 
 	useEffect(() => {
 		if (existingProduct) {
@@ -55,22 +54,10 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
 
-		if (name === 'price' && !/^\d*\.?\d*$/.test(value)) {
-			return
-		}
-
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
 		}))
-		if (name === 'price') {
-			const priceValue = parseFloat(value)
-			if (priceValue <= 0 || priceValue >= 10000) {
-				setPriceError('Price must be greater than 0 and less than 10,000.')
-			} else {
-				setPriceError('')
-			}
-		}
 	}
 
 	const handleImageChange = (e) => {
@@ -78,8 +65,6 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 		if (values.image.length + imageFiles.length + files.length > 5) {
 			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
-		} else {
-			setError('')
 		}
 		if (files.length) {
 			const fileReaders = Array.from(files).map((file) => {
@@ -116,25 +101,34 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 	}
 
 	const handleDescriptionGenerator = async () => {
+		if (values.name.trim() === '') {
+			enqueueSnackbar('Please enter a name', { variant: 'warning' })
+			return
+		}
+
+		setIsGenerating(true)
+
 		try {
 			const descriptionGenerated = await DescriptionGenerator(
 				'Product',
 				values.name,
 				generatorOption
 			)
-			if (descriptionGenerated.trim().toString() !== '404') {
+			if (descriptionGenerated.trim() !== '404') {
 				setValues((prev) => ({
 					...prev,
 					description: descriptionGenerated.trim(),
 				}))
 			} else {
-				enqueueSnackbar('Cant generate description', { variant: 'warning' })
+				enqueueSnackbar('Cant find this food to generate description', { variant: 'warning' })
 			}
 		} catch (error) {
 			setValues((prev) => ({ ...prev, description: '' }))
+			enqueueSnackbar('Cant find this food to generate description', { variant: 'warning' })
+		} finally {
+			setIsGenerating(false)
 		}
 	}
-
 	const handleUpdate = () => {
 		let isValid = true
 
@@ -144,14 +138,14 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 			}
 		})
 
-		var imageLength = values.image.length + imageFiles.length
+		const imageLength = values.image.length + imageFiles.length
 		if (imageLength <= 0) {
 			isValid = false
 			enqueueSnackbar(`Images are required`, { variant: 'error' })
 		}
 
 		if (isValid) {
-			var formData = new FormData()
+			const formData = new FormData()
 			formData.append('productId', values.id)
 			values.image.forEach((remainImage) => {
 				formData.append('remainImages', remainImage)
@@ -168,7 +162,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 			formData.append('subCategoryId', parseInt(values.subCategoryId))
 
 			handleUpdateProduct(formData)
-			enqueueSnackbar('Update Product Sucessfully', { variant: 'success' })
+			enqueueSnackbar('Update Product Successfully', { variant: 'success' })
 			handleClose()
 		}
 	}
@@ -281,7 +275,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 							<Add sx={{ fontSize: 50 }} />
 						</IconButton>
 					</Stack>
-					{error && <Typography color='error'>{error}</Typography>}
+
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['id'] = el)}
 						label='ID'
@@ -306,8 +300,7 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 						variant='filled'
 						value={values.price}
 						onChange={handleValueChange}
-						error={!!priceError}
-						helperText={priceError}
+						maxLength={1000}
 					/>
 					<Stack direction={'row'} alignItems={'center'}>
 						<ValidationTextField
@@ -334,8 +327,9 @@ const UpdateProduct = ({ categories, open, handleClose, existingProduct, handleU
 								variant='contained'
 								color='info'
 								onClick={handleDescriptionGenerator}
+								disabled={isGenerating}
 							>
-								Auto Generate
+								{isGenerating ? 'Generating...' : 'Auto Generate'}
 							</Button>
 						</Stack>
 					</Stack>

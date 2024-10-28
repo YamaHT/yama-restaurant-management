@@ -32,8 +32,6 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 		image: [],
 	})
 
-	const [error, setError] = useState('')
-
 	useEffect(() => {
 		if (existingTable) {
 			setValues({
@@ -47,7 +45,7 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
-
+		const newValue = name === 'floor' ? parseInt(value, 10) : value
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
@@ -59,8 +57,6 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 		if (values.image.length + imageFiles.length + files.length > 5) {
 			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
-		} else {
-			setError('')
 		}
 		if (files.length) {
 			const fileReaders = Array.from(files).map((file) => {
@@ -242,7 +238,6 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 							<Add sx={{ fontSize: 50 }} />
 						</IconButton>
 					</Stack>
-					{error && <Typography color='error'>{error}</Typography>}
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['id'] = el)}
 						label='ID'
@@ -251,17 +246,26 @@ const UpdateProduct = ({ tableTypes, open, handleClose, existingTable, handleUpd
 						value={values.id}
 						slotProps={customInputImageProperties}
 					/>
-					<ValidationTextField
+					<ValidationSelect
 						ref={(el) => (fieldsRef.current['floor'] = el)}
 						label='Floor'
 						name='floor'
-						type='number'
-						variant='filled'
 						value={values.floor}
 						onChange={handleValueChange}
-						regex='^(0|1|2|3)$'
-						regexErrorText='Floor must be 0, 1, 2, or 3.'
-					/>
+						variant='filled'
+					>
+						{[
+							{ value: '0', label: 'Ground' },
+							{ value: '1', label: '1st' },
+							{ value: '2', label: '2nd' },
+							{ value: '3', label: '3rd' },
+							{ value: '4', label: '4th' },
+						].map(({ value, label }) => (
+							<MenuItem key={value} value={value}>
+								{label}
+							</MenuItem>
+						))}
+					</ValidationSelect>
 					<ValidationSelect
 						ref={(el) => (fieldsRef.current['type'] = el)}
 						label='Table Type'

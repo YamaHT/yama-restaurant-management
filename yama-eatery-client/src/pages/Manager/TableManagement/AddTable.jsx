@@ -27,12 +27,10 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 		floor: '',
 		images: [],
 	})
-	const [floorError, setFloorError] = useState('')
-	const [typeError, setTypeError] = useState('')
-	const [imageError, setImageError] = useState('')
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
+		const newValue = name === 'floor' ? parseInt(value, 10) : value
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
@@ -44,8 +42,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 		if (values.images.length + files.length > 5) {
 			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
-		} else {
-			setImageError('')
 		}
 		if (files.length) {
 			const fileReaders = Array.from(files).map((file) => {
@@ -83,10 +79,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 
 	const handleAdd = () => {
 		let isValid = true
-
-		setFloorError('')
-		setTypeError('')
-		setImageError('')
 
 		if (!values.floor) {
 			isValid = false
@@ -170,11 +162,6 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 							</IconButton>
 						</Grid2>
 					</Grid2>
-					<Stack spacing={2}>
-						{floorError && <Typography color='error'>{floorError}</Typography>}
-						{typeError && <Typography color='error'>{typeError}</Typography>}
-						{imageError && <Typography color='error'>{imageError}</Typography>}
-					</Stack>
 
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['image'] = el)}
@@ -205,17 +192,26 @@ const AddTable = ({ tableTypes, open, handleClose, handleAddTable }) => {
 							},
 						}}
 					/>
-					<ValidationTextField
+					<ValidationSelect
 						ref={(el) => (fieldsRef.current['floor'] = el)}
 						label='Floor'
 						name='floor'
-						type='number'
-						variant='filled'
 						value={values.floor}
 						onChange={handleValueChange}
-						regex='^(0|1|2|3)$'
-						regexErrorText='Floor must be 0, 1, 2, or 3.'
-					/>
+						variant='filled'
+					>
+						{[
+							{ value: '0', label: 'Ground' },
+							{ value: '1', label: '1st' },
+							{ value: '2', label: '2nd' },
+							{ value: '3', label: '3rd' },
+							{ value: '4', label: '4th' },
+						].map(({ value, label }) => (
+							<MenuItem key={value} value={value}>
+								{label}
+							</MenuItem>
+						))}
+					</ValidationSelect>
 
 					<ValidationSelect
 						ref={(el) => (fieldsRef.current['type'] = el)}

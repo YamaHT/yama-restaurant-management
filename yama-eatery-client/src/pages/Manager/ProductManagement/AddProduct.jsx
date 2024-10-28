@@ -18,6 +18,7 @@ import {
 } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
+
 const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	const fileRef = useRef(null)
 	const fieldsRef = useRef({})
@@ -33,26 +34,16 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	})
 
 	const [generatorOption, setGeneratorOption] = useState('')
-	const [error, setError] = useState('')
-	const [priceError, setPriceError] = useState('')
+
+	const [isGenerating, setIsGenerating] = useState(false)
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
-		if (name === 'price' && !/^\d*\.?\d*$/.test(value)) {
-			return
-		}
+
 		setValues((prev) => ({
 			...prev,
 			[name]: value,
 		}))
-		if (name === 'price') {
-			const priceValue = parseFloat(value)
-			if (priceValue <= 0 || priceValue >= 10000) {
-				setPriceError('Price must be greater than 0 and less than 10,000.')
-			} else {
-				setPriceError('')
-			}
-		}
 	}
 
 	const handleImageChange = (e) => {
@@ -60,8 +51,6 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 		if (values.images.length + files.length > 5) {
 			enqueueSnackbar(`You can only upload up to 5 images.`, { variant: 'error' })
 			return
-		} else {
-			setError('')
 		}
 		if (files.length) {
 			const fileReaders = Array.from(files).map((file) => {
@@ -98,20 +87,32 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 	}
 
 	const handleDescriptionGenerator = async () => {
+		if (values.name.trim() === '') {
+			enqueueSnackbar('Please enter a name', { variant: 'warning' })
+			return
+		}
+
+		setIsGenerating(true)
+
 		try {
 			const descriptionGenerated = await DescriptionGenerator(
 				'Product',
 				values.name,
 				generatorOption
 			)
-			if (descriptionGenerated.trim().toString() !== '404') {
+			if (descriptionGenerated.trim() !== '404') {
 				setValues((prev) => ({
 					...prev,
 					description: descriptionGenerated.trim(),
 				}))
+			} else {
+				enqueueSnackbar('Cant find this food to generate description', { variant: 'warning' })
 			}
 		} catch (error) {
 			setValues((prev) => ({ ...prev, description: '' }))
+			enqueueSnackbar('Cant find this food to generate description', { variant: 'warning' })
+		} finally {
+			setIsGenerating(false)
 		}
 	}
 
@@ -121,8 +122,6 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 		if (values.images.length === 0) {
 			enqueueSnackbar(`Images are required`, { variant: 'error' })
 			isValid = false
-		} else {
-			setError('')
 		}
 
 		Object.keys(fieldsRef.current).forEach((key) => {
@@ -143,7 +142,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 			formData.append('subCategoryId', parseInt(values.subCategoryId))
 
 			handleAddProduct(formData)
-			enqueueSnackbar('Add Product Sucessfully', { variant: 'success' })
+			enqueueSnackbar('Add Product Successfully', { variant: 'success' })
 			handleClose()
 		}
 	}
@@ -203,7 +202,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 							</IconButton>
 						</Grid2>
 					</Grid2>
-					{error && <Typography color='error'>{error}</Typography>}
+
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['image'] = el)}
 						label='Images'
@@ -249,8 +248,7 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 						variant='filled'
 						value={values.price}
 						onChange={handleValueChange}
-						error={!!priceError}
-						helperText={priceError}
+						maxLength={1000}
 					/>
 					<ValidationTextField
 						ref={(el) => (fieldsRef.current['stockQuantity'] = el)}
@@ -291,8 +289,9 @@ const AddProduct = ({ categories, open, handleClose, handleAddProduct }) => {
 								variant='contained'
 								color='info'
 								onClick={handleDescriptionGenerator}
+								disabled={isGenerating}
 							>
-								Auto Generate
+								{isGenerating ? 'Generating...' : 'Auto Generate'}
 							</Button>
 						</Stack>
 					</Stack>
