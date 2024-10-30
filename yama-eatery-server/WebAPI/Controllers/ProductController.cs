@@ -27,7 +27,6 @@ namespace WebAPI.Controllers
             return Ok(priceRange);
         }
 
-
         [HttpGet("detail/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
@@ -41,10 +40,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetSimilar(string categoryName)
         {
             var similarProduct = await _unitOfWork.ProductRepository.GetRandom10ProductsByCategoryName(categoryName);
-
             return Ok(similarProduct);
         }
-        
-
     }
 }

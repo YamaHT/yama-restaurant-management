@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings"]);
             if (user.Bookings.FirstOrDefault(x => x.BookingDate == addBookingDTO.BookingDate
-                && x.DayPart == addBookingDTO.DayPart) != null)
+                                               && x.DayPart == addBookingDTO.DayPart) != null)
             {
                 throw new DataConflictException("This part of day did have a booking");
             }
@@ -138,9 +138,10 @@ namespace WebAPI.Controllers
             }
 
             booking.BookingStatus = BookingStatusEnum.Booking.ToString();
-            foreach(var detail in booking.BookingDetails)
+            foreach (var detail in booking.BookingDetails)
             {
                 detail.Product.StockQuantity = Math.Max(0, detail.Product.StockQuantity - detail.Quantity);
+                _unitOfWork.ProductRepository.Update(detail.Product);
             }
 
             _unitOfWork.BookingRepository.Update(booking);

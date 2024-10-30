@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
             var employee = await _unitOfWork.EmployeeRepository.GetByEmailAndPasswordAsync(userLoginDTO.Email, userLoginDTO.Password);
             if (employee != null)
             {
-                var jwt = employee?.GenerateJWTEmployee(_configuration["JWT:SecretKey"]);
+                var jwt = employee?.GenerateJwtEmployee(_configuration["JWT:SecretKey"]);
                 return Ok(new { token = jwt, role = employee?.Position?.Name ?? RoleEnum.Staff.ToString() });
             }
 
@@ -96,7 +96,7 @@ namespace WebAPI.Controllers
             var employee = await _unitOfWork.EmployeeRepository.GetByEmailAsync(googleProfileDTO.Email);
             if (employee != null)
             {
-                var jwtEmployee = employee?.GenerateJWTEmployee(_configuration["JWT:SecretKey"]);
+                var jwtEmployee = employee?.GenerateJwtEmployee(_configuration["JWT:SecretKey"]);
                 return Ok(new { token = jwtEmployee, role = employee?.Position?.Name ?? RoleEnum.Staff.ToString() });
             }
 

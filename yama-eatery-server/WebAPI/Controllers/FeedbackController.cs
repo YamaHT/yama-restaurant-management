@@ -1,4 +1,4 @@
-﻿            using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs.Feedback;
 using WebAPI.Models;
@@ -56,7 +56,6 @@ namespace WebAPI.Controllers
             feedback.TryValidate();
 
             _unitOfWork.FeedbackProductRepository.Update(feedback);
-
             await _unitOfWork.SaveChangeAsync();
 
             return Ok(feedback);

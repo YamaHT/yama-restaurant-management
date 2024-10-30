@@ -68,7 +68,7 @@ namespace WebAPI.Controllers
             var listImage = updateProductDTO.RemainImages;
             foreach (var item in updateProductDTO.DeletedImages)
             {
-                ImageUtil.DeleteImageAsync(nameof(Product), item);
+                ImageUtil.DeleteImage(nameof(Product), item);
             }
 
             foreach (var item in updateProductDTO.ImageFiles)
@@ -99,7 +99,7 @@ namespace WebAPI.Controllers
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
             if (product == null)
             {
-                throw new DataNotFoundException("Product is not found");
+                throw new DataNotFoundException("Product not found");
             }
 
             _unitOfWork.ProductRepository.Remove(product);
@@ -114,7 +114,7 @@ namespace WebAPI.Controllers
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
             if (product == null)
             {
-                throw new DataNotFoundException("Product is not found");
+                throw new DataNotFoundException("Product not found");
             }
 
             _unitOfWork.ProductRepository.Restore(product);
