@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs.Staff;
 using WebAPI.Models;
 using WebAPI.Models.Enums;
-using WebAPI.Utils.Exceptions;
 using WebAPI.Utils;
+using WebAPI.Utils.Exceptions;
 
 namespace WebAPI.Controllers
 {

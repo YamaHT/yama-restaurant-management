@@ -1,6 +1,6 @@
 import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
-import DialogChoosingProduct from '@/components/DialogChoosing/DialogChoosingProduct'
+import DialogChoosingListProduct from '@/components/DialogChoosing/DialogChoosingListProduct'
 import { BookingService } from '@/services/BookingService'
 import { TableService } from '@/services/TableService'
 import { UserService } from '@/services/UserService'
@@ -371,10 +371,10 @@ export default function TableDetail() {
 								<Add sx={{ fontSize: 50 }} />
 							</IconButton>
 						</Grid2>
-						<DialogChoosingProduct
+						<DialogChoosingListProduct
 							open={open}
 							handleClose={() => setOpen(false)}
-							handleAddProduct={handleAddBookingDetail}
+							handleSelectProducts={handleAddBookingDetail}
 							selectedProducts={formData.products}
 						/>
 					</Grid2>

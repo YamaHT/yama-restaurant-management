@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using WebAPI.DTOs.Product;
 using WebAPI.Models;
 using WebAPI.Models.Enums;
@@ -74,7 +73,8 @@ namespace WebAPI.Controllers
             foreach (var item in updateProductDTO.ImageFiles)
             {
                 var imageName = await ImageUtil.AddImageAsync(nameof(Product), item);
-                if (imageName != null) { 
+                if (imageName != null)
+                {
                     listImage.Add(imageName);
                 }
             }

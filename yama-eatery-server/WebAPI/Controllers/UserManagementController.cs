@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Data;
 using WebAPI.Models.Enums;
-using WebAPI.Repositories;
 using WebAPI.Utils;
 using WebAPI.Utils.Exceptions;
 
@@ -17,7 +15,7 @@ namespace WebAPI.Controllers
             var user = await _unitOfWork.UserRepository.GetAllAsync(["Membership"]);
             return Ok(user);
         }
-            
+
         [HttpGet("membership")]
         public async Task<IActionResult> MembershipRegister()
         {

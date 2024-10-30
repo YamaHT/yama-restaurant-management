@@ -1,5 +1,6 @@
-import { TableService } from '@/services/TableService'
+import { BookingManagementService } from '@/services/BookingManagementService'
 import { AssetImages } from '@/utilities/AssetImages'
+import { Close } from '@mui/icons-material'
 import {
 	Avatar,
 	Button,
@@ -12,22 +13,23 @@ import {
 	DialogContent,
 	DialogTitle,
 	Grid2,
+	IconButton,
 	Stack,
 	Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 
-const DialogChoosingTable = ({ open, handleClose, handleSelectTable }) => {
+const DialogChoosingTable = ({ open, dayPart, handleClose, handleSelectTable }) => {
 	const [tables, setTables] = useState([])
 
 	useEffect(() => {
-		async function fetchProducts() {
-			const data = await TableService.GET_ALL()
+		async function fetchTables() {
+			const data = await BookingManagementService.GET_TABLES_NOT_BOOKED(dayPart)
 			if (data) {
 				setTables(data)
 			}
 		}
-		fetchProducts()
+		fetchTables()
 	}, [open])
 
 	const handleClick = (tableId) => {
@@ -37,7 +39,14 @@ const DialogChoosingTable = ({ open, handleClose, handleSelectTable }) => {
 
 	return (
 		<Dialog open={open} maxWidth onClose={handleClose} PaperProps={{ sx: { bgcolor: '#eee' } }}>
-			<DialogTitle>List available table</DialogTitle>
+			<DialogTitle display={'flex'} alignItems={'center'}>
+				<Typography variant='h6' flexGrow={1}>
+					List available table
+				</Typography>
+				<IconButton onClick={() => handleClose()}>
+					<Close />
+				</IconButton>
+			</DialogTitle>
 			<DialogContent>
 				{tables && tables.length > 0 ? (
 					<Grid2 container spacing={2}>
@@ -46,13 +55,18 @@ const DialogChoosingTable = ({ open, handleClose, handleSelectTable }) => {
 								<Card>
 									<CardActionArea onClick={() => handleClick(table.id)}>
 										<CardMedia
-											component={Avatar}
-											variant='square'
-											src={AssetImages.ProductImage(table.image?.[0])}
+											component={() => (
+												<Avatar
+													src={AssetImages.TableImage(table.image?.[0])}
+													variant='square'
+													sx={{
+														width: '100%',
+														height: 150,
+														objectFit: 'cover',
+													}}
+												/>
+											)}
 											sx={{
-												width: '100%',
-												height: 150,
-												objectFit: 'cover',
 												display: 'flex',
 												justifyContent: 'center',
 												alignItems: 'center',

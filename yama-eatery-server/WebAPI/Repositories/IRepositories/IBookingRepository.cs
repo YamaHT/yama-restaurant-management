@@ -6,5 +6,6 @@ namespace WebAPI.Repositories.IRepositories
     {
         Task<Booking?> GetByGuidAsync(Guid id, string[]? includes = null);
         Task<List<string>> GetAllBookedDayPartOfTableInDateAsync(int tableId, DateOnly date);
+        Task<List<Booking>> GetAllBookingInDayPartAsync(string dayPart);
     }
 }
