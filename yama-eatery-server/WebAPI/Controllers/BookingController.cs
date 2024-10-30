@@ -27,17 +27,17 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("reserve")]
-        public async Task<IActionResult> Reserve([FromBody] AddBookingDTO addBookingDTO)
+        public async Task<IActionResult> Reserve([FromBody] AddUserBookingDTO addUserBookingDTO)
         {
             var user = await _unitOfWork.GetUserFromHttpContextAsync(HttpContext, ["Bookings"]);
-            if (user.Bookings.FirstOrDefault(x => x.BookingDate == addBookingDTO.BookingDate
-                                               && x.DayPart == addBookingDTO.DayPart) != null)
+            if (user.Bookings.FirstOrDefault(x => x.BookingDate == addUserBookingDTO.BookingDate
+                                               && x.DayPart == addUserBookingDTO.DayPart) != null)
             {
                 throw new DataConflictException("This part of day did have a booking");
             }
 
-            var table = await _unitOfWork.TableRepository.GetByIdAsync(addBookingDTO.TableId);
-            var userVoucher = await _unitOfWork.UserVoucherRepository.GetByIdAsync(addBookingDTO.UserVoucherId, ["Voucher"]);
+            var table = await _unitOfWork.TableRepository.GetByIdAsync(addUserBookingDTO.TableId);
+            var userVoucher = await _unitOfWork.UserVoucherRepository.GetByIdAsync(addUserBookingDTO.UserVoucherId, ["Voucher"]);
             if (userVoucher != null)
             {
                 userVoucher.IsUsed = true;
@@ -49,14 +49,14 @@ namespace WebAPI.Controllers
 
             var booking = new Booking
             {
-                CustomerName = $"{addBookingDTO.LastName} {addBookingDTO.FirstName}".Trim(),
-                Phone = addBookingDTO.Phone,
-                BookingDate = addBookingDTO.BookingDate,
-                DayPart = addBookingDTO.DayPart,
+                CustomerName = $"{addUserBookingDTO.LastName} {addUserBookingDTO.FirstName}".Trim(),
+                Phone = addUserBookingDTO.Phone,
+                BookingDate = addUserBookingDTO.BookingDate,
+                DayPart = addUserBookingDTO.DayPart,
                 BookingStatus = BookingStatusEnum.Undeposited.ToString(),
-                Note = addBookingDTO.Note,
-                TotalPayment = addBookingDTO.TotalPayment,
-                DepositPrice = addBookingDTO.DepositPrice,
+                Note = addUserBookingDTO.Note,
+                TotalPayment = addUserBookingDTO.TotalPayment,
+                DepositPrice = addUserBookingDTO.DepositPrice,
                 NewPaymentDate = DateTime.Now,
                 User = user,
                 Table = table,
@@ -68,7 +68,7 @@ namespace WebAPI.Controllers
             await _unitOfWork.BookingRepository.AddAsync(booking);
 
             List<BookingDetail> bookingDetails = [];
-            foreach (var item in addBookingDTO.Products)
+            foreach (var item in addUserBookingDTO.Products)
             {
                 var product = await _unitOfWork.ProductRepository.GetByIdAsync(item.ProductId);
                 if (product == null)

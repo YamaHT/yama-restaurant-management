@@ -1,15 +1,14 @@
+import { BookingManagementService } from '@/services/BookingManagementService'
 import { ProductService } from '@/services/ProductService'
 import { AssetImages } from '@/utilities/AssetImages'
-import { Add, Inventory2, Remove } from '@mui/icons-material'
+import { Close } from '@mui/icons-material'
 import {
-	Badge,
+	Avatar,
 	Button,
-	ButtonGroup,
 	Card,
+	CardActionArea,
 	CardContent,
-	CardHeader,
 	CardMedia,
-	Chip,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -21,13 +20,13 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 
-const DialogChoosingProduct = ({ open, handleClose, handleSelectProducts, selectedProducts }) => {
+const DialogChoosingProduct = ({ open, handleClose, handleSelectProduct }) => {
 	const [products, setProducts] = useState([])
-	const [selects, setSelects] = useState([])
 
 	useEffect(() => {
 		async function fetchProducts() {
 			const data = await ProductService.GET_ALL()
+			console.log(data)
 			if (data) {
 				setProducts(data)
 			}
@@ -35,124 +34,83 @@ const DialogChoosingProduct = ({ open, handleClose, handleSelectProducts, select
 		fetchProducts()
 	}, [open])
 
-	useEffect(() => {
-		setSelects(selectedProducts)
-	}, [selectedProducts])
-
-	const handleProductQuantityChange = (productId, change) => {
-		setSelects((prevSelected) => {
-			const existingProduct = prevSelected.find(
-				(selectedProduct) => selectedProduct.product.id === productId
-			)
-
-			if (existingProduct) {
-				const updatedQuantity = existingProduct.quantity + change
-
-				const stockQuantity = products.find((product) => product.id === productId).stockQuantity
-
-				if (updatedQuantity <= 0) {
-					return prevSelected.filter((selectedProduct) => selectedProduct.product.id !== productId)
-				} else if (updatedQuantity > stockQuantity) {
-					return prevSelected
-				} else {
-					return prevSelected.map((selectedProduct) =>
-						selectedProduct.product.id === productId
-							? { ...selectedProduct, quantity: updatedQuantity }
-							: selectedProduct
-					)
-				}
-			} else {
-				const product = products.find((product) => product.id === productId)
-				const initialQuantity = Math.max(0, change)
-
-				if (initialQuantity > product.stockQuantity) {
-					return prevSelected
-				}
-
-				return [
-					...prevSelected,
-					{
-						product: product,
-						quantity: initialQuantity,
-					},
-				]
-			}
-		})
-	}
-
-	const handleSubmitAdd = () => {
-		handleSelectProducts(selects.filter((select) => select.quantity !== 0))
+	const handleClick = (id) => {
+		handleSelectProduct(id)
 		handleClose()
 	}
 
+	const filteredProducts = products
+		.filter((product) => product.stockQuantity !== 0)
+		.sort((a, b) => a?.subCategory.category.name.localeCompare(b?.subCategory.category.name))
+
 	return (
-		<Dialog open={open} maxWidth onClose={handleClose} PaperProps={{ sx: { bgcolor: '#eee' } }}>
-			<DialogTitle>List Product</DialogTitle>
+		<Dialog
+			open={open}
+			maxWidth
+			onClose={handleClose}
+			PaperProps={{ sx: { bgcolor: '#eee', width: '100%' } }}
+		>
+			<DialogTitle display={'flex'} alignItems={'center'}>
+				<Typography variant='h6' flexGrow={1}>
+					List available product
+				</Typography>
+				<IconButton onClick={() => handleClose()}>
+					<Close />
+				</IconButton>
+			</DialogTitle>
 			<DialogContent>
-				<Grid2 container spacing={2}>
-					{products.map((product) => {
-						const selectedProduct = selects
-							? selects.find((item) => item.product.id === product.id)
-							: null
-						const quantity = selectedProduct ? selectedProduct.quantity : 0
-						return (
-							<Grid2 size={{ xs: 12, sm: 4, md: 3 }} key={product.id}>
+				{filteredProducts && filteredProducts.length > 0 ? (
+					<Grid2 container spacing={2}>
+						{filteredProducts.map((product) => (
+							<Grid2 size={{ xs: 6, sm: 4, md: 3 }} key={product.id}>
 								<Card>
-									<CardHeader
-										subheader={product.name}
-										subheaderTypographyProps={{ color: 'primary.main' }}
-									/>
-									<CardMedia
-										component={'img'}
-										src={AssetImages.ProductImage(product.image[0])}
-										sx={{ height: 200, objectFit: 'cover' }}
-									/>
-									<CardContent>
-										<Stack
-											pr={2}
-											direction={'row'}
-											justifyContent={'space-between'}
-											alignItems={'center'}
+									<CardActionArea onClick={() => handleClick(product.id)}>
+										<CardMedia
+											component={() => (
+												<Avatar
+													src={AssetImages.ProductImage(product.image?.[0])}
+													variant='square'
+													sx={{
+														width: '100%',
+														height: 150,
+														objectFit: 'cover',
+													}}
+												/>
+											)}
+											sx={{
+												display: 'flex',
+												justifyContent: 'center',
+												alignItems: 'center',
+											}}
+										/>
+										<CardContent
+											sx={{
+												display: 'flex',
+												justifyContent: 'space-between',
+												flexDirection: 'column',
+											}}
 										>
-											<Chip variant='outlined' label={product.subCategory.name} />
-											<Badge color='secondary' badgeContent={product.stockQuantity} showZero>
-												<Inventory2 />
-											</Badge>
-										</Stack>
-										<Stack
-											mt={1}
-											direction={'row'}
-											justifyContent={'space-between'}
-											alignItems={'center'}
-										>
-											<Typography variant='h6'>${product.price}</Typography>
-											<ButtonGroup>
-												<IconButton onClick={() => handleProductQuantityChange(product.id, -1)}>
-													<Remove />
-												</IconButton>
-												<Button disabled>
-													<Typography variant='body1' color='textPrimary'>
-														{quantity}
-													</Typography>
-												</Button>
-												<IconButton onClick={() => handleProductQuantityChange(product.id, 1)}>
-													<Add />
-												</IconButton>
-											</ButtonGroup>
-										</Stack>
-									</CardContent>
+											<Typography variant='subtitle1'>Price: ${product.price}</Typography>
+											<Typography variant='subtitle1'>Quantity: {product.stockQuantity}</Typography>
+											<Typography variant='subtitle1' noWrap>
+												Category: {product.subCategory.name}
+											</Typography>
+											<Typography align='center' variant='h5' fontWeight={'bold'}>
+												{product.name}
+											</Typography>
+										</CardContent>
+									</CardActionArea>
 								</Card>
 							</Grid2>
-						)
-					})}
-				</Grid2>
+						))}
+					</Grid2>
+				) : (
+					<Typography variant='subtitle1'>No products are available</Typography>
+				)}
 			</DialogContent>
 			<DialogActions>
 				<Button color='inherit' onClick={handleClose}>
 					Cancel
-				</Button>
-				<Button variant='contained' onClick={handleSubmitAdd}>
-					Submit
 				</Button>
 			</DialogActions>
 		</Dialog>

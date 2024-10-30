@@ -1,11 +1,9 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Models;
 using WebAPI.Models.Enums;
 using WebAPI.Utils;
 using WebAPI.Utils.Exceptions;
-using System.Linq;
 
 namespace WebAPI.Controllers
 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
 using WebAPI.Models;
+using WebAPI.Models.Enums;
 using WebAPI.Repositories.IRepositories;
 
 namespace WebAPI.Repositories
@@ -27,7 +28,17 @@ namespace WebAPI.Repositories
             return await _dbContext.Booking
                 .Include(x => x.Table)
                 .Where(x => x.Table.Id == tableId && x.BookingDate == date)
-                .Select(x => x.DayPart).ToListAsync();  
+                .Select(x => x.DayPart).ToListAsync();
+        }
+
+        public async Task<List<Booking>> GetAllBookingInDayPartAsync(string dayPart)
+        {
+            return await _dbContext.Booking
+                 .Include(x => x.Table)
+                 .Where(x => x.BookingDate == DateOnly.FromDateTime(DateTime.Now)
+                          && x.DayPart == dayPart
+                          && x.BookingStatus == BookingStatusEnum.Booking.ToString())
+                 .ToListAsync();
         }
     }
 }

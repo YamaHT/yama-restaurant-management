@@ -4,7 +4,6 @@ using WebAPI.DTOs.User;
 using WebAPI.Models;
 using WebAPI.Models.Enums;
 using WebAPI.Utils;
-using WebAPI.Utils.Exceptions;
 
 namespace WebAPI.Controllers
 {
@@ -135,7 +134,7 @@ namespace WebAPI.Controllers
 
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangeAsync();
-            
+
             return Ok(user.Membership);
         }
     }
