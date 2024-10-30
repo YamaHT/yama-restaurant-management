@@ -59,7 +59,7 @@ namespace WebAPI.Controllers
             var listImage = updateTableDTO.RemainImages;
             foreach (var item in updateTableDTO.DeletedImages)
             {
-                ImageUtil.DeleteImageAsync(nameof(Table), item);
+                ImageUtil.DeleteImage(nameof(Table), item);
             }
 
             foreach (var item in updateTableDTO.ImageFiles)

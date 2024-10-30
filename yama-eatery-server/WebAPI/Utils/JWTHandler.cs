@@ -28,7 +28,7 @@ namespace WebAPI.Utils
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public static string GenerateJWTEmployee(this Employee employee, string secretKey)
+        public static string GenerateJwtEmployee(this Employee employee, string secretKey)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

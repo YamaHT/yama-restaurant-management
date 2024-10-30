@@ -47,7 +47,7 @@ namespace WebAPI.Utils
             return fileName;
         }
 
-        public static void DeleteImageAsync(string entity, string? imageName)
+        public static void DeleteImage(string entity, string? imageName)
         {
             var directoryPath = Path.Combine("..", "..", "yama-eatery-client", "src", "assets", "img", entity.ToLower());
 
@@ -68,7 +68,7 @@ namespace WebAPI.Utils
                 return oldImageName;
             }
 
-            DeleteImageAsync(entity, oldImageName);
+            DeleteImage(entity, oldImageName);
 
             var newFileName = await AddImageAsync(entity, file);
 

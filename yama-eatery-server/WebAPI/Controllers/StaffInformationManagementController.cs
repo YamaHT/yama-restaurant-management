@@ -29,7 +29,7 @@ namespace WebAPI.Controllers
 
             var employee = new Employee
             {
-                Image = await ImageUtil.AddImageAsync(nameof(Employee), addStaffDTO.ImageFiles),
+                Image = await ImageUtil.AddImageAsync(nameof(Employee), addStaffDTO.ImageFile),
                 Name = addStaffDTO.Name,
                 Email = addStaffDTO.Email,
                 Password = addStaffDTO.Password,

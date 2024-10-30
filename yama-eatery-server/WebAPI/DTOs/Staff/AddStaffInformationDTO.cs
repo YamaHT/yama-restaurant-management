@@ -2,7 +2,7 @@
 {
     public class AddStaffInformationDTO
     {
-        public IFormFile? ImageFiles { get; set; }
+        public IFormFile? ImageFile { get; set; }
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
