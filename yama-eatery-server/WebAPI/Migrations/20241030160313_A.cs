@@ -330,8 +330,8 @@ namespace WebAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Phone = table.Column<string>(type: "char(10)", maxLength: 10, nullable: false),
+                    CustomerName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Phone = table.Column<string>(type: "char(10)", maxLength: 10, nullable: true),
                     Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     TotalPayment = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     DepositPrice = table.Column<decimal>(type: "numeric(10,2)", nullable: false),

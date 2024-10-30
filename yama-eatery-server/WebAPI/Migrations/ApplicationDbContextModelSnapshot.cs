@@ -73,7 +73,6 @@ namespace WebAPI.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("CustomerName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -95,7 +94,6 @@ namespace WebAPI.Migrations
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("char(10)");
 
