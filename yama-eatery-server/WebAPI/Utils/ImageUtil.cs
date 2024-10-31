@@ -13,6 +13,11 @@ namespace WebAPI.Utils
 
             var newFileName = $"{Guid.NewGuid()}-{file.FileName}";
             var directoryPath = Path.Combine("..", "..", "yama-eatery-client", "src", "assets", "img", entity.ToLower());
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
             var newFilePath = Path.Combine(directoryPath, newFileName);
 
             if (!Directory.Exists(directoryPath))

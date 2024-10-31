@@ -26,7 +26,6 @@ const DialogChoosingProduct = ({ open, handleClose, handleSelectProduct }) => {
 	useEffect(() => {
 		async function fetchProducts() {
 			const data = await ProductService.GET_ALL()
-			console.log(data)
 			if (data) {
 				setProducts(data)
 			}

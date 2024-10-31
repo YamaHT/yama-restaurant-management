@@ -30,7 +30,7 @@ const DialogChoosingTable = ({ open, dayPart, handleClose, handleSelectTable }) 
 			}
 		}
 		fetchTables()
-	}, [open])
+	}, [open, dayPart])
 
 	const handleClick = (tableId) => {
 		handleSelectTable(tableId)
@@ -38,7 +38,12 @@ const DialogChoosingTable = ({ open, dayPart, handleClose, handleSelectTable }) 
 	}
 
 	return (
-		<Dialog open={open} maxWidth onClose={handleClose} PaperProps={{ sx: { bgcolor: '#eee' } }}>
+		<Dialog
+			open={open}
+			maxWidth
+			onClose={handleClose}
+			PaperProps={{ sx: { bgcolor: '#eee', width: '100%' } }}
+		>
 			<DialogTitle display={'flex'} alignItems={'center'}>
 				<Typography variant='h6' flexGrow={1}>
 					List available table
