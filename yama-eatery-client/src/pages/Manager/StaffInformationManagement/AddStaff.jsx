@@ -198,6 +198,7 @@ const AddStaff = ({ open, handleClose, handleAddStaff }) => {
 						ref={(el) => (fieldsRef.current['name'] = el)}
 						label='Name'
 						name='name'
+						type='name'
 						variant='filled'
 						value={values.name}
 						onChange={handleValueChange}
