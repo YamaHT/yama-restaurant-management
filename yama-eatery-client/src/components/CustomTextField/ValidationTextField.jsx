@@ -37,21 +37,6 @@ const ValidationTextField = (
 			setError('Please enter a valid number')
 			return false
 		}
-		if (type === 'name') {
-			const namePattern = /^[\p{L}]+(?:\s+[\p{L}]+)+$/u
-
-			if (!value) {
-				setError('Name is required.')
-				return false
-			}
-
-			if (!namePattern.test(value)) {
-				setError(
-					'Invalid name. Please enter a valid name with at least two words, e.g., "Quách Khang".'
-				)
-				return false
-			}
-		}
 
 		if (type === 'email' && !/^[a-zA-Z]+[-.]?\w+@([\w-]+\.)+[\w]{2,}$/.test(value)) {
 			setError('Please enter a valid email address')

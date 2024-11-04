@@ -1,3 +1,4 @@
+import NameTextField from '@/components/CustomTextField/NameTextField'
 import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import { Add, Close } from '@mui/icons-material'
 import {
@@ -194,11 +195,10 @@ const AddStaff = ({ open, handleClose, handleAddStaff }) => {
 							},
 						}}
 					/>
-					<ValidationTextField
+					<NameTextField
 						ref={(el) => (fieldsRef.current['name'] = el)}
 						label='Name'
 						name='name'
-						type='name'
 						variant='filled'
 						value={values.name}
 						onChange={handleValueChange}
@@ -236,7 +236,6 @@ const AddStaff = ({ open, handleClose, handleAddStaff }) => {
 						type='date'
 						label={'Birthday'}
 						name='birthday'
-						variant='filled'
 						value={values.birthday}
 						onChange={handleValueChange}
 						slotProps={{
