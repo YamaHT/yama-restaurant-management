@@ -15,17 +15,22 @@ const TableBookingCard = ({ table }) => {
 		<Card sx={{ height: 150 }}>
 			<CardActionArea sx={{ height: '100%', display: 'flex' }}>
 				<CardMedia
-					component={Avatar}
-					variant='square'
+					component={() => (
+						<Avatar
+							src={AssetImages.TableImage(table.image?.[0])}
+							variant='square'
+							sx={{
+								width: '40%',
+								height: '100%',
+								objectFit: 'cover',
+							}}
+						/>
+					)}
 					sx={{
-						width: '40%',
-						height: '100%',
-						objectFit: 'cover',
 						display: 'flex',
 						justifyContent: 'center',
 						alignItems: 'center',
 					}}
-					src={AssetImages.TableImage(table.image?.[0])}
 				/>
 				<CardContent
 					sx={{

@@ -1,5 +1,4 @@
 import { publicRoutes } from '@/routes'
-import { SnackbarProvider } from 'notistack'
 import { Fragment, useEffect, useState } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import secureLocalStorage from 'react-secure-storage'

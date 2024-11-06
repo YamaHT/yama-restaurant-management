@@ -1,4 +1,4 @@
-import Footer from '@/components/Footer'
+import Footer from '@/components/Layout/Footer'
 import HeaderGuest from '@/components/Layout/HeaderGuest'
 import { Box } from '@mui/material'
 
