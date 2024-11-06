@@ -1,4 +1,4 @@
-import Footer from '@/components/Footer'
+import Footer from '@/components/Layout/Footer'
 import HeaderCustomer from '@/components/Layout/HeaderCustomer'
 import { Box } from '@mui/material'
 import React from 'react'
