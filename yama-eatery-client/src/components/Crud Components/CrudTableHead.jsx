@@ -17,6 +17,9 @@ const CustomTableCell = styled(TableCell)(({ theme }) => ({
 		fontWeight: '500',
 		fontSize: 16,
 	},
+	[`&.${tableCellClasses.body}`]: {
+		fontSize: '1.25rem',
+	},
 }))
 
 const CrudTableHead = ({ order, orderBy, onRequestSort, headCells }) => {
@@ -42,12 +45,13 @@ const CrudTableHead = ({ order, orderBy, onRequestSort, headCells }) => {
 								onClick={createSortHandler(headCell.orderData)}
 								sx={{
 									'& .MuiTableSortLabel-icon': {
-										color: 'white !important', // Force icon to stay white
+										color: 'white !important',
 									},
 									'&.Mui-active .MuiTableSortLabel-icon': {
-										color: 'white !important', // Ensure active icon is white
+										color: 'white !important',
 									},
 									color: 'inherit',
+									fontSize: '1.125rem',
 									'&:hover': {
 										color: 'inherit',
 									},

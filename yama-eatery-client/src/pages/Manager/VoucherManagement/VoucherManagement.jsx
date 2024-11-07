@@ -207,11 +207,7 @@ const VoucherManagement = () => {
 						{visibleRows.length > 0 ? (
 							visibleRows.map((row) => (
 								<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
-									<TableCell>
-										<Stack direction='row' spacing={2} alignItems='center'>
-											<p>{row.name}</p>
-										</Stack>
-									</TableCell>
+									<TableCell>{row.name}</TableCell>
 									<TableCell>{row.expiredDate}</TableCell>
 									<TableCell sx={{ overflow: 'hidden' }}>{row.description}</TableCell>
 									<TableCell align='right'>{row.reducedPercent}%</TableCell>
