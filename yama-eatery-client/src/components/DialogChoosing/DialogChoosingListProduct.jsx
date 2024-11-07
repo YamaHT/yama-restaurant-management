@@ -2,6 +2,7 @@ import { ProductService } from '@/services/ProductService'
 import { AssetImages } from '@/utilities/AssetImages'
 import { Add, Inventory2, Remove } from '@mui/icons-material'
 import {
+	Avatar,
 	Badge,
 	Button,
 	ButtonGroup,
@@ -20,6 +21,7 @@ import {
 	Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
+import ProductViewDetailDialog from '../ProductViewDetailDialog/ProductViewDetailDialog'
 
 const DialogChoosingListProduct = ({
 	open,
@@ -29,6 +31,8 @@ const DialogChoosingListProduct = ({
 }) => {
 	const [products, setProducts] = useState([])
 	const [selects, setSelects] = useState([])
+	const [openDetail, setOpenDetail] = useState(false)
+	const [productDetail, setProductDetail] = useState(null)
 
 	useEffect(() => {
 		async function fetchProducts() {
@@ -85,82 +89,102 @@ const DialogChoosingListProduct = ({
 		})
 	}
 
+	const handleOpenDetail = (product) => {
+		setProductDetail(product)
+		setOpenDetail(true)
+	}
+
 	const handleSubmitAdd = () => {
 		handleSelectProducts(selects.filter((select) => select.quantity !== 0))
 		handleClose()
 	}
 
 	return (
-		<Dialog open={open} maxWidth onClose={handleClose} PaperProps={{ sx: { bgcolor: '#eee' } }}>
-			<DialogTitle>List Product</DialogTitle>
-			<DialogContent>
-				<Grid2 container spacing={2}>
-					{products.map((product) => {
-						const selectedProduct = selects
-							? selects.find((item) => item.product.id === product.id)
-							: null
-						const quantity = selectedProduct ? selectedProduct.quantity : 0
-						return (
-							<Grid2 size={{ xs: 12, sm: 4, md: 3 }} key={product.id}>
-								<Card>
-									<CardHeader
-										subheader={product.name}
-										subheaderTypographyProps={{ color: 'primary.main' }}
-									/>
-									<CardMedia
-										component={'img'}
-										src={AssetImages.ProductImage(product.image[0])}
-										sx={{ height: 200, objectFit: 'cover' }}
-									/>
-									<CardContent>
-										<Stack
-											pr={2}
-											direction={'row'}
-											justifyContent={'space-between'}
-											alignItems={'center'}
-										>
-											<Chip variant='outlined' label={product.subCategory.name} />
-											<Badge color='secondary' badgeContent={product.stockQuantity} showZero>
-												<Inventory2 />
-											</Badge>
-										</Stack>
-										<Stack
-											mt={1}
-											direction={'row'}
-											justifyContent={'space-between'}
-											alignItems={'center'}
-										>
-											<Typography variant='h6'>${product.price}</Typography>
-											<ButtonGroup>
-												<IconButton onClick={() => handleProductQuantityChange(product.id, -1)}>
-													<Remove />
-												</IconButton>
-												<Button disabled>
-													<Typography variant='body1' color='textPrimary'>
-														{quantity}
-													</Typography>
-												</Button>
-												<IconButton onClick={() => handleProductQuantityChange(product.id, 1)}>
-													<Add />
-												</IconButton>
-											</ButtonGroup>
-										</Stack>
-									</CardContent>
-								</Card>
-							</Grid2>
-						)
-					})}
-				</Grid2>
-			</DialogContent>
-			<DialogActions>
-				<Button color='inherit' onClick={handleClose}>
-					Cancel
-				</Button>
-				<Button variant='contained' onClick={handleSubmitAdd}>
-					Submit
-				</Button>
-			</DialogActions>
-		</Dialog>
+		<>
+			<Dialog open={open} maxWidth onClose={handleClose} PaperProps={{ sx: { bgcolor: '#eee' } }}>
+				<DialogTitle>List Product</DialogTitle>
+				<DialogContent>
+					<Grid2 container spacing={2}>
+						{products.map((product) => {
+							const selectedProduct = selects
+								? selects.find((item) => item.product.id === product.id)
+								: null
+							const quantity = selectedProduct ? selectedProduct.quantity : 0
+							return (
+								<Grid2 size={{ xs: 12, sm: 4, md: 3 }} key={product.id}>
+									<Card>
+										<CardHeader
+											subheader={
+												<Button onClick={() => handleOpenDetail(product)}>{product.name}</Button>
+											}
+											subheaderTypographyProps={{ color: 'primary.main' }}
+										/>
+										<CardMedia
+											component={() => (
+												<Avatar
+													variant='square'
+													sx={{ height: 200, width: '100%', objectFit: 'cover' }}
+													src={AssetImages.ProductImage(product.image[0])}
+												/>
+											)}
+										/>
+										<CardContent>
+											<Stack
+												pr={2}
+												direction={'row'}
+												justifyContent={'space-between'}
+												alignItems={'center'}
+											>
+												<Chip variant='outlined' label={product.subCategory.name} />
+												<Badge color='secondary' badgeContent={product.stockQuantity} showZero>
+													<Inventory2 />
+												</Badge>
+											</Stack>
+											<Stack
+												mt={1}
+												direction={'row'}
+												justifyContent={'space-between'}
+												alignItems={'center'}
+											>
+												<Typography variant='h6'>${product.price}</Typography>
+												<ButtonGroup>
+													<IconButton onClick={() => handleProductQuantityChange(product.id, -1)}>
+														<Remove />
+													</IconButton>
+													<Button disabled>
+														<Typography variant='body1' color='textPrimary'>
+															{quantity}
+														</Typography>
+													</Button>
+													<IconButton onClick={() => handleProductQuantityChange(product.id, 1)}>
+														<Add />
+													</IconButton>
+												</ButtonGroup>
+											</Stack>
+										</CardContent>
+									</Card>
+								</Grid2>
+							)
+						})}
+					</Grid2>
+				</DialogContent>
+				<DialogActions>
+					<Button color='inherit' onClick={handleClose}>
+						Cancel
+					</Button>
+					<Button variant='contained' onClick={handleSubmitAdd}>
+						Submit
+					</Button>
+				</DialogActions>
+			</Dialog>
+			{openDetail && (
+				<ProductViewDetailDialog
+					open={openDetail}
+					productId={productDetail.id}
+					handleClose={() => setOpenDetail(false)}
+				/>
+			)}
+		</>
 	)
 }
 
