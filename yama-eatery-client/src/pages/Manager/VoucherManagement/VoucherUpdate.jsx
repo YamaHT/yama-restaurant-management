@@ -1,5 +1,6 @@
 import { AssetImages } from '@/utilities/AssetImages'
 import {
+	Avatar,
 	Box,
 	Button,
 	Dialog,
@@ -157,13 +158,14 @@ const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleUpdate }) => 
 				/>
 				<Box marginTop={2} display='flex' flexDirection='column' alignItems='center'>
 					{imagePreview && (
-						<Box marginBottom={2}>
-							<img
+						<Box marginBottom={2} width={'100%'}>
+							<Avatar
 								src={imagePreview}
 								alt='Current Voucher'
 								style={{
 									width: '100%',
-									maxHeight: '200px',
+									height: '100%',
+									aspectRatio: 16 / 9,
 									border: '1px solid #ccc',
 									borderRadius: '8px',
 									objectFit: 'cover',

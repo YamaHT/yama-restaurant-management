@@ -38,11 +38,11 @@ import AddTable from './AddTable'
 import UpdateTable from './UpdateTable'
 
 const headCells = [
-	{ name: 'Id', orderData: 'id', numeric: true, widthPercent: 10 },
-	{ name: 'Image', orderData: 'image', numeric: true, widthPercent: 25 },
+	{ name: 'Id', orderData: 'id', numeric: true, widthPercent: 5 },
+	{ name: 'Image', orderData: 'image', numeric: true, widthPercent: 60 },
 	{ name: 'Floor', orderData: 'floor', numeric: true, widthPercent: 10 },
 	{ name: 'Type', orderData: 'type', numeric: false, widthPercent: 10 },
-	{ name: 'Status', orderData: 'isDeleted', numeric: false, widthPercent: 30 },
+	{ name: 'Status', orderData: 'isDeleted', numeric: false, widthPercent: 10 },
 	{ name: '', widthPercent: 5 },
 ]
 
@@ -212,10 +212,11 @@ const TableManagement = () => {
 									<TableCell align='right'>{row.id}</TableCell>
 									<TableCell>
 										{row.image && row.image.length > 0 ? (
-											<AvatarGroup max={10}>
+											<AvatarGroup max={5} variant='rounded'>
 												{row.image.map((imgSrc, index) => (
 													<Avatar
 														key={index}
+														sx={{ width: '20%', aspectRatio: 4 / 3, height: '100%' }}
 														src={AssetImages.TableImage(imgSrc)}
 														alt={`Table Image ${index}`}
 													/>

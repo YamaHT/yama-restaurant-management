@@ -45,13 +45,19 @@ const headCells = [
 		name: 'product',
 		orderData: 'name',
 		numeric: false,
-		widthPercent: 30,
+		widthPercent: 20,
+	},
+	{
+		name: 'Image',
+		orderData: 'name',
+		numeric: true,
+		widthPercent: 20,
 	},
 	{
 		name: 'Category',
 		orderData: 'subCategory.category.name',
 		numeric: false,
-		widthPercent: 20,
+		widthPercent: 25,
 	},
 	{
 		name: 'Price',
@@ -63,13 +69,13 @@ const headCells = [
 		name: 'Quantity',
 		orderData: 'stockQuantity',
 		numeric: true,
-		widthPercent: 20,
+		widthPercent: 10,
 	},
 	{
 		name: 'status',
 		orderData: 'isDeleted',
 		numeric: false,
-		widthPercent: 15,
+		widthPercent: 10,
 	},
 	{
 		name: '',
@@ -299,30 +305,21 @@ const ProductManagement = () => {
 							visibleRows.map((row) => {
 								return (
 									<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
+										<TableCell>{row.name}</TableCell>
 										<TableCell>
-											<Stack
-												direction='row'
-												alignItems='center'
-												spacing={2}
-												justifyContent='space-between'
-											>
-												<Typography variant='body2' sx={{ flexGrow: 1 }}>
-													{row.name}
-												</Typography>
-												<AvatarGroup max={3}>
-													{row.image && row.image.length > 0 ? (
-														row.image.map((imgSrc, index) => (
-															<Avatar
-																key={index}
-																src={AssetImages.ProductImage(imgSrc)}
-																alt={`Product Image ${index}`}
-															/>
-														))
-													) : (
-														<Avatar alt={row.name} />
-													)}
-												</AvatarGroup>
-											</Stack>
+											<AvatarGroup max={5} variant='rounded'>
+												{row.image && row.image.length > 0 ? (
+													row.image.map((imgSrc, index) => (
+														<Avatar
+															key={index}
+															src={AssetImages.ProductImage(imgSrc)}
+															alt={`Product Image ${index}`}
+														/>
+													))
+												) : (
+													<Avatar alt={row.name} />
+												)}
+											</AvatarGroup>
 										</TableCell>
 										<TableCell>
 											{row.subCategory.category.name} / {row.subCategory.name}
