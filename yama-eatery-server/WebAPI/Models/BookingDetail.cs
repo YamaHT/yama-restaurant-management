@@ -20,5 +20,7 @@ namespace WebAPI.Models
 
         [Range(0, int.MaxValue, ErrorMessage = "Quantity can't be negative")]
         public int Quantity { get; set; }
+
+        public double UnitPrice { get; set; }
     }
 }

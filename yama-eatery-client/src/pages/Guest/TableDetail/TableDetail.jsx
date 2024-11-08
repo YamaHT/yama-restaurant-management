@@ -195,8 +195,6 @@ export default function TableDetail() {
 			}
 		})
 
-		console.log(formData)
-
 		if (isValid) {
 			const products = formData.products.map((item) => ({
 				productId: item.product.id,

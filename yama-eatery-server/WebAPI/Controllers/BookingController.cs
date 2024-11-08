@@ -59,7 +59,6 @@ namespace WebAPI.Controllers
                 DayPart = addUserBookingDTO.DayPart,
                 BookingStatus = BookingStatusEnum.Undeposited.ToString(),
                 Note = addUserBookingDTO.Note,
-                TotalPayment = addUserBookingDTO.TotalPayment,
                 DepositPrice = addUserBookingDTO.DepositPrice,
                 NewPaymentDate = DateTime.Now,
                 User = user,

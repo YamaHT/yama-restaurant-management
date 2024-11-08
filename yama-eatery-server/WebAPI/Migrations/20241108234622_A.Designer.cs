@@ -12,7 +12,7 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241108045553_A")]
+    [Migration("20241108234622_A")]
     partial class A
     {
         /// <inheritdoc />
@@ -149,6 +149,9 @@ namespace WebAPI.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric(10, 2)");
 
                     b.HasKey("Id");
 

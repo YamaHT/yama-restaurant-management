@@ -147,6 +147,9 @@ namespace WebAPI.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric(10, 2)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BookingId");
