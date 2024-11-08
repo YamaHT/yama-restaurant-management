@@ -168,6 +168,8 @@ const UpdateStaff = ({ open, handleClose, existingStaff, handleUpdateStaff }) =>
 						label='Name'
 						name='name'
 						variant='filled'
+						regex='/^[a-z]{2,}( [a-z]+)*?( [a-z]{2,}){1,}$/'
+						regexErrorText='Invalid name. Please enter a valid name with first name and last name.'
 						value={values.name}
 						onChange={handleValueChange}
 					/>
@@ -189,6 +191,8 @@ const UpdateStaff = ({ open, handleClose, existingStaff, handleUpdateStaff }) =>
 						fullWidth
 						label='Phone'
 						name='phone'
+						regex='^\d{10}$'
+						regexErrorText='Phone must be 10 digits'
 						variant='filled'
 						value={values.phone}
 						onChange={handleValueChange}

@@ -83,7 +83,7 @@ const VoucherAdd = ({ open, handleClose, handleAdd }) => {
 	}
 
 	return (
-		<Dialog open={open} onClose={handleClose} maxWidth='sm' fullWidth>
+		<Dialog open={open} onClose={handleClose} fullWidth>
 			<DialogTitle>Add New Voucher</DialogTitle>
 			<DialogContent dividers>
 				<Stack spacing={3}>

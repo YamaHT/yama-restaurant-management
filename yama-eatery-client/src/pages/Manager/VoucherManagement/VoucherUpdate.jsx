@@ -95,7 +95,7 @@ const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleUpdate }) => 
 	}
 
 	return (
-		<Dialog open={open} onClose={handleClose}>
+		<Dialog open={open} onClose={handleClose} fullWidth>
 			<DialogTitle>Update Voucher</DialogTitle>
 			<DialogContent dividers>
 				<Stack spacing={3}>

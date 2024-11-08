@@ -51,7 +51,7 @@ export default function TableDetail() {
 		totalPayment: 0,
 		depositPrice: 5.0,
 		tableId: id,
-		voucherId: '',
+		voucherId: 0,
 	})
 	const [bookedDayPart, setBookedDayPart] = useState([])
 	const [userVoucher, setUserVoucher] = useState([])
@@ -64,7 +64,11 @@ export default function TableDetail() {
 	const fieldsRef = useRef([])
 
 	const role = secureLocalStorage.getItem('role')
-	const dayParts = ['Morning', 'Afternoon', 'Evening']
+	const dayParts = [
+		{ label: 'Morning (6 AM - 12 PM)', value: 'Morning' },
+		{ label: 'Afternoon (12 PM - 6 PM)', value: 'Afternoon' },
+		{ label: 'Evening (6 PM - 0 AM)', value: 'Evening' },
+	]
 
 	const getAvailableDayParts = () => {
 		const currentDate = new Date()
@@ -85,12 +89,16 @@ export default function TableDetail() {
 				return []
 			}
 			if (currentHour >= 12 && currentHour < 18) {
-				return dayParts.filter((part) => part === 'Evening' && !bookedDayPart.includes(part))
+				return dayParts.filter(
+					(part) => part.value === 'Evening' && !bookedDayPart.includes(part.value)
+				)
 			}
-			return dayParts.filter((part) => part !== 'Morning' && !bookedDayPart.includes(part))
+			return dayParts.filter(
+				(part) => part.value !== 'Morning' && !bookedDayPart.includes(part.value)
+			)
 		}
 
-		return dayParts.filter((part) => !bookedDayPart.includes(part))
+		return dayParts.filter((part) => !bookedDayPart.includes(part.value))
 	}
 
 	useEffect(() => {
@@ -186,6 +194,8 @@ export default function TableDetail() {
 				isValid = false
 			}
 		})
+
+		console.log(formData)
 
 		if (isValid) {
 			const products = formData.products.map((item) => ({
@@ -431,8 +441,8 @@ export default function TableDetail() {
 								disabled={!!!formData.bookingDate}
 							>
 								{getAvailableDayParts().map((part) => (
-									<MenuItem key={part} value={part}>
-										{part}
+									<MenuItem key={part.value} value={part.value}>
+										{part.label}
 									</MenuItem>
 								))}
 							</ValidationSelect>
@@ -448,15 +458,16 @@ export default function TableDetail() {
 						/>
 						<Stack direction='row' alignItems={'center'} justifyContent='space-between'>
 							<FormControl sx={{ width: '30%' }}>
-								<InputLabel id='voucher' sx={{ bgcolor: 'transparent' }}>
+								<InputLabel id='voucherLabel' shrink={Boolean(formData.voucherId)}>
 									Voucher
 								</InputLabel>
 								<Select
-									labelId='voucher'
+									labelId='voucherLabel'
 									label='Voucher'
 									name='voucherId'
 									value={formData.voucherId}
 									onChange={handleFormChange}
+									notched={Boolean(formData.voucherId)}
 								>
 									{userVoucher.map((voucher) => (
 										<MenuItem value={voucher.voucherId}>

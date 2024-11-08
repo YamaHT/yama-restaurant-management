@@ -21,9 +21,10 @@ namespace WebAPI.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddStaff([FromForm] AddStaffInformationDTO addStaffDTO)
         {
-            if (await _unitOfWork.EmployeeRepository.CheckEmailExistedAsync(addStaffDTO.Email))
+            if (await _unitOfWork.UserRepository.CheckEmailExistedAsync(addStaffDTO.Email) 
+                || await _unitOfWork.EmployeeRepository.CheckEmailExistedAsync(addStaffDTO.Email))
             {
-                throw new DataConflictException("Email already exists");
+                throw new DataConflictException("Email existed");
             }
 
             var employee = new Employee
