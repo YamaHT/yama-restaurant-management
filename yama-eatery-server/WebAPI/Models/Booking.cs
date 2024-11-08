@@ -20,15 +20,12 @@ namespace WebAPI.Models
         [MaxLength(1000, ErrorMessage = "Note can't exceed 1000 characters")]
         public string? Note { get; set; }
 
-        [Column(TypeName = "numeric(10, 2)")]
         [Range(0, Double.PositiveInfinity, ErrorMessage = "Total Payment can't be negative")]
         public double TotalPayment { get; set; }
 
-        [Column(TypeName = "numeric(10, 2)")]
         [Range(0, Double.PositiveInfinity, ErrorMessage = "Deposit Price can't be negative")]
         public double DepositPrice { get; set; }
 
-        [Column(TypeName = "numeric(10, 2)")]
         [Range(0, Double.PositiveInfinity, ErrorMessage = "Remain Payment can't be negative")]
         public double RemainPayment { get; set; }
 
@@ -38,23 +35,22 @@ namespace WebAPI.Models
         [Required(ErrorMessage = "DayPart is required")]
         [Column(TypeName = "nvarchar(10)")]
         [EnumDataType(typeof(DayPartEnum), ErrorMessage = "This day part is not available")]
-        public required string DayPart { get; set; }
+        public string? DayPart { get; set; }
 
         [Required(ErrorMessage = "Booking Status is required")]
         [EnumDataType(typeof(BookingStatusEnum), ErrorMessage = "This status of booking is not available")]
         [MaxLength(20)]
-        public required string BookingStatus { get; set; }
+        public string? BookingStatus { get; set; }
         
         public DateTime NewPaymentDate { get; set; }
 
         public User? User { get; set; }
 
-        [Required(ErrorMessage = "Table is required")]
         public Table? Table { get; set; }
 
         public Employee? Employee { get; set; }
 
-        public UserVoucher? UserVoucher { get; set; }
+        public Voucher? Voucher { get; set; }
 
         public virtual ICollection<BookingDetail> BookingDetails { get; set; } = [];
     }

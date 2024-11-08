@@ -7,9 +7,8 @@ namespace WebAPI.Models
 	public class Position : BaseEntity
 	{
         [MaxLength(255)]
-        public required string Name { get; set; }
+        public string? Name { get; set; }
 
-        [Column(TypeName = "numeric(10, 2)")]
         public double HourlyWage { get; set; }
 
         public virtual ICollection<Employee> Employees { get; set; } = [];

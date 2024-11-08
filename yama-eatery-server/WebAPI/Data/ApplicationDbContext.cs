@@ -8,8 +8,6 @@ namespace WebAPI.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext() { }
-
         public DbSet<Attendance> Attendance { get; set; }
         public DbSet<Booking> Booking { get; set; }
         public DbSet<BookingDetail> BookingDetail { get; set; }
@@ -29,7 +27,7 @@ namespace WebAPI.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=localhost,1433;Initial Catalog=SWP391_SE1802_Group6;Integrated Security=True;Trust Server Certificate=True");
+            optionsBuilder.UseSqlServer("Server=localhost;Database=SWP391_SE1802_Group6;Integrated Security=True;TrustServerCertificate=True");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -55,6 +53,10 @@ namespace WebAPI.Data
                 })
                 .ToArray()
             );
+        }
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder.Properties<double>().HaveColumnType("numeric(10, 2)");
         }
     }
 }

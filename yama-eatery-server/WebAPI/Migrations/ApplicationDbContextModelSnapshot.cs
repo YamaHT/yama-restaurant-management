@@ -42,14 +42,14 @@ namespace WebAPI.Migrations
                     b.Property<bool>("EarlyLeave")
                         .HasColumnType("bit");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<bool>("LateArrival")
                         .HasColumnType("bit");
 
                     b.Property<decimal>("WorkHours")
-                        .HasColumnType("numeric(3, 1)");
+                        .HasColumnType("numeric(10, 2)");
 
                     b.HasKey("Id");
 
@@ -100,7 +100,7 @@ namespace WebAPI.Migrations
                     b.Property<decimal>("RemainPayment")
                         .HasColumnType("numeric(10, 2)");
 
-                    b.Property<int>("TableId")
+                    b.Property<int?>("TableId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPayment")
@@ -109,7 +109,7 @@ namespace WebAPI.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserVoucherId")
+                    b.Property<int?>("VoucherId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -120,15 +120,26 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserVoucherId");
+                    b.HasIndex("VoucherId");
 
                     b.ToTable("Booking");
                 });
 
             modelBuilder.Entity("WebAPI.Models.BookingDetail", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<Guid>("BookingId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CookingStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -136,7 +147,9 @@ namespace WebAPI.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("BookingId", "ProductId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
 
                     b.HasIndex("ProductId");
 
@@ -152,7 +165,6 @@ namespace WebAPI.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -292,7 +304,7 @@ namespace WebAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Rating")
-                        .HasColumnType("numeric(2,1)");
+                        .HasColumnType("numeric(10, 2)");
 
                     b.HasKey("UserId", "ProductId");
 
@@ -339,7 +351,6 @@ namespace WebAPI.Migrations
                         .HasColumnType("numeric(10, 2)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -402,7 +413,7 @@ namespace WebAPI.Migrations
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("SubCategoryId")
+                    b.Property<int?>("SubCategoryId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -423,7 +434,7 @@ namespace WebAPI.Migrations
                     b.Property<decimal>("Deductions")
                         .HasColumnType("numeric(10, 2)");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("NetSalary")
@@ -451,7 +462,6 @@ namespace WebAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -560,24 +570,16 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("WebAPI.Models.UserVoucher", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("bit");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<int>("VoucherId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
 
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId", "VoucherId");
 
                     b.HasIndex("VoucherId");
 
@@ -640,9 +642,7 @@ namespace WebAPI.Migrations
                 {
                     b.HasOne("WebAPI.Models.Employee", "Employee")
                         .WithMany("Attendances")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.Navigation("Employee");
                 });
@@ -655,17 +655,15 @@ namespace WebAPI.Migrations
 
                     b.HasOne("WebAPI.Models.Table", "Table")
                         .WithMany()
-                        .HasForeignKey("TableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TableId");
 
                     b.HasOne("WebAPI.Models.User", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("UserId");
 
-                    b.HasOne("WebAPI.Models.UserVoucher", "UserVoucher")
+                    b.HasOne("WebAPI.Models.Voucher", "Voucher")
                         .WithMany()
-                        .HasForeignKey("UserVoucherId");
+                        .HasForeignKey("VoucherId");
 
                     b.Navigation("Employee");
 
@@ -673,7 +671,7 @@ namespace WebAPI.Migrations
 
                     b.Navigation("User");
 
-                    b.Navigation("UserVoucher");
+                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("WebAPI.Models.BookingDetail", b =>
@@ -685,7 +683,7 @@ namespace WebAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("WebAPI.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("BookingDetails")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -738,9 +736,7 @@ namespace WebAPI.Migrations
                 {
                     b.HasOne("WebAPI.Models.SubCategory", "SubCategory")
                         .WithMany("Products")
-                        .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SubCategoryId");
 
                     b.Navigation("SubCategory");
                 });
@@ -749,9 +745,7 @@ namespace WebAPI.Migrations
                 {
                     b.HasOne("WebAPI.Models.Employee", "Employee")
                         .WithMany("Salaries")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.Navigation("Employee");
                 });
@@ -783,7 +777,7 @@ namespace WebAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("WebAPI.Models.Voucher", "Voucher")
-                        .WithMany()
+                        .WithMany("UserVouchers")
                         .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -817,6 +811,8 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("WebAPI.Models.Product", b =>
                 {
+                    b.Navigation("BookingDetails");
+
                     b.Navigation("Feedbacks");
                 });
 
@@ -833,6 +829,11 @@ namespace WebAPI.Migrations
 
                     b.Navigation("Feedbacks");
 
+                    b.Navigation("UserVouchers");
+                });
+
+            modelBuilder.Entity("WebAPI.Models.Voucher", b =>
+                {
                     b.Navigation("UserVouchers");
                 });
 #pragma warning restore 612, 618
