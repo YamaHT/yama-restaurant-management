@@ -19,7 +19,7 @@ namespace WebAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,7 +47,7 @@ namespace WebAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     HourlyWage = table.Column<decimal>(type: "numeric(10,2)", nullable: false)
                 },
                 constraints: table =>
@@ -103,7 +103,7 @@ namespace WebAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -182,7 +182,7 @@ namespace WebAPI.Migrations
                     Price = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     StockQuantity = table.Column<int>(type: "int", nullable: false),
-                    SubCategoryId = table.Column<int>(type: "int", nullable: false),
+                    SubCategoryId = table.Column<int>(type: "int", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -195,8 +195,7 @@ namespace WebAPI.Migrations
                         name: "FK_Product_SubCategory_SubCategoryId",
                         column: x => x.SubCategoryId,
                         principalTable: "SubCategory",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -227,15 +226,13 @@ namespace WebAPI.Migrations
                 name: "UserVoucher",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     VoucherId = table.Column<int>(type: "int", nullable: false),
                     IsUsed = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserVoucher", x => x.Id);
+                    table.PrimaryKey("PK_UserVoucher", x => new { x.UserId, x.VoucherId });
                     table.ForeignKey(
                         name: "FK_UserVoucher_User_UserId",
                         column: x => x.UserId,
@@ -259,10 +256,10 @@ namespace WebAPI.Migrations
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     CheckInTime = table.Column<TimeOnly>(type: "time", nullable: false),
                     CheckOutTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    WorkHours = table.Column<decimal>(type: "numeric(3,1)", nullable: false),
+                    WorkHours = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     LateArrival = table.Column<bool>(type: "bit", nullable: false),
                     EarlyLeave = table.Column<bool>(type: "bit", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false)
+                    EmployeeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -271,8 +268,52 @@ namespace WebAPI.Migrations
                         name: "FK_Attendance_Employee_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employee",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Booking",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CustomerName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Phone = table.Column<string>(type: "char(10)", maxLength: 10, nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    TotalPayment = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
+                    DepositPrice = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
+                    RemainPayment = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
+                    BookingDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    DayPart = table.Column<string>(type: "nvarchar(10)", nullable: false),
+                    BookingStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    NewPaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    TableId = table.Column<int>(type: "int", nullable: true),
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
+                    VoucherId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Booking", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Booking_Employee_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Booking_Table_TableId",
+                        column: x => x.TableId,
+                        principalTable: "Table",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Booking_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Booking_Voucher_VoucherId",
+                        column: x => x.VoucherId,
+                        principalTable: "Voucher",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -284,7 +325,7 @@ namespace WebAPI.Migrations
                     Deductions = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     NetSalary = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     PayDay = table.Column<DateOnly>(type: "date", nullable: true),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false)
+                    EmployeeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -293,8 +334,7 @@ namespace WebAPI.Migrations
                         name: "FK_Salary_Employee_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employee",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -303,7 +343,7 @@ namespace WebAPI.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    Rating = table.Column<decimal>(type: "numeric(2,1)", nullable: false),
+                    Rating = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -326,62 +366,19 @@ namespace WebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Booking",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Phone = table.Column<string>(type: "char(10)", maxLength: 10, nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    TotalPayment = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
-                    DepositPrice = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
-                    RemainPayment = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
-                    BookingDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    DayPart = table.Column<string>(type: "nvarchar(10)", nullable: false),
-                    BookingStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    NewPaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    TableId = table.Column<int>(type: "int", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: true),
-                    UserVoucherId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Booking", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Booking_Employee_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employee",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Booking_Table_TableId",
-                        column: x => x.TableId,
-                        principalTable: "Table",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Booking_UserVoucher_UserVoucherId",
-                        column: x => x.UserVoucherId,
-                        principalTable: "UserVoucher",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Booking_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "BookingDetail",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     BookingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
+                    CookingStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookingDetail", x => new { x.BookingId, x.ProductId });
+                    table.PrimaryKey("PK_BookingDetail", x => x.Id);
                     table.ForeignKey(
                         name: "FK_BookingDetail_Booking_BookingId",
                         column: x => x.BookingId,
@@ -437,9 +434,14 @@ namespace WebAPI.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Booking_UserVoucherId",
+                name: "IX_Booking_VoucherId",
                 table: "Booking",
-                column: "UserVoucherId");
+                column: "VoucherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BookingDetail_BookingId",
+                table: "BookingDetail",
+                column: "BookingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookingDetail_ProductId",
@@ -482,11 +484,6 @@ namespace WebAPI.Migrations
                 column: "MembershipId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserVoucher_UserId",
-                table: "UserVoucher",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserVoucher_VoucherId",
                 table: "UserVoucher",
                 column: "VoucherId");
@@ -511,6 +508,9 @@ namespace WebAPI.Migrations
                 name: "Salary");
 
             migrationBuilder.DropTable(
+                name: "UserVoucher");
+
+            migrationBuilder.DropTable(
                 name: "Booking");
 
             migrationBuilder.DropTable(
@@ -523,7 +523,10 @@ namespace WebAPI.Migrations
                 name: "Table");
 
             migrationBuilder.DropTable(
-                name: "UserVoucher");
+                name: "User");
+
+            migrationBuilder.DropTable(
+                name: "Voucher");
 
             migrationBuilder.DropTable(
                 name: "SubCategory");
@@ -532,16 +535,10 @@ namespace WebAPI.Migrations
                 name: "Position");
 
             migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
-                name: "Voucher");
+                name: "Membership");
 
             migrationBuilder.DropTable(
                 name: "Category");
-
-            migrationBuilder.DropTable(
-                name: "Membership");
         }
     }
 }

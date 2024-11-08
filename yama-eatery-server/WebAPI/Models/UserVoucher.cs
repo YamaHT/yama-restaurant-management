@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 namespace WebAPI.Models
 {
-    public class UserVoucher : BaseEntity
+    [PrimaryKey(nameof(UserId), nameof(VoucherId))]
+    public class UserVoucher
     {
         [Required(ErrorMessage = "User is required")]
         public int UserId { get; set; }

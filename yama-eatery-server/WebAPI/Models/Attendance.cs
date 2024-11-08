@@ -19,7 +19,6 @@ namespace WebAPI.Models
 
         public bool EarlyLeave { get; set; } = false;
 
-        [Required(ErrorMessage = "Employee is required")]
         public Employee? Employee { get; set; }
     }
 }

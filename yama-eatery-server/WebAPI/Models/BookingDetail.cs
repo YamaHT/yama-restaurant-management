@@ -1,10 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using WebAPI.Models.Enums;
 
 namespace WebAPI.Models
 {
-    [PrimaryKey(nameof(BookingId), nameof(ProductId))]
-    public class BookingDetail
+    public class BookingDetail : BaseEntity
     {
         [Required(ErrorMessage = "Booking is required")]
         public Guid BookingId { get; set; }
@@ -13,6 +12,11 @@ namespace WebAPI.Models
         [Required(ErrorMessage = "Product is required")]
         public int ProductId { get; set; }
         public Product? Product { get; set; }
+
+        [Required(ErrorMessage = "Cooking Status is required")]
+        [EnumDataType(typeof(BookingStatusEnum), ErrorMessage = "This status of cooking is not available")]
+        [MaxLength(20)]
+        public string? CookingStatus { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Quantity can't be negative")]
         public int Quantity { get; set; }

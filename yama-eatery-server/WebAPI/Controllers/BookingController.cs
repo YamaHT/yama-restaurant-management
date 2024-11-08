@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
                 NewPaymentDate = DateTime.Now,
                 User = user,
                 Table = table,
-                UserVoucher = userVoucher
+                Voucher = userVoucher?.Voucher
             };
 
             booking.TryValidate();

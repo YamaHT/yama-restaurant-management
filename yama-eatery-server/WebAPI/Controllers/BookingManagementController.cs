@@ -113,18 +113,15 @@ namespace WebAPI.Controllers
                 await _unitOfWork.BookingDetailRepository.AddAsync(detail);
             }
 
-            detail.Product.StockQuantity--;
-            _unitOfWork.ProductRepository.Update(detail.Product);
-
-            booking.TotalPayment = booking.BookingDetails.Sum(x => x.Product.Price * x.Quantity);
+            booking.TotalPayment = booking.BookingDetails.Sum(x => x.Product!.Price * x.Quantity);
             _unitOfWork.BookingRepository.Update(booking);
             await _unitOfWork.SaveChangeAsync();
 
             return RedirectToAction("GetBookingDetail", new { id = getBookingDetailDTO.BookingId });
         }
 
-        [HttpPost("update-detail")]
-        public async Task<IActionResult> UpdateBookingDetail([FromBody] UpdateBookingDetailDTO updateBookingDetailDTO)
+        [HttpPost("update-detail-quantity")]
+        public async Task<IActionResult> UpdateBookingDetailQuantity([FromBody] UpdateBookingDetailDTO updateBookingDetailDTO)
         {
             string[] includes = ["BookingDetails", "BookingDetails.Product"];
             var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(updateBookingDetailDTO.BookingId, includes);
@@ -133,15 +130,12 @@ namespace WebAPI.Controllers
                 throw new DataNotFoundException("Booking not found");
             }
 
-            var detail = booking.BookingDetails.FirstOrDefault(x => x.ProductId == updateBookingDetailDTO.ProductId);
-            
-            if (updateBookingDetailDTO.Quantity > detail.Product.StockQuantity)
-            {
-                throw new InvalidDataException("This product is out of stock");
-            }
+            var detail = booking.BookingDetails.FirstOrDefault(x => x.ProductId == updateBookingDetailDTO.ProductId)!;
 
-            detail.Product.StockQuantity -= updateBookingDetailDTO.Quantity - detail.Quantity;
-            _unitOfWork.ProductRepository.Update(detail.Product);
+            if (updateBookingDetailDTO.Quantity > detail.Product?.StockQuantity)
+            {
+                throw new InvalidDataException("This product is not enough stock");
+            }
 
             if (updateBookingDetailDTO.Quantity <= 0)
             {
@@ -154,7 +148,7 @@ namespace WebAPI.Controllers
                 _unitOfWork.BookingDetailRepository.Update(detail);
             }
 
-            booking.TotalPayment = booking.BookingDetails.Sum(x => x.Product.Price * x.Quantity);
+            booking.TotalPayment = booking.BookingDetails.Sum(x => x.Product!.Price * x.Quantity);
             _unitOfWork.BookingRepository.Update(booking);
             await _unitOfWork.SaveChangeAsync();
 
@@ -171,15 +165,12 @@ namespace WebAPI.Controllers
                 throw new DataNotFoundException("Booking not found");
             }
 
-            var detail = booking.BookingDetails.FirstOrDefault(x => x.ProductId == getBookingDetailDTO.ProductId);
-
-            detail.Product.StockQuantity += detail.Quantity;
-            _unitOfWork.ProductRepository.Update(detail.Product);
+            var detail = booking.BookingDetails.FirstOrDefault(x => x.ProductId == getBookingDetailDTO.ProductId)!;
 
             _unitOfWork.BookingDetailRepository.Remove(detail);
             booking.BookingDetails.Remove(detail);
 
-            booking.TotalPayment = booking.BookingDetails.Sum(x => x.Product.Price * x.Quantity);
+            booking.TotalPayment = booking.BookingDetails.Sum(x => x.Product!.Price * x.Quantity);
             _unitOfWork.BookingRepository.Update(booking);
 
             await _unitOfWork.SaveChangeAsync();
@@ -190,7 +181,7 @@ namespace WebAPI.Controllers
         [HttpPost("pay")]
         public async Task<IActionResult> PayBooking([FromBody] Guid bookingId)
         {
-            string[] includes = ["BookingDetails", "UserVoucher", "UserVoucher.Voucher", "User", "User.Membership"];
+            string[] includes = ["BookingDetails", "Voucher", "User", "User.Membership"];
             var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(bookingId, includes);
             if (booking == null)
             {
@@ -198,7 +189,7 @@ namespace WebAPI.Controllers
             }
 
             var remainPayment = booking.TotalPayment - booking.DepositPrice;
-            if (booking.User != null && booking.User.Membership.MembershipStatus == MembershipStatusEnum.Active.ToString())
+            if (booking.User != null && booking.User.Membership!.MembershipStatus == MembershipStatusEnum.Active.ToString())
             {
                 Enum.TryParse<RankEnum>(booking.User.Membership.Rank, out var rank);
                 remainPayment -= remainPayment * ((int)rank / 100.0);
@@ -222,10 +213,10 @@ namespace WebAPI.Controllers
                 _unitOfWork.MembershipRepository.Update(booking.User.Membership);
             }
 
-            if (booking.UserVoucher != null)
+            if (booking.Voucher != null)
             {
-                remainPayment -= Math.Min(remainPayment * (booking.UserVoucher.Voucher.ReducedPercent / 100.0),
-                                          booking.UserVoucher.Voucher.MaxReducing);
+                remainPayment -= Math.Min(remainPayment * (booking.Voucher.ReducedPercent / 100.0),
+                                          booking.Voucher.MaxReducing);
             }
 
             booking.RemainPayment = remainPayment;
