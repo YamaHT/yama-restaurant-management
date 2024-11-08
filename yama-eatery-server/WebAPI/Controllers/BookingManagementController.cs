@@ -113,8 +113,6 @@ namespace WebAPI.Controllers
                 await _unitOfWork.BookingDetailRepository.AddAsync(detail);
             }
 
-            booking.TotalPayment = booking.BookingDetails.Sum(x => x.Product!.Price * x.Quantity);
-            _unitOfWork.BookingRepository.Update(booking);
             await _unitOfWork.SaveChangeAsync();
 
             return RedirectToAction("GetBookingDetail", new { id = getBookingDetailDTO.BookingId });
@@ -148,8 +146,6 @@ namespace WebAPI.Controllers
                 _unitOfWork.BookingDetailRepository.Update(detail);
             }
 
-            booking.TotalPayment = booking.BookingDetails.Sum(x => x.Product!.Price * x.Quantity);
-            _unitOfWork.BookingRepository.Update(booking);
             await _unitOfWork.SaveChangeAsync();
 
             return RedirectToAction("GetBookingDetail", new { id = updateBookingDetailDTO.BookingId });
@@ -170,9 +166,6 @@ namespace WebAPI.Controllers
             _unitOfWork.BookingDetailRepository.Remove(detail);
             booking.BookingDetails.Remove(detail);
 
-            booking.TotalPayment = booking.BookingDetails.Sum(x => x.Product!.Price * x.Quantity);
-            _unitOfWork.BookingRepository.Update(booking);
-
             await _unitOfWork.SaveChangeAsync();
 
             return RedirectToAction("GetBookingDetail", new { id = getBookingDetailDTO.BookingId });
@@ -187,7 +180,7 @@ namespace WebAPI.Controllers
             {
                 throw new DataNotFoundException("Booking not found");
             }
-
+            // fix this line. Going sleep
             var remainPayment = booking.TotalPayment - booking.DepositPrice;
             if (booking.User != null && booking.User.Membership!.MembershipStatus == MembershipStatusEnum.Active.ToString())
             {
