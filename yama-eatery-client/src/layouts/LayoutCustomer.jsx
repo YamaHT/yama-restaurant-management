@@ -5,11 +5,13 @@ import React from 'react'
 
 const LayoutCustomer = ({ children }) => {
 	return (
-		<>
+		<Box display='flex' flexDirection='column' minHeight='100vh'>
 			<HeaderCustomer />
-			<Box mx={'auto'}>{children}</Box>
+			<Box flexGrow={1} mx='auto' width={'100%'}>
+				{children}
+			</Box>
 			<Footer />
-		</>
+		</Box>
 	)
 }
 

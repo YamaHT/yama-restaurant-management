@@ -4,11 +4,13 @@ import { Box } from '@mui/material'
 
 const LayoutGuest = ({ children }) => {
 	return (
-		<>
+		<Box display='flex' flexDirection='column' minHeight='100vh'>
 			<HeaderGuest />
-			<Box mx={'auto'}>{children}</Box>
+			<Box flexGrow={1} mx={'auto'} width={'100%'}>
+				{children}
+			</Box>
 			<Footer />
-		</>
+		</Box>
 	)
 }
 

@@ -51,7 +51,7 @@ export default function TableDetail() {
 		totalPayment: 0,
 		depositPrice: 5.0,
 		tableId: id,
-		userVoucherId: 0,
+		voucherId: '',
 	})
 	const [bookedDayPart, setBookedDayPart] = useState([])
 	const [userVoucher, setUserVoucher] = useState([])
@@ -448,12 +448,30 @@ export default function TableDetail() {
 						/>
 						<Stack direction='row' alignItems={'center'} justifyContent='space-between'>
 							<FormControl sx={{ width: '30%' }}>
-								<InputLabel id='userVoucher' sx={{ bgcolor: 'transparent' }}>
+								<InputLabel id='voucher' sx={{ bgcolor: 'transparent' }}>
 									Voucher
 								</InputLabel>
-								<Select labelId='userVoucher' label='Voucher'>
+								<Select
+									labelId='voucher'
+									label='Voucher'
+									name='voucherId'
+									value={formData.voucherId}
+									onChange={handleFormChange}
+								>
 									{userVoucher.map((voucher) => (
-										<MenuItem value={voucher.voucherId}>{voucher.voucher.name}</MenuItem>
+										<MenuItem value={voucher.voucherId}>
+											<Stack direction={'row'} spacing={2} alignItems={'center'}>
+												<Avatar
+													src={AssetImages.VoucherImage(voucher.voucher.image)}
+													variant='rounded'
+													sx={{ width: 36, height: 36, objectFit: 'cover' }}
+												/>
+												<Typography>
+													{voucher.voucher.name}{' '}
+													{`(${voucher.voucher.reducedPercent}%, Max: $${voucher.voucher.maxReducing})`}
+												</Typography>
+											</Stack>
+										</MenuItem>
 									))}
 								</Select>
 							</FormControl>

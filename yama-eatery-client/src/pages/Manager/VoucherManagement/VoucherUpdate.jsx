@@ -1,4 +1,6 @@
+import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import { AssetImages } from '@/utilities/AssetImages'
+import { Restore } from '@mui/icons-material'
 import {
 	Avatar,
 	Box,
@@ -7,14 +9,14 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	Stack,
 	TextField,
 } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { enqueueSnackbar } from 'notistack'
+import { useEffect, useRef, useState } from 'react'
 
 const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleUpdate }) => {
 	const [imagePreview, setImagePreview] = useState('')
-	const [errors, setErrors] = useState({})
-
 	const [data, setData] = useState({
 		id: 0,
 		name: '',
@@ -25,6 +27,9 @@ const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleUpdate }) => 
 		quantity: '',
 		image: null,
 	})
+
+	const fieldsRef = useRef({})
+	const fileRef = useRef(null)
 
 	useEffect(() => {
 		if (selectedVoucher) {
@@ -56,20 +61,20 @@ const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleUpdate }) => 
 		}
 	}
 
-	const validate = () => {
-		const newErrors = {}
-		if (!data.name) newErrors.name = 'Voucher name is required'
-		if (!data.description) newErrors.description = 'Description is required'
-		if (!data.expiredDate) newErrors.expiredDate = 'Expiration date is required'
-		if (!data.reducedPercent) newErrors.reducedPercent = 'Reduced percent is required'
-		if (!data.maxReducing) newErrors.maxReducing = 'Max reducing amount is required'
-		if (!data.quantity) newErrors.quantity = 'Quantity is required'
-		setErrors(newErrors)
-		return Object.keys(newErrors).length === 0
-	}
-
 	const handleSubmit = async () => {
-		if (!validate()) {
+		let isValid = true
+
+		Object.keys(fieldsRef.current).forEach((key) => {
+			if (!fieldsRef.current[key]?.validate()) {
+				isValid = false
+			}
+		})
+
+		if (!data.image) {
+			enqueueSnackbar('Image is required', { variant: 'error' })
+		}
+
+		if (!isValid) {
 			return
 		}
 
@@ -92,107 +97,105 @@ const VoucherUpdate = ({ open, handleClose, selectedVoucher, handleUpdate }) => 
 	return (
 		<Dialog open={open} onClose={handleClose}>
 			<DialogTitle>Update Voucher</DialogTitle>
-			<DialogContent>
-				<TextField
-					name='name'
-					label='Voucher Name'
-					value={data.name}
-					onChange={handleChange}
-					fullWidth
-					margin='normal'
-					error={!!errors.name}
-					helperText={errors.name}
-				/>
-				<TextField
-					name='description'
-					label='Description'
-					value={data.description}
-					onChange={handleChange}
-					fullWidth
-					margin='normal'
-					error={!!errors.description}
-					helperText={errors.description}
-				/>
-				<TextField
-					name='expiredDate'
-					label='Expiration Date'
-					value={data.expiredDate}
-					onChange={handleChange}
-					fullWidth
-					margin='normal'
-					error={!!errors.expiredDate}
-					helperText={errors.expiredDate}
-				/>
-				<TextField
-					name='reducedPercent'
-					label='Reduced Percent'
-					type='number'
-					value={data.reducedPercent}
-					onChange={handleChange}
-					fullWidth
-					margin='normal'
-					error={!!errors.reducedPercent}
-					helperText={errors.reducedPercent}
-				/>
-				<TextField
-					name='maxReducing'
-					label='Max Reducing (USD)'
-					type='number'
-					value={data.maxReducing}
-					onChange={handleChange}
-					fullWidth
-					margin='normal'
-					error={!!errors.maxReducing}
-					helperText={errors.maxReducing}
-				/>
-				<TextField
-					name='quantity'
-					label='Quantity'
-					type='number'
-					value={data.quantity}
-					onChange={handleChange}
-					fullWidth
-					margin='normal'
-					error={!!errors.quantity}
-					helperText={errors.quantity}
-				/>
-				<Box marginTop={2} display='flex' flexDirection='column' alignItems='center'>
-					{imagePreview && (
-						<Box marginBottom={2} width={'100%'}>
-							<Avatar
-								src={imagePreview}
-								alt='Current Voucher'
-								style={{
-									width: '100%',
-									height: '100%',
-									aspectRatio: 16 / 9,
-									border: '1px solid #ccc',
-									borderRadius: '8px',
-									objectFit: 'cover',
-								}}
-							/>
-						</Box>
-					)}
-					<Button
-						component='label'
-						style={{
-							border: '1px solid',
-							borderRadius: '8px',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							color: 'white',
-							backgroundColor: 'blue',
+			<DialogContent dividers>
+				<Stack spacing={3}>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['name'] = el)}
+						name='name'
+						label='Voucher Name'
+						variant='filled'
+						value={data.name}
+						onChange={handleChange}
+					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['description'] = el)}
+						name='description'
+						label='Description'
+						variant='filled'
+						value={data.description}
+						onChange={handleChange}
+					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['expiredDate'] = el)}
+						name='expiredDate'
+						label='Expiration Date'
+						type='date'
+						variant='filled'
+						value={data.expiredDate}
+						onChange={handleChange}
+						slotProps={{
+							inputLabel: { shrink: true },
+							input: { inputProps: { min: new Date().toISOString().split('T')[0] } },
 						}}
-					>
-						{!imagePreview ? 'Upload Image' : 'Change Image'}
-						<input type='file' hidden accept='image/*' onChange={handleImageChange} />
-					</Button>
-				</Box>
+					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['reducedPercent'] = el)}
+						name='reducedPercent'
+						label='Reduced Percent'
+						type='number'
+						variant='filled'
+						value={data.reducedPercent}
+						onChange={handleChange}
+					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['maxReducing'] = el)}
+						name='maxReducing'
+						label='Max Reducing (USD)'
+						type='number'
+						variant='filled'
+						value={data.maxReducing}
+						onChange={handleChange}
+					/>
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['quantity'] = el)}
+						name='quantity'
+						label='Quantity'
+						type='number'
+						variant='filled'
+						value={data.quantity}
+						onChange={handleChange}
+					/>
+					<Box marginTop={2} display='flex' flexDirection='column' alignItems='center'>
+						{imagePreview && (
+							<Box marginBottom={2} width={'100%'}>
+								<Avatar
+									src={imagePreview}
+									alt='Current Voucher'
+									style={{
+										width: '100%',
+										height: '100%',
+										aspectRatio: 16 / 9,
+										border: '1px solid #ccc',
+										borderRadius: '8px',
+										objectFit: 'cover',
+									}}
+								/>
+							</Box>
+						)}
+						<Button
+							fullWidth
+							variant='contained'
+							color='primary'
+							onClick={() => fileRef.current.click()}
+							startIcon={<Restore />}
+						>
+							{!imagePreview ? 'Upload Image' : 'Change Image'}
+							<input
+								ref={fileRef}
+								type='file'
+								hidden
+								accept='image/*'
+								onChange={handleImageChange}
+							/>
+						</Button>
+					</Box>
+				</Stack>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={handleClose}>Cancel</Button>
-				<Button onClick={handleSubmit} color='primary'>
+				<Button variant='text' color='inherit' onClick={handleClose}>
+					Cancel
+				</Button>
+				<Button onClick={handleSubmit} variant='contained' color='primary'>
 					Update
 				</Button>
 			</DialogActions>
