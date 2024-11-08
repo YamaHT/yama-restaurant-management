@@ -1,3 +1,6 @@
+import { ProductService } from '@/services/ProductService'
+import { AssetImages } from '@/utilities/AssetImages'
+import { calculateAverageRating } from '@/utilities/Calculate'
 import { StarBorderOutlined, StarRounded } from '@mui/icons-material'
 import {
 	Box,
@@ -10,41 +13,7 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material'
-
-const products = [
-	{
-		id: 1,
-		image: 'https://readymadeui.com/images/food1.webp',
-		name: 'Spicy Veg Burger',
-		rating: 4.5,
-		totalReviews: 128,
-		price: 99.99,
-	},
-	{
-		id: 2,
-		image: 'https://readymadeui.com/images/food5.webp',
-		name: 'Burgers with fries',
-		rating: 4.7,
-		totalReviews: 345,
-		price: 699.99,
-	},
-	{
-		id: 3,
-		image: 'https://readymadeui.com/images/food8.webp',
-		name: 'Vegetable Food',
-		rating: 4.3,
-		totalReviews: 214,
-		price: 11,
-	},
-	{
-		id: 4,
-		image: 'https://readymadeui.com/images/food3.webp',
-		name: 'Pasta with meatballs',
-		rating: 4.6,
-		totalReviews: 89,
-		price: 15,
-	},
-]
+import { useEffect, useState } from 'react'
 
 const ProductCard = ({ product }) => {
 	return (
@@ -56,15 +25,20 @@ const ProductCard = ({ product }) => {
 			}}
 		>
 			<CardActionArea href={`/product/detail/${product.id}`}>
-				<CardMedia sx={{ height: 300 }} image={product.image} title='green iguana' />
+				<CardMedia
+					sx={{ height: 300 }}
+					image={AssetImages.ProductImage(product?.image[0])}
+					title='green iguana'
+				/>
 				<CardContent>
 					<Typography gutterBottom variant='h5'>
 						{product.name}
 					</Typography>
 					<Stack direction={'row'} spacing={1}>
 						<Rating
-							value={product.rating}
+							value={calculateAverageRating(product.feedbacks)}
 							readOnly
+							precision={0.5}
 							icon={<StarRounded fontSize='inherit' />}
 							emptyIcon={<StarBorderOutlined fontSize='inherit' />}
 						/>
@@ -82,6 +56,17 @@ const ProductCard = ({ product }) => {
 }
 
 const ProductIntroSection = () => {
+	const [products, setProducts] = useState([])
+
+	useEffect(() => {
+		const fetchPopularProducts = async () => {
+			const data = await ProductService.GET_POPULAR_PRODUCT()
+			if (data) {
+				setProducts(data)
+			}
+		}
+		fetchPopularProducts()
+	}, [])
 	return (
 		<Stack mx={'2%'} spacing={4}>
 			<Box textAlign={'center'}>

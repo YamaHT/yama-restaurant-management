@@ -22,4 +22,9 @@ export const ProductService = {
 			.get(ApiRequest.ProductRequest.GET_PRICE_RANGE)
 			.then((response) => response.data)
 	},
+	GET_POPULAR_PRODUCT: async () => {
+		return await axiosFormBody
+			.get(ApiRequest.ProductRequest.GET_POPULAR_PRODUCT)
+			.then((response) => response.data)
+	},
 }

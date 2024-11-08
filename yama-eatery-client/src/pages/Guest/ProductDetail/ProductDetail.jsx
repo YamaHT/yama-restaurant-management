@@ -237,7 +237,7 @@ export default function ProductDetail() {
 						<Chip label={product.subCategory.category.name} variant='outlined' />
 						<Chip label={product.subCategory.name} variant='outlined' />
 					</Stack>
-					<Rating value={averageRating} precision={0.1} readOnly />
+					<Rating value={averageRating} precision={0.5} readOnly />
 					<Typography variant='h6' fontWeight='bold' color='textPrimary' mt={3}>
 						About the {product.name}
 					</Typography>
@@ -487,7 +487,7 @@ export default function ProductDetail() {
 											<Box sx={{ p: 2 }}>
 												<Rating
 													value={calculateAverageRating(recommendedProduct.feedbacks)}
-													precision={0.1}
+													precision={0.5}
 													readOnly
 													size='small'
 												/>

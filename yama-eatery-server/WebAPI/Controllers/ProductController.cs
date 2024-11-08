@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
 
         [HttpGet("price-range")]
         public async Task<IActionResult> GetPriceRange()
-        {   
+        {
             var products = await _unitOfWork.ProductRepository.GetAllAsync();
             var priceRange = new
             {
@@ -41,6 +41,15 @@ namespace WebAPI.Controllers
         {
             var similarProduct = await _unitOfWork.ProductRepository.GetRandom10ProductsByCategoryName(categoryName);
             return Ok(similarProduct);
+        }
+
+        [HttpGet("get-popular")]
+        public async Task<IActionResult> GetPopular()
+        {
+            int minimumFeedbackCount = 2;
+            double minimumAverageRating = 4;
+            var popularProduct = await _unitOfWork.ProductRepository.Get4HighestProductByPopularityScore(minimumFeedbackCount, minimumAverageRating);
+            return Ok(popularProduct);
         }
     }
 }
