@@ -34,8 +34,10 @@ axiosFormBody.interceptors.response.use(
 		const errorMessage = error.response?.data?.error || 'Internal Server Error'
 		switch (status) {
 			case 401:
-				AuthService.LOGOUT()
-				break
+				enqueueSnackbar('Unauthorized', { variant: 'warning', autoHideDuration: 1000 })
+				setTimeout(() => {
+					AuthService.LOGOUT()
+				}, 1000)
 			case 403:
 				enqueueSnackbar('Access Denied', { variant: 'error', autoHideDuration: 1000 })
 				setTimeout(() => {
@@ -43,11 +45,11 @@ axiosFormBody.interceptors.response.use(
 				}, 1000)
 				break
 			case 422:
-				errorMessage.map((error, index) =>
-					enqueueSnackbar(error, {
-						variant: 'error',
-					})
-				)
+				errorMessage.forEach((error, index) => {
+					setTimeout(() => {
+						enqueueSnackbar(error, { variant: 'error' })
+					}, index * 500)
+				})
 				break
 			case 400:
 			case 404:

@@ -5,6 +5,7 @@ import CrudTableHead from '@/components/Crud Components/CrudTableHead'
 import { StaffAttendanceManagementService } from '@/services/StaffAttendanceManagementService'
 import { AccessAlarm, Add, Delete, Update } from '@mui/icons-material'
 import {
+	Avatar,
 	Button,
 	Chip,
 	MenuItem,
@@ -20,16 +21,17 @@ import {
 import React, { useEffect, useState } from 'react'
 import AddStaffAttendance from './AddStaffAttendance'
 import UpdateStaffAttendance from './UpdateStaffAttendance'
+import { AssetImages } from '@/utilities/AssetImages'
 
 const headCells = [
 	{
-		name: 'AttendanceId',
+		name: 'Id',
 		orderData: 'id',
 		numeric: true,
-		widthPercent: 10,
+		widthPercent: 5,
 	},
 	{
-		name: 'Employee Name',
+		name: 'Employee',
 		orderData: 'employee.name',
 		numeric: false,
 		widthPercent: 25,
@@ -38,13 +40,13 @@ const headCells = [
 		name: 'CheckIn',
 		orderData: 'checkin',
 		numeric: false,
-		widthPercent: 10,
+		widthPercent: 15,
 	},
 	{
 		name: 'CheckOut',
 		orderData: 'checkout',
 		numeric: false,
-		widthPercent: 10,
+		widthPercent: 15,
 	},
 	{
 		name: 'Workhours',
@@ -56,7 +58,7 @@ const headCells = [
 		name: 'LateOrEarly',
 		orderData: 'lateOrEarly',
 		numeric: false,
-		widthPercent: 30,
+		widthPercent: 25,
 	},
 	{
 		name: '',
@@ -205,7 +207,13 @@ const StaffAttendanceManagement = () => {
 								return (
 									<TableRow hover key={row.id}>
 										<TableCell align='right'>{row.id}</TableCell>
-										<TableCell>{row.employee.name}</TableCell>
+										<TableCell sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+											<Avatar
+												variant='rounded'
+												src={AssetImages.EmployeeImage(row.employee.image)}
+											/>{' '}
+											{row.employee.name}
+										</TableCell>
 										<TableCell>{row.checkInTime}</TableCell>
 										<TableCell>{row.checkOutTime}</TableCell>
 										<TableCell align='right'>{row.workHours}</TableCell>
@@ -216,6 +224,9 @@ const StaffAttendanceManagement = () => {
 												)}
 												{row.earlyLeave && (
 													<Chip variant='filled' color='error' label='Early Departure' />
+												)}
+												{!row.lateArrival && !row.earlyLeave && (
+													<Chip variant='filled' color='success' label='Good status' />
 												)}
 											</Stack>
 										</TableCell>

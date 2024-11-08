@@ -47,11 +47,11 @@ axiosFormData.interceptors.response.use(
 				}, 1000)
 				break
 			case 422:
-				errorMessage.map((error, index) =>
-					enqueueSnackbar(error, {
-						variant: 'error',
-					})
-				)
+				errorMessage.forEach((error, index) => {
+					setTimeout(() => {
+						enqueueSnackbar(error, { variant: 'error' })
+					}, index * 500)
+				})
 				break
 			case 400:
 			case 404:

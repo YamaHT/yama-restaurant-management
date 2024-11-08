@@ -192,7 +192,11 @@ const StaffInformationManagement = () => {
 										<TableCell>
 											<CrudMenuOptions>
 												<MenuItem>
-													<Button onClick={() => handleUpdateClick(row)} startIcon={<Edit />}>
+													<Button
+														variant='outlined'
+														onClick={() => handleUpdateClick(row)}
+														startIcon={<Edit />}
+													>
 														Update
 													</Button>
 													{openUpdatePage && (
@@ -211,7 +215,11 @@ const StaffInformationManagement = () => {
 														handleConfirm={() => handleRemoveStaff(row.id)}
 													>
 														{(handleOpen) => (
-															<Button onClick={handleOpen} startIcon={<Delete />}>
+															<Button
+																variant='outlined'
+																onClick={handleOpen}
+																startIcon={<Delete />}
+															>
 																Remove
 															</Button>
 														)}
