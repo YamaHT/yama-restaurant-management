@@ -43,7 +43,7 @@ const ProductCard = ({ product }) => {
 							emptyIcon={<StarBorderOutlined fontSize='inherit' />}
 						/>
 						<Typography variant='body1' color='initial'>
-							{`(${product.totalReviews})`}
+							{`(${product.feedbacks.length} reviews)`}
 						</Typography>
 					</Stack>
 					<Typography fontWeight={'bold'} variant='h6'>
