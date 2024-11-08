@@ -1,3 +1,4 @@
+import ValidationTextField from '@/components/CustomTextField/ValidationTextField'
 import { Close, FileUpload } from '@mui/icons-material'
 import {
 	Button,
@@ -9,6 +10,7 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useRef, useState } from 'react'
 
 const VoucherAdd = ({ open, handleClose, handleAdd }) => {
@@ -24,15 +26,7 @@ const VoucherAdd = ({ open, handleClose, handleAdd }) => {
 		quantity: '',
 	})
 
-	const [errors, setErrors] = useState({
-		image: '',
-		name: '',
-		description: '',
-		expiredDate: '',
-		reducedPercent: '',
-		maxReducing: '',
-		quantity: '',
-	})
+	const fieldsRef = useRef({})
 
 	const handleValueChange = (e) => {
 		const { name, value } = e.target
@@ -57,20 +51,19 @@ const VoucherAdd = ({ open, handleClose, handleAdd }) => {
 	}
 
 	const handleAddVoucher = async () => {
-		const newErrors = {
-			image: values.image === '' ? 'Field image is required' : '',
-			name: values.name === '' ? 'Field name is required' : '',
-			description: values.description === '' ? 'Field description is required' : '',
-			expiredDate: values.expiredDate === '' ? 'Field expiredDate is required' : '',
-			reducedPercent: values.reducedPercent === '' ? 'Field reducedPercent is required' : '',
-			maxReducing: values.maxReducing === '' ? 'Field maxReducing is required' : '',
-			quantity: values.quantity === '' ? 'Field quantity is required' : '',
+		let isValid = true
+
+		Object.keys(fieldsRef.current).forEach((key) => {
+			if (!fieldsRef.current[key]?.validate()) {
+				isValid = false
+			}
+		})
+
+		if (!values.image) {
+			enqueueSnackbar('Image is required', { variant: 'error' })
 		}
 
-		setErrors(newErrors)
-		const formHasError = Object.values(newErrors).some((error) => error !== '')
-
-		if (formHasError) {
+		if (!isValid) {
 			return
 		}
 
@@ -91,79 +84,61 @@ const VoucherAdd = ({ open, handleClose, handleAdd }) => {
 
 	return (
 		<Dialog open={open} onClose={handleClose} maxWidth='sm' fullWidth>
-			<DialogTitle>
-				Add New Voucher
-				<IconButton
-					aria-label='close'
-					onClick={handleClose}
-					sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
-				>
-					<Close />
-				</IconButton>
-			</DialogTitle>
+			<DialogTitle>Add New Voucher</DialogTitle>
 			<DialogContent dividers>
 				<Stack spacing={3}>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['name'] = el)}
 						label='Voucher Name'
-						variant='outlined'
+						variant='filled'
 						name='name'
 						value={values.name}
 						onChange={handleValueChange}
-						error={!!errors.name}
-						helperText={errors.name}
-						required
 					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['description'] = el)}
 						label='Description'
-						variant='outlined'
+						variant='filled'
 						name='description'
 						value={values.description}
 						onChange={handleValueChange}
-						error={!!errors.description}
-						helperText={errors.description}
-						required
 					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['expiredDate'] = el)}
 						label='Expiration Date'
-						variant='outlined'
+						variant='filled'
 						type='date'
 						name='expiredDate'
 						value={values.expiredDate}
 						onChange={handleValueChange}
-						error={!!errors.expiredDate}
-						helperText={errors.expiredDate}
-						InputLabelProps={{ shrink: true }}
-						required
+						slotProps={{
+							inputLabel: { shrink: true },
+							input: { inputProps: { min: new Date().toISOString().split('T')[0] } },
+						}}
 					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['reducedPercent'] = el)}
 						label='Reduced Percent (%)'
-						variant='outlined'
+						variant='filled'
 						name='reducedPercent'
 						value={values.reducedPercent}
 						onChange={handleValueChange}
-						error={!!errors.reducedPercent}
-						helperText={errors.reducedPercent}
-						required
 					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['maxReducing'] = el)}
 						label='Max Reducing (VND)'
-						variant='outlined'
+						variant='filled'
 						name='maxReducing'
 						value={values.maxReducing}
 						onChange={handleValueChange}
-						error={!!errors.maxReducing}
-						helperText={errors.maxReducing}
-						required
 					/>
-					<TextField
+					<ValidationTextField
+						ref={(el) => (fieldsRef.current['quantity'] = el)}
 						label='Quantity'
-						variant='outlined'
+						variant='filled'
 						name='quantity'
 						value={values.quantity}
 						onChange={handleValueChange}
-						error={!!errors.quantity}
-						helperText={errors.quantity}
-						required
 					/>
 					{values.image ? (
 						<Button
@@ -197,6 +172,9 @@ const VoucherAdd = ({ open, handleClose, handleAdd }) => {
 				</Stack>
 			</DialogContent>
 			<DialogActions>
+				<Button variant='text' color='inherit' onClick={handleClose}>
+					Cancel
+				</Button>
 				<Button variant='contained' color='primary' onClick={handleAddVoucher}>
 					Save
 				</Button>

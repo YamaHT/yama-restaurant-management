@@ -36,7 +36,7 @@ namespace WebAPI.Utils
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, employee.Id.ToString()),
-                new Claim(ClaimTypes.Role, employee?.Position?.Name.ToString() ?? RoleEnum.Staff.ToString())
+                new Claim(ClaimTypes.Role, employee?.Position?.Name?.ToString() ?? RoleEnum.Staff.ToString())
             };
 
             var token = new JwtSecurityToken(

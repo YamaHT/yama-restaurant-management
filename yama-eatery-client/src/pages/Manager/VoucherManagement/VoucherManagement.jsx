@@ -16,6 +16,7 @@ import {
 	Restore,
 } from '@mui/icons-material'
 import {
+	Avatar,
 	Box,
 	Button,
 	Chip,
@@ -33,16 +34,17 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import VoucherAdd from './VoucherAdd'
 import VoucherUpdate from './VoucherUpdate'
+import { AssetImages } from '@/utilities/AssetImages'
 
 const headCells = [
-	{ name: 'Voucher Name', orderData: 'name', numeric: false, widthPercent: 20 },
+	{ name: 'Voucher', orderData: 'name', numeric: false, widthPercent: 20 },
 	{ name: 'Expiration Date', orderData: 'expiredDate', numeric: false, widthPercent: 15 },
 	{ name: 'Description ', orderData: 'description', numeric: false, widthPercent: 15 },
 	{ name: 'Reduced Percent', orderData: 'reducedPercent', numeric: true, widthPercent: 12.5 },
 	{ name: 'Max Reducing', orderData: 'maxReducing', numeric: true, widthPercent: 12.5 },
 	{ name: 'Quantity', orderData: 'quantity', numeric: true, widthPercent: 10 },
 	{ name: 'Status', orderData: '', numeric: false, widthPercent: 10 },
-	{ name: '', numeric: false, widthPercent: 5 },
+	{ name: '', widthPercent: 5 },
 ]
 
 const typeNavigation = [
@@ -207,7 +209,10 @@ const VoucherManagement = () => {
 						{visibleRows.length > 0 ? (
 							visibleRows.map((row) => (
 								<TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
-									<TableCell>{row.name}</TableCell>
+									<TableCell sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+										<Avatar variant='rounded' src={AssetImages.VoucherImage(row.image)} />{' '}
+										{row.name}
+									</TableCell>
 									<TableCell>{row.expiredDate}</TableCell>
 									<TableCell sx={{ overflow: 'hidden' }}>{row.description}</TableCell>
 									<TableCell align='right'>{row.reducedPercent}%</TableCell>

@@ -18,6 +18,6 @@
         public double TotalPayment { get; set; }
         public double DepositPrice { get; set; }
         public int TableId { get; set; }
-        public int UserVoucherId { get; set; }
+        public int VoucherId { get; set; }
     }
 }

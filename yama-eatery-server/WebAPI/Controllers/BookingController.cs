@@ -37,14 +37,18 @@ namespace WebAPI.Controllers
             }
 
             var table = await _unitOfWork.TableRepository.GetByIdAsync(addUserBookingDTO.TableId);
-            var userVoucher = await _unitOfWork.UserVoucherRepository.GetByIdAsync(addUserBookingDTO.UserVoucherId, ["Voucher"]);
-            if (userVoucher != null)
+            var voucher = await _unitOfWork.VoucherRepository.GetByIdAsync(addUserBookingDTO.VoucherId);
+            if (voucher != null)
             {
-                userVoucher.IsUsed = true;
-                userVoucher.Voucher.Quantity -= 1;
+                var userVoucher = await _unitOfWork.UserVoucherRepository.GetByUserIdAndVoucherId(user.Id, voucher.Id);
+                if (userVoucher != null)
+                {
+                    userVoucher.IsUsed = true;
+                    voucher.Quantity -= 1;
 
-                _unitOfWork.UserVoucherRepository.Update(userVoucher);
-                _unitOfWork.VoucherRepository.Update(userVoucher.Voucher);
+                    _unitOfWork.UserVoucherRepository.Update(userVoucher);
+                    _unitOfWork.VoucherRepository.Update(voucher);
+                }
             }
 
             var booking = new Booking
@@ -60,7 +64,7 @@ namespace WebAPI.Controllers
                 NewPaymentDate = DateTime.Now,
                 User = user,
                 Table = table,
-                Voucher = userVoucher?.Voucher
+                Voucher = voucher
             };
 
             booking.TryValidate();
@@ -83,6 +87,7 @@ namespace WebAPI.Controllers
                 {
                     BookingId = booking.Id,
                     ProductId = item.ProductId,
+                    CookingStatus = CookingStatusEnum.InCooking.ToString(),
                     Quantity = item.Quantity,
                 };
                 bookingDetails.Add(detail);
@@ -138,11 +143,6 @@ namespace WebAPI.Controllers
             }
 
             booking.BookingStatus = BookingStatusEnum.Booking.ToString();
-            foreach (var detail in booking.BookingDetails)
-            {
-                detail.Product.StockQuantity = Math.Max(0, detail.Product.StockQuantity - detail.Quantity);
-                _unitOfWork.ProductRepository.Update(detail.Product);
-            }
 
             _unitOfWork.BookingRepository.Update(booking);
             await _unitOfWork.SaveChangeAsync();

@@ -13,10 +13,15 @@ namespace WebAPI.Repositories
                 .Include(x => x.Voucher)
                 .Where(x => x.UserId == userId
                             && !x.IsUsed
-                            && x.Voucher.ExpiredDate > DateOnly.FromDateTime(DateTime.Now)
+                            && x.Voucher!.ExpiredDate > DateOnly.FromDateTime(DateTime.Now)
                             && !x.Voucher.IsDeleted
                             && x.Voucher.Quantity > 0)
                 .ToListAsync();
+        }
+
+        public async Task<UserVoucher?> GetByUserIdAndVoucherId(int userId, int voucherId)
+        {
+            return await _dbContext.UserVoucher.FirstOrDefaultAsync(x => x.UserId == userId && x.VoucherId == voucherId);
         }
     }
 }

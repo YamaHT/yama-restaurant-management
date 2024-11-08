@@ -6,7 +6,6 @@ const Footer = () => {
 	return (
 		<Box
 			component={'footer'}
-			mt={5}
 			p={5}
 			sx={{
 				background: '#04A',
