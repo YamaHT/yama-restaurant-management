@@ -37,6 +37,10 @@ namespace WebAPI.Controllers
             }
 
             var table = await _unitOfWork.TableRepository.GetByIdAsync(addUserBookingDTO.TableId);
+            if (table == null) {
+                throw new DataNotFoundException("Table not found");
+            }
+
             var voucher = await _unitOfWork.VoucherRepository.GetByIdAsync(addUserBookingDTO.VoucherId);
             if (voucher != null)
             {
@@ -44,9 +48,9 @@ namespace WebAPI.Controllers
                 if (userVoucher != null)
                 {
                     userVoucher.IsUsed = true;
-                    voucher.Quantity -= 1;
-
                     _unitOfWork.UserVoucherRepository.Update(userVoucher);
+
+                    voucher.Quantity -= 1;
                     _unitOfWork.VoucherRepository.Update(voucher);
                 }
             }
@@ -73,15 +77,6 @@ namespace WebAPI.Controllers
             List<BookingDetail> bookingDetails = [];
             foreach (var item in addUserBookingDTO.Products)
             {
-                var product = await _unitOfWork.ProductRepository.GetByIdAsync(item.ProductId);
-                if (product == null)
-                {
-                    continue;
-                }
-
-                product.StockQuantity -= item.Quantity;
-                _unitOfWork.ProductRepository.Update(product);
-
                 var detail = new BookingDetail
                 {
                     BookingId = booking.Id,

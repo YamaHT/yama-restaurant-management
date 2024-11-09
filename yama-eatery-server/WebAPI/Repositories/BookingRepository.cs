@@ -23,21 +23,31 @@ namespace WebAPI.Repositories
             return await query.FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public async Task<List<string>> GetAllBookedDayPartOfTableInDateAsync(int tableId, DateOnly date)
+        public async Task<List<string?>> GetAllBookedDayPartOfTableInDateAsync(int tableId, DateOnly date)
         {
             return await _dbContext.Booking
                 .Include(x => x.Table)
-                .Where(x => x.Table.Id == tableId && x.BookingDate == date)
+                .Where(x => x.Table!.Id == tableId && x.BookingDate == date)
                 .Select(x => x.DayPart).ToListAsync();
         }
 
-        public async Task<List<Booking>> GetAllBookingInDayPartAsync(string dayPart)
+        public async Task<List<Booking>> GetAllBookingInDateAndDayPartAsync(DateOnly date, string dayPart)
         {
             return await _dbContext.Booking
                  .Include(x => x.Table)
-                 .Where(x => x.BookingDate == DateOnly.FromDateTime(DateTime.Now)
+                 .Where(x => x.BookingDate == date
                           && x.DayPart == dayPart
                           && x.BookingStatus == BookingStatusEnum.Booking.ToString())
+                 .ToListAsync();
+        }
+
+        public async Task<List<Booking>> GetAllBookedInvoiceInDateAndDayPartAsync(DateOnly date, string dayPart)
+        {
+            return await _dbContext.Booking
+                 .Include(x => x.Table)
+                 .Where(x => x.BookingDate == date
+                          && x.DayPart == dayPart
+                          && x.BookingStatus == BookingStatusEnum.Completed.ToString())
                  .ToListAsync();
         }
     }
