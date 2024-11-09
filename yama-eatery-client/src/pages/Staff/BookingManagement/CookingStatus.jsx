@@ -1,26 +1,21 @@
 import TableBookingCard from '@/components/BookingManagement/TableBookingCard'
 import CrudSearchBar from '@/components/Crud Components/CrudSearchBar'
 import ValidationSelect from '@/components/CustomTextField/ValidationSelect'
-import DialogChoosingTable from '@/components/DialogChoosing/DialogChoosingTable'
 import { BookingManagementService } from '@/services/BookingManagementService'
 import { formatDateWithLetterMonth, getFormattedDate } from '@/utilities/FormatUtil'
-import { Add } from '@mui/icons-material'
-import { Box, Button, Grid2, MenuItem, Stack, Typography } from '@mui/material'
+import { Box, Grid2, MenuItem, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import BookingDetail from './BookingDetail'
+import CookingStatusBookingDetail from './CookingStatusBookingDetail'
 
-const BookingManagement = () => {
+const CookingStatus = () => {
 	const [bookings, setBookings] = useState([])
 	const [filteredbookings, setFilteredbookings] = useState([])
 	const [searchNumber, setSearchNumber] = useState()
-
-	const [openTableChoosing, setOpenTableChoosing] = useState(false)
 
 	const [selectedBooking, setSelectedBooking] = useState(null)
 	const [openBookingDetail, setOpenBookingDetail] = useState(false)
 	const [isChange, setIsChange] = useState(false)
 
-	const [selectedDate, setSelectedDate] = useState(getFormattedDate(0))
 	const [selectedDayPart, setSelectedDayPart] = useState(() => {
 		const currentHour = new Date().getHours()
 		if (currentHour >= 18) {
@@ -32,38 +27,15 @@ const BookingManagement = () => {
 		}
 	})
 
-	const dateOptions = [
-		{
-			label: `Yesterday - ${formatDateWithLetterMonth(getFormattedDate(-1))}`,
-			value: getFormattedDate(-1),
-		},
-		{
-			label: `Today - ${formatDateWithLetterMonth(getFormattedDate(0))}`,
-			value: getFormattedDate(0),
-		},
-		{
-			label: `Tomorrow - ${formatDateWithLetterMonth(getFormattedDate(1))}`,
-			value: getFormattedDate(1),
-		},
-		{
-			label: `2 Days Later - ${formatDateWithLetterMonth(getFormattedDate(2))}`,
-			value: getFormattedDate(2),
-		},
-		{
-			label: `3 Days Later - ${formatDateWithLetterMonth(getFormattedDate(3))}`,
-			value: getFormattedDate(3),
-		},
-	]
-
 	useEffect(() => {
 		const fetchBooking = async () => {
-			const data = await BookingManagementService.GET_ALL(selectedDate, selectedDayPart)
+			const data = await BookingManagementService.GET_ALL(getFormattedDate(0), selectedDayPart)
 			if (data) {
 				setBookings(data)
 			}
 		}
 		fetchBooking()
-	}, [selectedDate, selectedDayPart, isChange])
+	}, [selectedDayPart, isChange])
 
 	useEffect(() => {
 		let filtered = bookings
@@ -95,53 +67,29 @@ const BookingManagement = () => {
 		setIsChange(!isChange)
 	}
 
-	const handleAddBooking = async (tableId) => {
-		const formData = {
-			tableId,
-			date: selectedDate,
-			dayPart: selectedDayPart,
-		}
-		const data = await BookingManagementService.ADD_BOOKING(formData)
-		if (data) {
-			setBookings(data)
-		}
-	}
-
 	const handleBookingClick = async (booking) => {
 		setSelectedBooking(booking)
 		setOpenBookingDetail(true)
 	}
-
 	return (
 		<Box>
 			<Typography variant='h5' fontWeight={'bold'}>
-				Booking Management - Reservation
+				Booking Management - Cooking Status
 			</Typography>
 			<Stack my={2} spacing={5} direction={'row'}>
 				<CrudSearchBar
 					listItem={bookings.map((booking) => booking.table.id.toString())}
-					widthPercent={100}
+					widthPercent={30}
 					placeholder={'Search table number...'}
 					value={searchNumber}
 					handleChange={setSearchNumber}
 				/>
 				<ValidationSelect
-					label={'Date'}
-					size='small'
-					value={selectedDate}
-					onChange={(e) => setSelectedDate(e.target.value)}
-				>
-					{dateOptions.map((option) => (
-						<MenuItem key={option.value} value={option.value}>
-							{option.label}
-						</MenuItem>
-					))}
-				</ValidationSelect>
-				<ValidationSelect
 					label={'Day Part'}
 					value={selectedDayPart}
 					onChange={(e) => setSelectedDayPart(e.target.value)}
 					size={'small'}
+					sx={{ width: '30%' }}
 				>
 					<MenuItem value={'Morning'}>Morning</MenuItem>
 					<MenuItem value={'Afternoon'}>Afternoon</MenuItem>
@@ -149,32 +97,6 @@ const BookingManagement = () => {
 				</ValidationSelect>
 			</Stack>
 			<Grid2 container spacing={2}>
-				{selectedDate !== getFormattedDate(-1) && (
-					<Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-						<Button
-							onClick={() => setOpenTableChoosing(true)}
-							sx={{
-								width: '100%',
-								height: 150,
-								fontSize: '2rem',
-								'& .MuiSvgIcon-root': { fontSize: '2rem' },
-							}}
-							variant='outlined'
-							startIcon={<Add sx={{ bgcolor: 'primary.main', color: 'white' }} />}
-						>
-							Add new table
-						</Button>
-						{openTableChoosing && (
-							<DialogChoosingTable
-								open={openTableChoosing}
-								date={selectedDate}
-								dayPart={selectedDayPart}
-								handleClose={() => setOpenTableChoosing(false)}
-								handleSelectTable={handleAddBooking}
-							/>
-						)}
-					</Grid2>
-				)}
 				{filteredbookings.map((booking) => (
 					<Grid2
 						key={booking.id}
@@ -184,17 +106,17 @@ const BookingManagement = () => {
 						<TableBookingCard booking={booking} />
 					</Grid2>
 				))}
-				{openBookingDetail && (
-					<BookingDetail
-						bookingId={selectedBooking.id}
-						open={openBookingDetail}
-						handleClose={() => setOpenBookingDetail(false)}
-						trigger={triggerPaidBooking}
-					/>
-				)}
 			</Grid2>
+			{openBookingDetail && (
+				<CookingStatusBookingDetail
+					bookingId={selectedBooking.id}
+					open={openBookingDetail}
+					handleClose={() => setOpenBookingDetail(false)}
+					trigger={triggerPaidBooking}
+				/>
+			)}
 		</Box>
 	)
 }
 
-export default BookingManagement
+export default CookingStatus

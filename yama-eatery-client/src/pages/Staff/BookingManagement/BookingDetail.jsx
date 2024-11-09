@@ -1,12 +1,13 @@
 import DialogChoosingProduct from '@/components/DialogChoosing/DialogChoosingProduct'
 import { BookingManagementService } from '@/services/BookingManagementService'
 import { AssetImages } from '@/utilities/AssetImages'
-import { Add, Close, Delete, Remove } from '@mui/icons-material'
+import { Add, Build, Check, Close, Delete, Remove } from '@mui/icons-material'
 import {
 	Avatar,
 	Box,
 	Button,
 	ButtonGroup,
+	Chip,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -15,14 +16,17 @@ import {
 	IconButton,
 	Paper,
 	Stack,
+	TextField,
 	Typography,
 } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useEffect } from 'react'
 import { useState } from 'react'
 
-const BookingDetail = ({ open, bookingId, handleClose }) => {
+const BookingDetail = ({ open, bookingId, handleClose, trigger }) => {
 	const [booking, setBooking] = useState(null)
 	const [openChoosingProduct, setOpenChoosingProduct] = useState(false)
+	const [totalPrice, setTotalPrice] = useState(0)
 
 	useEffect(() => {
 		const fetchBooking = async () => {
@@ -33,6 +37,20 @@ const BookingDetail = ({ open, bookingId, handleClose }) => {
 		}
 		fetchBooking()
 	}, [open])
+
+	useEffect(() => {
+		setTotalPrice(
+			booking?.bookingDetails.reduce(
+				(total, bookingDetail) => total + bookingDetail.product.price * bookingDetail.quantity,
+				0
+			)
+		)
+	}, [booking])
+
+	const handleInfoChange = (e) => {
+		const { name, value } = e.target
+		setBooking((prev) => ({ ...prev, [name]: value }))
+	}
 
 	const handleAddBookingDetail = async (productId) => {
 		const formData = {
@@ -45,31 +63,56 @@ const BookingDetail = ({ open, bookingId, handleClose }) => {
 		}
 	}
 
-	const handleUpdateBookingDetail = async (productId, quantity) => {
+	const handleUpdateBookingDetailQuantity = async (id, quantity) => {
 		const formData = {
-			bookingId,
-			productId,
+			bookingDetailId: id,
 			quantity,
 		}
-		const data = await BookingManagementService.UPDATE_BOOKING_DETAIL(formData)
+		const data = await BookingManagementService.UPDATE_BOOKING_DETAIL_QUANTITY(formData)
+		if (data) {
+			setBooking(data)
+		}
+	}
+	const handleFixBookingDetail = async (id) => {
+		const formData = {
+			bookingDetailId: id,
+			cookingStatus: 'InCooking',
+		}
+		const data = await BookingManagementService.UPDATE_BOOKING_DETAIL_STATUS(formData)
+		if (data) {
+			setBooking(data)
+			trigger()
+		}
+	}
+
+	const handleDeleteBookingDetail = async (id) => {
+		const data = await BookingManagementService.DELETE_BOOKING_DETAIL(id)
 		if (data) {
 			setBooking(data)
 		}
 	}
 
-	const handleDeleteBookingDetail = async (productId) => {
+	const handleUpdateInformation = async () => {
 		const formData = {
-			bookingId,
-			productId,
+			id: booking.id,
+			customerName: booking.customerName,
+			phone: booking.phone,
+			note: booking.note,
 		}
-		const data = await BookingManagementService.DELETE_BOOKING_DETAIL(formData)
+		const data = await BookingManagementService.UPDATE_BOOKING(formData)
 		if (data) {
+			enqueueSnackbar('Update successfully', { variant: 'success' })
 			setBooking(data)
 		}
 	}
 
 	const handlePayBooking = async () => {
 		const data = await BookingManagementService.PAY_BOOKING(bookingId)
+		if (data) {
+		} else {
+		}
+		handleClose()
+		trigger()
 	}
 
 	return (
@@ -83,74 +126,160 @@ const BookingDetail = ({ open, bookingId, handleClose }) => {
 			<DialogContent sx={{ maxHeight: 300 }}>
 				<Stack spacing={2}>
 					{booking?.bookingDetails.map((detail) => (
-						<Stack direction={'row'} spacing={2}>
+						<Stack direction={{ md: 'row', sm: 'column' }} gap={2} alignItems={{ md: 'center' }}>
 							<Avatar
 								src={AssetImages.ProductImage(detail.product.image?.[0])}
-								sx={{ width: 50, height: 50 }}
+								sx={{ width: '100px', height: '100px' }}
 								variant='rounded'
 							/>
-							<Stack flexGrow={1}>
+							<Stack flexGrow={1} spacing={0.5}>
 								<Stack direction={'row'} spacing={1}>
 									<Typography>{detail.product.name}</Typography>
 									<Divider
 										sx={{ bgcolor: 'gray', width: 2 }}
 										variant='middle'
-										orientation='vertical'
+										orientation='horizontal'
 									/>
 									<Typography>
 										{detail.product.subCategory.category.name} / {detail.product.subCategory.name}
 									</Typography>
 								</Stack>
-								<Typography>${detail.product.price}</Typography>
+								<Stack direction={'row'} spacing={1}>
+									<Typography>${detail.product.price}</Typography>
+									<Chip
+										size='small'
+										label={`Available: ${detail.product.stockQuantity}`}
+										color={
+											detail.product.stockQuantity >= 50
+												? 'success'
+												: detail.product.stockQuantity >= 20
+												? 'warning'
+												: 'error'
+										}
+									/>
+								</Stack>
 							</Stack>
-							<Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
+							<Stack
+								direction={'row'}
+								justifyContent={'space-between'}
+								spacing={2}
+								flexWrap={'wrap'}
+								alignItems={'center'}
+							>
 								<Typography variant='h6'>${detail.product.price * detail.quantity}</Typography>
 								<ButtonGroup>
-									<IconButton
-										onClick={() => handleUpdateBookingDetail(detail.productId, detail.quantity - 1)}
-									>
-										<Remove />
-									</IconButton>
+									{detail.cookingStatus !== 'Cooked' && (
+										<IconButton
+											onClick={() =>
+												handleUpdateBookingDetailQuantity(detail.id, detail.quantity - 1)
+											}
+										>
+											<Remove />
+										</IconButton>
+									)}
 									<Button disabled>
 										<Typography variant='body1' color='textPrimary'>
 											{detail.quantity}
 										</Typography>
 									</Button>
-									<IconButton
-										onClick={() => handleUpdateBookingDetail(detail.productId, detail.quantity + 1)}
-									>
-										<Add />
-									</IconButton>
+									{detail.cookingStatus !== 'Cooked' && (
+										<IconButton
+											onClick={() =>
+												handleUpdateBookingDetailQuantity(detail.id, detail.quantity + 1)
+											}
+										>
+											<Add />
+										</IconButton>
+									)}
 								</ButtonGroup>
+								{detail.cookingStatus === 'InTrouble' && (
+									<Button
+										onClick={() => handleFixBookingDetail(detail.id)}
+										variant='contained'
+										color='warning'
+										startIcon={<Build />}
+									>
+										Fixed
+									</Button>
+								)}
+								{detail.cookingStatus === 'InCooking' && (
+									<Button
+										onClick={() => handleDeleteBookingDetail(detail.id)}
+										variant='contained'
+										color='error'
+										startIcon={<Delete />}
+									>
+										Delete
+									</Button>
+								)}
+								{detail.cookingStatus === 'Cooked' && (
+									<Button
+										disableFocusRipple
+										disableElevation
+										sx={{ userSelect: 'none', pointerEvents: 'none' }}
+										variant='contained'
+										color='success'
+										startIcon={<Check />}
+									>
+										Done
+									</Button>
+								)}
 							</Stack>
-							<Button
-								onClick={() => handleDeleteBookingDetail(detail.productId)}
-								variant='contained'
-								startIcon={<Delete />}
-							>
-								Delete
-							</Button>
 						</Stack>
 					))}
 				</Stack>
 			</DialogContent>
 			<Divider />
 			<DialogActions>
-				<Stack alignItems={'start'} width={'100%'}>
-					<Stack direction={'row'} justifyContent={'space-between'} width={'100%'}>
-						<Box>
-							<Typography variant='h6'>
-								Customer name: {booking?.customerName || 'Not Specified'}
-							</Typography>
-							<Typography variant='h6'>Phone: {booking?.phone || 'Not Specified'}</Typography>
-							<Typography variant='subtitle1'>Note: {booking?.note || 'Not Specified'}</Typography>
+				<Stack alignItems={'start'} width={'100%'} maxHeight={300} spacing={2} overflow={'auto'}>
+					<Stack
+						direction={{ md: 'row', sm: 'column' }}
+						justifyContent={'space-between'}
+						width={'100%'}
+					>
+						<Box width={'80%'}>
+							<Typography variant='h6'>Customer name:</Typography>
+							<TextField
+								size='small'
+								name='customerName'
+								value={booking?.customerName}
+								onChange={handleInfoChange}
+								fullWidth
+							/>
+
+							<Typography variant='h6'>Phone: </Typography>
+							<TextField
+								size='small'
+								name='phone'
+								value={booking?.phone}
+								onChange={handleInfoChange}
+								fullWidth
+							/>
+
+							<Typography variant='subtitle1'>Note:</Typography>
+							<TextField
+								multiline
+								size='small'
+								name='note'
+								value={booking?.note}
+								onChange={handleInfoChange}
+								fullWidth
+							/>
 						</Box>
-						<Box>
+						<Box p={2}>
 							<Typography variant='h6'>
 								Total dishes:{' '}
 								{booking?.bookingDetails.reduce((total, detail) => total + detail.quantity, 0)}
 							</Typography>
-							<Typography variant='h6'>Total price: ${booking?.totalPayment}</Typography>
+							<Typography variant='h6'>Total price: ${totalPrice}</Typography>
+							<Button
+								variant='contained'
+								color='success'
+								onClick={() => handleUpdateInformation()}
+								sx={{ mt: 2 }}
+							>
+								Update information
+							</Button>
 						</Box>
 					</Stack>
 					<Stack direction={'row'} width={'100%'} spacing={2}>
@@ -163,7 +292,13 @@ const BookingDetail = ({ open, bookingId, handleClose }) => {
 						>
 							Add new product
 						</Button>
-						<Button variant='contained' color='success' size='large' fullWidth>
+						<Button
+							onClick={handlePayBooking}
+							variant='contained'
+							color='success'
+							size='large'
+							fullWidth
+						>
 							Pay booking
 						</Button>
 					</Stack>

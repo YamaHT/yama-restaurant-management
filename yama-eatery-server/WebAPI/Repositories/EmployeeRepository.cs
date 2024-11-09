@@ -18,9 +18,9 @@ namespace WebAPI.Repositories
             return CryptoUtil.IsPasswordCorrect(password, employee?.Password) ? employee : null;
         }
 
-        public async Task<Employee?> GetByEmailAsync(string email)
+        public async Task<Employee?> GetByEmailAsync(string email)  
         {
-            return await _dbContext.Employee.FirstOrDefaultAsync(x => x.Email == email);
+            return await _dbContext.Employee.Include(x => x.Position).FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<bool> CheckEmailExistedAsync(string email)
