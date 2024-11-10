@@ -1,0 +1,71 @@
+{
+  "name": "yama-eatery-client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/style": "^0.8.0",
+    "@emotion/styled": "^11.13.0",
+    "@fontsource/roboto": "^5.1.0",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-brands-svg-icons": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@google/generative-ai": "^0.17.0",
+    "@mui/icons-material": "^6.1.1",
+    "@mui/lab": "^6.0.0-beta.12",
+    "@mui/material": "^6.1.1",
+    "@react-oauth/google": "^0.12.1",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@tippyjs/react": "^4.2.6",
+    "apexcharts": "^3.54.1",
+    "axios": "^1.7.4",
+    "classnames": "^2.5.1",
+    "js-guid": "^1.0.2",
+    "notistack": "^3.0.1",
+    "react": "^18.3.1",
+    "react-apexcharts": "^1.4.1",
+    "react-awesome-reveal": "^4.2.14",
+    "react-dom": "^18.3.1",
+    "react-number-format": "^5.4.2",
+    "react-router-dom": "^6.26.0",
+    "react-scripts": "5.0.1",
+    "react-secure-storage": "^1.3.2",
+    "react-slideshow-image": "^4.3.2",
+    "sass": "^1.79.4",
+    "swiper": "^11.1.14",
+    "web-vitals": "^2.1.0"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.2.1"
+  }
+}
