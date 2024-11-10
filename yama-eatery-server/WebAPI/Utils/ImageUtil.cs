@@ -19,12 +19,6 @@ namespace WebAPI.Utils
             }
 
             var newFilePath = Path.Combine(directoryPath, newFileName);
-
-            if (!Directory.Exists(directoryPath))
-            {
-                return null;
-            }
-
             using (var stream = new FileStream(newFilePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
@@ -40,6 +34,10 @@ namespace WebAPI.Utils
                 return null;
             }
             var directoryPath = Path.Combine("..", "..", "yama-eatery-client", "src", "assets", "img", entity.ToLower());
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
 
             using var client = new HttpClient();
             byte[] imageBytes = await client.GetByteArrayAsync(imageUrl);
@@ -55,6 +53,10 @@ namespace WebAPI.Utils
         public static void DeleteImage(string entity, string? imageName)
         {
             var directoryPath = Path.Combine("..", "..", "yama-eatery-client", "src", "assets", "img", entity.ToLower());
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
 
             if (!string.IsNullOrEmpty(imageName))
             {

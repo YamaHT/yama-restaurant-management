@@ -35,6 +35,7 @@ namespace WebAPI.Repositories
         {
             return await _dbContext.Booking
                  .Include(x => x.Table)
+                 .Include(x => x.BookingDetails)
                  .Where(x => x.BookingDate == date
                           && x.DayPart == dayPart
                           && x.BookingStatus == BookingStatusEnum.Booking.ToString())
@@ -45,6 +46,7 @@ namespace WebAPI.Repositories
         {
             return await _dbContext.Booking
                  .Include(x => x.Table)
+                 .Include(x => x.BookingDetails)
                  .Where(x => x.BookingDate == date
                           && x.DayPart == dayPart
                           && x.BookingStatus == BookingStatusEnum.Completed.ToString())

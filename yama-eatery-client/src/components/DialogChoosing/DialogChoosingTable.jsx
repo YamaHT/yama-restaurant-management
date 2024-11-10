@@ -19,18 +19,18 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 
-const DialogChoosingTable = ({ open, dayPart, handleClose, handleSelectTable }) => {
+const DialogChoosingTable = ({ open, date, dayPart, handleClose, handleSelectTable }) => {
 	const [tables, setTables] = useState([])
 
 	useEffect(() => {
 		async function fetchTables() {
-			const data = await BookingManagementService.GET_TABLES_NOT_BOOKED(dayPart)
+			const data = await BookingManagementService.GET_TABLES_NOT_BOOKED(date, dayPart)
 			if (data) {
 				setTables(data)
 			}
 		}
 		fetchTables()
-	}, [open, dayPart])
+	}, [open, date, dayPart])
 
 	const handleClick = (tableId) => {
 		handleSelectTable(tableId)

@@ -74,7 +74,7 @@ namespace WebAPI.Controllers
                 TotalPayment = 0,
                 DepositPrice = 0,
                 RemainPayment = 0,
-                BookingDate = addBookingDTO.BookingDate,
+                BookingDate = addBookingDTO.Date,
                 DayPart = addBookingDTO.DayPart,
                 BookingStatus = BookingStatusEnum.Booking.ToString(),
                 Table = table,
@@ -84,7 +84,7 @@ namespace WebAPI.Controllers
 
             await _unitOfWork.BookingRepository.AddAsync(booking);
             await _unitOfWork.SaveChangeAsync();
-            return RedirectToAction("GetAllBookingInDayPart", new { dayPart = addBookingDTO.DayPart });
+            return RedirectToAction("GetAllBookingInDateAndDayPart", new { date = addBookingDTO.Date, dayPart = addBookingDTO.DayPart });
         }
 
         [HttpPost("update")]
@@ -108,22 +108,22 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add-detail")]
-        public async Task<IActionResult> AddBookingDetail([FromBody] GetBookingDetailDTO getBookingDetailDTO)
+        public async Task<IActionResult> AddBookingDetail([FromBody] AddBookingDetailDTO addBookingDetailDTO)
         {
-            var product = await _unitOfWork.ProductRepository.GetByIdAsync(getBookingDetailDTO.ProductId);
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(addBookingDetailDTO.ProductId);
             if (product == null)
             {
                 throw new DataNotFoundException("Product not found");
             }
 
             string[] includes = ["BookingDetails", "BookingDetails.Product"];
-            var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(getBookingDetailDTO.BookingId, includes);
+            var booking = await _unitOfWork.BookingRepository.GetByGuidAsync(addBookingDetailDTO.BookingId, includes);
             if (booking == null)
             {
                 throw new DataNotFoundException("Booking not found");
             }
 
-            var detail = booking.BookingDetails.FirstOrDefault(x => x.ProductId == getBookingDetailDTO.ProductId && x.CookingStatus == CookingStatusEnum.InCooking.ToString());
+            var detail = booking.BookingDetails.FirstOrDefault(x => x.ProductId == addBookingDetailDTO.ProductId && x.CookingStatus == CookingStatusEnum.InCooking.ToString());
             if (detail != null)
             {
                 detail.Quantity = Math.Min(product.StockQuantity, ++detail.Quantity);
@@ -133,8 +133,9 @@ namespace WebAPI.Controllers
             {
                 detail = new BookingDetail
                 {
-                    ProductId = getBookingDetailDTO.ProductId,
-                    BookingId = getBookingDetailDTO.BookingId,
+                    ProductId = addBookingDetailDTO.ProductId,
+                    BookingId = addBookingDetailDTO.BookingId,
+                    CookingStatus = CookingStatusEnum.InCooking.ToString(),
                     Quantity = 1
                 };
                 await _unitOfWork.BookingDetailRepository.AddAsync(detail);
@@ -142,7 +143,7 @@ namespace WebAPI.Controllers
 
             await _unitOfWork.SaveChangeAsync();
 
-            return RedirectToAction("GetBookingDetail", new { id = getBookingDetailDTO.BookingId });
+            return RedirectToAction("GetBookingDetail", new { id = addBookingDetailDTO.BookingId });
         }
 
         [HttpPost("update-detail-quantity")]
@@ -153,11 +154,6 @@ namespace WebAPI.Controllers
             if (detail == null)
             {
                 throw new DataNotFoundException("Booking Detail not found");
-            }
-
-            if (updateBookingDetailDTO.Quantity > detail.Product?.StockQuantity)
-            {
-                throw new InvalidDataException("This product is not enough stock");
             }
 
             if (updateBookingDetailDTO.Quantity <= 0)
@@ -230,12 +226,29 @@ namespace WebAPI.Controllers
                 throw new DataNotFoundException("Booking not found");
             }
 
+            if (booking.BookingDetails.Count == 0 && booking.DepositPrice == 0)
+            {
+                _unitOfWork.BookingRepository.Remove(booking);
+                await _unitOfWork.SaveChangeAsync();
+                throw new InvalidDataException("This booking will be deleted due to contaning no food");
+            }
+
+            if (booking.BookingDate > DateOnly.FromDateTime(DateTime.Today))
+            {
+                throw new InvalidDataException("Can't pay the future booking");
+            }
+
+            if (!booking.BookingDetails.All(x => x.CookingStatus == CookingStatusEnum.Cooked.ToString()))
+            {
+                throw new InvalidDataException("This booking has uncooked foods");
+            }
+
             booking.TotalPayment = booking.BookingDetails.Sum(x => x.Quantity * x.Product!.Price);
 
             var remainPayment = booking.TotalPayment - booking.DepositPrice;
             if (booking.User != null && booking.User.Membership!.MembershipStatus == MembershipStatusEnum.Active.ToString())
             {
-                Enum.TryParse<RankEnum>(booking.User.Membership.Rank, out var rank);
+                _ = Enum.TryParse<RankEnum>(booking.User.Membership.Rank, out var rank);
                 remainPayment -= remainPayment * ((int)rank / 100.0);
 
                 booking.User.Membership.MemberScore += (int)Math.Floor(booking.TotalPayment / 10);
@@ -265,6 +278,7 @@ namespace WebAPI.Controllers
 
             booking.RemainPayment = remainPayment;
             booking.BookingStatus = BookingStatusEnum.Completed.ToString();
+            booking.NewPaymentDate = DateTime.Now;
 
             booking.BookingDetails.ToList().ForEach(bookingDetail => bookingDetail.UnitPrice = bookingDetail.Product.Price);
             _unitOfWork.BookingDetailRepository.UpdateRange(booking.BookingDetails.ToList());

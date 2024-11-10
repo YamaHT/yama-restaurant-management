@@ -14,7 +14,7 @@ namespace WebAPI.Models
         public Product? Product { get; set; }
 
         [Required(ErrorMessage = "Cooking Status is required")]
-        [EnumDataType(typeof(BookingStatusEnum), ErrorMessage = "This status of cooking is not available")]
+        [EnumDataType(typeof(CookingStatusEnum), ErrorMessage = "This status of cooking is not available")]
         [MaxLength(20)]
         public string? CookingStatus { get; set; }
 

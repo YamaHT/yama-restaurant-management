@@ -1,7 +1,9 @@
 import StatisticsManager from '@/pages/Manager/StatisticsManager/StatisticsManager'
 import BookingManagement from '@/pages/Staff/BookingManagement/BookingManagement'
+import CookingStatus from '@/pages/Staff/BookingManagement/CookingStatus'
+import HistoryInvoice from '@/pages/Staff/BookingManagement/HistoryInvoice'
 import { AssetImages } from '@/utilities/AssetImages'
-import { Event, Leaderboard } from '@mui/icons-material'
+import { Event, Leaderboard, PointOfSale, Restaurant } from '@mui/icons-material'
 import {
 	Avatar,
 	Button,
@@ -35,6 +37,18 @@ const navigations = [
 				label: 'Booking',
 				pageKey: 'Booking',
 				page: <BookingManagement />,
+			},
+			{
+				icon: <Restaurant />,
+				label: 'Cooking',
+				pageKey: 'Cooking',
+				page: <CookingStatus />,
+			},
+			{
+				icon: <PointOfSale />,
+				label: 'Invoice',
+				pageKey: 'Invoice',
+				page: <HistoryInvoice />,
 			},
 		],
 	},

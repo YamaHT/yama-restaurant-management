@@ -66,11 +66,11 @@ const HeaderStaff = ({ handleOpenDrawer }) => {
 				>
 					<Stack direction={'row'} flexGrow={1} spacing={1.25} alignItems='center' sx={{ p: 0.5 }}>
 						<Avatar
-							src={AssetImages.EmployeeImage(employeeProfile.image)}
+							src={AssetImages.EmployeeImage(employeeProfile?.image)}
 							sx={{ fontSize: '0.875rem', width: 32, height: 32 }}
 						/>
 						<Typography fontWeight={550} variant='body1' sx={{ textTransform: 'capitalize' }}>
-							{employeeProfile.name}
+							{employeeProfile?.name}
 						</Typography>
 					</Stack>
 				</ButtonBase>

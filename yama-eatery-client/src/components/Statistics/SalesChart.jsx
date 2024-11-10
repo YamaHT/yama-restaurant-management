@@ -43,7 +43,20 @@ const columnChartOptions = {
 		colors: ['transparent'],
 	},
 	xaxis: {
-		categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+		categories: [
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec',
+		],
 	},
 	yaxis: {
 		title: {
@@ -75,28 +88,17 @@ const columnChartOptions = {
 	],
 }
 
-const initialSeries = [
-	{
-		name: 'Income',
-		data: [180, 90, 135, 114, 120, 145],
-	},
-	{
-		name: 'Cost Of Sales',
-		data: [120, 45, 78, 150, 168, 99],
-	},
-]
-
 // ==============================|| SALES COLUMN CHART ||============================== //
 
-export default function SalesChart() {
+export default function SalesChart({ monthlyTotalPayments, monthlyRemainPayments }) {
 	const theme = useTheme()
 
 	const [legend, setLegend] = useState({
-		income: true,
-		cos: true,
+		total: true,
+		remain: true,
 	})
 
-	const { income, cos } = legend
+	const { total, remain } = legend
 
 	const { primary, secondary } = theme.palette.text
 	const line = theme.palette.divider
@@ -105,7 +107,16 @@ export default function SalesChart() {
 	const primaryMain = theme.palette.primary.main
 	const successDark = theme.palette.success.dark
 
-	const [series, setSeries] = useState(initialSeries)
+	const [series, setSeries] = useState([
+		{
+			name: 'Total Payment',
+			data: monthlyTotalPayments,
+		},
+		{
+			name: 'Payment Received',
+			data: monthlyRemainPayments,
+		},
+	])
 
 	const handleLegendChange = (event) => {
 		setLegend({ ...legend, [event.target.name]: event.target.checked })
@@ -115,42 +126,44 @@ export default function SalesChart() {
 	const [options, setOptions] = useState(columnChartOptions)
 
 	useEffect(() => {
-		if (income && cos) {
-			setSeries(initialSeries)
-		} else if (income) {
+		if (total && remain) {
 			setSeries([
 				{
-					name: 'Income',
-					data: [180, 90, 135, 114, 120, 145],
+					name: 'Total Payment',
+					data: monthlyTotalPayments,
+				},
+				{
+					name: 'Payment Received',
+					data: monthlyRemainPayments,
 				},
 			])
-		} else if (cos) {
+		} else if (total) {
 			setSeries([
 				{
-					name: 'Cost Of Sales',
-					data: [120, 45, 78, 150, 168, 99],
+					name: 'Total Payment',
+					data: monthlyTotalPayments,
+				},
+			])
+		} else if (remain) {
+			setSeries([
+				{
+					name: 'Payment Received',
+					data: monthlyRemainPayments,
 				},
 			])
 		} else {
 			setSeries([])
 		}
-	}, [income, cos])
+	}, [total, remain])
 
 	useEffect(() => {
 		setOptions((prevState) => ({
 			...prevState,
-			colors: !(income && cos) && cos ? [primaryMain] : [warning, primaryMain],
+			colors: !(total && remain) && remain ? [primaryMain] : [warning, primaryMain],
 			xaxis: {
 				labels: {
 					style: {
-						colors: [
-							secondary,
-							secondary,
-							secondary,
-							secondary,
-							secondary,
-							secondary,
-						],
+						colors: [secondary, secondary, secondary, secondary, secondary, secondary],
 					},
 				},
 			},
@@ -170,31 +183,19 @@ export default function SalesChart() {
 				},
 			},
 		}))
-	}, [
-		primary,
-		secondary,
-		line,
-		warning,
-		primaryMain,
-		successDark,
-		income,
-		cos,
-		xsDown,
-	])
+	}, [primary, secondary, line, warning, primaryMain, successDark, total, remain, xsDown])
 
 	return (
 		<MainCard sx={{ mt: 1 }} content={false}>
 			<Box sx={{ p: 2.5, pb: 0 }}>
-				<Stack
-					direction='row'
-					alignItems='center'
-					justifyContent='space-between'
-				>
+				<Stack direction='row' alignItems='center' justifyContent='space-between'>
 					<Stack spacing={1.5}>
 						<Typography variant='h6' color='secondary'>
 							Net Profit
 						</Typography>
-						<Typography variant='h4'>$1560</Typography>
+						<Typography variant='h4'>
+							${monthlyTotalPayments.reduce((sum, payment) => sum + payment, 0)}
+						</Typography>
 					</Stack>
 					<FormControl component='fieldset'>
 						<FormGroup row>
@@ -202,33 +203,22 @@ export default function SalesChart() {
 								control={
 									<Checkbox
 										color='warning'
-										checked={income}
+										checked={total}
 										onChange={handleLegendChange}
-										name='income'
+										name='total'
 									/>
 								}
-								label='Income'
+								label='Total Payment'
 							/>
 							<FormControlLabel
-								control={
-									<Checkbox
-										checked={cos}
-										onChange={handleLegendChange}
-										name='cos'
-									/>
-								}
-								label='Cost of Sales'
+								control={<Checkbox checked={remain} onChange={handleLegendChange} name='remain' />}
+								label='Payment Received'
 							/>
 						</FormGroup>
 					</FormControl>
 				</Stack>
 				<Box id='chart' sx={{ bgcolor: 'transparent' }}>
-					<ReactApexChart
-						options={options}
-						series={series}
-						type='bar'
-						height={360}
-					/>
+					<ReactApexChart options={options} series={series} type='bar' height={360} />
 				</Box>
 			</Box>
 		</MainCard>
