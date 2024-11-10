@@ -168,7 +168,7 @@ const UpdateStaff = ({ open, handleClose, existingStaff, handleUpdateStaff }) =>
 						label='Name'
 						name='name'
 						variant='filled'
-						regex='/^[a-z]{2,}( [a-z]+)*?( [a-z]{2,}){1,}$/'
+						regex={/^[A-Za-z]{2,}( [A-Za-z]+)*?( [A-Za-z]{2,}){1,}$/}
 						regexErrorText='Invalid name. Please enter a valid name with first name and last name.'
 						value={values.name}
 						onChange={handleValueChange}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -11,6 +11,7 @@ import MainCard from './MainCard'
 
 export default function LineChart({ slot, label, data = [] }) {
 	const [selectedSlot, setSelectedSlot] = useState(slot || 'month')
+	useEffect(() => {}, [data])
 
 	return (
 		<>

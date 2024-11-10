@@ -2,6 +2,7 @@ import StatisticsManager from '@/pages/Manager/StatisticsManager/StatisticsManag
 import BookingManagement from '@/pages/Staff/BookingManagement/BookingManagement'
 import CookingStatus from '@/pages/Staff/BookingManagement/CookingStatus'
 import HistoryInvoice from '@/pages/Staff/BookingManagement/HistoryInvoice'
+import StatisticsStaff from '@/pages/Staff/StatisticsStaff/StatisticsStaff'
 import { AssetImages } from '@/utilities/AssetImages'
 import { Event, Leaderboard, PointOfSale, Restaurant } from '@mui/icons-material'
 import {
@@ -25,7 +26,7 @@ const navigations = [
 				icon: <Leaderboard />,
 				label: 'Statistics',
 				pageKey: 'StatisticsStaff',
-				page: <StatisticsManager />,
+				page: <StatisticsStaff />,
 			},
 		],
 	},

@@ -84,22 +84,19 @@ export default function IncomeAreaChart({ slot, label, data = [] }) {
 		}))
 	}, [primary, secondary, line, theme, slot])
 
-	const [series, setSeries] = useState([
-		{
-			name: label,
-			data: data,
-		},
-	])
-
-	useEffect(() => {
-		setSeries([
-			{
-				data: data,
-			},
-		])
-	}, [slot])
-
-	return <ReactApexChart options={options} series={series} type='area' height={450} />
+	return (
+		<ReactApexChart
+			options={options}
+			series={[
+				{
+					name: label,
+					data: data,
+				},
+			]}
+			type='area'
+			height={450}
+		/>
+	)
 }
 
 IncomeAreaChart.propTypes = { slot: PropTypes.string }

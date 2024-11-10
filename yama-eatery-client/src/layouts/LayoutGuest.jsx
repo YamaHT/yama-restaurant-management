@@ -6,7 +6,7 @@ const LayoutGuest = ({ children }) => {
 	return (
 		<Box display='flex' flexDirection='column' minHeight='100vh'>
 			<HeaderGuest />
-			<Box flexGrow={1} mx={'auto'} width={'100%'}>
+			<Box flexGrow={1} mx={'auto'} width={'100%'} bgcolor={'#f0f2f5'}>
 				{children}
 			</Box>
 			<Footer />
