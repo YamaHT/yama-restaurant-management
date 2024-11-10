@@ -108,7 +108,6 @@ const Membership = () => {
 					>
 						<CardContent
 							sx={{
-								p: 3,
 								pt: 5,
 								height: '300px',
 								width: '270px',
@@ -119,10 +118,10 @@ const Membership = () => {
 							<Typography variant='h5' fontWeight='bold' color='gray'>
 								Silver
 							</Typography>
-							<ul style={{ textAlign: 'left', padding: '10px' }}>
+							<ul style={{ textAlign: 'left', padding: '10px', fontSize: 13 }}>
 								<li>Access to exclusive discounts on select products</li>
-								<li>Monthly newsletters with special offers and updates</li>
 								<li>Priority customer support</li>
+								<li>Get sale on booking</li>
 								<li>Access to members-only events and promotions</li>
 							</ul>
 							<Button
@@ -149,7 +148,6 @@ const Membership = () => {
 					>
 						<CardContent
 							sx={{
-								p: 3,
 								pt: 5,
 								height: '300px',
 								width: '270px',
@@ -159,7 +157,7 @@ const Membership = () => {
 							<Typography variant='h5' fontWeight='bold'>
 								Gold
 							</Typography>
-							<ul style={{ textAlign: 'left', padding: '10px' }}>
+							<ul style={{ textAlign: 'left', padding: '10px', fontSize: 13 }}>
 								<li>All Silver tier benefits</li>
 								<li>Higher discount rates on a wider range of products</li>
 								<li>Early access to new product launches</li>
@@ -189,7 +187,6 @@ const Membership = () => {
 					>
 						<CardContent
 							sx={{
-								p: 3,
 								pt: 5,
 								height: '300px',
 								width: '270px',
@@ -200,7 +197,7 @@ const Membership = () => {
 							<Typography variant='h5' fontWeight='bold' color='white '>
 								Platinum
 							</Typography>
-							<ul style={{ textAlign: 'left', padding: '10px', color: 'white ' }}>
+							<ul style={{ textAlign: 'left', padding: '10px', color: 'white', fontSize: 13 }}>
 								<li>All Gold tier benefits</li>
 								<li>Free shipping on all orders</li>
 								<li>Exclusive invitations to VIP events and experiences</li>

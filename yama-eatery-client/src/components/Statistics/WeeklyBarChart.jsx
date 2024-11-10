@@ -36,6 +36,9 @@ const barChartOptions = {
 	},
 	yaxis: {
 		show: false,
+		labels: {
+			formatter: (value) => `$${value}`,
+		},
 	},
 	grid: {
 		show: false,
@@ -50,15 +53,7 @@ export default function WeeklyBarChart({ data = [] }) {
 	const { primary, secondary } = theme.palette.text
 	const info = theme.palette.info.light
 
-	const [series] = useState([
-		{
-			name: '',
-			data: data,
-		},
-	])
-
 	const [options, setOptions] = useState(barChartOptions)
-
 	useEffect(() => {
 		setOptions((prevState) => ({
 			...prevState,
@@ -75,7 +70,12 @@ export default function WeeklyBarChart({ data = [] }) {
 
 	return (
 		<Box id='chart' sx={{ bgcolor: 'transparent' }}>
-			<ReactApexChart options={options} series={series} type='bar' height={365} />
+			<ReactApexChart
+				options={options}
+				series={[{ name: '', data: data }]}
+				type='bar'
+				height={365}
+			/>
 		</Box>
 	)
 }

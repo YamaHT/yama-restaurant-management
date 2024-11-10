@@ -101,7 +101,12 @@ const DialogChoosingListProduct = ({
 
 	return (
 		<>
-			<Dialog open={open} maxWidth onClose={handleClose} PaperProps={{ sx: { bgcolor: '#eee' } }}>
+			<Dialog
+				open={open}
+				maxWidth
+				onClose={handleClose}
+				PaperProps={{ sx: { bgcolor: '#eee', width: '100%' } }}
+			>
 				<DialogTitle>List Product</DialogTitle>
 				<DialogContent>
 					<Grid2 container spacing={2}>

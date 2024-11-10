@@ -4,21 +4,6 @@ import MainCard from '@/components/Statistics/MainCard'
 import WeeklyBarChart from '@/components/Statistics/WeeklyBarChart'
 import { Box, Grid2, Stack, Typography } from '@mui/material'
 
-const avatarSX = {
-	width: 36,
-	height: 36,
-	fontSize: '1rem',
-}
-
-const actionSX = {
-	mt: 0.75,
-	ml: 1,
-	top: 'auto',
-	right: 'auto',
-	alignSelf: 'flex-start',
-	transform: 'none',
-}
-
 const StatisticsStaff = () => {
 	return (
 		<Grid2 container rowSpacing={4.5} columnSpacing={2.75}>

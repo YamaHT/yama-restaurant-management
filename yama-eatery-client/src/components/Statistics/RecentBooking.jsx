@@ -118,7 +118,7 @@ export default function RecentBooking({ bookings }) {
 									<TableCell component='th' id={labelId} scope='row'>
 										<Link color='secondary'> {booking.id}</Link>
 									</TableCell>
-									<TableCell>{booking.table.id}</TableCell>
+									<TableCell>{booking?.table?.id}</TableCell>
 									<TableCell align='right'>
 										{booking.bookingDetails.reduce(
 											(sum, bookingDetail) => sum + bookingDetail.quantity,

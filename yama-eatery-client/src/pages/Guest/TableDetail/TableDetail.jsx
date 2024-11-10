@@ -379,12 +379,6 @@ export default function TableDetail() {
 								<Add sx={{ fontSize: 50 }} />
 							</IconButton>
 						</Grid2>
-						<DialogChoosingListProduct
-							open={open}
-							handleClose={() => setOpen(false)}
-							handleSelectProducts={handleAddBookingDetail}
-							selectedProducts={formData.products}
-						/>
 					</Grid2>
 
 					<Stack spacing={2} mt={2}>
@@ -494,6 +488,14 @@ export default function TableDetail() {
 						</Stack>
 					</Stack>
 				</Paper>
+			)}
+			{open && (
+				<DialogChoosingListProduct
+					open={open}
+					handleClose={() => setOpen(false)}
+					handleSelectProducts={handleAddBookingDetail}
+					selectedProducts={formData.products}
+				/>
 			)}
 			{afterBooked.success !== '' && (
 				<Dialog open={!!afterBooked.success}>

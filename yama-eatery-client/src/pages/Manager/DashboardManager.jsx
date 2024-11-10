@@ -27,7 +27,9 @@ const DashboardManager = () => {
 			/>
 			<Box width={'100%'}>
 				<HeaderManager handleOpenDrawer={handleOpenDrawer} />
-				<Box p={3}>{selectedPage}</Box>
+				<Box p={3} bgcolor={'#f0f2f5'} minHeight={'90vh'}>
+					{selectedPage}
+				</Box>
 			</Box>
 		</Stack>
 	)
