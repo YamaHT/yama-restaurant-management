@@ -23,7 +23,10 @@ const InvoiceCard = ({ booking }) => {
 					}}
 				>
 					<Box width={'100%'}>
-						<Typography variant='body1'>Total dishes: {booking.bookingDetails.length}</Typography>
+						<Typography variant='body1'>
+							Total dishes:{' '}
+							{booking?.bookingDetails.reduce((sum, detail) => sum + detail.quantity, 0)}
+						</Typography>
 						<Typography variant='body1'>
 							Payment: ${booking.remainPayment} / {booking.totalPayment}
 						</Typography>

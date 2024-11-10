@@ -8,6 +8,7 @@ import { Add } from '@mui/icons-material'
 import { Box, Button, Grid2, MenuItem, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import BookingDetail from './BookingDetail'
+import InvoiceDetail from './InvoiceDetail'
 
 const BookingManagement = () => {
 	const [bookings, setBookings] = useState([])
@@ -18,6 +19,7 @@ const BookingManagement = () => {
 
 	const [selectedBooking, setSelectedBooking] = useState(null)
 	const [openBookingDetail, setOpenBookingDetail] = useState(false)
+	const [openBill, setOpenBill] = useState(false)
 	const [isChange, setIsChange] = useState(false)
 
 	const [selectedDate, setSelectedDate] = useState(getFormattedDate(0))
@@ -189,7 +191,15 @@ const BookingManagement = () => {
 						bookingId={selectedBooking.id}
 						open={openBookingDetail}
 						handleClose={() => setOpenBookingDetail(false)}
+						handleOpenBill={() => setOpenBill(true)}
 						trigger={triggerPaidBooking}
+					/>
+				)}
+				{openBill && (
+					<InvoiceDetail
+						open={openBill}
+						bookingId={selectedBooking.id}
+						handleClose={() => setOpenBill(false)}
 					/>
 				)}
 			</Grid2>

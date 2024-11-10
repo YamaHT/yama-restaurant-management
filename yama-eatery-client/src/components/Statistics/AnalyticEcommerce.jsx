@@ -10,14 +10,7 @@ const iconSX = {
 	marginRight: 0,
 }
 
-export default function AnalyticEcommerce({
-	color = 'primary',
-	title,
-	count,
-	percentage,
-	isLoss,
-	extra,
-}) {
+export default function AnalyticEcommerce({ title, count, percentage, isLoss, extra }) {
 	return (
 		<MainCard contentSX={{ p: 2.25 }}>
 			<Stack spacing={0.5}>
@@ -30,36 +23,27 @@ export default function AnalyticEcommerce({
 							{count}
 						</Typography>
 					</Grid>
-					{percentage && (
-						<Grid item>
-							<Chip
-								variant='filled'
-								color={color}
-								icon={
-									isLoss ? (
-										<TrendingDownSharp style={iconSX} />
-									) : (
-										<TrendingUpSharp style={iconSX} />
-									)
-								}
-								label={`${percentage}%`}
-								sx={{ ml: 1.25, pl: 1 }}
-								size='small'
-							/>
-						</Grid>
-					)}
+					<Grid item>
+						<Chip
+							variant='filled'
+							color={isLoss ? 'warning' : 'primary'}
+							icon={
+								isLoss ? <TrendingDownSharp style={iconSX} /> : <TrendingUpSharp style={iconSX} />
+							}
+							label={`${percentage}%`}
+							sx={{ ml: 1.25, pl: 1 }}
+							size='small'
+						/>
+					</Grid>
 				</Grid>
 			</Stack>
 			<Box sx={{ pt: 2.25 }}>
 				<Typography variant='caption' color='text.secondary'>
 					You made an extra{' '}
-					<Typography
-						variant='caption'
-						sx={{ color: `${color || 'primary'}.main` }}
-					>
+					<Typography variant='caption' sx={{ color: isLoss ? 'warning.main' : 'primary.main' }}>
 						{extra}
 					</Typography>{' '}
-					this year
+					this month
 				</Typography>
 			</Box>
 		</MainCard>

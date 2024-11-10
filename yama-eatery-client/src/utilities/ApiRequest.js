@@ -5,11 +5,13 @@ import { ContactManagementRequest } from '@/requests/ContactManagementRequest'
 import { EmployeeRequest } from '@/requests/EmployeeRequest'
 import { EnumRequest } from '@/requests/EnumRequest'
 import { FeedbackRequest } from '@/requests/FeedbackRequest'
+import { ManagerStatisticRequest } from '@/requests/ManagerStatisticRequest'
 import { ProductManagementRequest } from '@/requests/ProductManagementRequest'
 import { ProductRequest } from '@/requests/ProductRequest'
 import { StaffAttendanceManagementRequest } from '@/requests/StaffAttendanceManagementRequest'
 import { StaffInformationManagementRequest } from '@/requests/StaffInformationManagementRequest'
 import { StaffSalaryManagementRequest } from '@/requests/StaffSalaryManagementRequest'
+import { StaffStatisticRequest } from '@/requests/StaffStatisticRequest'
 import { TableManagementRequest } from '@/requests/TableManagementRequest'
 import { TableRequest } from '@/requests/TableRequest'
 import { UserManagementRequest } from '@/requests/UserManagementRequest'
@@ -28,6 +30,7 @@ export const ApiRequest = {
 	ProductRequest,
 	UserRequest,
 	FeedbackRequest,
+	ManagerStatisticRequest,
 	TableRequest,
 	VoucherRequest,
 	ProductManagementRequest,
@@ -36,5 +39,6 @@ export const ApiRequest = {
 	StaffAttendanceManagementRequest,
 	StaffSalaryManagementRequest,
 	StaffInformationManagementRequest,
+	StaffStatisticRequest,
 	TableManagementRequest,
 }

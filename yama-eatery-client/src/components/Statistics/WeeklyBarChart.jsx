@@ -44,7 +44,7 @@ const barChartOptions = {
 
 // ==============================|| MONTHLY BAR CHART ||============================== //
 
-export default function MonthlyBarChart() {
+export default function WeeklyBarChart({ data = [] }) {
 	const theme = useTheme()
 
 	const { primary, secondary } = theme.palette.text
@@ -52,7 +52,8 @@ export default function MonthlyBarChart() {
 
 	const [series] = useState([
 		{
-			data: [80, 95, 70, 42, 65, 55, 78],
+			name: '',
+			data: data,
 		},
 	])
 
@@ -65,15 +66,7 @@ export default function MonthlyBarChart() {
 			xaxis: {
 				labels: {
 					style: {
-						colors: [
-							secondary,
-							secondary,
-							secondary,
-							secondary,
-							secondary,
-							secondary,
-							secondary,
-						],
+						colors: [secondary, secondary, secondary, secondary, secondary, secondary, secondary],
 					},
 				},
 			},
@@ -82,12 +75,7 @@ export default function MonthlyBarChart() {
 
 	return (
 		<Box id='chart' sx={{ bgcolor: 'transparent' }}>
-			<ReactApexChart
-				options={options}
-				series={series}
-				type='bar'
-				height={365}
-			/>
+			<ReactApexChart options={options} series={series} type='bar' height={365} />
 		</Box>
 	)
 }
